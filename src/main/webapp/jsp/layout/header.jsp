@@ -14,6 +14,7 @@
         <div class="row">
         <jsp:include page="fragment/sidebar.jsp" />
         <div class="col-lg-9">
+            <jsp:include page="fragment/globalErrors.jsp" />
             <div class="grid support-content">
                 <div class="grid-body">
                     <h5>${page_title}</h5>

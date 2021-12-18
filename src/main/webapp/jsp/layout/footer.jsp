@@ -30,6 +30,11 @@
     });
 
     $(function () {
+        //check if cookies are enabled
+        if (!navigator.cookieEnabled) {
+            $('#err-cookie-support').show();
+        }
+
         //init bootstrap forms validation
         (function() {
             'use strict';
