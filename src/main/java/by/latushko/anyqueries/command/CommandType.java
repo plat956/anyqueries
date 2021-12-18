@@ -6,7 +6,8 @@ import static by.latushko.anyqueries.command.RequestMethod.POST;
 public enum CommandType {
     LOGIN_PAGE(GET),
     LOGIN_ACTION(POST),
-    MAIN_PAGE(GET);
+    MAIN_PAGE(GET),
+    REGISTRATION_PAGE(GET);
 
     private RequestMethod method;
 

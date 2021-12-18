@@ -3,6 +3,7 @@ package by.latushko.anyqueries.command;
 import by.latushko.anyqueries.command.impl.LoginActionCommand;
 import by.latushko.anyqueries.command.impl.LoginPageCommand;
 import by.latushko.anyqueries.command.impl.MainPageCommand;
+import by.latushko.anyqueries.command.impl.RegistrationPageCommand;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,7 @@ public class CommandProvider {
     private CommandProvider() {
         commands.put(CommandType.LOGIN_PAGE, new LoginPageCommand());
         commands.put(CommandType.LOGIN_ACTION, new LoginActionCommand());
+        commands.put(CommandType.REGISTRATION_PAGE, new RegistrationPageCommand());
         commands.put(CommandType.MAIN_PAGE, new MainPageCommand());
     }
 
@@ -38,7 +40,8 @@ public class CommandProvider {
         }
 
         if(commandType.getMethod().equals(method)) {
-            return Optional.of(commands.get(commandType));
+            Command command = commands.get(commandType);
+            return Optional.ofNullable(command);
         } else {
             return Optional.empty();
         }
