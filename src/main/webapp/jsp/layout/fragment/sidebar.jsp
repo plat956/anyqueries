@@ -17,6 +17,12 @@
                 <li><a href="#"><span class="support-label-span bg-yellow">&#xA0;</span>Кулинария<span class="float-right">128</span></a>
                 </li>
             </ul>
+            <hr>
+            <select class="selectpicker" data-width="100%">
+                <option data-content='<i class="flag flag-united-states"></i> English'>English</option>
+                <option  data-content='<i class="flag flag-belarus"></i> Беларуская'>Беларуская</option>
+                <option  data-content='<i class="flag flag-russia"></i> Русский'>Русский</option>
+            </select>
         </div>
     </div>
 </div>

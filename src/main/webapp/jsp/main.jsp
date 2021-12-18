@@ -3,4 +3,7 @@
 <c:set var="page_title" value="Main page" scope="request" />
 <jsp:include page="layout/header.jsp" />
 main
+<i class="ae flag"></i>
+<i class="france flag"></i>
+<i class="united states flag"></i>
 <jsp:include page="layout/footer.jsp" />

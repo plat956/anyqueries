@@ -8,18 +8,22 @@
             <div class="input-group-prepend">
                 <span class="input-group-text"> <i class="fa fa-user"></i> </span>
             </div>
-            <input name="login" class="form-control" placeholder="Login" type="text" required pattern="[A-Za-z0-9]{1,25}" maxlength="20">
+            <input name="login" class="form-control" placeholder="Login" type="text" required pattern="[A-Za-z0-9]{1,25}" maxlength="20"
+                   data-toggle="popover" data-trigger="focus" data-placement="right"
+                   data-content="Логин может содержать только латинские буквы в любом регистре и цифры, максимальная длина 20 символов">
             <div class="invalid-feedback">
-                Для логина допустимы только латинские буквы и цифры, макс. 20 символов.
+                Заполните поле корректно
             </div>
         </div>
         <div class="form-group input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
             </div>
-            <input class="form-control" placeholder="Password" type="password" name="password" id="password" required pattern="(?=.*[0-9])(?=.*[A-ZА-Я])\S{6,}" maxlength="25">
+            <input class="form-control" placeholder="Password" type="password" name="password" id="password" required pattern="(?=.*[0-9])(?=.*[A-ZА-Я])\S{6,}" maxlength="25"
+                   data-toggle="popover" data-trigger="focus" data-placement="right"
+                   data-content="Пароль должен содержать от 6 до 25 символов, хотя бы 1 цифру и 1 заглавную букву">
             <div class="invalid-feedback">
-                Длина пароля дожна быть 6-25 символов, мин. 1 цифра, 1 заглавная буква.
+                Заполните поле корректно
             </div>
         </div>
         <div class="form-group form-check">

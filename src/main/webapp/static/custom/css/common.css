@@ -159,29 +159,29 @@ body {
     border-bottom-style: solid !important;
 }
 
-.support ul {
+.support ul.support-label {
     list-style: none;
     padding: 0px;
 }
 
-.support ul li {
+.support ul.support-label li {
     padding: 8px 10px;
 }
 
-.support ul li a {
+.support ul.support-label li a {
     color: #999;
     display: block;
 }
 
-.support ul li a:hover {
+.support ul.support-label li a:hover {
     color: #666;
 }
 
-.support ul li.active {
+.support ul.support-label li.active {
     background: #0073b7;
 }
 
-.support ul li.active a {
+.support ul.support-label li.active a {
     color: #fff;
 }
 
@@ -351,4 +351,59 @@ body {
 }
 .page-title-hr {
     margin: 15px 0px 15px 0px;
+}
+.bottom-copyright {
+    float: right;
+    font-size: 0.8em;
+    color: #a5a5a5;
+    margin-top: -15px;
+    margin-bottom: 10px;
+}
+.bottom-copyright > a {
+    color: #a5a5a5 !important;
+}
+i.flag:not(.icon), i.flag:not(.icon):before {
+    display: inline-block;
+    width: 16px;
+    height: 11px;
+}
+i.flag:not(.icon) {
+    margin: 0 0.5em 0 0;
+    line-height: 11px;
+    text-decoration: inherit;
+    vertical-align: baseline;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+i.flag:not(.icon):before {
+    content: "";
+    background: url(../images/flags.png) no-repeat -108px -1976px;
+}
+i.flag:not(.icon), i.flag:not(.icon):before {
+    display: inline-block;
+    width: 16px;
+    height: 11px;
+}
+i.flag:before {
+    display: inline-block;
+    width: 16px;
+    height: 11px;
+    content: "";
+    background: url(../images/flags.png) no-repeat -108px -1976px;
+}
+i.flag-belarus:before, i.flag-by:before {
+    background-position: 0 -858px!important;
+}
+i.flag-america:before, i.flag-united-states:before, i.flag-us:before {
+    background-position: -72px -1950px!important;
+}
+i.flag-ru:before, i.flag-russia:before {
+    background-position: -72px -884px!important;
+}
+.user-dropdown > a {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.search-input {
+    font-size: 0.9em;
 }
