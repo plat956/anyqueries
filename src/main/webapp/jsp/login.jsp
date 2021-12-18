@@ -3,7 +3,7 @@
 <c:set var="page_title" value="Вход в учетную запись" scope="request" />
 <jsp:include page="layout/header.jsp" />
 <div class="col-lg-7 mx-auto">
-    <form id="reg_form" class="needs-validation" novalidate>
+    <form id="login_form" class="needs-validation" novalidate>
         <div class="form-group input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text"> <i class="fa fa-user"></i> </span>
@@ -30,28 +30,12 @@
             <button type="submit" class="btn btn-primary btn-block"> Войти  </button>
         </div>
         <div class="text-center">
-            <a href="/controller?command=forgot_password_action">Забыли пароль?</a>
+            <a href="/controller?command=forgot_password">Забыли пароль?</a>
         </div>
     </form>
 </div>
 <script>
-    (function() {
-        'use strict';
-        window.addEventListener('load', function() {
-            var forms = document.getElementsByClassName('needs-validation');
-            var validation = Array.prototype.filter.call(forms, function(form) {
-                form.addEventListener('submit', function(event) {
-                    if (form.checkValidity() === false) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        }, false);
-    })();
-
-    $('#reg_form').on('input', function () {
+    $('#login_form').on('input', function () {
         var password = document.getElementById("password");
         var password_confirmed = document.getElementById("password_confirmed");
 

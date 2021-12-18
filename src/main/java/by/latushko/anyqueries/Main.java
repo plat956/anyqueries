@@ -2,7 +2,7 @@
 //
 //import by.latushko.anyqueries.dao.UserDao;
 //import by.latushko.anyqueries.dao.impl.UserDaoImpl;
-//import by.latushko.anyqueries.entity.User;
+//import User;
 //import by.latushko.anyqueries.exception.DaoException;
 //import by.latushko.anyqueries.exception.MailSenderException;
 //import by.latushko.anyqueries.util.encryption.PasswordEncoder;

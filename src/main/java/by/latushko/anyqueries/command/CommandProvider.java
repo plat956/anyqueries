@@ -1,9 +1,11 @@
 package by.latushko.anyqueries.command;
 
-import by.latushko.anyqueries.command.impl.LoginActionCommand;
-import by.latushko.anyqueries.command.impl.LoginPageCommand;
-import by.latushko.anyqueries.command.impl.MainPageCommand;
-import by.latushko.anyqueries.command.impl.RegistrationPageCommand;
+import by.latushko.anyqueries.command.impl.getCommand.LoginPageCommand;
+import by.latushko.anyqueries.command.impl.getCommand.MainPageCommand;
+import by.latushko.anyqueries.command.impl.getCommand.RegistrationPageCommand;
+import by.latushko.anyqueries.command.impl.postCommand.LoginCommand;
+import by.latushko.anyqueries.command.impl.postCommand.RegistrationCommand;
+import by.latushko.anyqueries.util.http.RequestMethod;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,13 +13,15 @@ import java.util.Optional;
 
 public class CommandProvider {
     private static CommandProvider instance;
-    private final Map<CommandType, Command> commands = new HashMap<>();
+    private final Map<CommandType, Command> getCommands = new HashMap<>();
+    private final Map<CommandType, Command> postCommands = new HashMap<>();
 
     private CommandProvider() {
-        commands.put(CommandType.LOGIN_PAGE, new LoginPageCommand());
-        commands.put(CommandType.LOGIN_ACTION, new LoginActionCommand());
-        commands.put(CommandType.REGISTRATION_PAGE, new RegistrationPageCommand());
-        commands.put(CommandType.MAIN_PAGE, new MainPageCommand());
+        getCommands.put(CommandType.LOGIN_PAGE, new LoginPageCommand());
+        getCommands.put(CommandType.REGISTRATION_PAGE, new RegistrationPageCommand());
+        getCommands.put(CommandType.MAIN_PAGE, new MainPageCommand());
+        postCommands.put(CommandType.LOGIN, new LoginCommand());
+        postCommands.put(CommandType.REGISTRATION, new RegistrationCommand());
     }
 
     public static CommandProvider getInstance() {
@@ -39,11 +43,12 @@ public class CommandProvider {
             return Optional.empty();
         }
 
-        if(commandType.getMethod().equals(method)) {
-            Command command = commands.get(commandType);
-            return Optional.ofNullable(command);
-        } else {
-            return Optional.empty();
-        }
+        Command command = switch (method) {
+            case GET -> getCommands.get(commandType);
+            case POST -> postCommands.get(commandType);
+            default -> null;
+        };
+
+        return Optional.ofNullable(command);
     }
 }

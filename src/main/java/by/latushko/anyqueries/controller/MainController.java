@@ -4,12 +4,12 @@ import java.io.*;
 import java.util.Optional;
 
 import by.latushko.anyqueries.command.*;
-import by.latushko.anyqueries.command.RequestMethod;
+import by.latushko.anyqueries.util.http.RequestMethod;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
-import static by.latushko.anyqueries.util.MimeType.APPLICATION_JSON;
+import static by.latushko.anyqueries.util.http.MimeType.APPLICATION_JSON;
 
 @WebServlet(name = "mainController", value = "/controller")
 public class MainController extends HttpServlet {
@@ -35,19 +35,19 @@ public class MainController extends HttpServlet {
             return;
         }
 
-        Router router = command.get().execute(request);
+        ResponseParameter parameter = command.get().execute(request); //todo rename ResponseParameter class
 
-        switch (router.getRouterType()) {
-            case FORWARDING:
-                request.getRequestDispatcher(router.getPage()).forward(request, response);
+        switch (parameter.getRoutingType()) {
+            case FORWARD:
+                request.getRequestDispatcher(parameter.getPage()).forward(request, response);
                 break;
-            case REDIRECTION:
-                response.sendRedirect(router.getPage());
+            case REDIRECT:
+                response.sendRedirect(parameter.getPage());
                 break;
-            case AJAX_RESPONSE_BODY:
+            case RESPOND_WITH_JSON:
                 response.setContentType(APPLICATION_JSON);
                 PrintWriter writer = response.getWriter();
-                writer.print(router.getPage());
+                writer.print(parameter.getPage());
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

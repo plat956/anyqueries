@@ -64,12 +64,13 @@ public class MailSender {
     }
 
     private MimeMessage initMessage(String sendTo, String subject, String text) throws MessagingException {
+        String email = properties.getProperty("mail.user.email");
+        String name = properties.getProperty("mail.user.name");
+        String contentType = properties.getProperty("mail.content.type");
         Session mailSession = SessionFactory.createSession(properties);
         MimeMessage message = new MimeMessage(mailSession);
         message.setSubject(subject);
-        message.setContent(text, "text/html");
-        String email = properties.getProperty("mail.user.email");
-        String name = properties.getProperty("mail.user.name");
+        message.setContent(text, contentType);
         InternetAddress senderAddress;
         try {
             senderAddress = new InternetAddress(email, name);
