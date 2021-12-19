@@ -9,6 +9,7 @@ public final class RequestParameter {
     public static final String LOGIN = "login";
     public static final String PASSWORD = "password";
     public static final String PASSWORD_CONFIRMED = "password_confirmed";
+    public static final String QUERY_STRING = "query_string";
 
     private RequestParameter() {
     }

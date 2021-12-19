@@ -27,6 +27,7 @@
         <maven.compiler.version>3.1</maven.compiler.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <telegram.api.version>5.2.0</telegram.api.version>
     </properties>
 
     <dependencies>
@@ -70,6 +71,11 @@
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>
             <version>${jbcrypt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots</artifactId>
+            <version>${telegram.api.version}</version>
         </dependency>
     </dependencies>
 

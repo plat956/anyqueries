@@ -9,3 +9,12 @@ var forms = {
         });
     }
 }
+
+var registration = {
+    chooseMode: function (value) {
+        $('.notice-confirmation').hide();
+        $('#' + value + '-confirmation').fadeIn();
+        $('.input-confirmation').prop('required',false);
+        $('#' + value).prop('required',true);
+    }
+}

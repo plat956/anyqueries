@@ -21,10 +21,14 @@ import java.util.concurrent.locks.ReentrantLock;
 public class MailSender {
     private static final Logger logger = LogManager.getLogger();
     private static final String MAIL_PROPERTIES_PATH = "config/mail.properties";
+    public static final String USER_EMAIL_PROPERTY = "mail.user.email";
+    public static final String USER_PASSWORD_PROPERTY = "mail.user.password";
+    public static final String USER_NAME_PROPERTY = "mail.user.name";
+    public static final String CONTENT_TYPE_PROPERTY = "mail.content.type";
     private static MailSender instance;
     private static AtomicBoolean creator = new AtomicBoolean(false);
     private static ReentrantLock lockerSingleton = new ReentrantLock();
-    private Properties properties;
+    private final Properties properties;
 
     private MailSender() {
         this.properties = new Properties();
@@ -64,9 +68,9 @@ public class MailSender {
     }
 
     private MimeMessage initMessage(String sendTo, String subject, String text) throws MessagingException {
-        String email = properties.getProperty("mail.user.email");
-        String name = properties.getProperty("mail.user.name");
-        String contentType = properties.getProperty("mail.content.type");
+        String email = properties.getProperty(USER_EMAIL_PROPERTY);
+        String name = properties.getProperty(USER_NAME_PROPERTY);
+        String contentType = properties.getProperty(CONTENT_TYPE_PROPERTY);
         Session mailSession = SessionFactory.createSession(properties);
         MimeMessage message = new MimeMessage(mailSession);
         message.setSubject(subject);
@@ -75,7 +79,7 @@ public class MailSender {
         try {
             senderAddress = new InternetAddress(email, name);
         } catch (UnsupportedEncodingException e) {
-            logger.error("Unsupported sender name encoding in property \"mail.user.name\", check the file: " + MAIL_PROPERTIES_PATH);
+            logger.error("Unsupported sender name encoding in property \"" + USER_NAME_PROPERTY + "\", check the file: " + MAIL_PROPERTIES_PATH);
             senderAddress = new InternetAddress(email);
         }
         message.setFrom(senderAddress);

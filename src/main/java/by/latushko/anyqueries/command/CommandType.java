@@ -5,5 +5,6 @@ public enum CommandType {
     MAIN_PAGE,
     REGISTRATION_PAGE,
     LOGIN,
-    REGISTRATION;
+    REGISTRATION,
+    LIVE_SEARCH;
 }

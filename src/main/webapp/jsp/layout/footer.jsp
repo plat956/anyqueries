@@ -2,14 +2,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="date" class="java.util.Date" />
 <fmt:formatDate value="${date}" pattern="yyyy" var="currentYear" />
-                    </div>
-                </div>
-                <div class="bottom-copyright">
-                    © ${currentYear} <a href="http://t.me/${initParam['author-telegram']}" target="_blank">${initParam['author-name']}</a>
-                </div>
-            </div>
-        </div>
-    </section>
+</div>
+</div>
+<div class="bottom-copyright">
+    © ${currentYear} <a href="http://t.me/${initParam['author-telegram']}" target="_blank">${initParam['author-name']}</a>
+</div>
+</div>
+</div>
+</section>
 </div>
 <script type="text/javascript">
     // Show the progress bar
@@ -39,8 +39,8 @@
         (function() {
             'use strict';
             window.addEventListener('load', function() {
-                var forms = document.getElementsByClassName('needs-validation');
-                var validation = Array.prototype.filter.call(forms, function(form) {
+                var allForms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(allForms, function(form) {
                     form.addEventListener('submit', function(event) {
                         if (form.checkValidity() === false) {
                             event.preventDefault();
@@ -51,6 +51,15 @@
                 });
             }, false);
         })();
+
+        //init navbar live search
+        $('input.search-input').typeahead({
+            source:  function (query, process) {
+                return $.get('/controller?command=live_search', {query_string: query}, function (data) {
+                    return process(data);
+                });
+            }
+        });
 
         //init form buttons spinner
         forms.spinSubmitButton();

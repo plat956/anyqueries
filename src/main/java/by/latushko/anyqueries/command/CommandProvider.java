@@ -1,5 +1,6 @@
 package by.latushko.anyqueries.command;
 
+import by.latushko.anyqueries.command.impl.getCommand.LiveSearchCommand;
 import by.latushko.anyqueries.command.impl.getCommand.LoginPageCommand;
 import by.latushko.anyqueries.command.impl.getCommand.MainPageCommand;
 import by.latushko.anyqueries.command.impl.getCommand.RegistrationPageCommand;
@@ -20,6 +21,8 @@ public class CommandProvider {
         getCommands.put(CommandType.LOGIN_PAGE, new LoginPageCommand());
         getCommands.put(CommandType.REGISTRATION_PAGE, new RegistrationPageCommand());
         getCommands.put(CommandType.MAIN_PAGE, new MainPageCommand());
+        getCommands.put(CommandType.LIVE_SEARCH, new LiveSearchCommand());
+
         postCommands.put(CommandType.LOGIN, new LoginCommand());
         postCommands.put(CommandType.REGISTRATION, new RegistrationCommand());
     }
