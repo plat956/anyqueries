@@ -20,12 +20,15 @@ import java.time.LocalDateTime;
 import static by.latushko.anyqueries.command.ResponseMessage.Type.INFO;
 
 public class RegistrationCommand implements Command {
+    private static final String CONFIRMATION_LINK_ALIVE_PARAMETER = "confirmation-link-alive";
+
     @Override
     public ResponseParameter execute(HttpServletRequest request) {
         String firstName = request.getParameter(RequestParameter.FIRST_NAME);
         String lastName = request.getParameter(RequestParameter.LAST_NAME);
         String middleName = request.getParameter(RequestParameter.MIDDLE_NAME);
         String email = request.getParameter(RequestParameter.EMAIL);
+        String telegram = request.getParameter(RequestParameter.TELEGRAM);
         String login = request.getParameter(RequestParameter.LOGIN);
         String password = request.getParameter(RequestParameter.PASSWORD);
         String passwordConfirmed = request.getParameter(RequestParameter.PASSWORD_CONFIRMED);
@@ -39,6 +42,7 @@ public class RegistrationCommand implements Command {
         user.setLastName(lastName);
         user.setMiddleName(middleName);
         user.setEmail(email);
+        user.setTelegram(telegram);
         user.setLogin(login);
         user.setPassword(encoder.encode(password));
         user.setRole(User.Role.ROLE_USER);
@@ -78,9 +82,12 @@ public class RegistrationCommand implements Command {
             e.printStackTrace();
         }
 
-        String text = "Ссылка для подтверждения учетной записи отправлена на " + user.getEmail();
-        String notice = "Обратите внимание, что ссылка действительна в течении 24 часов. По истечении данного срока Вам придется повторить процедуру регистрации";
-        request.setAttribute(RequestAttribute.MESSAGE, new ResponseMessage(INFO, text, notice));
-        return new ResponseParameter(PagePath.REGISTRATION_PAGE, ResponseParameter.RoutingType.FORWARD);
+        String aliveHours = request.getServletContext().getInitParameter(CONFIRMATION_LINK_ALIVE_PARAMETER);
+        String text = "Ссылка для подтверждения учетной записи отправлена на <b>" + user.getEmail() + "</b>";
+        String notice = "Обратите внимание, что ссылка действительна в течении " + aliveHours + " часов. " +
+                "По истечении данного срока Вам придется повторить процедуру регистрации с логином <b>" + user.getLogin() + "</b>";
+
+        request.getSession().setAttribute(RequestAttribute.MESSAGE, new ResponseMessage(INFO, text, notice));
+        return new ResponseParameter(PagePath.REGISTRATION_URL, ResponseParameter.RoutingType.REDIRECT);
     }
 }

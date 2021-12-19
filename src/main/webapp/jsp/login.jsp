@@ -33,9 +33,6 @@
         <div class="form-group">
             <button type="submit" class="btn btn-primary btn-block"> Войти  </button>
         </div>
-        <div class="text-center">
-            <a href="/controller?command=forgot_password">Забыли пароль?</a>
-        </div>
     </form>
 </div>
 <script>

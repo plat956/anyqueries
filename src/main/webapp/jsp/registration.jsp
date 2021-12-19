@@ -4,7 +4,7 @@
 <jsp:include page="layout/header.jsp" />
 <div class="reg-confirm-block">
     <div id="telegram-confirmation" class="notice-confirmation alert alert-warning" style="display: none">
-        Чтобы активировать учетную запись, вы должны быть подписаны на telegram-бота <strong>@confirmBot</strong>. После регистрации на any-q.by отправьте telegram-боту команду "Активировать учетную запись"
+        Чтобы активировать учетную запись подпишитесь на telegram-бота <a href="https://t.me/${telegramBot}" target="_blank"><strong>@${telegramBot}</strong></a>. После регистрации на ${initParam['website']} отправьте боту команду "${activationCommand}"
     </div>
     <div id="email-confirmation" class="notice-confirmation alert alert-warning" style="display: none">
         На ваш email будет направлена ссылка для активации учетной записи

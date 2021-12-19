@@ -19,6 +19,7 @@ public class UserMapper implements RowMapper<User> {
             user.setLogin(resultSet.getString("login"));
             user.setPassword(resultSet.getString("password"));
             user.setEmail(resultSet.getString("email"));
+            user.setTelegram(resultSet.getString("telegram"));
             user.setAvatar(resultSet.getString("avatar"));
             user.setStatus(User.Status.valueOf(resultSet.getString("status")));
             user.setRole(User.Role.valueOf(resultSet.getString("role")));

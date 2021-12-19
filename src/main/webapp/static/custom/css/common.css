@@ -328,12 +328,12 @@ body {
     color: #fff;
 }
 .custom-sidebar {
-    padding-right: 0px;
+    padding-right: 15px;
+    padding-left: 0;
 }
-.navbar-search {
-    margin-right: 15px;
-    margin-left: 10px;
-    width: 450px;
+.custom-content {
+    padding-right: 0;
+    padding-left: 0;
 }
 .navbar-search-btn {
     color: #fff;
@@ -406,4 +406,25 @@ i.flag-ru:before, i.flag-russia:before {
 }
 .search-input {
     font-size: 0.9em;
+}
+.sidebar-row {
+    margin-right: 0;
+    margin-left: 0;
+}
+@media (max-width: 992px) {
+    .custom-sidebar {
+        padding-right: 0px !important;
+        padding-left: 0px !important;
+    }
+    .navbar-search {
+        margin-top: 10px;
+    }
+    .navbar-search > .typeahead{
+        position: absolute;
+    }
+}
+@media (min-width: 992px) {
+    .navbar-search {
+        width: 450px;
+    }
 }

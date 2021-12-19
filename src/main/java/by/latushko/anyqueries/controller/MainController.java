@@ -3,10 +3,9 @@ package by.latushko.anyqueries.controller;
 import java.io.*;
 import java.util.Optional;
 
-import by.latushko.anyqueries.util.bot.TelegramBot;
+import by.latushko.anyqueries.util.telegram.TelegramBot;
 import by.latushko.anyqueries.command.*;
 import by.latushko.anyqueries.util.http.RequestMethod;
-import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;

@@ -11,9 +11,9 @@
 <div class="container">
     <jsp:include page="fragment/navbar.jsp" />
     <section class="page-section content">
-        <div class="row">
+        <div class="row sidebar-row">
         <jsp:include page="fragment/sidebar.jsp" />
-        <div class="col-lg-9">
+        <div class="col-lg-9 custom-content">
             <jsp:include page="fragment/globalErrors.jsp" />
             <div class="grid support-content">
                 <div class="grid-body">

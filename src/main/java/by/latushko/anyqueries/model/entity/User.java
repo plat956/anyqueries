@@ -15,6 +15,7 @@ public class User extends BaseEntity<Long> {
     private String login;
     private String password;
     private String email;
+    private String telegram;
     private String avatar;
     private Status status;
     private Role role;
@@ -70,6 +71,14 @@ public class User extends BaseEntity<Long> {
         this.email = email;
     }
 
+    public String getTelegram() {
+        return telegram;
+    }
+
+    public void setTelegram(String telegram) {
+        this.telegram = telegram;
+    }
+
     public String getAvatar() {
         return avatar;
     }
@@ -107,9 +116,10 @@ public class User extends BaseEntity<Long> {
         if (login != null ? !login.equals(user.login) : user.login != null) return false;
         if (password != null ? !password.equals(user.password) : user.password != null) return false;
         if (email != null ? !email.equals(user.email) : user.email != null) return false;
+        if (telegram != null ? !telegram.equals(user.telegram) : user.telegram != null) return false;
         if (avatar != null ? !avatar.equals(user.avatar) : user.avatar != null) return false;
         if (status != user.status) return false;
-        return role != null ? role.equals(user.role) : user.role == null;
+        return role == user.role;
     }
 
     @Override
@@ -120,6 +130,7 @@ public class User extends BaseEntity<Long> {
         result = 31 * result + (login != null ? login.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (telegram != null ? telegram.hashCode() : 0);
         result = 31 * result + (avatar != null ? avatar.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (role != null ? role.hashCode() : 0);
@@ -135,6 +146,7 @@ public class User extends BaseEntity<Long> {
         sb.append(", login='").append(login).append('\'');
         sb.append(", password='").append(password).append('\'');
         sb.append(", email='").append(email).append('\'');
+        sb.append(", telegram='").append(telegram).append('\'');
         sb.append(", avatar='").append(avatar).append('\'');
         sb.append(", status=").append(status);
         sb.append(", role=").append(role);
