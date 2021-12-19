@@ -15,18 +15,18 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class UserDaoImpl implements UserDao {
     private static final String SQL_FIND_ALL_QUERY = """
-            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, status, role 
+            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role 
             FROM users""";
     private static final String SQL_FIND_BY_ID_QUERY = """
-            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, status, role 
+            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role 
             FROM users 
             WHERE id = ?""";
     private static final String SQL_CREATE_QUERY = """
-            INSERT INTO users(first_name, last_name, middle_name, login, password, email, telegram, avatar, status, role) 
+            INSERT INTO users(first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""";
     private static final String SQL_UPDATE_QUERY = """
             UPDATE users 
-            SET first_name = ?, last_name = ?, middle_name = ?, login = ?, password = ?, email = ?, telegram = ?, avatar = ?, status = ?, role = ?  
+            SET first_name = ?, last_name = ?, middle_name = ?, login = ?, password = ?, email = ?, telegram = ?, avatar = ?, last_login_date = ?, status = ?, role = ?  
             WHERE id = ?""";
     private static final String SQL_DELETE_QUERY = """
             DELETE FROM users WHERE id = ?""";
@@ -66,8 +66,9 @@ public class UserDaoImpl implements UserDao {
             statement.setString(6, user.getEmail());
             statement.setString(7, user.getTelegram());
             statement.setString(8, user.getAvatar());
-            statement.setString(9, user.getStatus().name());
-            statement.setString(10, user.getRole().name());
+            statement.setObject(9, user.getLastLoginDate()); //todo проверить
+            statement.setString(10, user.getStatus().name());
+            statement.setString(11, user.getRole().name());
 
             if(statement.executeUpdate() > 0) {
                 ResultSet resultSet = statement.getGeneratedKeys();
@@ -126,9 +127,10 @@ public class UserDaoImpl implements UserDao {
             statement.setString(6, user.getEmail());
             statement.setString(7, user.getTelegram());
             statement.setString(8, user.getAvatar());
-            statement.setString(9, user.getStatus().name());
-            statement.setString(10, user.getRole().name());
-            statement.setLong(11, user.getId());
+            statement.setObject(9, user.getLastLoginDate()); //todo проверить
+            statement.setString(10, user.getStatus().name());
+            statement.setString(11, user.getRole().name());
+            statement.setLong(12, user.getId());
 
             if(statement.executeUpdate() > 0) {
                 return Optional.of(user);

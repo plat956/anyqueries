@@ -1,5 +1,7 @@
 package by.latushko.anyqueries.model.entity;
 
+import java.time.LocalDateTime;
+
 public class User extends BaseEntity<Long> {
     public enum Status {
         ACTIVE, INACTIVE, BANNED;
@@ -17,6 +19,7 @@ public class User extends BaseEntity<Long> {
     private String email;
     private String telegram;
     private String avatar;
+    private LocalDateTime lastLoginDate;
     private Status status;
     private Role role;
 
@@ -87,6 +90,14 @@ public class User extends BaseEntity<Long> {
         this.avatar = avatar;
     }
 
+    public LocalDateTime getLastLoginDate() {
+        return lastLoginDate;
+    }
+
+    public void setLastLoginDate(LocalDateTime lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
+    }
+
     public Status getStatus() {
         return status;
     }
@@ -118,6 +129,8 @@ public class User extends BaseEntity<Long> {
         if (email != null ? !email.equals(user.email) : user.email != null) return false;
         if (telegram != null ? !telegram.equals(user.telegram) : user.telegram != null) return false;
         if (avatar != null ? !avatar.equals(user.avatar) : user.avatar != null) return false;
+        if (lastLoginDate != null ? !lastLoginDate.equals(user.lastLoginDate) : user.lastLoginDate != null)
+            return false;
         if (status != user.status) return false;
         return role == user.role;
     }
@@ -132,6 +145,7 @@ public class User extends BaseEntity<Long> {
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (telegram != null ? telegram.hashCode() : 0);
         result = 31 * result + (avatar != null ? avatar.hashCode() : 0);
+        result = 31 * result + (lastLoginDate != null ? lastLoginDate.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (role != null ? role.hashCode() : 0);
         return result;
@@ -148,6 +162,7 @@ public class User extends BaseEntity<Long> {
         sb.append(", email='").append(email).append('\'');
         sb.append(", telegram='").append(telegram).append('\'');
         sb.append(", avatar='").append(avatar).append('\'');
+        sb.append(", lastLoginDate=").append(lastLoginDate);
         sb.append(", status=").append(status);
         sb.append(", role=").append(role);
         sb.append('}');

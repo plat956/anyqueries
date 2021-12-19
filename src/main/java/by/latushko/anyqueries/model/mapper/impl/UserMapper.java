@@ -5,6 +5,7 @@ import by.latushko.anyqueries.model.mapper.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public class UserMapper implements RowMapper<User> {
@@ -21,6 +22,7 @@ public class UserMapper implements RowMapper<User> {
             user.setEmail(resultSet.getString("email"));
             user.setTelegram(resultSet.getString("telegram"));
             user.setAvatar(resultSet.getString("avatar"));
+            user.setLastLoginDate(LocalDateTime.parse(resultSet.getString("last_login_date")));
             user.setStatus(User.Status.valueOf(resultSet.getString("status")));
             user.setRole(User.Role.valueOf(resultSet.getString("role")));
             return Optional.of(user);
