@@ -428,3 +428,6 @@ i.flag-ru:before, i.flag-russia:before {
         width: 450px;
     }
 }
+.form-check {
+    padding-left: 0px;
+}
