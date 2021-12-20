@@ -19,18 +19,6 @@ import static by.latushko.anyqueries.util.http.MimeType.APPLICATION_JSON;
 
 @WebServlet(name = "mainController", value = "/controller")
 public class MainController extends HttpServlet {
-    private static final Logger logger = LogManager.getLogger();
-
-    @Override
-    public void init() throws ServletException {
-        try {
-            initTelegramBot();
-        } catch (TelegramApiException e) {
-            logger.error("Unable to start telegram bot", e);
-            throw new ExceptionInInitializerError("Unable to start telegram bot");
-        }
-    }
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doRequest(request, response);
@@ -71,10 +59,5 @@ public class MainController extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 break;
         }
-    }
-
-    private void initTelegramBot() throws TelegramApiException {
-        TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-        botsApi.registerBot(new TelegramBot());
     }
 }
