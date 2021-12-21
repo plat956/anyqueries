@@ -27,6 +27,16 @@
     // Trigger bar when exiting the page
     $(window).on('beforeunload', function(){
         NProgress.start();
+        pageEvents.freezeClicks(true);
+    });
+
+    //prevent forms double submitting
+    $('form').preventDoubleSubmission();
+
+    $(document).on('submit', 'form', function(e) {
+        if($(this)[0].checkValidity()) {
+            pageEvents.freezeClicks(true);
+        }
     });
 
     $(function () {
@@ -69,6 +79,10 @@
 
         //init selects
         $('select').selectpicker();
+
+        setTimeout(function() {
+            pageEvents.freezeClicks(false);
+        }, 1);
     });
 </script>
 </body>

@@ -1,6 +1,6 @@
 package by.latushko.anyqueries.controller.listener;
 
-import by.latushko.anyqueries.command.RequestAttribute;
+import by.latushko.anyqueries.controller.command.RequestAttribute;
 import jakarta.servlet.ServletRequestEvent;
 import jakarta.servlet.ServletRequestListener;
 import jakarta.servlet.annotation.WebListener;

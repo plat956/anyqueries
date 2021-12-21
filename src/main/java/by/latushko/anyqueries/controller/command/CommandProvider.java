@@ -1,11 +1,11 @@
-package by.latushko.anyqueries.command;
+package by.latushko.anyqueries.controller.command;
 
-import by.latushko.anyqueries.command.impl.getCommand.LiveSearchCommand;
-import by.latushko.anyqueries.command.impl.getCommand.LoginPageCommand;
-import by.latushko.anyqueries.command.impl.getCommand.MainPageCommand;
-import by.latushko.anyqueries.command.impl.getCommand.RegistrationPageCommand;
-import by.latushko.anyqueries.command.impl.postCommand.LoginCommand;
-import by.latushko.anyqueries.command.impl.postCommand.RegistrationCommand;
+import by.latushko.anyqueries.controller.command.impl.getCommand.LiveSearchCommand;
+import by.latushko.anyqueries.controller.command.impl.getCommand.LoginPageCommand;
+import by.latushko.anyqueries.controller.command.impl.getCommand.MainPageCommand;
+import by.latushko.anyqueries.controller.command.impl.getCommand.RegistrationPageCommand;
+import by.latushko.anyqueries.controller.command.impl.postCommand.LoginCommand;
+import by.latushko.anyqueries.controller.command.impl.postCommand.RegistrationCommand;
 import by.latushko.anyqueries.util.http.RequestMethod;
 
 import java.util.HashMap;

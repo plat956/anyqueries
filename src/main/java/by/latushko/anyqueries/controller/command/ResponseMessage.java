@@ -1,4 +1,4 @@
-package by.latushko.anyqueries.command;
+package by.latushko.anyqueries.controller.command;
 
 public class ResponseMessage {
     public enum Type {
@@ -30,6 +30,11 @@ public class ResponseMessage {
         this.type = type;
         this.text = text;
         this.notice = notice;
+    }
+
+    public ResponseMessage(Type type, String text) {
+        this.type = type;
+        this.text = text;
     }
 
     public Type getType() {

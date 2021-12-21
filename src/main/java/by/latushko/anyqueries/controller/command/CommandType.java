@@ -1,4 +1,4 @@
-package by.latushko.anyqueries.command;
+package by.latushko.anyqueries.controller.command;
 
 public enum CommandType {
     LOGIN_PAGE,

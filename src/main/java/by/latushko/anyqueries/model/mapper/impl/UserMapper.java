@@ -22,7 +22,7 @@ public class UserMapper implements RowMapper<User> {
             user.setEmail(resultSet.getString("email"));
             user.setTelegram(resultSet.getString("telegram"));
             user.setAvatar(resultSet.getString("avatar"));
-            user.setLastLoginDate(LocalDateTime.parse(resultSet.getString("last_login_date")));
+            user.setLastLoginDate(resultSet.getObject("last_login_date", LocalDateTime.class));
             user.setStatus(User.Status.valueOf(resultSet.getString("status")));
             user.setRole(User.Role.valueOf(resultSet.getString("role")));
             return Optional.of(user);

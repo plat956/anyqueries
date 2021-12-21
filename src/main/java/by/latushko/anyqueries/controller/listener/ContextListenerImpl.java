@@ -1,7 +1,6 @@
 package by.latushko.anyqueries.controller.listener;
 
 import by.latushko.anyqueries.util.telegram.TelegramBot;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
@@ -16,7 +15,7 @@ public class ContextListenerImpl implements ServletContextListener {
     private static final Logger logger = LogManager.getLogger();
 
     @Override
-    public void contextInitialized(ServletContextEvent ev) {
+    public void contextInitialized(ServletContextEvent event) {
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(new TelegramBot());

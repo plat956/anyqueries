@@ -46,7 +46,7 @@
             </div>
         </div>
         <div class="form-group input-group">
-            <select class="form-control" required onchange="registration.chooseMode(this.value)">
+            <select name="confirmation_type" class="form-control" required onchange="registration.chooseMode(this.value)">
                 <option value="" selected disabled data-content='<i class="fa fa-check-square-o"></i> Choose account activation mode'>Choose account activation mode</option>
                 <option value="telegram" data-content='<i class="fab fa-telegram"></i> Telegram bot'>Telegram bot</option>
                 <option value="email" data-content='<i class="fa fa-envelope"></i> Email'>Email</option>

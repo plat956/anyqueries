@@ -1,6 +1,5 @@
 package by.latushko.anyqueries.util.telegram;
 
-import by.latushko.anyqueries.command.CommandProvider;
 import by.latushko.anyqueries.util.telegram.command.BotCommand;
 import by.latushko.anyqueries.util.telegram.command.BotCommandProvider;
 import org.apache.logging.log4j.LogManager;

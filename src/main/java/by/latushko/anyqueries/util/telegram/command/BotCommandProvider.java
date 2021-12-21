@@ -1,9 +1,6 @@
 package by.latushko.anyqueries.util.telegram.command;
 
-import by.latushko.anyqueries.util.telegram.command.impl.ActivateAccountCommand;
-import by.latushko.anyqueries.util.telegram.command.impl.ContactToDeveloperCommand;
-import by.latushko.anyqueries.util.telegram.command.impl.JoinCommand;
-import by.latushko.anyqueries.util.telegram.command.impl.UnknownCommand;
+import by.latushko.anyqueries.util.telegram.command.impl.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +12,7 @@ public class BotCommandProvider {
     private BotCommandProvider() {
         commands.put(BotCommandType.JOIN_COMMAND, new JoinCommand());
         commands.put(BotCommandType.ACTIVATE_ACCOUNT, new ActivateAccountCommand());
+        commands.put(BotCommandType.HELP, new HelpCommand());
         commands.put(BotCommandType.CONTACT_TO_DEVELOPER, new ContactToDeveloperCommand());
         commands.put(BotCommandType.UNKNOWN_COMMAND, new UnknownCommand());
     }

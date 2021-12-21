@@ -1,19 +1,18 @@
 package by.latushko.anyqueries.model.dao.impl;
 
+import by.latushko.anyqueries.model.dao.BaseDao;
 import by.latushko.anyqueries.model.dao.UserDao;
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.exception.DaoException;
+import by.latushko.anyqueries.model.entity.UserHash;
 import by.latushko.anyqueries.model.mapper.RowMapper;
 import by.latushko.anyqueries.model.mapper.impl.UserMapper;
-import by.latushko.anyqueries.model.pool.ConnectionPool;
 
 import java.sql.*;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
 
-public class UserDaoImpl implements UserDao {
+public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     private static final String SQL_FIND_ALL_QUERY = """
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role 
             FROM users""";
@@ -21,43 +20,24 @@ public class UserDaoImpl implements UserDao {
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role 
             FROM users 
             WHERE id = ?""";
-    private static final String SQL_CREATE_QUERY = """
+    private static final String SQL_CREATE_USER_QUERY = """
             INSERT INTO users(first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""";
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
+    private static final String SQL_CREATE_HASH_QUERY = """
+            INSERT INTO user_hash(hash, expires, user_id) 
+            VALUES (?, ?, ?)""";
     private static final String SQL_UPDATE_QUERY = """
             UPDATE users 
             SET first_name = ?, last_name = ?, middle_name = ?, login = ?, password = ?, email = ?, telegram = ?, avatar = ?, last_login_date = ?, status = ?, role = ?  
             WHERE id = ?""";
     private static final String SQL_DELETE_QUERY = """
             DELETE FROM users WHERE id = ?""";
-    private static UserDao instance;
-    private static AtomicBoolean creator = new AtomicBoolean(false);
-    private static ReentrantLock lockerSingleton = new ReentrantLock();
-    private final RowMapper<User> mapper;
 
-    private UserDaoImpl() {
-        mapper = new UserMapper();
-    }
+    private final RowMapper<User> mapper = new UserMapper();
 
-    public static UserDao getInstance(){
-        if(!creator.get()){
-            try{
-                lockerSingleton.lock();
-                if(instance == null){
-                    instance = new UserDaoImpl();
-                    creator.set(true);
-                }
-            } finally {
-                lockerSingleton.unlock();
-            }
-        }
-        return instance;
-    }
-
-    @Override
+        @Override
     public boolean create(User user) throws DaoException {
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_CREATE_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_USER_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
             statement.setString(1, user.getFirstName());
             statement.setString(2, user.getLastName());
             statement.setString(3, user.getMiddleName());
@@ -66,7 +46,7 @@ public class UserDaoImpl implements UserDao {
             statement.setString(6, user.getEmail());
             statement.setString(7, user.getTelegram());
             statement.setString(8, user.getAvatar());
-            statement.setObject(9, user.getLastLoginDate()); //todo проверить
+            statement.setObject(9, user.getLastLoginDate());
             statement.setString(10, user.getStatus().name());
             statement.setString(11, user.getRole().name());
 
@@ -85,10 +65,30 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public boolean createUserHash(UserHash hash) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_HASH_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
+            statement.setString(1, hash.getHash());
+            statement.setObject(2, hash.getExpires());
+            statement.setLong(3, hash.getUser().getId());
+
+            if(statement.executeUpdate() > 0) {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if(resultSet.next()) {
+                    Long generatedId = resultSet.getLong(1);
+                    hash.setId(generatedId);
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to create user by calling create(User user) method", e);
+        }
+        return false;
+    }
+
+    @Override
     public List<User> findAll() throws DaoException {
         List<User> users;
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             Statement statement = connection.createStatement()){
+        try (Statement statement = connection.createStatement()){
             try(ResultSet resultSet = statement.executeQuery(SQL_FIND_ALL_QUERY)) {
                 users = mapper.mapRows(resultSet);
             }
@@ -100,8 +100,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Optional<User> findById(Long id) throws DaoException {
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID_QUERY)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID_QUERY)){
             statement.setLong(1, id);
             try(ResultSet resultSet = statement.executeQuery()) {
                 if(resultSet.next()) {
@@ -117,8 +116,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Optional<User> update(User user) throws DaoException {
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_QUERY)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_QUERY)){
             statement.setString(1, user.getFirstName());
             statement.setString(2, user.getLastName());
             statement.setString(3, user.getMiddleName());
@@ -143,8 +141,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean delete(User user) throws DaoException {
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_QUERY)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_QUERY)){
             statement.setLong(1, user.getId());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -154,8 +151,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean delete(Long id) throws DaoException {
-        try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_DELETE_QUERY)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_QUERY)){
             statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {

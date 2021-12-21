@@ -2,6 +2,10 @@ body {
     background: #eee;
 }
 
+.loading * {
+    pointer-events: none;
+}
+
 .padding {
     padding: 10px;
 }

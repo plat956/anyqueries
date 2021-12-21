@@ -19,10 +19,6 @@
         <session-timeout>30</session-timeout>
     </session-config>
     <context-param>
-        <param-name>confirmation-link-alive</param-name>
-        <param-value>24</param-value>
-    </context-param>
-    <context-param>
         <param-name>website</param-name>
         <param-value>any-queries.by</param-value>
     </context-param>

@@ -1,4 +1,4 @@
-package by.latushko.anyqueries.command;
+package by.latushko.anyqueries.controller.command;
 
 public final class PagePath {
     public static final String LOGIN_PAGE = "jsp/login.jsp";
