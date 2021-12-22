@@ -1,36 +1,14 @@
 package by.latushko.anyqueries.controller.command.impl.postCommand;
 
 import by.latushko.anyqueries.controller.command.*;
-import by.latushko.anyqueries.exception.DaoException;
-import by.latushko.anyqueries.model.dao.BaseDao;
-import by.latushko.anyqueries.model.dao.EntityTransaction;
-import by.latushko.anyqueries.model.dao.UserDao;
-import by.latushko.anyqueries.model.dao.impl.UserDaoImpl;
-import by.latushko.anyqueries.model.entity.User;
-import by.latushko.anyqueries.model.entity.UserHash;
-import by.latushko.anyqueries.exception.MailSenderException;
 import by.latushko.anyqueries.service.RegistrationService;
 import by.latushko.anyqueries.service.impl.RegistrationServiceImpl;
-import by.latushko.anyqueries.util.encryption.PasswordEncoder;
-import by.latushko.anyqueries.util.encryption.impl.BCryptPasswordEncoder;
-import by.latushko.anyqueries.util.mail.MailSender;
 import by.latushko.anyqueries.util.telegram.TelegramBot;
-import by.latushko.anyqueries.validator.UserValidator;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
-import java.io.StringWriter;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static by.latushko.anyqueries.controller.command.ResponseMessage.Type.DANGER;
-import static by.latushko.anyqueries.controller.command.ResponseMessage.Type.INFO;
-import static by.latushko.anyqueries.service.impl.UserServiceImpl.ACTIVATION_HASH_EXPIRES_IN_HOURS;
+import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
+import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.INFO;
+import static by.latushko.anyqueries.util.AppProperty.APP_ACTIVATION_LINK_ALIVE_HOURS;
 
 public class RegistrationCommand implements Command {
     @Override
@@ -54,7 +32,7 @@ public class RegistrationCommand implements Command {
         if(result) {
             if (confirmationType.equals("email")) {
                 String text = "Ссылка для подтверждения учетной записи отправлена на <b>" + email + "</b>";
-                String notice = "Обратите внимание, что ссылка действительна в течении " + ACTIVATION_HASH_EXPIRES_IN_HOURS + " часов. " +
+                String notice = "Обратите внимание, что ссылка действительна в течении " + APP_ACTIVATION_LINK_ALIVE_HOURS + " часов. " +
                         "По истечении данного срока Вам придется повторить процедуру регистрации с логином <b>" + login + "</b>";
                 message = new ResponseMessage(INFO, text, notice);
             } else if (confirmationType.equals("telegram")) {

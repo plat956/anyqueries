@@ -2,6 +2,9 @@ package by.latushko.anyqueries.controller.command;
 
 public class ResponseMessage {
     public enum Type {
+        ALERT, POPUP, TOAST
+    }
+    public enum Level {
         SUCCESS("success"),
         DANGER("danger"),
         INFO("info"),
@@ -9,7 +12,7 @@ public class ResponseMessage {
 
         private String mode;
 
-        Type(String mode) {
+        Level(String mode) {
             this.mode = mode;
         }
 
@@ -23,17 +26,35 @@ public class ResponseMessage {
     }
 
     private Type type;
+    private Level level;
     private String text;
     private String notice;
 
-    public ResponseMessage(Type type, String text, String notice) {
-        this.type = type;
+    {
+        this.type = Type.ALERT;
+    }
+
+    public ResponseMessage(Level level, String text, String notice) {
+        this.level = level;
         this.text = text;
         this.notice = notice;
     }
 
-    public ResponseMessage(Type type, String text) {
+    public ResponseMessage(Level level, String text) {
+        this.level = level;
+        this.text = text;
+    }
+
+    public ResponseMessage(Type type, Level level, String text, String notice) {
         this.type = type;
+        this.level = level;
+        this.text = text;
+        this.notice = notice;
+    }
+
+    public ResponseMessage(Type type, Level level, String text) {
+        this.type = type;
+        this.level = level;
         this.text = text;
     }
 
@@ -43,6 +64,18 @@ public class ResponseMessage {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public String getText() {

@@ -8,9 +8,10 @@ import by.latushko.anyqueries.util.encryption.impl.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 
+import static by.latushko.anyqueries.util.AppProperty.APP_ACTIVATION_LINK_ALIVE_HOURS;
+
 public class UserServiceImpl implements UserService {
     private static final String ACTIVATION_HASH_FAKE_SALT = "#@бЫрвалГ?";
-    public static final Integer ACTIVATION_HASH_EXPIRES_IN_HOURS = 24;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
@@ -33,7 +34,7 @@ public class UserServiceImpl implements UserService {
         UserHash userHash = new UserHash();
         userHash.setUser(user);
         userHash.setHash(passwordEncoder.encode(user.getEmail() + ACTIVATION_HASH_FAKE_SALT + user.getLogin()));
-        userHash.setExpires(LocalDateTime.now().plusHours(ACTIVATION_HASH_EXPIRES_IN_HOURS));
+        userHash.setExpires(LocalDateTime.now().plusHours(APP_ACTIVATION_LINK_ALIVE_HOURS));
         return userHash;
     }
 

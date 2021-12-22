@@ -9,6 +9,7 @@ import by.latushko.anyqueries.model.mapper.RowMapper;
 import by.latushko.anyqueries.model.mapper.impl.UserMapper;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,12 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role 
             FROM users 
             WHERE id = ?""";
+    private static final String SQL_FIND_INACTIVE_BY_HASH_AND_DATE_QUERY = """
+            SELECT u.id, u.first_name, u.last_name, u.middle_name, u.login, u.password, u.email, u.telegram, u.avatar, u.last_login_date, u.status, u.role 
+            FROM users u INNER JOIN user_hash uh ON u.id = uh.user_id WHERE u.status = ? and uh.hash = ? and uh.expires >= ?""";
+    private static final String SQL_FIND_INACTIVE_BY_TELEGRAM_QUERY = """
+            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role 
+            FROM users WHERE status = ? and telegram = ?""";
     private static final String SQL_CREATE_USER_QUERY = """
             INSERT INTO users(first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
@@ -30,12 +37,14 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             UPDATE users 
             SET first_name = ?, last_name = ?, middle_name = ?, login = ?, password = ?, email = ?, telegram = ?, avatar = ?, last_login_date = ?, status = ?, role = ?  
             WHERE id = ?""";
-    private static final String SQL_DELETE_QUERY = """
+    private static final String SQL_DELETE_USER_QUERY = """
             DELETE FROM users WHERE id = ?""";
+    private static final String SQL_DELETE_HASH_QUERY = """
+            DELETE FROM user_hash WHERE user_id = ?""";
 
     private final RowMapper<User> mapper = new UserMapper();
 
-        @Override
+    @Override
     public boolean create(User user) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_USER_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
             statement.setString(1, user.getFirstName());
@@ -55,27 +64,6 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 if(resultSet.next()) {
                     Long generatedId = resultSet.getLong(1);
                     user.setId(generatedId);
-                    return true;
-                }
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Failed to create user by calling create(User user) method", e);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean createUserHash(UserHash hash) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_HASH_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
-            statement.setString(1, hash.getHash());
-            statement.setObject(2, hash.getExpires());
-            statement.setLong(3, hash.getUser().getId());
-
-            if(statement.executeUpdate() > 0) {
-                ResultSet resultSet = statement.getGeneratedKeys();
-                if(resultSet.next()) {
-                    Long generatedId = resultSet.getLong(1);
-                    hash.setId(generatedId);
                     return true;
                 }
             }
@@ -141,7 +129,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
 
     @Override
     public boolean delete(User user) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_QUERY)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_USER_QUERY)){
             statement.setLong(1, user.getId());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -151,11 +139,77 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
 
     @Override
     public boolean delete(Long id) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_QUERY)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_USER_QUERY)){
             statement.setLong(1, id);
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DaoException("Failed to delete user by calling delete(Long id) method", e);
+        }
+    }
+
+    @Override
+    public boolean createUserHash(UserHash hash) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_HASH_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
+            statement.setString(1, hash.getHash());
+            statement.setObject(2, hash.getExpires());
+            statement.setLong(3, hash.getUser().getId());
+
+            if(statement.executeUpdate() > 0) {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if(resultSet.next()) {
+                    Long generatedId = resultSet.getLong(1);
+                    hash.setId(generatedId);
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to create user hash by calling createUserHash(UserHash hash) method", e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteUserHashByUserId(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_HASH_QUERY)){
+            statement.setLong(1, id);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to delete user hash by calling deleteHashByUserId(Long id) method", e);
+        }
+    }
+
+    @Override
+    public Optional<User> findInactiveUserByHashAndHashIsNotExpired(String hash, LocalDateTime validDate) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_INACTIVE_BY_HASH_AND_DATE_QUERY)){
+            statement.setObject(1, User.Status.INACTIVE);
+            statement.setString(2, hash);
+            statement.setObject(3, validDate);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return mapper.mapRow(resultSet);
+                } else {
+                    return Optional.empty();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find user by calling findInactiveUserByHashAndHashIsNotExpired(String hash, LocalDateTime validDate) method", e);
+        }
+    }
+
+    @Override
+    public Optional<User> findInactiveUserByTelegram(String account) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_INACTIVE_BY_TELEGRAM_QUERY)){
+            statement.setString(1, User.Status.INACTIVE.name());
+            statement.setString(2, account);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return mapper.mapRow(resultSet);
+                } else {
+                    return Optional.empty();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find user by calling findInactiveUserByTelegram(String account) method", e);
         }
     }
 }

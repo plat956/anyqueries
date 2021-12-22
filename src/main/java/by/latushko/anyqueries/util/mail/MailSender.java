@@ -24,7 +24,7 @@ public class MailSender {
     public static final String USER_EMAIL_PROPERTY = "mail.user.email";
     public static final String USER_PASSWORD_PROPERTY = "mail.user.password";
     public static final String USER_NAME_PROPERTY = "mail.user.name";
-    public static final String CONTENT_TYPE_PROPERTY = "mail.content.type";
+    public static final String CONTENT_TYPE_PROPERTY = "mail.content.level";
     private static MailSender instance;
     private static AtomicBoolean creator = new AtomicBoolean(false);
     private static ReentrantLock lockerSingleton = new ReentrantLock();

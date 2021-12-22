@@ -19,6 +19,10 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 import java.io.StringWriter;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static by.latushko.anyqueries.util.AppProperty.APP_HOST;
 
 public class RegistrationServiceImpl implements RegistrationService {
     private static final String VELOCITY_PROPERTIES_LOADER_CLASS = "classpath.resource.loader.class";
@@ -38,9 +42,9 @@ public class RegistrationServiceImpl implements RegistrationService {
                 User user = userService.createNewUser(firstName, lastName, middleName, email, telegram, login, password);
                 userDao.create(user);
 
-                if(confirmationType.equals(RequestParameter.CONFIRMATION_TYPE_EMAIL)) {
+                if (confirmationType.equals(RequestParameter.CONFIRMATION_TYPE_EMAIL)) {
                     UserHash userHash = userService.generateActivationHash(user);
-                    ((UserDao)userDao).createUserHash(userHash);
+                    ((UserDao) userDao).createUserHash(userHash);
 
                     sendActivationEmail(user, userHash);
                 }
@@ -52,6 +56,63 @@ public class RegistrationServiceImpl implements RegistrationService {
                 return false;
             }
         }
+    }
+
+    @Override
+    public boolean activateUserByHash(String hash) {
+        BaseDao userDao = new UserDaoImpl();
+
+        boolean result = false;
+        try (EntityTransaction transaction = new EntityTransaction()) {
+            try {
+                transaction.begin(userDao);
+
+                LocalDateTime validDate = LocalDateTime.now();
+                Optional<User> userOptional = ((UserDao)userDao).findInactiveUserByHashAndHashIsNotExpired(hash, validDate);
+
+                if (userOptional.isPresent()) {
+                    User user = userOptional.get();
+                    user.setStatus(User.Status.ACTIVE);
+                    userDao.update(user);
+
+                    ((UserDao)userDao).deleteUserHashByUserId(user.getId());
+                    result = true;
+                }
+
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public boolean activateUserByTelegramAccount(String account) {
+        BaseDao userDao = new UserDaoImpl();
+
+        boolean result = false;
+        try (EntityTransaction transaction = new EntityTransaction()) {
+            try {
+                transaction.begin(userDao);
+
+                Optional<User> userOptional = ((UserDao)userDao).findInactiveUserByTelegram(account);
+
+                if (userOptional.isPresent()) {
+                    User user = userOptional.get();
+                    user.setStatus(User.Status.ACTIVE);
+                    userDao.update(user);
+                    result = true;
+                }
+
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        }
+
+        return result;
     }
 
     private void sendActivationEmail(User user, UserHash userHash) throws MailSenderException {
@@ -73,8 +134,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         String fio = userService.getUserFio(user);
         context.put("text", "Dear " + fio + ", you've sent a registration request. Please, press the button below to activate your account");
         context.put("buttonText", "Activate");
-        String server = "";/*request.getRequestURL().toString().replace(request.getRequestURI(), "");*/
-        context.put("buttonLink", server + "/controller?command=confirmation&hash=" + userHash.getHash());
+        context.put("buttonLink", APP_HOST + "/controller?command=activate_user&hash=" + userHash.getHash());
 
         StringWriter writer = new StringWriter();
         t.merge(context, writer);

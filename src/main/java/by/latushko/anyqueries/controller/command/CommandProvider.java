@@ -1,9 +1,6 @@
 package by.latushko.anyqueries.controller.command;
 
-import by.latushko.anyqueries.controller.command.impl.getCommand.LiveSearchCommand;
-import by.latushko.anyqueries.controller.command.impl.getCommand.LoginPageCommand;
-import by.latushko.anyqueries.controller.command.impl.getCommand.MainPageCommand;
-import by.latushko.anyqueries.controller.command.impl.getCommand.RegistrationPageCommand;
+import by.latushko.anyqueries.controller.command.impl.getCommand.*;
 import by.latushko.anyqueries.controller.command.impl.postCommand.LoginCommand;
 import by.latushko.anyqueries.controller.command.impl.postCommand.RegistrationCommand;
 import by.latushko.anyqueries.util.http.RequestMethod;
@@ -20,6 +17,7 @@ public class CommandProvider {
     private CommandProvider() {
         getCommands.put(CommandType.LOGIN_PAGE, new LoginPageCommand());
         getCommands.put(CommandType.REGISTRATION_PAGE, new RegistrationPageCommand());
+        getCommands.put(CommandType.ACTIVATE_USER, new ActivateUserCommand());
         getCommands.put(CommandType.MAIN_PAGE, new MainPageCommand());
         getCommands.put(CommandType.LIVE_SEARCH, new LiveSearchCommand());
 

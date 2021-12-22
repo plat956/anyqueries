@@ -1,5 +1,7 @@
 package by.latushko.anyqueries.util.telegram.command.impl;
 
+import by.latushko.anyqueries.service.RegistrationService;
+import by.latushko.anyqueries.service.impl.RegistrationServiceImpl;
 import by.latushko.anyqueries.util.telegram.ResponseMessage;
 import by.latushko.anyqueries.util.telegram.command.BotCommand;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -12,7 +14,15 @@ public class ActivateAccountCommand implements BotCommand {
         SendMessage outMessage = new SendMessage();
         outMessage.setReplyToMessageId(inMessage.getMessageId());
         outMessage.setChatId(String.valueOf(inMessage.getChatId()));
-        outMessage.setText(ResponseMessage.ACTIVATION_SUCCESSFUL);
+
+        String account = inMessage.getChat().getUserName();
+        RegistrationService registrationService = new RegistrationServiceImpl();
+        boolean result = registrationService.activateUserByTelegramAccount(account);
+        if(result) {
+            outMessage.setText(ResponseMessage.ACTIVATION_SUCCESSFUL);
+        } else {
+            outMessage.setText(ResponseMessage.ACTIVATION_FAILED);
+        }
         return outMessage;
     }
 }
