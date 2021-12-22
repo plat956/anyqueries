@@ -27,6 +27,12 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     private static final String SQL_FIND_INACTIVE_BY_TELEGRAM_QUERY = """
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role 
             FROM users WHERE status = ? and telegram = ?""";
+    private static final String SQL_FIND_BY_LOGIN_QUERY = """
+            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role 
+            FROM users WHERE login = ?""";
+    private static final String SQL_FIND_BY_CREDENTIAL_KEY_QUERY = """
+            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role 
+            FROM users WHERE credential_key = ?""";
     private static final String SQL_CREATE_USER_QUERY = """
             INSERT INTO users(first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
@@ -210,6 +216,38 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find user by calling findInactiveUserByTelegram(String account) method", e);
+        }
+    }
+
+    @Override
+    public Optional<User> findUserByLogin(String login) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_LOGIN_QUERY)){
+            statement.setString(1, login);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return mapper.mapRow(resultSet);
+                } else {
+                    return Optional.empty();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find user by calling findUserByLogin(String login) method", e);
+        }
+    }
+
+    @Override
+    public Optional<User> findUserByCredentialKey(String key) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_CREDENTIAL_KEY_QUERY)){
+            statement.setString(1, key);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return mapper.mapRow(resultSet);
+                } else {
+                    return Optional.empty();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find user by calling findUserByCredentialKey(String key) method", e);
         }
     }
 }

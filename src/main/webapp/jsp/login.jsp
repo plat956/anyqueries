@@ -3,7 +3,7 @@
 <c:set var="page_title" value="Вход в учетную запись" scope="request" />
 <jsp:include page="layout/header.jsp" />
 <div class="col-lg-7 mx-auto">
-    <form id="login_form" class="needs-validation" novalidate>
+    <form id="login_form" class="needs-validation" method="post" action="/controller?command=login" novalidate>
         <div class="form-group input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text"> <i class="fa fa-user"></i> </span>

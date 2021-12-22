@@ -6,6 +6,8 @@ public final class PagePath {
     public static final String MAIN_PAGE = "jsp/main.jsp";
 
     public static final String REGISTRATION_URL = "/controller?command=registration_page";
+    public static final String MAIN_URL = "/controller?command=main_page";
+    public static final String LOGIN_URL = "/controller?command=login_page";
 
     private PagePath() {
     }

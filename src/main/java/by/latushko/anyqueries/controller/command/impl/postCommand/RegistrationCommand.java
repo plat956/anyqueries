@@ -5,6 +5,7 @@ import by.latushko.anyqueries.service.RegistrationService;
 import by.latushko.anyqueries.service.impl.RegistrationServiceImpl;
 import by.latushko.anyqueries.util.telegram.TelegramBot;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.INFO;
@@ -12,7 +13,7 @@ import static by.latushko.anyqueries.util.AppProperty.APP_ACTIVATION_LINK_ALIVE_
 
 public class RegistrationCommand implements Command {
     @Override
-    public PreparedResponse execute(HttpServletRequest request) {
+    public PreparedResponse execute(HttpServletRequest request, HttpServletResponse response) {
         String firstName = request.getParameter(RequestParameter.FIRST_NAME);
         String lastName = request.getParameter(RequestParameter.LAST_NAME);
         String middleName = request.getParameter(RequestParameter.MIDDLE_NAME);
@@ -46,7 +47,7 @@ public class RegistrationCommand implements Command {
 }
 
 
-
+//todo chain of responibility?
 //######TODO INDIAN CODE 1
 //        if(userValidator.checkIfFirstNameValid(firstName)) {
 //            if(userValidator.checkIfLastNameValid(firstName)) {

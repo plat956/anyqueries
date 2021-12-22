@@ -40,7 +40,7 @@ public class MainController extends HttpServlet {
             return;
         }
 
-        PreparedResponse preparedResponse = command.get().execute(request);
+        PreparedResponse preparedResponse = command.get().execute(request, response);
 
         switch (preparedResponse.getRoutingType()) {
             case FORWARD:

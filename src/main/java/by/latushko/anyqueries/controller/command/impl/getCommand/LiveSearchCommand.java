@@ -6,12 +6,13 @@ import by.latushko.anyqueries.controller.command.PreparedResponse;
 import com.mysql.cj.xdevapi.JsonArray;
 import com.mysql.cj.xdevapi.JsonString;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import static by.latushko.anyqueries.controller.command.PreparedResponse.RoutingType.RESPOND_WITH_JSON;
 
 public class LiveSearchCommand implements Command {
     @Override
-    public PreparedResponse execute(HttpServletRequest request) {
+    public PreparedResponse execute(HttpServletRequest request, HttpServletResponse response) {
         String queryString = request.getParameter(RequestParameter.QUERY_STRING);
 
         //todo search in db
