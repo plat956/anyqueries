@@ -1,7 +1,7 @@
 package by.latushko.anyqueries.controller.command.impl.getCommand;
 
 import by.latushko.anyqueries.controller.command.Command;
-import by.latushko.anyqueries.controller.command.RequestParameter;
+import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.controller.command.PreparedResponse;
 import com.mysql.cj.xdevapi.JsonArray;
 import com.mysql.cj.xdevapi.JsonString;
@@ -15,7 +15,7 @@ public class LiveSearchCommand implements Command {
     public PreparedResponse execute(HttpServletRequest request, HttpServletResponse response) {
         String queryString = request.getParameter(RequestParameter.QUERY_STRING);
 
-        //todo search in db
+        //todo select data from db and put results in array below
 
         JsonArray array = new JsonArray();
         array.addValue(new JsonString().setValue("Andorra"));

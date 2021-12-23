@@ -1,6 +1,6 @@
 package by.latushko.anyqueries.service.impl;
 
-import by.latushko.anyqueries.controller.command.RequestParameter;
+import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.exception.EntityTransactionException;
 import by.latushko.anyqueries.exception.MailSenderException;

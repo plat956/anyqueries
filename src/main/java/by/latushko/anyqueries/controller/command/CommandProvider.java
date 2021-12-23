@@ -6,14 +6,14 @@ import by.latushko.anyqueries.controller.command.impl.postCommand.LoginCommand;
 import by.latushko.anyqueries.controller.command.impl.postCommand.RegistrationCommand;
 import by.latushko.anyqueries.util.http.RequestMethod;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class CommandProvider {
     private static CommandProvider instance;
-    private final Map<CommandType, Command> getCommands = new HashMap<>();
-    private final Map<CommandType, Command> postCommands = new HashMap<>();
+    private final Map<CommandType, Command> getCommands = new EnumMap<>(CommandType.class);
+    private final Map<CommandType, Command> postCommands = new EnumMap<>(CommandType.class);
 
     private CommandProvider() {
         getCommands.put(CommandType.LOGIN_PAGE, new LoginPageCommand());

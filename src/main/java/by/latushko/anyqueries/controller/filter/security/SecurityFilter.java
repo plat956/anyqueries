@@ -1,8 +1,8 @@
 package by.latushko.anyqueries.controller.filter.security;
 
 import by.latushko.anyqueries.controller.command.CommandType;
-import by.latushko.anyqueries.controller.command.PagePath;
-import by.latushko.anyqueries.controller.command.RequestParameter;
+import by.latushko.anyqueries.controller.command.identity.PagePath;
+import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.UserService;
 import by.latushko.anyqueries.service.impl.UserServiceImpl;
@@ -18,9 +18,9 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Optional;
 
-import static by.latushko.anyqueries.controller.command.RequestAttribute.PRINCIPAL;
-import static by.latushko.anyqueries.controller.command.RequestParameter.CREDENTIAL_KEY;
-import static by.latushko.anyqueries.controller.command.RequestParameter.CREDENTIAL_TOKEN;
+import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_KEY;
+import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_TOKEN;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
 
 @WebFilter(filterName = "securityFilter", urlPatterns = "/controller")
 public class SecurityFilter implements Filter {
@@ -35,13 +35,16 @@ public class SecurityFilter implements Filter {
             User principal = null;
             if (session.getAttribute(PRINCIPAL) != null) {
                 principal = (User) session.getAttribute(PRINCIPAL);
+                if(!principal.getStatus().equals(User.Status.ACTIVE)) {
+                    //todo: logout user! principal = null, session invalidate and maybe redirect with message as well
+                }
             } else {
                 Optional<String> credentialKey = CookieHelper.readCookie(request, CREDENTIAL_KEY);
                 Optional<String> credentialToken = CookieHelper.readCookie(request, CREDENTIAL_TOKEN);
                 if (credentialKey.isPresent() && credentialToken.isPresent()) {
                     UserService userService = UserServiceImpl.getInstance();
                     Optional<User> user = userService.findUserByCredentialKey(credentialKey.get());
-                    if (user.isPresent()) {
+                    if (user.isPresent() && user.get().getStatus().equals(User.Status.ACTIVE)) {
                         String tokenSource = userService.getCredentialTokenSource(user.get());
                         PasswordEncoder passwordEncoder = BCryptPasswordEncoder.getInstance();
                         if(passwordEncoder.check(tokenSource, credentialToken.get())) {
@@ -50,6 +53,8 @@ public class SecurityFilter implements Filter {
                                 principal = user.get();
                             }
                         }
+                    } else {
+                        //todo remove credential cookies, don't keep trash!
                     }
                 }
             }

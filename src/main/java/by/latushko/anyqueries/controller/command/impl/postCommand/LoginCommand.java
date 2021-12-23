@@ -1,6 +1,9 @@
 package by.latushko.anyqueries.controller.command.impl.postCommand;
 
 import by.latushko.anyqueries.controller.command.*;
+import by.latushko.anyqueries.controller.command.identity.PagePath;
+import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
+import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.UserService;
 import by.latushko.anyqueries.service.impl.UserServiceImpl;
@@ -11,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Optional;
 
-import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.INFO;
+import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.*;
 
 public class LoginCommand implements Command {
     @Override
@@ -22,21 +25,28 @@ public class LoginCommand implements Command {
         UserService userService = UserServiceImpl.getInstance();
         PasswordEncoder passwordEncoder = BCryptPasswordEncoder.getInstance();
 
+        Optional<User> user = userService.findUserByLogin(login);
         ResponseMessage message = new ResponseMessage(INFO, "Неверные данные аутентификации");
-        Optional<User> userOptional = userService.findUserByLogin(login);
-        if(userOptional.isPresent()) {
-            User user = userOptional.get();
-            if(passwordEncoder.check(password, user.getPassword())) {
-                if(user.getStatus().equals(User.Status.ACTIVE)) {
-                    boolean remember = true; //todo - read checkbox from form parameters
-                    userService.authorize(user, request, response, remember);
-                    message = new ResponseMessage(INFO, "Вы успешно вошли в учетную запись");
-                }
-                //todo handle other user statuses
+        if(user.isPresent()) {
+            if(passwordEncoder.check(password, user.get().getPassword())) {
+                message = switch (user.get().getStatus()) {
+                    case ACTIVE -> {
+                        boolean remember = true; //todo - read "remember me" checkbox value from form parameters
+                        boolean result = userService.authorize(user.get(), request, response, remember);
+                        if(result) {
+                            yield new ResponseMessage(INFO, "Вы успешно вошли в учетную запись");
+                        } else {
+                            yield new ResponseMessage(DANGER, "При входе возникла непредвиденная ошибка");
+                        }
+                    }
+                    case INACTIVE -> new ResponseMessage(WARNING, "Учетная запись не активирована");
+                    case BANNED -> new ResponseMessage(DANGER, "Учетная запись заблокирована");
+                    //todo default -> ???
+                };
             }
         }
 
-        request.getSession().setAttribute(RequestAttribute.MESSAGE, message);
+        request.getSession().setAttribute(SessionAttribute.MESSAGE, message);
         return new PreparedResponse(PagePath.LOGIN_URL, PreparedResponse.RoutingType.REDIRECT);
     }
 }

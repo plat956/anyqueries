@@ -19,9 +19,10 @@ import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static by.latushko.anyqueries.controller.command.RequestParameter.CREDENTIAL_KEY;
-import static by.latushko.anyqueries.controller.command.RequestParameter.CREDENTIAL_TOKEN;
-import static by.latushko.anyqueries.util.AppProperty.*;
+import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_KEY;
+import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_TOKEN;
+import static by.latushko.anyqueries.util.AppProperty.APP_ACTIVATION_LINK_ALIVE_HOURS;
+import static by.latushko.anyqueries.util.AppProperty.APP_COOKIE_ALIVE_DAYS;
 
 public class UserServiceImpl implements UserService {
     private static final String ACTIVATION_HASH_ADDITIONAL_SALT = "#@бЫрвалГ?";

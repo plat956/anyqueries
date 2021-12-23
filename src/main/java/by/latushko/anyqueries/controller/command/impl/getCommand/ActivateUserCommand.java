@@ -1,6 +1,9 @@
 package by.latushko.anyqueries.controller.command.impl.getCommand;
 
 import by.latushko.anyqueries.controller.command.*;
+import by.latushko.anyqueries.controller.command.identity.PagePath;
+import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
+import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.service.RegistrationService;
 import by.latushko.anyqueries.service.impl.RegistrationServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +27,7 @@ public class ActivateUserCommand implements Command {
             message = new ResponseMessage(DANGER, "Неверная ссылка активации либо истек срок ее действия, повторите процедуру регистрации с тем же логином.");
         }
         //todo: log-in automatically if success & redirect to the main page must be here
-        request.getSession().setAttribute(RequestAttribute.MESSAGE, message);
-        return new PreparedResponse(PagePath.MAIN_PAGE, PreparedResponse.RoutingType.REDIRECT);
+        request.getSession().setAttribute(SessionAttribute.MESSAGE, message);
+        return new PreparedResponse(PagePath.MAIN_URL, PreparedResponse.RoutingType.REDIRECT);
     }
 }

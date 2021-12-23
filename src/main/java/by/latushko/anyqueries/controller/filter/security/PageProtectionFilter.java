@@ -1,6 +1,6 @@
 package by.latushko.anyqueries.controller.filter.security;
 
-import by.latushko.anyqueries.controller.command.PagePath;
+import by.latushko.anyqueries.controller.command.identity.PagePath;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;

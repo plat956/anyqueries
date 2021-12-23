@@ -1,6 +1,9 @@
 package by.latushko.anyqueries.controller.command.impl.postCommand;
 
 import by.latushko.anyqueries.controller.command.*;
+import by.latushko.anyqueries.controller.command.identity.PagePath;
+import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
+import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.service.RegistrationService;
 import by.latushko.anyqueries.service.impl.RegistrationServiceImpl;
 import by.latushko.anyqueries.util.telegram.TelegramBot;
@@ -29,19 +32,21 @@ public class RegistrationCommand implements Command {
         RegistrationService registrationService = RegistrationServiceImpl.getInstance();
         boolean result = registrationService.registerUser(firstName, lastName, middleName, confirmationType, email, telegram, login, password);
 
-        ResponseMessage message = new ResponseMessage(DANGER, "При регистрации возникла непредвиденная ошибка");
+        ResponseMessage message = null;
         if(result) {
-            if (confirmationType.equals("email")) {
+            if (confirmationType.equals(RequestParameter.CONFIRMATION_TYPE_EMAIL)) {
                 String text = "Ссылка для подтверждения учетной записи отправлена на <b>" + email + "</b>";
                 String notice = "Обратите внимание, что ссылка действительна в течении " + APP_ACTIVATION_LINK_ALIVE_HOURS + " часов. " +
                         "По истечении данного срока Вам придется повторить процедуру регистрации с логином <b>" + login + "</b>";
                 message = new ResponseMessage(INFO, text, notice);
             } else if (confirmationType.equals("telegram")) {
                 message = new ResponseMessage(INFO, "Для активации учетной записи перейдите в чат telegram-бота <b>@" + TelegramBot.BOT_NAME + "</b>");
+            } else {
+                message = new ResponseMessage(DANGER, "При регистрации возникла непредвиденная ошибка");
             }
         }
 
-        request.getSession().setAttribute(RequestAttribute.MESSAGE, message);
+        request.getSession().setAttribute(SessionAttribute.MESSAGE, message);
         return new PreparedResponse(PagePath.REGISTRATION_URL, PreparedResponse.RoutingType.REDIRECT);
     }
 }
@@ -108,5 +113,4 @@ public class RegistrationCommand implements Command {
 //        if(!userValidator.checkIfPasswordValid(firstName)) {
 //            request.getSession().setAttribute(RequestAttribute.MESSAGE, message);
 //            return new PreparedResponse(PagePath.REGISTRATION_URL, PreparedResponse.RoutingType.REDIRECT);
-//        }
-//      and so on
+//        } and so on......

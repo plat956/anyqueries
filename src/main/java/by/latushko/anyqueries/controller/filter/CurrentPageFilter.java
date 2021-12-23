@@ -1,7 +1,7 @@
 package by.latushko.anyqueries.controller.filter;
 
-import by.latushko.anyqueries.controller.command.RequestAttribute;
-import by.latushko.anyqueries.controller.command.RequestParameter;
+import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
+import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.util.http.RequestMethod;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
@@ -18,7 +18,7 @@ public class CurrentPageFilter implements Filter {
                 request.getParameter(RequestParameter.AJAX) == null &&
                 request.getParameter(RequestParameter.COMMAND) != null) {
             String currentPage = "/controller?" + request.getQueryString();
-            request.getSession().setAttribute(RequestAttribute.CURRENT_PAGE, currentPage);
+            request.getSession().setAttribute(SessionAttribute.CURRENT_PAGE, currentPage);
         }
         chain.doFilter(request, servletResponse);
     }

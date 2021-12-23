@@ -16,7 +16,6 @@ public enum CommandType {
         if (commandName == null) {
             return Optional.empty();
         }
-
         Optional<CommandType> commandType;
         try {
             commandType = Optional.of(CommandType.valueOf(commandName.toUpperCase()));

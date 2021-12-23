@@ -1,7 +1,7 @@
 package by.latushko.anyqueries.controller.command.impl.getCommand;
 
 import by.latushko.anyqueries.controller.command.Command;
-import by.latushko.anyqueries.controller.command.PagePath;
+import by.latushko.anyqueries.controller.command.identity.PagePath;
 import by.latushko.anyqueries.controller.command.PreparedResponse;
 import by.latushko.anyqueries.util.telegram.command.BotCommandType;
 import jakarta.servlet.http.HttpServletRequest;
