@@ -15,4 +15,5 @@ public interface UserService {
     boolean authorize(User user, HttpServletRequest request, HttpServletResponse response);
     Optional<User> findUserByLogin(String login);
     Optional<User> findUserByCredentialKey(String key);
+    boolean changeLocale(String lang, HttpServletResponse response);
 }

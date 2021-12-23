@@ -18,11 +18,13 @@
                 </li>
             </ul>
             <hr>
-            <select class="selectpicker" data-width="100%">
-                <option data-content='<i class="flag flag-united-states"></i> English'>English</option>
-                <option  data-content='<i class="flag flag-belarus"></i> Беларуская'>Беларуская</option>
-                <option  data-content='<i class="flag flag-russia"></i> Русский'>Русский</option>
+            <form method="post" action="/controller?command=change_locale" id="locale_form">
+            <select class="selectpicker" data-width="100%" name="lang" onchange="$('#locale_form').submit();">
+                <option data-content='<i class="flag flag-united-states"></i> English' value="en"${cookie['lang'].value == 'en' ? ' selected' : ''}>English</option>
+                <option  data-content='<i class="flag flag-belarus"></i> Беларуская' value="be"${cookie['lang'].value == 'be' ? ' selected' : ''}>Беларуская</option>
+                <option  data-content='<i class="flag flag-russia"></i> Русский' value="ru"${cookie['lang'].value == 'ru' ? ' selected' : ''}>Русский</option>
             </select>
+            </form>
         </div>
     </div>
 </div>

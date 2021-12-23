@@ -7,5 +7,6 @@ public enum CommandType {
     ACTIVATE_USER,
     LOGIN,
     REGISTRATION,
+    CHANGE_LOCALE,
     LIVE_SEARCH;
 }

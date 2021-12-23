@@ -18,8 +18,7 @@ import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static by.latushko.anyqueries.util.AppProperty.APP_ACTIVATION_LINK_ALIVE_HOURS;
-import static by.latushko.anyqueries.util.AppProperty.APP_AUTHORIZATION_COOKIE_ALIVE_DAYS;
+import static by.latushko.anyqueries.util.AppProperty.*;
 
 public class UserServiceImpl implements UserService {
     private static final String ACTIVATION_HASH_ADDITIONAL_SALT = "#@бЫрвалГ?";
@@ -66,7 +65,7 @@ public class UserServiceImpl implements UserService {
         HttpSession session = request.getSession();
         session.setAttribute("principal", user);
 
-        Integer cookieMaxAge = APP_AUTHORIZATION_COOKIE_ALIVE_DAYS * 24 * 60 * 60;
+        Integer cookieMaxAge = APP_COOKIE_ALIVE_DAYS * 24 * 60 * 60;
         Cookie keyCookie = new Cookie("CREDENTIAL_KEY", "qweerty"); //todo geenerate and store near the user
         keyCookie.setMaxAge(cookieMaxAge);
         response.addCookie(keyCookie);
@@ -111,5 +110,14 @@ public class UserServiceImpl implements UserService {
             }
         }
         return userOptional;
+    }
+
+    @Override
+    public boolean changeLocale(String lang, HttpServletResponse response) {
+        Integer cookieMaxAge = APP_COOKIE_ALIVE_DAYS * 24 * 60 * 60;
+        Cookie keyCookie = new Cookie("lang", lang);
+        keyCookie.setMaxAge(cookieMaxAge);
+        response.addCookie(keyCookie);
+        return true;
     }
 }

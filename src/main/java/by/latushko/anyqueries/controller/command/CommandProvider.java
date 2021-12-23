@@ -1,6 +1,7 @@
 package by.latushko.anyqueries.controller.command;
 
 import by.latushko.anyqueries.controller.command.impl.getCommand.*;
+import by.latushko.anyqueries.controller.command.impl.postCommand.ChangeLocaleCommand;
 import by.latushko.anyqueries.controller.command.impl.postCommand.LoginCommand;
 import by.latushko.anyqueries.controller.command.impl.postCommand.RegistrationCommand;
 import by.latushko.anyqueries.util.http.RequestMethod;
@@ -23,6 +24,7 @@ public class CommandProvider {
 
         postCommands.put(CommandType.LOGIN, new LoginCommand());
         postCommands.put(CommandType.REGISTRATION, new RegistrationCommand());
+        postCommands.put(CommandType.CHANGE_LOCALE, new ChangeLocaleCommand());
     }
 
     public static CommandProvider getInstance() {
