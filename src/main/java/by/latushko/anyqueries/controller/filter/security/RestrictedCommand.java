@@ -14,6 +14,9 @@ public final class RestrictedCommand {
         commands.put(CommandType.LOGIN_PAGE, List.of(User.Role.GUEST));
         commands.put(CommandType.REGISTRATION_PAGE, List.of(User.Role.GUEST));
         commands.put(CommandType.ACTIVATE_USER, List.of(User.Role.GUEST));
+        commands.put(CommandType.LOGIN, List.of(User.Role.GUEST));
+        commands.put(CommandType.REGISTRATION, List.of(User.Role.GUEST));
+        commands.put(CommandType.LOGOUT, List.of(User.Role.ADMIN, User.Role.USER, User.Role.MODERATOR));
         //todo add each admin pages in the future
     }
 

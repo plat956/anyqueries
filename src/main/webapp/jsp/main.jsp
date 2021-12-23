@@ -3,5 +3,5 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="page_title" value="Main page" scope="request" />
 <jsp:include page="layout/header.jsp" />
-main - ${principal.firstName} - <fmt:message key="label.registration" bundle="${rb}" />
+Hello, ${principal.firstName}
 <jsp:include page="layout/footer.jsp" />

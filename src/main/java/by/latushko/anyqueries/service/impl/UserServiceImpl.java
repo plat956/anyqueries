@@ -1,5 +1,6 @@
 package by.latushko.anyqueries.service.impl;
 
+import by.latushko.anyqueries.controller.command.identity.CookieName;
 import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.exception.EntityTransactionException;
 import by.latushko.anyqueries.model.dao.BaseDao;
@@ -11,7 +12,7 @@ import by.latushko.anyqueries.model.entity.UserHash;
 import by.latushko.anyqueries.service.UserService;
 import by.latushko.anyqueries.util.encryption.PasswordEncoder;
 import by.latushko.anyqueries.util.encryption.impl.BCryptPasswordEncoder;
-import jakarta.servlet.http.Cookie;
+import by.latushko.anyqueries.util.http.CookieHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -84,14 +85,9 @@ public class UserServiceImpl implements UserService {
         session.setAttribute("principal", user);
         if(remember) {
             Integer cookieMaxAge = APP_COOKIE_ALIVE_DAYS * 24 * 60 * 60;
-            Cookie keyCookie = new Cookie(CREDENTIAL_KEY, user.getCredentialKey());
-            keyCookie.setMaxAge(cookieMaxAge);
-            response.addCookie(keyCookie);
-
+            CookieHelper.addCookie(response, CREDENTIAL_KEY, user.getCredentialKey(), cookieMaxAge);
             String tokenSource = getCredentialTokenSource(user);
-            Cookie cookie = new Cookie(CREDENTIAL_TOKEN, passwordEncoder.encode(tokenSource));
-            cookie.setMaxAge(cookieMaxAge);
-            response.addCookie(cookie);
+            CookieHelper.addCookie(response, CREDENTIAL_TOKEN, passwordEncoder.encode(tokenSource), cookieMaxAge);
         }
         return true;
     }
@@ -137,9 +133,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean changeLocale(String lang, HttpServletResponse response) {
         Integer cookieMaxAge = APP_COOKIE_ALIVE_DAYS * 24 * 60 * 60;
-        Cookie keyCookie = new Cookie("lang", lang);
-        keyCookie.setMaxAge(cookieMaxAge);
-        response.addCookie(keyCookie);
+        CookieHelper.addCookie(response, CookieName.LANG, lang, cookieMaxAge);
         return true;
     }
 

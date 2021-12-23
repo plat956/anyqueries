@@ -3,6 +3,7 @@ package by.latushko.anyqueries.controller.command;
 import by.latushko.anyqueries.controller.command.impl.getCommand.*;
 import by.latushko.anyqueries.controller.command.impl.postCommand.ChangeLocaleCommand;
 import by.latushko.anyqueries.controller.command.impl.postCommand.LoginCommand;
+import by.latushko.anyqueries.controller.command.impl.postCommand.LogoutCommand;
 import by.latushko.anyqueries.controller.command.impl.postCommand.RegistrationCommand;
 import by.latushko.anyqueries.util.http.RequestMethod;
 
@@ -23,6 +24,7 @@ public class CommandProvider {
         getCommands.put(CommandType.LIVE_SEARCH, new LiveSearchCommand());
 
         postCommands.put(CommandType.LOGIN, new LoginCommand());
+        postCommands.put(CommandType.LOGOUT, new LogoutCommand());
         postCommands.put(CommandType.REGISTRATION, new RegistrationCommand());
         postCommands.put(CommandType.CHANGE_LOCALE, new ChangeLocaleCommand());
     }

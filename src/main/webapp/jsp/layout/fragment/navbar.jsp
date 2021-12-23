@@ -34,7 +34,7 @@
                 </li>
             </c:if>
             <c:if test="${!empty principal}">
-                <span class="badge badge-danger">${principal.role}</span>
+                <span class="badge badge-warning user-role-span">${fn:toLowerCase(principal.role)}</span>
                 <li class="nav-item dropdown user-dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -44,7 +44,8 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="${pageContext.request.contextPath}/controller?command=profile_page">Профиль</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="${pageContext.request.contextPath}/controller?command=logout">Выход</a>
+                        <form id="logout_form" action="${pageContext.request.contextPath}/controller?command=logout" method="post" />
+                        <a class="dropdown-item" href="#" onclick="$('#logout_form').submit();">Выход</a>
                     </div>
                 </li>
             </c:if>

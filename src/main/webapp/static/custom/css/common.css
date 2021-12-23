@@ -435,3 +435,8 @@ i.flag-ru:before, i.flag-russia:before {
 .form-check {
     padding-left: 0px;
 }
+.user-role-span {
+    font-size: 0.8rem;
+    text-transform: capitalize;
+    cursor: default !important;
+}

@@ -8,6 +8,7 @@ public enum CommandType {
     REGISTRATION_PAGE,
     ACTIVATE_USER,
     LOGIN,
+    LOGOUT,
     REGISTRATION,
     CHANGE_LOCALE,
     LIVE_SEARCH;
