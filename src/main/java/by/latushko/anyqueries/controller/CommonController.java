@@ -17,8 +17,8 @@ import java.util.Optional;
 
 import static by.latushko.anyqueries.util.http.MimeType.APPLICATION_JSON;
 
-@WebServlet(name = "mainController", value = "/controller")
-public class MainController extends HttpServlet {
+@WebServlet(name = "commonController", value = "/controller")
+public class CommonController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doRequest(request, response);
