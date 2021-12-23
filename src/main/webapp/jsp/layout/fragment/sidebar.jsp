@@ -20,9 +20,9 @@
             <hr>
             <form method="post" action="${pageContext.request.contextPath}/controller?command=change_locale" id="locale_form">
             <select class="selectpicker" data-width="100%" name="lang" onchange="$('#locale_form').submit();">
-                <option data-content='<i class="flag flag-united-states"></i> English' value="en"${cookie['lang'].value == 'en' ? ' selected' : ''}>English</option>
-                <option  data-content='<i class="flag flag-belarus"></i> Беларуская' value="be"${cookie['lang'].value == 'be' ? ' selected' : ''}>Беларуская</option>
-                <option  data-content='<i class="flag flag-russia"></i> Русский' value="ru"${cookie['lang'].value == 'ru' ? ' selected' : ''}>Русский</option>
+                <option  data-content='<i class="flag flag-russia"></i> Русский' value="ru"${empty current_lang || current_lang == 'ru' ? ' selected' : ''}>Русский</option>
+                <option  data-content='<i class="flag flag-belarus"></i> Беларуская' value="be"${current_lang == 'be' ? ' selected' : ''}>Беларуская</option>
+                <option data-content='<i class="flag flag-united-states"></i> English' value="en"${current_lang == 'en' ? ' selected' : ''}>English</option>
             </select>
             </form>
         </div>

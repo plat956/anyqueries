@@ -2,7 +2,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<fmt:setLocale value="${cookie['lang'].value}" scope="request"/>
+<c:set var="current_lang" value="${cookie['lang'].value}" scope="request" />
+<fmt:setLocale value="${current_lang}" scope="request"/>
 <fmt:setBundle basename="message" scope="request"/>
 <c:if test="${empty page_title_label}">
     <c:set var="page_title_label" value="label.unknown-page" />
