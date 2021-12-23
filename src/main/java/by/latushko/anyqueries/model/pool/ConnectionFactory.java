@@ -9,7 +9,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class ConnectionFactory {
+class ConnectionFactory {
     private static final Logger logger = LogManager.getLogger();
     private static final String DB_PROPERTIES_PATH = "config/database.properties";
     private static final String DB_DRIVER;
@@ -41,7 +41,7 @@ public class ConnectionFactory {
     private ConnectionFactory() {
     }
 
-    public static ProxyConnection getConnection() throws SQLException {
+    static ProxyConnection getConnection() throws SQLException {
         return new ProxyConnection(DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD));
     }
 }
