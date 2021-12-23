@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" isErrorPage="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="page_title" value="Page not found" scope="request" />
 <jsp:include page="../layout/header.jsp" />
 <div class="page-wrap d-flex flex-row align-items-center">
     <div class="container">

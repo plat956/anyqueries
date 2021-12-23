@@ -1,8 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<fmt:setLocale value="${cookie['lang'].value}" scope="session" />
-<fmt:setBundle basename="message" var="rb" scope="session" />
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<fmt:setLocale value="${cookie['lang'].value}" scope="request"/>
+<fmt:setBundle basename="message" scope="request"/>
+<c:if test="${empty page_title_label}">
+    <c:set var="page_title_label" value="label.unknown-page" />
+</c:if>
+<fmt:message key="${page_title_label}" var="page_title" scope="request" />
 <!DOCTYPE html>
 <html>
 <head>

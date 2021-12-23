@@ -25,30 +25,32 @@
             </li>
         </ul>
         <ul class="navbar-nav form-inline my-2 my-lg-0">
-            <c:if test="${empty principal}">
-                <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=login_page">Вход</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=registration_page">Регистрация</a>
-                </li>
-            </c:if>
-            <c:if test="${!empty principal}">
-                <span class="badge badge-warning user-role-span">${fn:toLowerCase(principal.role)}</span>
-                <li class="nav-item dropdown user-dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg" width="35" height="35" class="rounded-circle">
-                        ${principal.login}
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="${pageContext.request.contextPath}/controller?command=profile_page">Профиль</a>
-                        <div class="dropdown-divider"></div>
-                        <form id="logout_form" action="${pageContext.request.contextPath}/controller?command=logout" method="post" />
-                        <a class="dropdown-item" href="#" onclick="$('#logout_form').submit();">Выход</a>
-                    </div>
-                </li>
-            </c:if>
+            <c:choose>
+                <c:when test="${!empty principal}">
+                    <span class="badge badge-warning user-role-span">${fn:toLowerCase(principal.role)}</span>
+                    <li class="nav-item dropdown user-dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg" width="35" height="35" class="rounded-circle">
+                                ${principal.login}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/controller?command=profile_page">Профиль</a>
+                            <div class="dropdown-divider"></div>
+                            <form id="logout_form" action="${pageContext.request.contextPath}/controller?command=logout" method="post"></form>
+                            <a class="dropdown-item" href="#" onclick="$('#logout_form').submit();">Выход</a>
+                        </div>
+                    </li>
+                </c:when>
+                <c:otherwise>
+                    <li class="nav-item">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=login_page">Вход</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=registration_page">Регистрация</a>
+                    </li>
+                </c:otherwise>
+            </c:choose>
         </ul>
     </div>
 </nav>

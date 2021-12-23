@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:set var="page_title_label" value="label.registration" scope="request" />
 <jsp:include page="layout/header.jsp" />
-<fmt:message key="label.registration" bundle="${rb}" var="page_title" scope="session"/>
 <div class="reg-confirm-block">
     <div id="telegram-confirmation" class="notice-confirmation alert alert-warning" style="display: none">
         Чтобы активировать учетную запись подпишитесь на telegram-бота <a href="https://t.me/${telegramBot}" target="_blank"><strong>@${telegramBot}</strong></a>. После регистрации на ${initParam['website']} отправьте боту команду "${activationCommand}"
