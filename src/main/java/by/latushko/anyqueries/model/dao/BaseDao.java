@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class BaseDao<K, T extends BaseEntity> implements AutoCloseable {
+public abstract class BaseDao<K, T extends BaseEntity> {
     protected Connection connection;
 
     public abstract List<T> findAll() throws DaoException;
@@ -19,10 +19,5 @@ public abstract class BaseDao<K, T extends BaseEntity> implements AutoCloseable 
 
     void setConnection(Connection connection){
         this.connection = connection;
-    }
-
-    @Override
-    public void close() {
-        connection = null;
     }
 }

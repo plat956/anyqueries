@@ -35,20 +35,13 @@ public class CommandProvider {
     }
 
     public Optional<Command> getCommand(String commandName, RequestMethod method) {
-        if (commandName == null) {
+        Optional<CommandType> commandType = CommandType.getByName(commandName);
+        if(commandType.isEmpty()) {
             return Optional.empty();
         }
-
-        CommandType commandType;
-        try {
-            commandType = CommandType.valueOf(commandName.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
-
         Command command = switch (method) {
-            case GET -> getCommands.get(commandType);
-            case POST -> postCommands.get(commandType);
+            case GET -> getCommands.get(commandType.get());
+            case POST -> postCommands.get(commandType.get());
             default -> null;
         };
 

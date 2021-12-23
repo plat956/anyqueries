@@ -26,13 +26,11 @@ public class BotCommandProvider {
 
     public BotCommand getCommand(String commandName) {
         BotCommand command;
-
         if(commands.containsKey(commandName)) {
             command = commands.get(commandName);
         } else {
             command = commands.get(BotCommandType.UNKNOWN_COMMAND);
         }
-
         return command;
     }
 }

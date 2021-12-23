@@ -1,6 +1,7 @@
 package by.latushko.anyqueries.service.impl;
 
 import by.latushko.anyqueries.exception.DaoException;
+import by.latushko.anyqueries.exception.EntityTransactionException;
 import by.latushko.anyqueries.model.dao.BaseDao;
 import by.latushko.anyqueries.model.dao.EntityTransaction;
 import by.latushko.anyqueries.model.dao.UserDao;
@@ -18,12 +19,26 @@ import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static by.latushko.anyqueries.controller.command.RequestParameter.CREDENTIAL_KEY;
+import static by.latushko.anyqueries.controller.command.RequestParameter.CREDENTIAL_TOKEN;
 import static by.latushko.anyqueries.util.AppProperty.*;
 
 public class UserServiceImpl implements UserService {
     private static final String ACTIVATION_HASH_ADDITIONAL_SALT = "#@бЫрвалГ?";
-    private static final String CREDENTIAL_TOKEN_ADDITIONAL_SALT = "A3>rE(wY%.LA)4V!";
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private static final String CREDENTIAL_KEY_ADDITIONAL_SALT = "A3>rE(wY%.LA)4V!";
+    private static final String CREDENTIAL_TOKEN_ADDITIONAL_SALT = ";{(NP3yE4aG4fkZT";
+    private static UserServiceImpl instance;
+    private final PasswordEncoder passwordEncoder = BCryptPasswordEncoder.getInstance();
+
+    private UserServiceImpl() {
+    }
+
+    public static UserService getInstance() {
+        if (instance == null) {
+            instance = new UserServiceImpl();
+        }
+        return instance;
+    }
 
     @Override
     public User createNewUser(String firstName, String lastName, String middleName, String email, String telegram, String login, String password) {
@@ -34,14 +49,15 @@ public class UserServiceImpl implements UserService {
         user.setEmail(email);
         user.setTelegram(telegram);
         user.setLogin(login);
+        user.setCredentialKey(passwordEncoder.encode(CREDENTIAL_KEY_ADDITIONAL_SALT + login));
         user.setPassword(passwordEncoder.encode(password));
-        user.setRole(User.Role.ROLE_USER);
+        user.setRole(User.Role.USER);
         user.setStatus(User.Status.INACTIVE);
         return user;
     }
 
     @Override
-    public UserHash generateActivationHash(User user) {
+    public UserHash generateUserHash(User user) {
         UserHash userHash = new UserHash();
         userHash.setUser(user);
         userHash.setHash(passwordEncoder.encode(ACTIVATION_HASH_ADDITIONAL_SALT + user.getLogin()));
@@ -61,20 +77,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean authorize(User user, HttpServletRequest request, HttpServletResponse response) { //todo how to do this without request&response references???
+    public boolean authorize(User user, HttpServletRequest request, HttpServletResponse response, boolean remember) {
+        //fixme how to design this method without request&response references???
         HttpSession session = request.getSession();
         session.setAttribute("principal", user);
+        if(remember) {
+            Integer cookieMaxAge = APP_COOKIE_ALIVE_DAYS * 24 * 60 * 60;
+            Cookie keyCookie = new Cookie(CREDENTIAL_KEY, user.getCredentialKey());
+            keyCookie.setMaxAge(cookieMaxAge);
+            response.addCookie(keyCookie);
 
-        Integer cookieMaxAge = APP_COOKIE_ALIVE_DAYS * 24 * 60 * 60;
-        Cookie keyCookie = new Cookie("CREDENTIAL_KEY", "qweerty"); //todo geenerate and store near the user
-        keyCookie.setMaxAge(cookieMaxAge);
-        response.addCookie(keyCookie);
-
-        Cookie cookie = new Cookie("CREDENTIAL_TOKEN", passwordEncoder.encode(CREDENTIAL_TOKEN_ADDITIONAL_SALT + user.getLogin())); //todo geenerate
-        cookie.setMaxAge(cookieMaxAge);
-        response.addCookie(cookie);
-
-        //work with sessions+cookies
+            String tokenSource = getCredentialTokenSource(user);
+            Cookie cookie = new Cookie(CREDENTIAL_TOKEN, passwordEncoder.encode(tokenSource));
+            cookie.setMaxAge(cookieMaxAge);
+            response.addCookie(cookie);
+        }
         return true;
     }
 
@@ -88,9 +105,11 @@ public class UserServiceImpl implements UserService {
                 transaction.begin(userDao);
                 userOptional = ((UserDao)userDao).findUserByLogin(login);
                 transaction.commit();
-            } catch (DaoException e) {
+            } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
             }
+        } catch (EntityTransactionException e) {
+            //todo err log
         }
         return userOptional;
     }
@@ -105,9 +124,11 @@ public class UserServiceImpl implements UserService {
                 transaction.begin(userDao);
                 userOptional = ((UserDao)userDao).findUserByCredentialKey(key);
                 transaction.commit();
-            } catch (DaoException e) {
+            } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
             }
+        } catch (EntityTransactionException e) {
+            //todo err log
         }
         return userOptional;
     }
@@ -119,5 +140,10 @@ public class UserServiceImpl implements UserService {
         keyCookie.setMaxAge(cookieMaxAge);
         response.addCookie(keyCookie);
         return true;
+    }
+
+    @Override
+    public String getCredentialTokenSource(User user) {
+        return CREDENTIAL_TOKEN_ADDITIONAL_SALT + user.getLogin();
     }
 }

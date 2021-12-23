@@ -1,5 +1,6 @@
 package by.latushko.anyqueries.controller.listener;
 
+import by.latushko.anyqueries.model.pool.ConnectionPool;
 import by.latushko.anyqueries.util.telegram.TelegramBot;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -16,6 +17,8 @@ public class ContextListenerImpl implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent event) {
+        ConnectionPool.getInstance();
+
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(new TelegramBot());
@@ -23,5 +26,10 @@ public class ContextListenerImpl implements ServletContextListener {
             logger.error("Unable to start telegram bot", e);
             throw new ExceptionInInitializerError("Unable to start telegram bot");
         }
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent event) {
+        ConnectionPool.getInstance().destroyPool();
     }
 }

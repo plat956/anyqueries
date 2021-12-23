@@ -14,10 +14,10 @@ public class ActivateUserCommand implements Command {
     @Override
     public PreparedResponse execute(HttpServletRequest request, HttpServletResponse response) {
         String hash = request.getParameter(RequestParameter.HASH);
-        RegistrationService registrationService = new RegistrationServiceImpl();
+        RegistrationService registrationService = RegistrationServiceImpl.getInstance();
         boolean result = registrationService.activateUserByHash(hash);
 
-        ResponseMessage message = null;
+        ResponseMessage message;
         if(result) {
             message = new ResponseMessage(POPUP, SUCCESS, "Регистрация завершена", "Поздравляем! Теперь вы можете воспользоваться полным функционалом системы.");
         } else {

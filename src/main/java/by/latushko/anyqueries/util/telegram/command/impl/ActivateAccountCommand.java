@@ -16,7 +16,7 @@ public class ActivateAccountCommand implements BotCommand {
         outMessage.setChatId(String.valueOf(inMessage.getChatId()));
 
         String account = inMessage.getChat().getUserName();
-        RegistrationService registrationService = new RegistrationServiceImpl();
+        RegistrationService registrationService = RegistrationServiceImpl.getInstance();
         boolean result = registrationService.activateUserByTelegramAccount(account);
         if(result) {
             outMessage.setText(ResponseMessage.ACTIVATION_SUCCESSFUL);

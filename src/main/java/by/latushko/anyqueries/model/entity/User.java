@@ -6,11 +6,9 @@ public class User extends BaseEntity<Long> {
     public enum Status {
         ACTIVE, INACTIVE, BANNED;
     }
-
     public enum Role {
-        ROLE_ADMIN, ROLE_USER, ROLE_MODERATOR;
+        ADMIN, USER, MODERATOR, GUEST;
     }
-
     private String firstName;
     private String lastName;
     private String middleName;
@@ -19,6 +17,7 @@ public class User extends BaseEntity<Long> {
     private String email;
     private String telegram;
     private String avatar;
+    private String credentialKey;
     private LocalDateTime lastLoginDate;
     private Status status;
     private Role role;
@@ -90,6 +89,14 @@ public class User extends BaseEntity<Long> {
         this.avatar = avatar;
     }
 
+    public String getCredentialKey() {
+        return credentialKey;
+    }
+
+    public void setCredentialKey(String credentialKey) {
+        this.credentialKey = credentialKey;
+    }
+
     public LocalDateTime getLastLoginDate() {
         return lastLoginDate;
     }
@@ -129,6 +136,8 @@ public class User extends BaseEntity<Long> {
         if (email != null ? !email.equals(user.email) : user.email != null) return false;
         if (telegram != null ? !telegram.equals(user.telegram) : user.telegram != null) return false;
         if (avatar != null ? !avatar.equals(user.avatar) : user.avatar != null) return false;
+        if (credentialKey != null ? !credentialKey.equals(user.credentialKey) : user.credentialKey != null)
+            return false;
         if (lastLoginDate != null ? !lastLoginDate.equals(user.lastLoginDate) : user.lastLoginDate != null)
             return false;
         if (status != user.status) return false;
@@ -145,6 +154,7 @@ public class User extends BaseEntity<Long> {
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (telegram != null ? telegram.hashCode() : 0);
         result = 31 * result + (avatar != null ? avatar.hashCode() : 0);
+        result = 31 * result + (credentialKey != null ? credentialKey.hashCode() : 0);
         result = 31 * result + (lastLoginDate != null ? lastLoginDate.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (role != null ? role.hashCode() : 0);
@@ -162,6 +172,7 @@ public class User extends BaseEntity<Long> {
         sb.append(", email='").append(email).append('\'');
         sb.append(", telegram='").append(telegram).append('\'');
         sb.append(", avatar='").append(avatar).append('\'');
+        sb.append(", credentialKey='").append(credentialKey).append('\'');
         sb.append(", lastLoginDate=").append(lastLoginDate);
         sb.append(", status=").append(status);
         sb.append(", role=").append(role);

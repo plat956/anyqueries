@@ -6,7 +6,6 @@ import by.latushko.anyqueries.service.UserService;
 import by.latushko.anyqueries.service.impl.UserServiceImpl;
 import by.latushko.anyqueries.util.encryption.PasswordEncoder;
 import by.latushko.anyqueries.util.encryption.impl.BCryptPasswordEncoder;
-import by.latushko.anyqueries.util.telegram.TelegramBot;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -20,8 +19,8 @@ public class LoginCommand implements Command {
         String login = request.getParameter(RequestParameter.LOGIN);
         String password = request.getParameter(RequestParameter.PASSWORD);
 
-        UserService userService = new UserServiceImpl();
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        UserService userService = UserServiceImpl.getInstance();
+        PasswordEncoder passwordEncoder = BCryptPasswordEncoder.getInstance();
 
         ResponseMessage message = new ResponseMessage(INFO, "Неверные данные аутентификации");
         Optional<User> userOptional = userService.findUserByLogin(login);
@@ -29,7 +28,8 @@ public class LoginCommand implements Command {
             User user = userOptional.get();
             if(passwordEncoder.check(password, user.getPassword())) {
                 if(user.getStatus().equals(User.Status.ACTIVE)) {
-                    userService.authorize(user, request, response);
+                    boolean remember = true; //todo - read checkbox from form parameters
+                    userService.authorize(user, request, response, remember);
                     message = new ResponseMessage(INFO, "Вы успешно вошли в учетную запись");
                 }
                 //todo handle other user statuses

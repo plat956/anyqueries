@@ -20,9 +20,7 @@ class ProxyConnection implements Connection {
     @Override
     public void close() throws SQLException {
         try {
-            if(!this.getAutoCommit()) {
-                this.setAutoCommit(true);
-            }
+            this.setAutoCommit(true);
             ConnectionPool.getInstance().releaseConnection(this);
         } catch (ConnectionPoolException e) {
             logger.error("Failed to close connection", e);

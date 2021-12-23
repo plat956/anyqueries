@@ -10,10 +10,11 @@ import java.util.Optional;
 public interface UserService {
     User createNewUser(String firstName, String lastName, String middleName, String email,
                        String telegram, String login, String password);
-    UserHash generateActivationHash(User user);
-    String getUserFio(User user);
-    boolean authorize(User user, HttpServletRequest request, HttpServletResponse response);
+    UserHash generateUserHash(User user);
+    String getUserFio(User user); //todo make it using taglib in jstl, create custom one
+    boolean authorize(User user, HttpServletRequest request, HttpServletResponse response, boolean remember);
     Optional<User> findUserByLogin(String login);
     Optional<User> findUserByCredentialKey(String key);
     boolean changeLocale(String lang, HttpServletResponse response);
+    String getCredentialTokenSource(User user);
 }

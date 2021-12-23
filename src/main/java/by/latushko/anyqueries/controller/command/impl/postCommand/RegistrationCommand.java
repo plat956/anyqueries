@@ -26,7 +26,7 @@ public class RegistrationCommand implements Command {
 
         //todo: validation must be here - ask to look at some wild options below
 
-        RegistrationService registrationService = new RegistrationServiceImpl();
+        RegistrationService registrationService = RegistrationServiceImpl.getInstance();
         boolean result = registrationService.registerUser(firstName, lastName, middleName, confirmationType, email, telegram, login, password);
 
         ResponseMessage message = new ResponseMessage(DANGER, "При регистрации возникла непредвиденная ошибка");

@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JoinCommand implements BotCommand {
+    private static final int KEYBOARD_ROWS = 2;
+
     @Override
     public BotApiMethod execute(Message inMessage) {
         SendMessage message = new SendMessage();
@@ -25,7 +27,7 @@ public class JoinCommand implements BotCommand {
     private ReplyKeyboardMarkup buildKeyboard() {
         ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup();
         keyboard.setResizeKeyboard(true);
-        List<KeyboardRow> rows = new ArrayList<>();
+        List<KeyboardRow> rows = new ArrayList<>(KEYBOARD_ROWS);
         KeyboardRow firstRow = new KeyboardRow();
         firstRow.add(BotCommandType.ACTIVATE_ACCOUNT);
         firstRow.add(BotCommandType.HELP);

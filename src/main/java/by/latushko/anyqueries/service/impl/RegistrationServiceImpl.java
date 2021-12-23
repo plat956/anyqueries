@@ -2,6 +2,7 @@ package by.latushko.anyqueries.service.impl;
 
 import by.latushko.anyqueries.controller.command.RequestParameter;
 import by.latushko.anyqueries.exception.DaoException;
+import by.latushko.anyqueries.exception.EntityTransactionException;
 import by.latushko.anyqueries.exception.MailSenderException;
 import by.latushko.anyqueries.model.dao.BaseDao;
 import by.latushko.anyqueries.model.dao.EntityTransaction;
@@ -28,7 +29,18 @@ public class RegistrationServiceImpl implements RegistrationService {
     private static final String VELOCITY_PROPERTIES_LOADER_CLASS = "classpath.resource.loader.class";
     private static final String VELOCITY_RESOURCES_PATH = "classpath";
     private static final String VELOCITY_ACTIVATION_TEMPLATE_PATH = "/template/mail/activation.vm";
-    private UserService userService = new UserServiceImpl();
+    private static RegistrationServiceImpl instance;
+    private UserService userService = UserServiceImpl.getInstance();
+
+    private RegistrationServiceImpl() {
+    }
+
+    public static RegistrationService getInstance() {
+        if (instance == null) {
+            instance = new RegistrationServiceImpl();
+        }
+        return instance;
+    }
 
     @Override
     public boolean registerUser(String firstName, String lastName, String middleName, String confirmationType,
@@ -43,7 +55,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 userDao.create(user);
 
                 if (confirmationType.equals(RequestParameter.CONFIRMATION_TYPE_EMAIL)) {
-                    UserHash userHash = userService.generateActivationHash(user);
+                    UserHash userHash = userService.generateUserHash(user);
                     ((UserDao) userDao).createUserHash(userHash);
 
                     sendActivationEmail(user, userHash);
@@ -51,18 +63,19 @@ public class RegistrationServiceImpl implements RegistrationService {
 
                 transaction.commit();
                 return true;
-            } catch (DaoException | MailSenderException e) {
+            } catch (EntityTransactionException | DaoException | MailSenderException e) {
                 transaction.rollback();
-                return false;
             }
+        } catch (EntityTransactionException e) {
+            //todo error log
         }
+        return false;
     }
 
     @Override
     public boolean activateUserByHash(String hash) {
         BaseDao userDao = new UserDaoImpl();
 
-        boolean result = false;
         try (EntityTransaction transaction = new EntityTransaction()) {
             try {
                 transaction.begin(userDao);
@@ -76,23 +89,24 @@ public class RegistrationServiceImpl implements RegistrationService {
                     userDao.update(user);
 
                     ((UserDao)userDao).deleteUserHashByUserId(user.getId());
-                    result = true;
+                    return true;
                 }
 
                 transaction.commit();
-            } catch (DaoException e) {
+            } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
             }
+        } catch (EntityTransactionException e) {
+            //todo err log
         }
 
-        return result;
+        return false;
     }
 
     @Override
     public boolean activateUserByTelegramAccount(String account) {
         BaseDao userDao = new UserDaoImpl();
 
-        boolean result = false;
         try (EntityTransaction transaction = new EntityTransaction()) {
             try {
                 transaction.begin(userDao);
@@ -103,16 +117,19 @@ public class RegistrationServiceImpl implements RegistrationService {
                     User user = userOptional.get();
                     user.setStatus(User.Status.ACTIVE);
                     userDao.update(user);
-                    result = true;
+                    return true;
                 }
 
                 transaction.commit();
-            } catch (DaoException e) {
+                return true;
+            } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
             }
+        } catch (EntityTransactionException e) {
+            //todo err log
         }
 
-        return result;
+        return false;
     }
 
     private void sendActivationEmail(User user, UserHash userHash) throws MailSenderException {

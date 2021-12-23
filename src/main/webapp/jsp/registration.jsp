@@ -1,7 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="page_title" value="Регистрация" scope="request" />
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:include page="layout/header.jsp" />
+<fmt:message key="label.registration" bundle="${rb}" var="page_title" scope="session"/>
 <div class="reg-confirm-block">
     <div id="telegram-confirmation" class="notice-confirmation alert alert-warning" style="display: none">
         Чтобы активировать учетную запись подпишитесь на telegram-бота <a href="https://t.me/${telegramBot}" target="_blank"><strong>@${telegramBot}</strong></a>. После регистрации на ${initParam['website']} отправьте боту команду "${activationCommand}"
@@ -11,7 +12,7 @@
     </div>
 </div>
 <div class="col-lg-7 mx-auto">
-    <form id="reg_form" class="needs-validation" method="post" action="/controller?command=registration" novalidate>
+    <form id="reg_form" class="needs-validation" method="post" action="${pageContext.request.contextPath}/controller?command=registration" novalidate>
         <div class="form-group input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text"> <i class="fa fa-user"></i> </span>

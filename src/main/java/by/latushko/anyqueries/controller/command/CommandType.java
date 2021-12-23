@@ -1,5 +1,7 @@
 package by.latushko.anyqueries.controller.command;
 
+import java.util.Optional;
+
 public enum CommandType {
     LOGIN_PAGE,
     MAIN_PAGE,
@@ -9,4 +11,18 @@ public enum CommandType {
     REGISTRATION,
     CHANGE_LOCALE,
     LIVE_SEARCH;
+
+    public static Optional<CommandType> getByName(String commandName) {
+        if (commandName == null) {
+            return Optional.empty();
+        }
+
+        Optional<CommandType> commandType;
+        try {
+            commandType = Optional.of(CommandType.valueOf(commandName.toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            commandType = Optional.empty();
+        }
+        return commandType;
+    }
 }

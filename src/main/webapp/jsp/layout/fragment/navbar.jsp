@@ -2,7 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary navbar-main-panel">
-    <a class="navbar-brand" href="/controller?command=main_page">
+    <a class="navbar-brand" href="${pageContext.request.contextPath}/controller?command=main_page">
         <i class="fa fa-question-circle"></i>
         ${fn:toUpperCase(initParam['website'])}
     </a>
@@ -27,10 +27,10 @@
         <ul class="navbar-nav form-inline my-2 my-lg-0">
             <c:if test="${empty principal}">
                 <li class="nav-item">
-                    <a class="nav-link" href="/controller?command=login_page">Вход</a>
+                    <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=login_page">Вход</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/controller?command=registration_page">Регистрация</a>
+                    <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=registration_page">Регистрация</a>
                 </li>
             </c:if>
             <c:if test="${!empty principal}">
@@ -42,9 +42,9 @@
                         ${principal.login}
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="/controller?command=profile_page">Профиль</a>
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/controller?command=profile_page">Профиль</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/controller?command=logout">Выход</a>
+                        <a class="dropdown-item" href="${pageContext.request.contextPath}/controller?command=logout">Выход</a>
                     </div>
                 </li>
             </c:if>

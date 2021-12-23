@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class MailSender {
     private static final Logger logger = LogManager.getLogger();
@@ -26,8 +24,6 @@ public class MailSender {
     public static final String USER_NAME_PROPERTY = "mail.user.name";
     public static final String CONTENT_TYPE_PROPERTY = "mail.content.level";
     private static MailSender instance;
-    private static AtomicBoolean creator = new AtomicBoolean(false);
-    private static ReentrantLock lockerSingleton = new ReentrantLock();
     private final Properties properties;
 
     private MailSender() {
@@ -42,16 +38,8 @@ public class MailSender {
     }
 
     public static MailSender getInstance(){
-        if(!creator.get()){
-            try{
-                lockerSingleton.lock();
-                if(instance == null){
-                    instance = new MailSender();
-                    creator.set(true);
-                }
-            } finally {
-                lockerSingleton.unlock();
-            }
+        if(instance == null){
+            instance = new MailSender();
         }
         return instance;
     }

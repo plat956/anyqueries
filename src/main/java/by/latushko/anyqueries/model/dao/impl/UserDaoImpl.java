@@ -15,39 +15,46 @@ import java.util.Optional;
 
 public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     private static final String SQL_FIND_ALL_QUERY = """
-            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role 
+            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 
             FROM users""";
     private static final String SQL_FIND_BY_ID_QUERY = """
-            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role 
+            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 
             FROM users 
             WHERE id = ?""";
     private static final String SQL_FIND_INACTIVE_BY_HASH_AND_DATE_QUERY = """
-            SELECT u.id, u.first_name, u.last_name, u.middle_name, u.login, u.password, u.email, u.telegram, u.avatar, u.last_login_date, u.status, u.role 
-            FROM users u INNER JOIN user_hash uh ON u.id = uh.user_id WHERE u.status = ? and uh.hash = ? and uh.expires >= ?""";
+            SELECT u.id, u.first_name, u.last_name, u.middle_name, u.login, u.password, u.email, u.telegram, u.avatar, u.credential_key, u.last_login_date, u.status, u.role 
+            FROM users u 
+            INNER JOIN user_hash uh 
+            ON u.id = uh.user_id 
+            WHERE u.status = ? and uh.hash = ? and uh.expires >= ?""";
     private static final String SQL_FIND_INACTIVE_BY_TELEGRAM_QUERY = """
-            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role 
-            FROM users WHERE status = ? and telegram = ?""";
+            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 
+            FROM users 
+            WHERE status = ? and telegram = ?""";
     private static final String SQL_FIND_BY_LOGIN_QUERY = """
-            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role 
-            FROM users WHERE login = ?""";
+            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 
+            FROM users 
+            WHERE login = ?""";
     private static final String SQL_FIND_BY_CREDENTIAL_KEY_QUERY = """
-            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role 
-            FROM users WHERE credential_key = ?""";
+            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 
+            FROM users 
+            WHERE credential_key = ?""";
     private static final String SQL_CREATE_USER_QUERY = """
-            INSERT INTO users(first_name, last_name, middle_name, login, password, email, telegram, avatar, last_login_date, status, role) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
+            INSERT INTO users(first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
     private static final String SQL_CREATE_HASH_QUERY = """
             INSERT INTO user_hash(hash, expires, user_id) 
             VALUES (?, ?, ?)""";
     private static final String SQL_UPDATE_QUERY = """
             UPDATE users 
-            SET first_name = ?, last_name = ?, middle_name = ?, login = ?, password = ?, email = ?, telegram = ?, avatar = ?, last_login_date = ?, status = ?, role = ?  
+            SET first_name = ?, last_name = ?, middle_name = ?, login = ?, password = ?, email = ?, telegram = ?, avatar = ?, credential_key = ?, last_login_date = ?, status = ?, role = ?  
             WHERE id = ?""";
     private static final String SQL_DELETE_USER_QUERY = """
-            DELETE FROM users WHERE id = ?""";
+            DELETE FROM users 
+            WHERE id = ?""";
     private static final String SQL_DELETE_HASH_QUERY = """
-            DELETE FROM user_hash WHERE user_id = ?""";
-
+            DELETE FROM user_hash 
+            WHERE user_id = ?""";
     private final RowMapper<User> mapper = new UserMapper();
 
     @Override
@@ -61,11 +68,12 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             statement.setString(6, user.getEmail());
             statement.setString(7, user.getTelegram());
             statement.setString(8, user.getAvatar());
-            statement.setObject(9, user.getLastLoginDate());
-            statement.setString(10, user.getStatus().name());
-            statement.setString(11, user.getRole().name());
+            statement.setString(9, user.getCredentialKey());
+            statement.setObject(10, user.getLastLoginDate());
+            statement.setString(11, user.getStatus().name());
+            statement.setString(12, user.getRole().name());
 
-            if(statement.executeUpdate() > 0) {
+            if(statement.executeUpdate() >= 0) {
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if(resultSet.next()) {
                     Long generatedId = resultSet.getLong(1);
@@ -119,12 +127,13 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             statement.setString(6, user.getEmail());
             statement.setString(7, user.getTelegram());
             statement.setString(8, user.getAvatar());
-            statement.setObject(9, user.getLastLoginDate()); //todo проверить
-            statement.setString(10, user.getStatus().name());
-            statement.setString(11, user.getRole().name());
-            statement.setLong(12, user.getId());
+            statement.setString(9, user.getCredentialKey());
+            statement.setObject(10, user.getLastLoginDate());
+            statement.setString(11, user.getStatus().name());
+            statement.setString(12, user.getRole().name());
+            statement.setLong(13, user.getId());
 
-            if(statement.executeUpdate() > 0) {
+            if(statement.executeUpdate() >= 0) {
                 return Optional.of(user);
             }
         } catch (SQLException e) {
@@ -137,7 +146,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     public boolean delete(User user) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_USER_QUERY)){
             statement.setLong(1, user.getId());
-            return statement.executeUpdate() > 0;
+            return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
             throw new DaoException("Failed to delete user by calling delete(User user) method", e);
         }
@@ -147,7 +156,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     public boolean delete(Long id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_USER_QUERY)){
             statement.setLong(1, id);
-            return statement.executeUpdate() > 0;
+            return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
             throw new DaoException("Failed to delete user by calling delete(Long id) method", e);
         }
@@ -160,7 +169,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             statement.setObject(2, hash.getExpires());
             statement.setLong(3, hash.getUser().getId());
 
-            if(statement.executeUpdate() > 0) {
+            if(statement.executeUpdate() >= 0) {
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if(resultSet.next()) {
                     Long generatedId = resultSet.getLong(1);
@@ -178,7 +187,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     public boolean deleteUserHashByUserId(Long id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_HASH_QUERY)){
             statement.setLong(1, id);
-            return statement.executeUpdate() > 0;
+            return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
             throw new DaoException("Failed to delete user hash by calling deleteHashByUserId(Long id) method", e);
         }
@@ -187,7 +196,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     @Override
     public Optional<User> findInactiveUserByHashAndHashIsNotExpired(String hash, LocalDateTime validDate) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_INACTIVE_BY_HASH_AND_DATE_QUERY)){
-            statement.setObject(1, User.Status.INACTIVE);
+            statement.setString(1, User.Status.INACTIVE.name());
             statement.setString(2, hash);
             statement.setObject(3, validDate);
             try(ResultSet resultSet = statement.executeQuery()) {

@@ -1,6 +1,6 @@
 package by.latushko.anyqueries.util.telegram.command;
 
-public class BotCommandType {
+public final class BotCommandType {
     public static final String JOIN_COMMAND = "/start";
     public static final String ACTIVATE_ACCOUNT = "Activate account";
     public static final String HELP = "Help";

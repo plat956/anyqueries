@@ -8,7 +8,7 @@
             <div class="col-md-12 text-center">
                 <span class="display-1 d-block">Error...</span>
                 <div class="mb-4 lead">Please, contact to support to resolve this problem.</div>
-                <a href="/" class="btn btn-success">Back to Home</a>
+                <a href="${pageContext.request.contextPath}/controller?command=main_page" class="btn btn-success">Back to Home</a>
             </div>
         </div>
     </div>

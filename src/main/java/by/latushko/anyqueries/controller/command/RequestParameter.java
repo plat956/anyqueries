@@ -2,6 +2,7 @@ package by.latushko.anyqueries.controller.command;
 
 public final class RequestParameter {
     public static final String COMMAND = "command";
+    public static final String AJAX = "ajax";
     public static final String FIRST_NAME = "first_name";
     public static final String LAST_NAME = "last_name";
     public static final String MIDDLE_NAME = "middle_name";
@@ -16,6 +17,8 @@ public final class RequestParameter {
     public static final String PASSWORD_CONFIRMED = "password_confirmed";
     public static final String QUERY_STRING = "query_string";
     public static final String HASH = "hash";
+    public static final String CREDENTIAL_KEY = "CREDENTIAL_KEY";
+    public static final String CREDENTIAL_TOKEN = "CREDENTIAL_TOKEN";
 
     private RequestParameter() {
     }

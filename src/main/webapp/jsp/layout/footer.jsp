@@ -65,7 +65,7 @@
         //init navbar live search
         $('input.search-input').typeahead({
             source:  function (query, process) {
-                return $.get('/controller?command=live_search', {query_string: query}, function (data) {
+                return $.get('/controller?command=live_search', {query_string: query, ajax: true}, function (data) {
                     return process(data);
                 });
             }
