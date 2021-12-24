@@ -2,7 +2,7 @@ package by.latushko.anyqueries.controller;
 
 import by.latushko.anyqueries.controller.command.Command;
 import by.latushko.anyqueries.controller.command.CommandProvider;
-import by.latushko.anyqueries.controller.command.PreparedResponse;
+import by.latushko.anyqueries.controller.command.CommandResult;
 import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.util.http.RequestMethod;
 import jakarta.servlet.ServletException;
@@ -41,15 +41,15 @@ public class CommonController extends HttpServlet {
             return;
         }
 
-        PreparedResponse preparedResponse = command.get().execute(request, response);
+        CommandResult result = command.get().execute(request, response);
 
-        switch (preparedResponse.routingType()) {
-            case FORWARD -> request.getRequestDispatcher(preparedResponse.page()).forward(request, response);
-            case REDIRECT -> response.sendRedirect(preparedResponse.page());
+        switch (result.routingType()) {
+            case FORWARD -> request.getRequestDispatcher(result.page()).forward(request, response);
+            case REDIRECT -> response.sendRedirect(result.page());
             case RESPOND_WITH_JSON -> {
                 response.setContentType(APPLICATION_JSON);
                 PrintWriter writer = response.getWriter();
-                writer.print(preparedResponse.page());
+                writer.print(result.page());
             }
             default -> response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }

@@ -1,10 +1,10 @@
 package by.latushko.anyqueries.controller.command;
 
-import by.latushko.anyqueries.controller.command.impl.getCommand.*;
-import by.latushko.anyqueries.controller.command.impl.postCommand.ChangeLocaleCommand;
-import by.latushko.anyqueries.controller.command.impl.postCommand.LoginCommand;
-import by.latushko.anyqueries.controller.command.impl.postCommand.LogoutCommand;
-import by.latushko.anyqueries.controller.command.impl.postCommand.RegistrationCommand;
+import by.latushko.anyqueries.controller.command.impl.get.*;
+import by.latushko.anyqueries.controller.command.impl.post.ChangeLocaleCommand;
+import by.latushko.anyqueries.controller.command.impl.post.LoginCommand;
+import by.latushko.anyqueries.controller.command.impl.post.LogoutCommand;
+import by.latushko.anyqueries.controller.command.impl.post.RegistrationCommand;
 import by.latushko.anyqueries.util.http.RequestMethod;
 
 import java.util.EnumMap;

@@ -1,4 +1,4 @@
-package by.latushko.anyqueries.controller.command.impl.getCommand;
+package by.latushko.anyqueries.controller.command.impl.get;
 
 import by.latushko.anyqueries.controller.command.*;
 import by.latushko.anyqueries.controller.command.identity.PagePath;
@@ -15,7 +15,7 @@ import static by.latushko.anyqueries.controller.command.ResponseMessage.Type.POP
 
 public class ActivateUserCommand implements Command {
     @Override
-    public PreparedResponse execute(HttpServletRequest request, HttpServletResponse response) {
+    public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         String hash = request.getParameter(RequestParameter.HASH);
         RegistrationService registrationService = RegistrationServiceImpl.getInstance();
         boolean result = registrationService.activateUserByHash(hash);
@@ -28,6 +28,6 @@ public class ActivateUserCommand implements Command {
         }
         //todo: log-in automatically if success & redirect to the main page must be here
         request.getSession().setAttribute(SessionAttribute.MESSAGE, message);
-        return new PreparedResponse(PagePath.MAIN_URL, PreparedResponse.RoutingType.REDIRECT);
+        return new CommandResult(PagePath.MAIN_URL, CommandResult.RoutingType.REDIRECT);
     }
 }

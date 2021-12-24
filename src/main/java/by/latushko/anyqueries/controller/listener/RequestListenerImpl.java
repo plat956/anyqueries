@@ -5,6 +5,7 @@ import jakarta.servlet.ServletRequestEvent;
 import jakarta.servlet.ServletRequestListener;
 import jakarta.servlet.annotation.WebListener;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @WebListener
 public class RequestListenerImpl implements ServletRequestListener {
@@ -12,7 +13,15 @@ public class RequestListenerImpl implements ServletRequestListener {
     public void requestInitialized(ServletRequestEvent event) {
         HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
         Object message = request.getSession().getAttribute(SessionAttribute.MESSAGE);
-        request.getSession().removeAttribute(SessionAttribute.MESSAGE);
-        request.setAttribute(SessionAttribute.MESSAGE, message);
+        Object validationResult = request.getSession().getAttribute(SessionAttribute.VALIDATION_RESULT);
+        HttpSession session = request.getSession();
+        if(message != null) {
+            session.removeAttribute(SessionAttribute.MESSAGE);
+            request.setAttribute(SessionAttribute.MESSAGE, message);
+        }
+        if(validationResult != null) {
+            session.removeAttribute(SessionAttribute.VALIDATION_RESULT);
+            request.setAttribute(SessionAttribute.VALIDATION_RESULT, validationResult);
+        }
     }
 }

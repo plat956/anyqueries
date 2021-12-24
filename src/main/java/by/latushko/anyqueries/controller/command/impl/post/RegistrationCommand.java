@@ -1,4 +1,4 @@
-package by.latushko.anyqueries.controller.command.impl.postCommand;
+package by.latushko.anyqueries.controller.command.impl.post;
 
 import by.latushko.anyqueries.controller.command.*;
 import by.latushko.anyqueries.controller.command.identity.PagePath;
@@ -16,7 +16,7 @@ import static by.latushko.anyqueries.util.AppProperty.APP_ACTIVATION_LINK_ALIVE_
 
 public class RegistrationCommand implements Command {
     @Override
-    public PreparedResponse execute(HttpServletRequest request, HttpServletResponse response) {
+    public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         String firstName = request.getParameter(RequestParameter.FIRST_NAME);
         String lastName = request.getParameter(RequestParameter.LAST_NAME);
         String middleName = request.getParameter(RequestParameter.MIDDLE_NAME);
@@ -47,7 +47,7 @@ public class RegistrationCommand implements Command {
         }
 
         request.getSession().setAttribute(SessionAttribute.MESSAGE, message);
-        return new PreparedResponse(PagePath.REGISTRATION_URL, PreparedResponse.RoutingType.REDIRECT);
+        return new CommandResult(PagePath.REGISTRATION_URL, CommandResult.RoutingType.REDIRECT);
     }
 }
 

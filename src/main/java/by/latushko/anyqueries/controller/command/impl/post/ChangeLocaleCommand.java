@@ -1,4 +1,4 @@
-package by.latushko.anyqueries.controller.command.impl.postCommand;
+package by.latushko.anyqueries.controller.command.impl.post;
 
 import by.latushko.anyqueries.controller.command.*;
 import by.latushko.anyqueries.controller.command.identity.PagePath;
@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpSession;
 
 public class ChangeLocaleCommand implements Command {
     @Override
-    public PreparedResponse execute(HttpServletRequest request, HttpServletResponse response) {
+    public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         String lang = request.getParameter(RequestParameter.LANG);
         UserService userService = UserServiceImpl.getInstance();
         ResponseMessage message;
@@ -30,6 +30,6 @@ public class ChangeLocaleCommand implements Command {
             currentPage = PagePath.MAIN_URL;
         }
         session.setAttribute(SessionAttribute.MESSAGE, message);
-        return new PreparedResponse(currentPage, PreparedResponse.RoutingType.REDIRECT);
+        return new CommandResult(currentPage, CommandResult.RoutingType.REDIRECT);
     }
 }

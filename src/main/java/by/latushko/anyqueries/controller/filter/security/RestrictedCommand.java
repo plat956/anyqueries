@@ -3,20 +3,18 @@ package by.latushko.anyqueries.controller.filter.security;
 import by.latushko.anyqueries.controller.command.CommandType;
 import by.latushko.anyqueries.model.entity.User;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class RestrictedCommand {
-    private static final Map<CommandType, List<User.Role>> commands = new EnumMap<>(CommandType.class);
+    private static final Map<CommandType, EnumSet<User.Role>> commands = new EnumMap<>(CommandType.class);
 
     static {
-        commands.put(CommandType.LOGIN_PAGE, List.of(User.Role.GUEST));
-        commands.put(CommandType.REGISTRATION_PAGE, List.of(User.Role.GUEST));
-        commands.put(CommandType.ACTIVATE_USER, List.of(User.Role.GUEST));
-        commands.put(CommandType.LOGIN, List.of(User.Role.GUEST));
-        commands.put(CommandType.REGISTRATION, List.of(User.Role.GUEST));
-        commands.put(CommandType.LOGOUT, List.of(User.Role.ADMIN, User.Role.USER, User.Role.MODERATOR));
+        commands.put(CommandType.LOGIN_PAGE, EnumSet.of(User.Role.GUEST));
+        commands.put(CommandType.REGISTRATION_PAGE, EnumSet.of(User.Role.GUEST));
+        commands.put(CommandType.ACTIVATE_USER, EnumSet.of(User.Role.GUEST));
+        commands.put(CommandType.LOGIN, EnumSet.of(User.Role.GUEST));
+        commands.put(CommandType.REGISTRATION, EnumSet.of(User.Role.GUEST));
+        commands.put(CommandType.LOGOUT, EnumSet.of(User.Role.ADMIN, User.Role.USER, User.Role.MODERATOR));
         //todo add each admin pages in the future
     }
 
@@ -25,7 +23,7 @@ public final class RestrictedCommand {
 
     public static boolean hasAccess(CommandType commandType, User.Role role) {
         if (commandType != null && role != null && commands.containsKey(commandType)) {
-            List<User.Role> roles = commands.get(commandType);
+            Set<User.Role> roles = commands.get(commandType);
             return roles.stream().anyMatch(r -> r.equals(role));
         } else {
             return true;

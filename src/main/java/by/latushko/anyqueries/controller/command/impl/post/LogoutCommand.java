@@ -1,7 +1,7 @@
-package by.latushko.anyqueries.controller.command.impl.postCommand;
+package by.latushko.anyqueries.controller.command.impl.post;
 
 import by.latushko.anyqueries.controller.command.Command;
-import by.latushko.anyqueries.controller.command.PreparedResponse;
+import by.latushko.anyqueries.controller.command.CommandResult;
 import by.latushko.anyqueries.controller.command.ResponseMessage;
 import by.latushko.anyqueries.controller.command.identity.CookieName;
 import by.latushko.anyqueries.controller.command.identity.PagePath;
@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpSession;
 
 public class LogoutCommand implements Command {
     @Override
-    public PreparedResponse execute(HttpServletRequest request, HttpServletResponse response) {
+    public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         CookieHelper.eraseCookie(request, response, CookieName.CREDENTIAL_KEY, CookieName.CREDENTIAL_TOKEN);
         HttpSession session = request.getSession(false);
         if(session != null) {
@@ -21,6 +21,6 @@ public class LogoutCommand implements Command {
         }
         session = request.getSession();
         session.setAttribute(SessionAttribute.MESSAGE, new ResponseMessage(ResponseMessage.Level.SUCCESS, "Всего доброго! Заходите еще."));
-        return new PreparedResponse(PagePath.MAIN_URL, PreparedResponse.RoutingType.REDIRECT);
+        return new CommandResult(PagePath.MAIN_URL, CommandResult.RoutingType.REDIRECT);
     }
 }

@@ -1,6 +1,11 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"
+         import="by.latushko.anyqueries.controller.command.identity.RequestParameter" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="layout/header.jsp" />
+
+${validationResult.getField(RequestParameter.LOGIN).status}<br>
+${validationResult.getField(RequestParameter.LOGIN).message}<br>
+${validationResult.getField(RequestParameter.LOGIN).value}
 <div class="col-lg-7 mx-auto">
     <form id="login_form" class="needs-validation" method="post" action="${pageContext.request.contextPath}/controller?command=login" novalidate>
         <div class="form-group input-group">
