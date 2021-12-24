@@ -12,7 +12,7 @@ public interface UserService {
                        String telegram, String login, String password);
     UserHash generateUserHash(User user);
     String getUserFio(User user); //todo make it using taglib in jstl, create custom one
-    boolean authorize(User user, HttpServletRequest request, HttpServletResponse response, boolean remember);
+    boolean authorize(User user, HttpServletRequest request, HttpServletResponse response, boolean remember, boolean manually);
     Optional<User> findUserByLogin(String login);
     Optional<User> findUserByCredentialKey(String key);
     boolean changeLocale(String lang, HttpServletResponse response);

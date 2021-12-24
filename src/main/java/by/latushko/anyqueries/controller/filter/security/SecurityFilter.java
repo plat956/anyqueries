@@ -48,7 +48,7 @@ public class SecurityFilter implements Filter {
                         String tokenSource = userService.getCredentialTokenSource(user.get());
                         PasswordEncoder passwordEncoder = BCryptPasswordEncoder.getInstance();
                         if(passwordEncoder.check(tokenSource, credentialToken.get())) {
-                            boolean authorized = userService.authorize(user.get(), request, response, false); //todo think about not to send req & resp to the service
+                            boolean authorized = userService.authorize(user.get(), request, response, false, false); //todo think about not to send req & resp to the service
                             if (authorized) {
                                 principal = user.get();
                             }

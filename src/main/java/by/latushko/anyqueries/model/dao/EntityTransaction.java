@@ -14,7 +14,7 @@ public class EntityTransaction implements AutoCloseable {
     private Connection connection;
     private BaseDao[] daoStorage;
 
-    public void begin(BaseDao... daos) throws EntityTransactionException {
+    public EntityTransaction(BaseDao... daos) throws EntityTransactionException {
         if(daos == null || daos.length == 0) {
             logger.error("Unable to begin transaction with no given dao");
             throw new EntityTransactionException("Unable to begin transaction with no given dao");

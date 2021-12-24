@@ -1,6 +1,7 @@
 package by.latushko.anyqueries.service.impl;
 
 import by.latushko.anyqueries.controller.command.identity.CookieName;
+import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
 import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.exception.EntityTransactionException;
 import by.latushko.anyqueries.model.dao.BaseDao;
@@ -16,6 +17,8 @@ import by.latushko.anyqueries.util.http.CookieHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -23,9 +26,10 @@ import java.util.Optional;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_KEY;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_TOKEN;
 import static by.latushko.anyqueries.util.AppProperty.APP_ACTIVATION_LINK_ALIVE_HOURS;
-import static by.latushko.anyqueries.util.AppProperty.APP_COOKIE_ALIVE_DAYS;
+import static by.latushko.anyqueries.util.AppProperty.APP_COOKIE_ALIVE_SECONDS;
 
 public class UserServiceImpl implements UserService {
+    private static final Logger logger = LogManager.getLogger();
     private static final String ACTIVATION_HASH_ADDITIONAL_SALT = "#@бЫрвалГ?";
     private static final String CREDENTIAL_KEY_ADDITIONAL_SALT = "A3>rE(wY%.LA)4V!";
     private static final String CREDENTIAL_TOKEN_ADDITIONAL_SALT = ";{(NP3yE4aG4fkZT";
@@ -79,15 +83,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean authorize(User user, HttpServletRequest request, HttpServletResponse response, boolean remember) {
+    public boolean authorize(User user, HttpServletRequest request, HttpServletResponse response, boolean remember, boolean manually) {
         //fixme how to design this method without request&response references???
+        if(manually) {
+            user.setLastLoginDate(LocalDateTime.now());
+            BaseDao userDao = new UserDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+                try {
+                    userDao.update(user);
+                    transaction.commit();
+                } catch (EntityTransactionException | DaoException e) {
+                    transaction.rollback();
+                    return false;
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Something went wrong during retrieving user by login", e);
+            }
+        }
+
         HttpSession session = request.getSession();
-        session.setAttribute("principal", user);
+        session.setAttribute(SessionAttribute.PRINCIPAL, user);
+
         if(remember) {
-            Integer cookieMaxAge = APP_COOKIE_ALIVE_DAYS * 24 * 60 * 60;
-            CookieHelper.addCookie(response, CREDENTIAL_KEY, user.getCredentialKey(), cookieMaxAge);
+            CookieHelper.addCookie(response, CREDENTIAL_KEY, user.getCredentialKey(), APP_COOKIE_ALIVE_SECONDS);
             String tokenSource = getCredentialTokenSource(user);
-            CookieHelper.addCookie(response, CREDENTIAL_TOKEN, passwordEncoder.encode(tokenSource), cookieMaxAge);
+            CookieHelper.addCookie(response, CREDENTIAL_TOKEN, passwordEncoder.encode(tokenSource), APP_COOKIE_ALIVE_SECONDS);
         }
         return true;
     }
@@ -97,16 +117,15 @@ public class UserServiceImpl implements UserService {
         BaseDao userDao = new UserDaoImpl();
 
         Optional<User> userOptional = Optional.empty();
-        try (EntityTransaction transaction = new EntityTransaction()) {
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
-                transaction.begin(userDao);
                 userOptional = ((UserDao)userDao).findUserByLogin(login);
                 transaction.commit();
             } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            //todo err log
+            logger.error("Something went wrong during retrieving user by login", e);
         }
         return userOptional;
     }
@@ -116,24 +135,22 @@ public class UserServiceImpl implements UserService {
         BaseDao userDao = new UserDaoImpl();
 
         Optional<User> userOptional = Optional.empty();
-        try (EntityTransaction transaction = new EntityTransaction()) {
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
-                transaction.begin(userDao);
                 userOptional = ((UserDao)userDao).findUserByCredentialKey(key);
                 transaction.commit();
             } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            //todo err log
+            logger.error("Something went wrong during retrieving user by credential key", e);
         }
         return userOptional;
     }
 
     @Override
     public boolean changeLocale(String lang, HttpServletResponse response) {
-        Integer cookieMaxAge = APP_COOKIE_ALIVE_DAYS * 24 * 60 * 60;
-        CookieHelper.addCookie(response, CookieName.LANG, lang, cookieMaxAge);
+        CookieHelper.addCookie(response, CookieName.LANG, lang, APP_COOKIE_ALIVE_SECONDS);
         return true;
     }
 

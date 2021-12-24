@@ -29,5 +29,12 @@
                 });
             </script>
         </c:when>
+        <c:when test="${message.type == 'TOAST'}">
+            <script type="text/javascript">
+                $(function () {
+                    toasts.show("${message.level.mode}", "${message.text}", "${message.notice}");
+                });
+            </script>
+        </c:when>
     </c:choose>
 </c:if>

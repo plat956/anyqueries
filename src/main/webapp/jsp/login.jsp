@@ -26,7 +26,10 @@
             </div>
         </div>
         <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input login-checker" data-toggle="switchbutton" id="rememberMe" checked data-size="sm">
+            <label class="switch">
+                <input type="checkbox" class="form-check-input" data-toggle="switchbutton" name="rememberMe" id="rememberMe" checked>
+                <span class="slider round"></span>
+            </label>
             <label class="form-check-label" for="rememberMe">Запомнить меня</label>
         </div>
         <div class="form-group">

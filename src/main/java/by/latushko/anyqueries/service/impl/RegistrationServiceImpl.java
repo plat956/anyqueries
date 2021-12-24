@@ -1,5 +1,6 @@
 package by.latushko.anyqueries.service.impl;
 
+import by.latushko.anyqueries.controller.command.identity.PagePath;
 import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.exception.EntityTransactionException;
@@ -13,6 +14,8 @@ import by.latushko.anyqueries.model.entity.UserHash;
 import by.latushko.anyqueries.service.RegistrationService;
 import by.latushko.anyqueries.service.UserService;
 import by.latushko.anyqueries.util.mail.MailSender;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -26,11 +29,13 @@ import java.util.Optional;
 import static by.latushko.anyqueries.util.AppProperty.APP_HOST;
 
 public class RegistrationServiceImpl implements RegistrationService {
+    private static final Logger logger = LogManager.getLogger();
     private static final String VELOCITY_PROPERTIES_LOADER_CLASS = "classpath.resource.loader.class";
     private static final String VELOCITY_RESOURCES_PATH = "classpath";
     private static final String VELOCITY_ACTIVATION_TEMPLATE_PATH = "/template/mail/activation.vm";
+    private static final String ACTIVATION_EMAIL_SUBJECT = "Account activation";
     private static RegistrationServiceImpl instance;
-    private UserService userService = UserServiceImpl.getInstance();
+    private final UserService userService = UserServiceImpl.getInstance();
 
     private RegistrationServiceImpl() {
     }
@@ -47,10 +52,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                                 String email, String telegram, String login, String password) {
         BaseDao userDao = new UserDaoImpl();
 
-        try (EntityTransaction transaction = new EntityTransaction()) {
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
-                transaction.begin(userDao);
-
                 User user = userService.createNewUser(firstName, lastName, middleName, email, telegram, login, password);
                 userDao.create(user);
 
@@ -67,7 +70,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            //todo error log
+            logger.error("Failed to register user", e);
         }
         return false;
     }
@@ -76,10 +79,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     public boolean activateUserByHash(String hash) {
         BaseDao userDao = new UserDaoImpl();
 
-        try (EntityTransaction transaction = new EntityTransaction()) {
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
-                transaction.begin(userDao);
-
                 LocalDateTime validDate = LocalDateTime.now();
                 Optional<User> userOptional = ((UserDao)userDao).findInactiveUserByHashAndHashIsNotExpired(hash, validDate);
 
@@ -97,7 +98,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            //todo err log
+            logger.error("Failed to activate user by hash", e);
         }
 
         return false;
@@ -107,10 +108,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     public boolean activateUserByTelegramAccount(String account) {
         BaseDao userDao = new UserDaoImpl();
 
-        try (EntityTransaction transaction = new EntityTransaction()) {
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
-                transaction.begin(userDao);
-
                 Optional<User> userOptional = ((UserDao)userDao).findInactiveUserByTelegram(account);
 
                 if (userOptional.isPresent()) {
@@ -126,7 +125,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            //todo err log
+            logger.error("Failed to activate user by telegram account", e);
         }
 
         return false;
@@ -134,9 +133,8 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private void sendActivationEmail(User user, UserHash userHash) throws MailSenderException {
         String messageBody = compileActivationEmail(user, userHash);
-
         MailSender sender = MailSender.getInstance();
-        sender.send(user.getEmail(), "Account activation", messageBody);
+        sender.send(user.getEmail(), ACTIVATION_EMAIL_SUBJECT, messageBody);
     }
 
     private String compileActivationEmail(User user, UserHash userHash) {
@@ -146,12 +144,12 @@ public class RegistrationServiceImpl implements RegistrationService {
         ve.init();
         Template t = ve.getTemplate(VELOCITY_ACTIVATION_TEMPLATE_PATH);
         VelocityContext context = new VelocityContext();
-        context.put("title", "Welcome to ANY-QUERIES.BY"); //todo: read product.domain from app.props file
+        context.put("title", "Welcome to ANY-QUERIES.BY"); //todo: read website from app.props file or context-param
 
         String fio = userService.getUserFio(user);
         context.put("text", "Dear " + fio + ", you've sent a registration request. Please, press the button below to activate your account");
         context.put("buttonText", "Activate");
-        context.put("buttonLink", APP_HOST + "/controller?command=activate_user&hash=" + userHash.getHash());
+        context.put("buttonLink", APP_HOST + PagePath.ACTIVATE_URL + "&" + RequestParameter.HASH + "=" + userHash.getHash());
 
         StringWriter writer = new StringWriter();
         t.merge(context, writer);

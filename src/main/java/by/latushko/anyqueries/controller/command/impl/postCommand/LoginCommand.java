@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.*;
+import static by.latushko.anyqueries.controller.command.ResponseMessage.Type.TOAST;
 
 public class LoginCommand implements Command {
     @Override
@@ -32,9 +33,10 @@ public class LoginCommand implements Command {
                 message = switch (user.get().getStatus()) {
                     case ACTIVE -> {
                         boolean remember = true; //todo - read "remember me" checkbox value from form parameters
-                        boolean result = userService.authorize(user.get(), request, response, remember);
+                        boolean result = userService.authorize(user.get(), request, response, remember, true);
                         if(result) {
-                            yield new ResponseMessage(INFO, "Вы успешно вошли в учетную запись");
+                            String fio = userService.getUserFio(user.get());
+                            yield new ResponseMessage(TOAST, SUCCESS, "Вход выполнен", "Добро пожаловать, " + fio);
                         } else {
                             yield new ResponseMessage(DANGER, "При входе возникла непредвиденная ошибка");
                         }
@@ -47,6 +49,6 @@ public class LoginCommand implements Command {
         }
 
         request.getSession().setAttribute(SessionAttribute.MESSAGE, message);
-        return new PreparedResponse(PagePath.LOGIN_URL, PreparedResponse.RoutingType.REDIRECT);
+        return new PreparedResponse(PagePath.MAIN_URL, PreparedResponse.RoutingType.REDIRECT);
     }
 }
