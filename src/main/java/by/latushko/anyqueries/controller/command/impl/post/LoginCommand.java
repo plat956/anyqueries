@@ -57,7 +57,7 @@ public class LoginCommand implements Command {
             }
 
             request.getSession().setAttribute(SessionAttribute.MESSAGE, message);
-            return new CommandResult(PagePath.MAIN_URL, CommandResult.RoutingType.REDIRECT);
+            return new CommandResult(PagePath.MAIN_URL, CommandResult.RoutingType.REDIRECT); //todo при ошибке на логин а не на мэйн редирект
         } else {
             request.getSession().setAttribute(SessionAttribute.VALIDATION_RESULT, validationResult);
             return new CommandResult(PagePath.LOGIN_URL, CommandResult.RoutingType.REDIRECT);

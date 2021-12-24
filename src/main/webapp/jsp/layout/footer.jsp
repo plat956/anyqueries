@@ -56,6 +56,7 @@
                             event.preventDefault();
                             event.stopPropagation();
                         }
+                        $('.invalid-feedback-backend').remove();
                         form.classList.add('was-validated');
                     }, false);
                 });

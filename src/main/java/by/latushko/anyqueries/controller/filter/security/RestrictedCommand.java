@@ -25,8 +25,7 @@ public final class RestrictedCommand {
         if (commandType != null && role != null && commands.containsKey(commandType)) {
             Set<User.Role> roles = commands.get(commandType);
             return roles.stream().anyMatch(r -> r.equals(role));
-        } else {
-            return true;
         }
+        return true;
     }
 }

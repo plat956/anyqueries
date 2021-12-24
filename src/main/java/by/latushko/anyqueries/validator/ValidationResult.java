@@ -10,26 +10,40 @@ public class ValidationResult {
         return fields.get(field);
     }
 
-    public void add(String field, String value, boolean status, String message) {
-        fields.put(field, new Field(status, value, message));
+    public void add(String field, String value, String message) {
+        fields.put(field, new Field(value, message));
     }
 
+    public void add(String field, String value) {
+        fields.put(field, new Field(value));
+    }
+
+
     public boolean getStatus() {
-        return fields.values().stream().noneMatch(f -> !f.getStatus());
+        return fields.values().stream().noneMatch(f -> f.getStatus().equals(Field.Status.INVALID));
     }
 
     public class Field {
-        private Boolean status;
-        private String value;
-        private String message;
-
-        public Field(boolean status, String value, String message) {
-            this.status = status;
-            this.value = value;
-            this.message = message;
+        public enum Status {
+            VALID, INVALID;
         }
 
-        public Boolean getStatus() {
+        private String value;
+        private Status status;
+        private String message;
+
+        public Field(String value) {
+            this.value = value;
+            this.status = Status.VALID;
+        }
+
+        public Field(String value, String message) {
+            this.value = value;
+            this.message = message;
+            this.status = Status.INVALID;
+        }
+
+        public Status getStatus() {
             return status;
         }
 
