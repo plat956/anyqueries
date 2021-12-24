@@ -21,7 +21,7 @@
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="Имя может состоять только из букв в любом регистре, максимальная длина 25 символов">
             <div class="invalid-feedback">
-                Заполните поле корректно
+                <fmt:message key="label.wrong-input" />
             </div>
         </div>
         <div class="form-group input-group">
@@ -32,7 +32,7 @@
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="Фамилия может состоять только из букв в любом регистре, максимальная длина 25 символов">
             <div class="invalid-feedback">
-                Заполните поле корректно
+                <fmt:message key="label.wrong-input" />
             </div>
         </div>
         <div class="form-group input-group">
@@ -43,7 +43,7 @@
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="Отчество может состоять только из букв в любом регистре, максимальная длина 25 символов">
             <div class="invalid-feedback">
-                Заполните поле корректно
+                <fmt:message key="label.wrong-input" />
             </div>
         </div>
         <div class="form-group input-group">
@@ -61,7 +61,7 @@
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="Пример: user@mail.com, максимальная длина 100 символов">
             <div class="invalid-feedback">
-                Заполните поле корректно
+                <fmt:message key="label.wrong-input" />
             </div>
         </div>
         <div class="form-group input-group">
@@ -72,7 +72,7 @@
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="Допустимые символы a-z, 0-9, _, длина от 5 до 32 символов">
             <div class="invalid-feedback">
-                Заполните поле корректно
+                <fmt:message key="label.wrong-input" />
             </div>
         </div>
         <div class="form-group input-group">
@@ -83,7 +83,7 @@
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="Логин может содержать только латинские буквы в любом регистре и цифры, максимальная длина 20 символов">
             <div class="invalid-feedback">
-                Заполните поле корректно
+                <fmt:message key="label.wrong-input" />
             </div>
         </div>
         <div class="form-group input-group">
@@ -94,7 +94,7 @@
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="Пароль должен содержать от 6 до 25 символов, хотя бы 1 цифру и 1 заглавную букву">
             <div class="invalid-feedback">
-                Заполните поле корректно
+                <fmt:message key="label.wrong-input" />
             </div>
         </div>
         <div class="form-group input-group">
@@ -105,7 +105,7 @@
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="Повторите введенный выше пароль">
             <div class="invalid-feedback">
-                Заполните поле корректно
+                <fmt:message key="label.wrong-input" />
             </div>
         </div>
         <div class="form-group">
