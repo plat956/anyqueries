@@ -95,7 +95,7 @@
         </div>
         <div class="form-group form-check">
             <label class="switch">
-                <input type="checkbox" class="form-check-input" data-toggle="switchbutton" name="send_link" id="sendLink" onchange="registration.sendLink(this)" checked>
+                <input type="checkbox" class="form-check-input" data-toggle="switchbutton" name="send_link" id="sendLink" onchange="registration.sendLink(this)" >
                 <span class="slider round"></span>
             </label>
             <label class="form-check-label" for="sendLink"><fmt:message key="label.registration.sendConfirmation" /></label>
