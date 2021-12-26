@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_KEY;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_TOKEN;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.INACTIVE_PRINCIPAL;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
 
 @WebFilter(filterName = "securityFilter", urlPatterns = "/controller")
@@ -28,8 +29,10 @@ public class SecurityFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+        String command = request.getParameter(RequestParameter.COMMAND);
+        Optional<CommandType> commandType = CommandType.getByName(command);
 
-        if (request.getParameter(RequestParameter.COMMAND) != null) {
+        if (commandType.isPresent()) {
             HttpSession session = request.getSession();
 
             User principal = null;
@@ -54,15 +57,14 @@ public class SecurityFilter implements Filter {
                 }
             }
 
-            User.Role currentRole = User.Role.GUEST;
+            AccessRole currentRole = AccessRole.GUEST;
             if (principal != null) {
-                currentRole = principal.getRole();
+                currentRole = AccessRole.valueOf(principal.getRole().name());
+            } else if(session.getAttribute(INACTIVE_PRINCIPAL) != null) {
+                currentRole = AccessRole.INACTIVE_USER;
             }
 
-            String command = request.getParameter(RequestParameter.COMMAND);
-            Optional<CommandType> commandType = CommandType.getByName(command);
-
-            if (commandType.isPresent() && !RestrictedCommand.hasAccess(commandType.get(), currentRole)) {
+            if (!RestrictedCommand.hasAccess(commandType.get(), currentRole)) {
                 response.sendRedirect(PagePath.MAIN_URL);
                 return;
             }

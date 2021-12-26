@@ -1,6 +1,5 @@
 package by.latushko.anyqueries.service.impl;
 
-import by.latushko.anyqueries.controller.command.identity.CookieName;
 import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.exception.EntityTransactionException;
 import by.latushko.anyqueries.model.dao.BaseDao;
@@ -12,8 +11,6 @@ import by.latushko.anyqueries.model.entity.UserHash;
 import by.latushko.anyqueries.service.UserService;
 import by.latushko.anyqueries.util.encryption.PasswordEncoder;
 import by.latushko.anyqueries.util.encryption.impl.BCryptPasswordEncoder;
-import by.latushko.anyqueries.util.http.CookieHelper;
-import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static by.latushko.anyqueries.util.AppProperty.APP_ACTIVATION_LINK_ALIVE_HOURS;
-import static by.latushko.anyqueries.util.AppProperty.APP_COOKIE_ALIVE_SECONDS;
 
 public class UserServiceImpl implements UserService {
     private static final Logger logger = LogManager.getLogger();
@@ -100,12 +96,6 @@ public class UserServiceImpl implements UserService {
             logger.error("Something went wrong during retrieving user by credential key", e);
         }
         return userOptional;
-    }
-
-    @Override
-    public boolean changeLocale(String lang, HttpServletResponse response) {
-        CookieHelper.addCookie(response, CookieName.LANG, lang, APP_COOKIE_ALIVE_SECONDS);
-        return true;
     }
 
     @Override

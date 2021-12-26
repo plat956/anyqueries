@@ -11,11 +11,14 @@ var forms = {
 }
 
 var registration = {
-    chooseMode: function (value) {
-        $('.notice-confirmation').hide();
-        $('#' + value + '-confirmation').fadeIn();
-        $('.input-confirmation').prop('required',false);
-        $('#' + value).prop('required',true);
+    sendLink: function (el) {
+        if($(el).is(':checked')) {
+            $('#email').prop('required', true);
+            $('#telegram').prop('required', false);
+        } else {
+            $('#email').prop('required', false);
+            $('#telegram').prop('required', true);
+        }
     }
 }
 

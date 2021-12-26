@@ -21,7 +21,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
-import org.checkerframework.checker.nullness.Opt;
 
 import java.io.StringWriter;
 import java.time.LocalDateTime;
@@ -48,7 +47,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public boolean registerUser(String firstName, String lastName, String middleName, String confirmationType,
+    public boolean registerUser(String firstName, String lastName, String middleName, boolean sendLink,
                                 String email, String telegram, String login, String password) {
         BaseDao userDao = new UserDaoImpl();
 
@@ -57,7 +56,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 User user = userService.createNewUser(firstName, lastName, middleName, email, telegram, login, password);
                 userDao.create(user);
 
-                if (confirmationType.equals(RequestParameter.CONFIRMATION_TYPE_EMAIL)) {
+                if (sendLink) {
                     UserHash userHash = userService.generateUserHash(user);
                     ((UserDao) userDao).createUserHash(userHash);
 
@@ -117,6 +116,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                     User user = userOptional.get();
                     user.setStatus(User.Status.ACTIVE);
                     userDao.update(user);
+                    ((UserDao)userDao).deleteUserHashByUserId(user.getId());
                     transaction.commit();
                     return true;
                 }

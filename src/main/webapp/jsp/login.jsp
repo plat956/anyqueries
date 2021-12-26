@@ -11,15 +11,17 @@
             <div class="input-group-prepend">
                 <span class="input-group-text"> <i class="fa fa-user"></i> </span>
             </div>
-            <input name="login" class="form-control<ft:field-class-detector status="${validationResult.getField(RequestParameter.LOGIN).status}" />"
+            <input name="login" class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.LOGIN)}" />"
                    placeholder="<fmt:message key="label.login.placeholder" />" type="text" required pattern="[A-Za-z0-9]{1,25}" maxlength="20"
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="<fmt:message key="label.login.info" />"
-                   value="${validationResult.getField(RequestParameter.LOGIN).value}"
+                   value="${validationResult.getValue(RequestParameter.LOGIN)}"
             >
-            <div class="invalid-feedback-backend">
-                ${validationResult.getField(RequestParameter.LOGIN).message}
-            </div>
+            <c:if test="${!empty validationResult.getMessage(RequestParameter.LOGIN)}">
+                <div class="invalid-feedback-backend">
+                    <fmt:message key="${validationResult.getMessage(RequestParameter.LOGIN)}" />
+                </div>
+            </c:if>
             <div class="invalid-feedback">
                 <fmt:message key="label.wrong-input" />
             </div>
@@ -28,15 +30,17 @@
             <div class="input-group-prepend">
                 <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
             </div>
-            <input class="form-control<ft:field-class-detector status="${validationResult.getField(RequestParameter.PASSWORD).status}" />"
+            <input class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.PASSWORD)}" />"
                    placeholder="<fmt:message key="label.password.placeholder" />" type="password" name="password" id="password" required pattern="(?=.*[0-9])(?=.*[A-ZА-Я])\S{6,}" maxlength="25"
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="<fmt:message key="label.password.info" />"
-                   value="${validationResult.getField(RequestParameter.PASSWORD).value}"
+                   value="${validationResult.getValue(RequestParameter.PASSWORD)}"
             >
-            <div class="invalid-feedback-backend">
-                ${validationResult.getField(RequestParameter.PASSWORD).message}
-            </div>
+            <c:if test="${!empty validationResult.getMessage(RequestParameter.PASSWORD)}">
+                <div class="invalid-feedback-backend">
+                    <fmt:message key="${validationResult.getMessage(RequestParameter.PASSWORD)}" />
+                </div>
+            </c:if>
             <div class="invalid-feedback">
                 <fmt:message key="label.wrong-input" />
             </div>

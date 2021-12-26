@@ -43,6 +43,12 @@
                         </div>
                     </li>
                 </c:when>
+                <c:when test="${!empty inactivePrincipal}">
+                    <li class="nav-item">
+                        <form id="logout_form" action="${pageContext.request.contextPath}/controller?command=logout" method="post"></form>
+                        <a class="nav-link" href="#" onclick="$('#logout_form').submit();"><fmt:message key="label.logout" /></a>
+                    </li>
+                </c:when>
                 <c:otherwise>
                     <li class="nav-item">
                         <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=login_page"><fmt:message key="label.login" /></a>

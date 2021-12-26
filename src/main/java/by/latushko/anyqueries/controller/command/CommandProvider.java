@@ -1,10 +1,7 @@
 package by.latushko.anyqueries.controller.command;
 
 import by.latushko.anyqueries.controller.command.impl.get.*;
-import by.latushko.anyqueries.controller.command.impl.post.ChangeLocaleCommand;
-import by.latushko.anyqueries.controller.command.impl.post.LoginCommand;
-import by.latushko.anyqueries.controller.command.impl.post.LogoutCommand;
-import by.latushko.anyqueries.controller.command.impl.post.RegistrationCommand;
+import by.latushko.anyqueries.controller.command.impl.post.*;
 import by.latushko.anyqueries.util.http.RequestMethod;
 
 import java.util.EnumMap;
@@ -19,6 +16,7 @@ public class CommandProvider {
     private CommandProvider() {
         getCommands.put(CommandType.LOGIN_PAGE, new LoginPageCommand());
         getCommands.put(CommandType.REGISTRATION_PAGE, new RegistrationPageCommand());
+        getCommands.put(CommandType.REPEAT_ACTIVATION_PAGE, new RepeatActivationPageCommand());
         getCommands.put(CommandType.ACTIVATE_USER, new ActivateUserCommand());
         getCommands.put(CommandType.MAIN_PAGE, new MainPageCommand());
         getCommands.put(CommandType.LIVE_SEARCH, new LiveSearchCommand());
@@ -27,6 +25,7 @@ public class CommandProvider {
         postCommands.put(CommandType.LOGOUT, new LogoutCommand());
         postCommands.put(CommandType.REGISTRATION, new RegistrationCommand());
         postCommands.put(CommandType.CHANGE_LOCALE, new ChangeLocaleCommand());
+        getCommands.put(CommandType.REPEAT_ACTIVATION, new RepeatActivationCommand());
     }
 
     public static CommandProvider getInstance() {

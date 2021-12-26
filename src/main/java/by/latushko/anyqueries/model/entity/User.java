@@ -7,7 +7,7 @@ public class User extends BaseEntity<Long> {
         ACTIVE, INACTIVE, BANNED;
     }
     public enum Role {
-        ADMIN, USER, MODERATOR, GUEST;
+        ADMIN, USER, MODERATOR;
     }
     private String firstName;
     private String lastName;

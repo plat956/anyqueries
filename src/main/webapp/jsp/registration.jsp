@@ -3,14 +3,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="page_title_label" value="label.registration" scope="request" />
 <jsp:include page="layout/header.jsp" />
-<div class="reg-confirm-block">
-    <div id="telegram-confirmation" class="notice-confirmation alert alert-warning" style="display: none">
-        <fmt:message key="message.telegram.warning.part1" /> <a href="https://t.me/${telegramBot}" target="_blank"><strong>@${telegramBot}</strong></a>. <fmt:message key="message.telegram.warning.part2" /> ${initParam['website']} <fmt:message key="message.telegram.warning.part3" /> "${activationCommand}"
-    </div>
-    <div id="email-confirmation" class="notice-confirmation alert alert-warning" style="display: none">
-        <fmt:message key="message.email.warning" />
-    </div>
-</div>
 <div class="col-lg-7 mx-auto">
     <form id="reg_form" class="needs-validation" method="post" action="${pageContext.request.contextPath}/controller?command=registration" novalidate>
         <div class="form-group input-group">
@@ -47,17 +39,10 @@
             </div>
         </div>
         <div class="form-group input-group">
-            <select name="confirmation_type" class="form-control" required onchange="registration.chooseMode(this.value)">
-                <option value="" selected disabled data-content='<i class="fa fa-check-square-o"></i> <fmt:message key="label.confirmationType.placeholder" />'><fmt:message key="label.confirmationType.placeholder" /></option>
-                <option value="telegram" data-content='<i class="fab fa-telegram"></i> <fmt:message key="label.telegramBot" />'><fmt:message key="label.telegramBot" /></option>
-                <option value="email" data-content='<i class="fa fa-envelope"></i> Email'><fmt:message key="label.email" /></option>
-            </select>
-        </div>
-        <div class="form-group input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
             </div>
-            <input name="email" id="email" class="form-control input-confirmation" placeholder="<fmt:message key="label.email.placeholder" />" type="email" pattern="[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,25}$" maxlength="100"
+            <input name="email" id="email" class="form-control input-confirmation" placeholder="<fmt:message key="label.email.placeholder" />" type="email" pattern="[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,25}$" maxlength="100" required
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="<fmt:message key="label.email.info" />">
             <div class="invalid-feedback">
@@ -107,6 +92,13 @@
             <div class="invalid-feedback">
                 <fmt:message key="label.wrong-input" />
             </div>
+        </div>
+        <div class="form-group form-check">
+            <label class="switch">
+                <input type="checkbox" class="form-check-input" data-toggle="switchbutton" name="send_link" id="sendLink" onchange="registration.sendLink(this)" checked>
+                <span class="slider round"></span>
+            </label>
+            <label class="form-check-label" for="sendLink"><fmt:message key="label.registration.sendConfirmation" /></label>
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary btn-block" id="btnSubmit">

@@ -41,6 +41,7 @@ public class ActivateUserCommand implements Command {
                     manager.getMessage(MessageKey.MESSAGE_REGISTRATION_SUCCESS_NOTICE));
 
             UserService userService = UserServiceImpl.getInstance();
+            session.removeAttribute(SessionAttribute.INACTIVE_PRINCIPAL);
             session.setAttribute(SessionAttribute.PRINCIPAL, activatedUser.get());
             userService.updateLastLoginDate(activatedUser.get());
 

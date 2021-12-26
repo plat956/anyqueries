@@ -27,6 +27,7 @@ import static by.latushko.anyqueries.controller.command.ResponseMessage.Type.POP
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Type.TOAST;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_KEY;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_TOKEN;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.INACTIVE_PRINCIPAL;
 import static by.latushko.anyqueries.util.AppProperty.APP_COOKIE_ALIVE_SECONDS;
 
 public class LoginCommand implements Command {
@@ -46,7 +47,7 @@ public class LoginCommand implements Command {
             String userLang = CookieHelper.readCookie(request, CookieName.LANG).orElse(null);
             MessageManager manager = MessageManager.getManager(userLang);
             Optional<User> user = userService.findIfExistsByLoginAndPassword(login, password);
-            ResponseMessage message = new ResponseMessage(DANGER, manager.getMessage(MessageKey.MESSAGE_LOGIN_WRONG));
+            ResponseMessage message;
             if (user.isPresent()) {
                 message = switch (user.get().getStatus()) {
                     case ACTIVE -> {
@@ -70,10 +71,23 @@ public class LoginCommand implements Command {
                                     manager.getMessage(MessageKey.MESSAGE_LOGIN_WELCOME, user.get().getFio()));
                         }
                     }
-                    case INACTIVE -> new ResponseMessage(WARNING, manager.getMessage(MessageKey.MESSAGE_LOGIN_INACTIVE));
-                    case BANNED -> new ResponseMessage(DANGER, manager.getMessage(MessageKey.MESSAGE_LOGIN_BANNED));
-                    default -> new ResponseMessage(DANGER, manager.getMessage(MessageKey.MESSAGE_LOGIN_FAIL));
+                    case INACTIVE -> {
+                        session.setAttribute(INACTIVE_PRINCIPAL, user.get());
+                        redirectUrl = PagePath.REPEAT_ACTIVATION_URL;
+                        yield null;
+                    }
+                    case BANNED -> {
+                        session.setAttribute(SessionAttribute.VALIDATION_RESULT, validationResult);
+                        yield new ResponseMessage(DANGER, manager.getMessage(MessageKey.MESSAGE_LOGIN_BANNED));
+                    }
+                    default -> {
+                        session.setAttribute(SessionAttribute.VALIDATION_RESULT, validationResult);
+                        yield new ResponseMessage(DANGER, manager.getMessage(MessageKey.MESSAGE_LOGIN_FAIL));
+                    }
                 };
+            } else {
+                message = new ResponseMessage(DANGER, manager.getMessage(MessageKey.MESSAGE_LOGIN_WRONG));
+                session.setAttribute(SessionAttribute.VALIDATION_RESULT, validationResult);
             }
 
             session.setAttribute(SessionAttribute.MESSAGE, message);

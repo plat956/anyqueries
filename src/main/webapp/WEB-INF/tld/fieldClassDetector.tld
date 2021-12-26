@@ -14,7 +14,7 @@
         <tag-class>by.latushko.anyqueries.util.tag.FieldClassDetectorTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
-            <name>status</name>
+            <name>field</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
