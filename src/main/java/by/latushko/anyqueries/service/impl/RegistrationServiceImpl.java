@@ -33,7 +33,6 @@ public class RegistrationServiceImpl implements RegistrationService {
     private static final String VELOCITY_PROPERTIES_LOADER_CLASS = "classpath.resource.loader.class";
     private static final String VELOCITY_RESOURCES_PATH = "classpath";
     private static final String VELOCITY_ACTIVATION_TEMPLATE_PATH = "/template/mail/activation.vm";
-    private static final String ACTIVATION_EMAIL_SUBJECT = "Account activation";
     private static RegistrationServiceImpl instance;
     private final UserService userService = UserServiceImpl.getInstance();
 
@@ -134,7 +133,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private void sendActivationEmail(User user, UserHash userHash) throws MailSenderException {
         String messageBody = compileActivationEmail(user, userHash);
         MailSender sender = MailSender.getInstance();
-        sender.send(user.getEmail(), ACTIVATION_EMAIL_SUBJECT, messageBody);
+        sender.send(user.getEmail(), "Account activation", messageBody);
     }
 
     private String compileActivationEmail(User user, UserHash userHash) {
@@ -145,9 +144,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         Template t = ve.getTemplate(VELOCITY_ACTIVATION_TEMPLATE_PATH);
         VelocityContext context = new VelocityContext();
         context.put("title", "Welcome to ANY-QUERIES.BY"); //todo: read website from app.props file or context-param
-
-        String fio = userService.getUserFio(user);
-        context.put("text", "Dear " + fio + ", you've sent a registration request. Please, press the button below to activate your account");
+        context.put("text", "Dear " + user.getFio() + ", you've sent a registration request. Please, press the button below to activate your account");
         context.put("buttonText", "Activate");
         context.put("buttonLink", APP_HOST + PagePath.ACTIVATE_URL + "&" + RequestParameter.HASH + "=" + userHash.getHash());
 

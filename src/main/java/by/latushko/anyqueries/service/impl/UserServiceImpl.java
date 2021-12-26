@@ -72,17 +72,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getUserFio(User user) {
-        String firstName = user.getFirstName();
-        String lastName = user.getLastName();
-        String middleName = user.getMiddleName();
-        String fio = lastName.substring(0, 1).toUpperCase() + lastName.substring(1) + " "
-                + firstName.substring(0, 1).toUpperCase() + ". "
-                + middleName.substring(0, 1).toUpperCase();
-        return fio;
-    }
-
-    @Override
     public boolean authorize(User user, HttpServletRequest request, HttpServletResponse response, boolean remember, boolean manually) {
         //fixme how to design this method without request&response references???
         if(manually) {

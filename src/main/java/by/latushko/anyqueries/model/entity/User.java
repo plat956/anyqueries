@@ -121,6 +121,15 @@ public class User extends BaseEntity<Long> {
         this.role = role;
     }
 
+    public String getFio() {
+        String firstName = this.getFirstName();
+        String lastName = this.getLastName();
+        String middleName = this.getMiddleName();
+        return lastName.substring(0, 1).toUpperCase() + lastName.substring(1) + " "
+                + firstName.substring(0, 1).toUpperCase() + ". "
+                + middleName.substring(0, 1).toUpperCase() + ".";
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

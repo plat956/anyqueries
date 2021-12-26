@@ -20,6 +20,11 @@ public enum MessageManager {
         return bundle.getString(key);
     }
 
+    public String getMessage(String key, Object... variables) {
+        String result = bundle.getString(key);
+        return String.format(result, variables);
+    }
+
     public static MessageManager getManager(String lang) {
         if(lang == null) {
             return RU;

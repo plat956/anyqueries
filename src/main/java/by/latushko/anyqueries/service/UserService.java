@@ -11,7 +11,6 @@ public interface UserService {
     User createNewUser(String firstName, String lastName, String middleName, String email,
                        String telegram, String login, String password);
     UserHash generateUserHash(User user);
-    String getUserFio(User user); //todo make it using taglib in jstl, create custom one
     boolean authorize(User user, HttpServletRequest request, HttpServletResponse response, boolean remember, boolean manually);
     Optional<User> findUserByLogin(String login);
     Optional<User> findUserByCredentialKey(String key);

@@ -3,6 +3,7 @@ package by.latushko.anyqueries.controller.command.impl.post;
 import by.latushko.anyqueries.controller.command.Command;
 import by.latushko.anyqueries.controller.command.CommandResult;
 import by.latushko.anyqueries.controller.command.ResponseMessage;
+import by.latushko.anyqueries.controller.command.identity.CookieName;
 import by.latushko.anyqueries.controller.command.identity.PagePath;
 import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
@@ -11,6 +12,9 @@ import by.latushko.anyqueries.service.UserService;
 import by.latushko.anyqueries.service.impl.UserServiceImpl;
 import by.latushko.anyqueries.util.encryption.PasswordEncoder;
 import by.latushko.anyqueries.util.encryption.impl.BCryptPasswordEncoder;
+import by.latushko.anyqueries.util.http.CookieHelper;
+import by.latushko.anyqueries.util.i18n.MessageKey;
+import by.latushko.anyqueries.util.i18n.MessageManager;
 import by.latushko.anyqueries.validator.FormValidator;
 import by.latushko.anyqueries.validator.ValidationResult;
 import by.latushko.anyqueries.validator.impl.LoginFormValidator;
@@ -34,8 +38,10 @@ public class LoginCommand implements Command {
         FormValidator validator = new LoginFormValidator();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
         if(validationResult.getStatus()) {
+            String userLang = CookieHelper.readCookie(request, CookieName.LANG).orElse(null);
+            MessageManager manager = MessageManager.getManager(userLang);
             Optional<User> user = userService.findUserByLogin(login);
-            ResponseMessage message = new ResponseMessage(INFO, "Неверные данные аутентификации");
+            ResponseMessage message = new ResponseMessage(DANGER, manager.getMessage(MessageKey.MESSAGE_LOGIN_WRONG));
             if (user.isPresent()) {
                 if (passwordEncoder.check(password, user.get().getPassword())) {
                     message = switch (user.get().getStatus()) {
@@ -43,15 +49,15 @@ public class LoginCommand implements Command {
                             boolean remember = true; //todo - read "remember me" checkbox value from form parameters
                             boolean result = userService.authorize(user.get(), request, response, remember, true);
                             if (result) {
-                                String fio = userService.getUserFio(user.get());
-                                yield new ResponseMessage(TOAST, SUCCESS, "Вход выполнен", "Добро пожаловать, " + fio);
+                                yield new ResponseMessage(TOAST, SUCCESS, manager.getMessage(MessageKey.MESSAGE_LOGIN_SUCCESS),
+                                        manager.getMessage(MessageKey.MESSAGE_LOGIN_WELCOME) + user.get().getFio());
                             } else {
-                                yield new ResponseMessage(DANGER, "При входе возникла непредвиденная ошибка");
+                                yield new ResponseMessage(DANGER, manager.getMessage(MessageKey.MESSAGE_LOGIN_FAIL));
                             }
                         }
-                        case INACTIVE -> new ResponseMessage(WARNING, "Учетная запись не активирована");
-                        case BANNED -> new ResponseMessage(DANGER, "Учетная запись заблокирована");
-                        //todo default -> ???
+                        case INACTIVE -> new ResponseMessage(WARNING, manager.getMessage(MessageKey.MESSAGE_LOGIN_INACTIVE));
+                        case BANNED -> new ResponseMessage(DANGER, manager.getMessage(MessageKey.MESSAGE_LOGIN_BANNED));
+                        default -> new ResponseMessage(DANGER, manager.getMessage(MessageKey.MESSAGE_LOGIN_FAIL));
                     };
                 }
             }
