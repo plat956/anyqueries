@@ -4,7 +4,7 @@ var forms = {
             if($(this)[0].checkValidity()) {
                 var button = $("button[type=submit]", this);
                 button.prop("disabled", true);
-                button.html('<span class="spinner-grow spinner-grow-sm"></span> Выполняется...');
+                button.html('<span class="spinner-grow spinner-grow-sm"></span> ' + message.processing);
             }
         });
     }

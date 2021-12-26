@@ -2,6 +2,8 @@
          import="by.latushko.anyqueries.controller.command.identity.RequestParameter" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="ft" uri="formtags" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:set var="page_title_label" value="label.login" scope="request" />
 <jsp:include page="layout/header.jsp" />
 <div class="col-lg-7 mx-auto">
     <form id="login_form" class="needs-validation" method="post" action="${pageContext.request.contextPath}/controller?command=login" novalidate>
@@ -10,16 +12,16 @@
                 <span class="input-group-text"> <i class="fa fa-user"></i> </span>
             </div>
             <input name="login" class="form-control<ft:field-class-detector status="${validationResult.getField(RequestParameter.LOGIN).status}" />"
-                   placeholder="Login" type="text" required pattern="[A-Za-z0-9]{1,25}" maxlength="20"
+                   placeholder="<fmt:message key="label.login.placeholder" />" type="text" required pattern="[A-Za-z0-9]{1,25}" maxlength="20"
                    data-toggle="popover" data-trigger="focus" data-placement="right"
-                   data-content="Логин может содержать только латинские буквы в любом регистре и цифры, максимальная длина 20 символов"
+                   data-content="<fmt:message key="label.login.info" />"
                    value="${validationResult.getField(RequestParameter.LOGIN).value}"
             >
             <div class="invalid-feedback-backend">
                 ${validationResult.getField(RequestParameter.LOGIN).message}
             </div>
             <div class="invalid-feedback">
-                Заполните поле корректно
+                <fmt:message key="label.wrong-input" />
             </div>
         </div>
         <div class="form-group input-group">
@@ -27,16 +29,16 @@
                 <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
             </div>
             <input class="form-control<ft:field-class-detector status="${validationResult.getField(RequestParameter.PASSWORD).status}" />"
-                   placeholder="Password" type="password" name="password" id="password" required pattern="(?=.*[0-9])(?=.*[A-ZА-Я])\S{6,}" maxlength="25"
+                   placeholder="<fmt:message key="label.password.placeholder" />" type="password" name="password" id="password" required pattern="(?=.*[0-9])(?=.*[A-ZА-Я])\S{6,}" maxlength="25"
                    data-toggle="popover" data-trigger="focus" data-placement="right"
-                   data-content="Пароль должен содержать от 6 до 25 символов, хотя бы 1 цифру и 1 заглавную букву"
+                   data-content="<fmt:message key="label.password.info" />"
                    value="${validationResult.getField(RequestParameter.PASSWORD).value}"
             >
             <div class="invalid-feedback-backend">
                 ${validationResult.getField(RequestParameter.PASSWORD).message}
             </div>
             <div class="invalid-feedback">
-                Заполните поле корректно
+                <fmt:message key="label.wrong-input" />
             </div>
         </div>
         <div class="form-group form-check">
@@ -44,23 +46,13 @@
                 <input type="checkbox" class="form-check-input" data-toggle="switchbutton" name="rememberMe" id="rememberMe" checked>
                 <span class="slider round"></span>
             </label>
-            <label class="form-check-label" for="rememberMe">Запомнить меня</label>
+            <label class="form-check-label" for="rememberMe"><fmt:message key="label.rememberMe" /></label>
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-primary btn-block"> Войти  </button>
+            <button type="submit" class="btn btn-primary btn-block">
+                <fmt:message key="label.login.button" />
+            </button>
         </div>
     </form>
 </div>
-<script>
-    $('#login_form').on('input', function () {
-        var password = document.getElementById("password");
-        var password_confirmed = document.getElementById("password_confirmed");
-
-        if(password.value != password_confirmed.value) {
-            password_confirmed.setCustomValidity("Please repeat password correctly");
-        } else {
-            password_confirmed.setCustomValidity("");
-        }
-    });
-</script>
 <jsp:include page="layout/footer.jsp" />

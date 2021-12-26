@@ -90,10 +90,11 @@ public class RegistrationServiceImpl implements RegistrationService {
                     userDao.update(user);
 
                     ((UserDao)userDao).deleteUserHashByUserId(user.getId());
+                    transaction.commit();
+
                     return true;
                 }
-
-                transaction.commit();
+                //todo, нужно ли было здесь делать transaction.commit(); ?
             } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
             }
@@ -116,11 +117,10 @@ public class RegistrationServiceImpl implements RegistrationService {
                     User user = userOptional.get();
                     user.setStatus(User.Status.ACTIVE);
                     userDao.update(user);
+                    transaction.commit();
                     return true;
                 }
 
-                transaction.commit();
-                return true;
             } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
             }

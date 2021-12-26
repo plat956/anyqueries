@@ -1,8 +1,9 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"
+         import="by.latushko.anyqueries.controller.command.identity.CookieName" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="current_lang" value="${cookie['lang'].value}" scope="request" />
+<c:set var="current_lang" value="${cookie[CookieName.LANG].value}" scope="request" />
 <fmt:setLocale value="${current_lang}" scope="request"/>
 <fmt:setBundle basename="message" scope="request"/>
 <c:if test="${empty page_title_label}">

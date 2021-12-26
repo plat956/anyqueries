@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary navbar-main-panel">
     <a class="navbar-brand" href="${pageContext.request.contextPath}/controller?command=main_page">
         <i class="fa fa-question-circle"></i>
@@ -15,7 +16,7 @@
             <li class="nav-item active">
                 <div class="navbar-search input-group">
                     <input class="form-control py-2 border-left-0 border search-input" type="text"
-                           placeholder="Поиск по вопросам" id="example-search-input" />
+                           placeholder="<fmt:message key="label.search.placeholder" />" id="example-search-input" />
                     <span class="input-group-append">
                         <button class="navbar-search-btn btn btn-outline-primary border-left-0 border">
                             <i class="fa fa-search"></i>
@@ -35,19 +36,19 @@
                                 ${principal.login}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="${pageContext.request.contextPath}/controller?command=profile_page">Профиль</a>
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/controller?command=profile_page"><fmt:message key="label.profile" /></a>
                             <div class="dropdown-divider"></div>
                             <form id="logout_form" action="${pageContext.request.contextPath}/controller?command=logout" method="post"></form>
-                            <a class="dropdown-item" href="#" onclick="$('#logout_form').submit();">Выход</a>
+                            <a class="dropdown-item" href="#" onclick="$('#logout_form').submit();"><fmt:message key="label.logout" /></a>
                         </div>
                     </li>
                 </c:when>
                 <c:otherwise>
                     <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=login_page">Вход</a>
+                        <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=login_page"><fmt:message key="label.login" /></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=registration_page">Регистрация</a>
+                        <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=registration_page"><fmt:message key="label.registration" /></a>
                     </li>
                 </c:otherwise>
             </c:choose>
