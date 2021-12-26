@@ -21,6 +21,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.checkerframework.checker.nullness.Opt;
 
 import java.io.StringWriter;
 import java.time.LocalDateTime;
@@ -75,9 +76,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public boolean activateUserByHash(String hash) {
+    public Optional<User> activateUserByHash(String hash) {
         BaseDao userDao = new UserDaoImpl();
-
+        Optional<User> activatedUser = Optional.empty();
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
                 LocalDateTime validDate = LocalDateTime.now();
@@ -91,7 +92,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                     ((UserDao)userDao).deleteUserHashByUserId(user.getId());
                     transaction.commit();
 
-                    return true;
+                    activatedUser = userOptional;
                 }
                 //todo, нужно ли было здесь делать transaction.commit(); ?
             } catch (EntityTransactionException | DaoException e) {
@@ -101,7 +102,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             logger.error("Failed to activate user by hash", e);
         }
 
-        return false;
+        return activatedUser;
     }
 
     @Override

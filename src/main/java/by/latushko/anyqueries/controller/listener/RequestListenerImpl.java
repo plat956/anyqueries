@@ -12,9 +12,9 @@ public class RequestListenerImpl implements ServletRequestListener {
     @Override
     public void requestInitialized(ServletRequestEvent event) {
         HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
-        Object message = request.getSession().getAttribute(SessionAttribute.MESSAGE);
-        Object validationResult = request.getSession().getAttribute(SessionAttribute.VALIDATION_RESULT);
         HttpSession session = request.getSession();
+        Object message = session.getAttribute(SessionAttribute.MESSAGE);
+        Object validationResult = session.getAttribute(SessionAttribute.VALIDATION_RESULT);
         if(message != null) {
             session.removeAttribute(SessionAttribute.MESSAGE);
             request.setAttribute(SessionAttribute.MESSAGE, message);

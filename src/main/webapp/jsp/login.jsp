@@ -43,7 +43,7 @@
         </div>
         <div class="form-group form-check">
             <label class="switch">
-                <input type="checkbox" class="form-check-input" data-toggle="switchbutton" name="rememberMe" id="rememberMe" checked>
+                <input type="checkbox" class="form-check-input" data-toggle="switchbutton" name="remember_me" id="rememberMe" checked>
                 <span class="slider round"></span>
             </label>
             <label class="form-check-label" for="rememberMe"><fmt:message key="label.rememberMe" /></label>

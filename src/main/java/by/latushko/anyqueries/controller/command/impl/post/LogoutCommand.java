@@ -23,8 +23,8 @@ public class LogoutCommand implements Command {
         }
         String userLang = CookieHelper.readCookie(request, CookieName.LANG).orElse(null);
         MessageManager manager = MessageManager.getManager(userLang);
-        session = request.getSession();
+        session = request.getSession(); //todo check, does it need?
         session.setAttribute(SessionAttribute.MESSAGE, new ResponseMessage(ResponseMessage.Level.SUCCESS, manager.getMessage(MessageKey.MESSAGE_LOGOUT_SUCCESS)));
-        return new CommandResult(PagePath.MAIN_URL, CommandResult.RoutingType.REDIRECT);
+        return new CommandResult(PagePath.LOGIN_URL, CommandResult.RoutingType.REDIRECT);
     }
 }

@@ -9,25 +9,25 @@ import java.io.IOException;
 @WebFilter(filterName = "characterEncodingFilter", urlPatterns = "/*",
         initParams = @WebInitParam(name = "encoding", value = "UTF-8"))
 public class CharacterEncodingFilter implements Filter {
-    private String code;
+    private String correctEncoding;
 
     @Override
     public void init(FilterConfig config) throws ServletException {
-        code = config.getInitParameter("encoding");
+        correctEncoding = config.getInitParameter("encoding");
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
-        String codeRequest = request.getCharacterEncoding();
-        if (code != null && !code.equalsIgnoreCase(codeRequest)) {
-            request.setCharacterEncoding(code);
-            response.setCharacterEncoding(code);
+        String requestEncoding = request.getCharacterEncoding();
+        if (correctEncoding != null && !correctEncoding.equalsIgnoreCase(requestEncoding)) {
+            request.setCharacterEncoding(correctEncoding);
+            response.setCharacterEncoding(correctEncoding);
         }
         chain.doFilter(request, response);
     }
 
     @Override
     public void destroy() {
-        code = null;
+        correctEncoding = null;
     }
 }

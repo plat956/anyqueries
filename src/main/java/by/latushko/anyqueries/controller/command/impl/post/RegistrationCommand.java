@@ -13,6 +13,7 @@ import by.latushko.anyqueries.util.i18n.MessageManager;
 import by.latushko.anyqueries.util.telegram.TelegramBot;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.INFO;
@@ -51,8 +52,8 @@ public class RegistrationCommand implements Command {
                 message = new ResponseMessage(DANGER, manager.getMessage(MessageKey.MESSAGE_REGISTRATION_FAIL));
             }
         }
-
-        request.getSession().setAttribute(SessionAttribute.MESSAGE, message);
+        HttpSession session = request.getSession();
+        session.setAttribute(SessionAttribute.MESSAGE, message);
         return new CommandResult(PagePath.REGISTRATION_URL, CommandResult.RoutingType.REDIRECT);
     }
 }

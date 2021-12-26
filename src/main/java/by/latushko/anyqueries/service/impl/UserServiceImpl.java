@@ -1,7 +1,6 @@
 package by.latushko.anyqueries.service.impl;
 
 import by.latushko.anyqueries.controller.command.identity.CookieName;
-import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
 import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.exception.EntityTransactionException;
 import by.latushko.anyqueries.model.dao.BaseDao;
@@ -14,17 +13,13 @@ import by.latushko.anyqueries.service.UserService;
 import by.latushko.anyqueries.util.encryption.PasswordEncoder;
 import by.latushko.anyqueries.util.encryption.impl.BCryptPasswordEncoder;
 import by.latushko.anyqueries.util.http.CookieHelper;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_KEY;
-import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_TOKEN;
 import static by.latushko.anyqueries.util.AppProperty.APP_ACTIVATION_LINK_ALIVE_HOURS;
 import static by.latushko.anyqueries.util.AppProperty.APP_COOKIE_ALIVE_SECONDS;
 
@@ -72,36 +67,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean authorize(User user, HttpServletRequest request, HttpServletResponse response, boolean remember, boolean manually) {
-        //fixme how to design this method without request&response references???
-        if(manually) {
-            user.setLastLoginDate(LocalDateTime.now());
-            BaseDao userDao = new UserDaoImpl();
-            try (EntityTransaction transaction = new EntityTransaction(userDao)) {
-                try {
-                    userDao.update(user);
-                    transaction.commit();
-                } catch (EntityTransactionException | DaoException e) {
-                    transaction.rollback();
-                    return false;
-                }
-            } catch (EntityTransactionException e) {
-                logger.error("Something went wrong during retrieving user by login", e);
-            }
-        }
-
-        HttpSession session = request.getSession();
-        session.setAttribute(SessionAttribute.PRINCIPAL, user);
-
-        if(remember) {
-            CookieHelper.addCookie(response, CREDENTIAL_KEY, user.getCredentialKey(), APP_COOKIE_ALIVE_SECONDS);
-            String tokenSource = getCredentialTokenSource(user);
-            CookieHelper.addCookie(response, CREDENTIAL_TOKEN, passwordEncoder.encode(tokenSource), APP_COOKIE_ALIVE_SECONDS);
-        }
-        return true;
-    }
-
-    @Override
     public Optional<User> findUserByLogin(String login) {
         BaseDao userDao = new UserDaoImpl();
 
@@ -144,7 +109,52 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getCredentialTokenSource(User user) {
+    public boolean updateLastLoginDate(User user) {
+        boolean result = false;
+        user.setLastLoginDate(LocalDateTime.now());
+        BaseDao userDao = new UserDaoImpl();
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                userDao.update(user);
+                transaction.commit();
+                result = true;
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during update user last login date", e);
+        }
+        return result;
+    }
+
+    @Override
+    public Optional<User> findIfExistsByLoginAndPassword(String login, String password) {
+        Optional<User> user = findUserByLogin(login);
+        if(user.isPresent() && passwordEncoder.check(password, user.get().getPassword())) {
+            return user;
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public String getCredentialToken(User user) {
+        String tokenSource = getCredentialTokenSource(user);
+        return passwordEncoder.encode(tokenSource);
+    }
+
+    @Override
+    public Optional<User> findIfExistsByCredentialsKeyAndToken(String key, String token) {
+        Optional<User> user = findUserByCredentialKey(key);
+        if(user.isPresent()) {
+            String tokenSource = getCredentialTokenSource(user.get());
+            if (passwordEncoder.check(tokenSource, token)) {
+                return user;
+            }
+        }
+        return Optional.empty();
+    }
+
+    private String getCredentialTokenSource(User user) {
         return CREDENTIAL_TOKEN_ADDITIONAL_SALT + user.getLogin();
     }
 }

@@ -1,13 +1,13 @@
 package by.latushko.anyqueries.controller.filter.security;
 
 import by.latushko.anyqueries.controller.command.CommandType;
+import by.latushko.anyqueries.controller.command.identity.CookieName;
 import by.latushko.anyqueries.controller.command.identity.PagePath;
 import by.latushko.anyqueries.controller.command.identity.RequestParameter;
+import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.UserService;
 import by.latushko.anyqueries.service.impl.UserServiceImpl;
-import by.latushko.anyqueries.util.encryption.PasswordEncoder;
-import by.latushko.anyqueries.util.encryption.impl.BCryptPasswordEncoder;
 import by.latushko.anyqueries.util.http.CookieHelper;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
@@ -25,7 +25,7 @@ import static by.latushko.anyqueries.controller.command.identity.SessionAttribut
 @WebFilter(filterName = "securityFilter", urlPatterns = "/controller")
 public class SecurityFilter implements Filter {
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
@@ -36,25 +36,20 @@ public class SecurityFilter implements Filter {
             if (session.getAttribute(PRINCIPAL) != null) {
                 principal = (User) session.getAttribute(PRINCIPAL);
                 if(!principal.getStatus().equals(User.Status.ACTIVE)) {
-                    //todo: logout user! principal = null, session invalidate and maybe redirect with message as well
+                    CookieHelper.eraseCookie(request, response, CookieName.CREDENTIAL_KEY, CookieName.CREDENTIAL_TOKEN);
+                    session.invalidate();
+                    principal = null;
                 }
             } else {
                 Optional<String> credentialKey = CookieHelper.readCookie(request, CREDENTIAL_KEY);
                 Optional<String> credentialToken = CookieHelper.readCookie(request, CREDENTIAL_TOKEN);
                 if (credentialKey.isPresent() && credentialToken.isPresent()) {
                     UserService userService = UserServiceImpl.getInstance();
-                    Optional<User> user = userService.findUserByCredentialKey(credentialKey.get());
+                    Optional<User> user = userService.findIfExistsByCredentialsKeyAndToken(credentialKey.get(), credentialToken.get());
                     if (user.isPresent() && user.get().getStatus().equals(User.Status.ACTIVE)) {
-                        String tokenSource = userService.getCredentialTokenSource(user.get());
-                        PasswordEncoder passwordEncoder = BCryptPasswordEncoder.getInstance();
-                        if(passwordEncoder.check(tokenSource, credentialToken.get())) {
-                            boolean authorized = userService.authorize(user.get(), request, response, false, false); //todo think about not to send req & resp to the service
-                            if (authorized) {
-                                principal = user.get();
-                            }
-                        }
+                        session.setAttribute(SessionAttribute.PRINCIPAL, user.get());
                     } else {
-                        //todo remove credential cookies, don't keep trash!
+                        CookieHelper.eraseCookie(request, response, CookieName.CREDENTIAL_KEY, CookieName.CREDENTIAL_TOKEN);
                     }
                 }
             }
@@ -72,6 +67,6 @@ public class SecurityFilter implements Filter {
                 return;
             }
         }
-        filterChain.doFilter(request, response);
+        chain.doFilter(request, response);
     }
 }

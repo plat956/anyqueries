@@ -37,7 +37,7 @@ public class ChangeLocaleCommand implements Command {
         HttpSession session = request.getSession();
         String currentPage;
         if(session.getAttribute(SessionAttribute.CURRENT_PAGE) != null) {
-            currentPage = request.getSession().getAttribute(SessionAttribute.CURRENT_PAGE).toString();
+            currentPage = session.getAttribute(SessionAttribute.CURRENT_PAGE).toString();
         } else {
             currentPage = PagePath.MAIN_URL;
         }

@@ -58,7 +58,7 @@ public class ConnectionPool {
         ProxyConnection connection = null;
         try {
             connection = freeConnections.take();
-            givenAwayConnections.put(connection); //todo: возвращать обратно во freeConnections???
+            givenAwayConnections.put(connection);
         } catch (InterruptedException e) {
             logger.error("Failed to get free connection", e);
             Thread.currentThread().interrupt();
@@ -77,7 +77,6 @@ public class ConnectionPool {
         try {
             freeConnections.put(c);
         } catch (InterruptedException e) {
-            //todo: возвращать обратно в givenAwayConnections???
             logger.error("Failed to release connection", e);
             Thread.currentThread().interrupt();
         }
