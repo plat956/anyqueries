@@ -26,6 +26,10 @@ public class ValidationResult {
         return value != null ? value : "";
     }
 
+    public boolean containsField(String field) {
+        return fields.containsKey(field);
+    }
+
     public String getMessage(String field) {
         if(fields.containsKey(field)) {
             return fields.get(field).getMessage();

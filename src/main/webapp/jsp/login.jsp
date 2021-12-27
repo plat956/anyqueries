@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"
-         import="by.latushko.anyqueries.controller.command.identity.RequestParameter" %>
+         import="by.latushko.anyqueries.controller.command.identity.RequestParameter,
+         by.latushko.anyqueries.validator.ValidationPattern" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="ft" uri="formtags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -12,7 +13,7 @@
                 <span class="input-group-text"> <i class="fa fa-user"></i> </span>
             </div>
             <input name="login" class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.LOGIN)}" />"
-                   placeholder="<fmt:message key="label.login.placeholder" />" type="text" required pattern="[A-Za-z0-9]{1,25}" maxlength="20"
+                   placeholder="<fmt:message key="label.login.placeholder" />" type="text" required pattern="${ValidationPattern.LOGIN_REGEXP}" maxlength="20"
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="<fmt:message key="label.login.info" />"
                    value="${validationResult.getValue(RequestParameter.LOGIN)}"
@@ -31,7 +32,8 @@
                 <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
             </div>
             <input class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.PASSWORD)}" />"
-                   placeholder="<fmt:message key="label.password.placeholder" />" type="password" name="password" id="password" required pattern="(?=.*[0-9])(?=.*[A-ZА-Я])\S{6,}" maxlength="25"
+                   placeholder="<fmt:message key="label.password.placeholder" />" type="password" name="password" id="password" required
+                   pattern="${ValidationPattern.PASSWORD_REGEXP}" maxlength="25"
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="<fmt:message key="label.password.info" />"
                    value="${validationResult.getValue(RequestParameter.PASSWORD)}"
@@ -48,7 +50,7 @@
         <div class="form-group form-check">
             <label class="switch">
                 <input type="checkbox" class="form-check-input" data-toggle="switchbutton" name="remember_me" id="rememberMe"
-                <c:if test="${!empty validationResult.getValue(RequestParameter.REMEMBER_ME)}">
+                <c:if test="${validationResult.containsField(RequestParameter.REMEMBER_ME)}">
                     checked
                 </c:if>
                 >

@@ -73,7 +73,7 @@ public class LoginCommand implements Command {
                     }
                     case INACTIVE -> {
                         session.setAttribute(INACTIVE_PRINCIPAL, user.get());
-                        redirectUrl = PagePath.REPEAT_ACTIVATION_URL;
+                        redirectUrl = PagePath.MAIN_URL;
                         yield null;
                     }
                     case BANNED -> {
