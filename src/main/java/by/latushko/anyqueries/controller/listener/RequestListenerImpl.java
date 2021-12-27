@@ -1,11 +1,13 @@
 package by.latushko.anyqueries.controller.listener;
 
-import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
 import jakarta.servlet.ServletRequestEvent;
 import jakarta.servlet.ServletRequestListener;
 import jakarta.servlet.annotation.WebListener;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.VALIDATION_RESULT;
 
 @WebListener
 public class RequestListenerImpl implements ServletRequestListener {
@@ -13,15 +15,15 @@ public class RequestListenerImpl implements ServletRequestListener {
     public void requestInitialized(ServletRequestEvent event) {
         HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
         HttpSession session = request.getSession();
-        Object message = session.getAttribute(SessionAttribute.MESSAGE);
-        Object validationResult = session.getAttribute(SessionAttribute.VALIDATION_RESULT);
+        Object message = session.getAttribute(MESSAGE);
+        Object validationResult = session.getAttribute(VALIDATION_RESULT);
         if(message != null) {
-            session.removeAttribute(SessionAttribute.MESSAGE);
-            request.setAttribute(SessionAttribute.MESSAGE, message);
+            session.removeAttribute(MESSAGE);
+            request.setAttribute(MESSAGE, message);
         }
         if(validationResult != null) {
-            session.removeAttribute(SessionAttribute.VALIDATION_RESULT);
-            request.setAttribute(SessionAttribute.VALIDATION_RESULT, validationResult);
+            session.removeAttribute(VALIDATION_RESULT);
+            request.setAttribute(VALIDATION_RESULT, validationResult);
         }
     }
 }

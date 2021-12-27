@@ -144,6 +144,57 @@ public class UserServiceImpl implements UserService {
         return Optional.empty();
     }
 
+    @Override
+    public boolean checkIfExistsByLogin(String login) {
+        BaseDao userDao = new UserDaoImpl();
+        boolean result = false;
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                result = ((UserDao)userDao).existsByLogin(login);
+                transaction.commit();
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during checking user existing by login", e);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean checkIfExistsByEmail(String email) {
+        BaseDao userDao = new UserDaoImpl();
+        boolean result = false;
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                result = ((UserDao)userDao).existsByEmail(email);
+                transaction.commit();
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during checking user existing by email", e);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean checkIfExistsByTelegram(String telegram) {
+        BaseDao userDao = new UserDaoImpl();
+        boolean result = false;
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                result = ((UserDao)userDao).existsByTelegram(telegram);
+                transaction.commit();
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during checking user existing by telegram", e);
+        }
+        return result;
+    }
+
     private String getCredentialTokenSource(User user) {
         return CREDENTIAL_TOKEN_ADDITIONAL_SALT + user.getLogin();
     }

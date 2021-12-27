@@ -1,6 +1,5 @@
 package by.latushko.anyqueries.controller.filter;
 
-import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
 import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.util.http.RequestMethod;
 import jakarta.servlet.*;
@@ -10,6 +9,9 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
+import static by.latushko.anyqueries.controller.command.identity.PagePath.CONTROLLER_URL;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.CURRENT_PAGE;
+
 @WebFilter(filterName = "currentPageFilter", urlPatterns = "/controller")
 public class CurrentPageFilter implements Filter {
     @Override
@@ -18,9 +20,9 @@ public class CurrentPageFilter implements Filter {
         if (request.getMethod().equals(RequestMethod.GET.name()) &&
                 request.getParameter(RequestParameter.AJAX) == null &&
                 request.getParameter(RequestParameter.COMMAND) != null) {
-            String currentPage = "/controller?" + request.getQueryString();
+            String currentPage = CONTROLLER_URL + "?" + request.getQueryString();
             HttpSession session = request.getSession();
-            session.setAttribute(SessionAttribute.CURRENT_PAGE, currentPage);
+            session.setAttribute(CURRENT_PAGE, currentPage);
         }
         chain.doFilter(request, servletResponse);
     }

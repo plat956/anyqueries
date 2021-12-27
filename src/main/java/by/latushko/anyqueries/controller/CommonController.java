@@ -3,7 +3,6 @@ package by.latushko.anyqueries.controller;
 import by.latushko.anyqueries.controller.command.Command;
 import by.latushko.anyqueries.controller.command.CommandProvider;
 import by.latushko.anyqueries.controller.command.CommandResult;
-import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.util.http.RequestMethod;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,6 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Optional;
 
+import static by.latushko.anyqueries.controller.command.identity.RequestParameter.COMMAND;
 import static by.latushko.anyqueries.util.http.MimeType.APPLICATION_JSON;
 
 @WebServlet(name = "commonController", value = "/controller")
@@ -32,7 +32,7 @@ public class CommonController extends HttpServlet {
     private void doRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         CommandProvider commandProvider = CommandProvider.getInstance();
 
-        String commandName = request.getParameter(RequestParameter.COMMAND);
+        String commandName = request.getParameter(COMMAND);
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
         Optional<Command> command = commandProvider.getCommand(commandName, method);
 

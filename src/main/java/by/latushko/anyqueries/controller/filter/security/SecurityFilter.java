@@ -1,10 +1,6 @@
 package by.latushko.anyqueries.controller.filter.security;
 
 import by.latushko.anyqueries.controller.command.CommandType;
-import by.latushko.anyqueries.controller.command.identity.CookieName;
-import by.latushko.anyqueries.controller.command.identity.PagePath;
-import by.latushko.anyqueries.controller.command.identity.RequestParameter;
-import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.UserService;
 import by.latushko.anyqueries.service.impl.UserServiceImpl;
@@ -20,6 +16,8 @@ import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_KEY;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_TOKEN;
+import static by.latushko.anyqueries.controller.command.identity.PagePath.MAIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.RequestParameter.COMMAND;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.INACTIVE_PRINCIPAL;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
 
@@ -29,7 +27,7 @@ public class SecurityFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        String command = request.getParameter(RequestParameter.COMMAND);
+        String command = request.getParameter(COMMAND);
         Optional<CommandType> commandType = CommandType.getByName(command);
 
         if (commandType.isPresent()) {
@@ -39,7 +37,7 @@ public class SecurityFilter implements Filter {
             if (session.getAttribute(PRINCIPAL) != null) {
                 principal = (User) session.getAttribute(PRINCIPAL);
                 if(!principal.getStatus().equals(User.Status.ACTIVE)) {
-                    CookieHelper.eraseCookie(request, response, CookieName.CREDENTIAL_KEY, CookieName.CREDENTIAL_TOKEN);
+                    CookieHelper.eraseCookie(request, response, CREDENTIAL_KEY, CREDENTIAL_TOKEN);
                     session.invalidate();
                     principal = null;
                 }
@@ -50,9 +48,9 @@ public class SecurityFilter implements Filter {
                     UserService userService = UserServiceImpl.getInstance();
                     Optional<User> user = userService.findIfExistsByCredentialsKeyAndToken(credentialKey.get(), credentialToken.get());
                     if (user.isPresent() && user.get().getStatus().equals(User.Status.ACTIVE)) {
-                        session.setAttribute(SessionAttribute.PRINCIPAL, user.get());
+                        session.setAttribute(PRINCIPAL, user.get());
                     } else {
-                        CookieHelper.eraseCookie(request, response, CookieName.CREDENTIAL_KEY, CookieName.CREDENTIAL_TOKEN);
+                        CookieHelper.eraseCookie(request, response, CREDENTIAL_KEY, CREDENTIAL_TOKEN);
                     }
                 }
             }
@@ -65,7 +63,7 @@ public class SecurityFilter implements Filter {
             }
 
             if (!RestrictedCommand.hasAccess(commandType.get(), currentRole)) {
-                response.sendRedirect(PagePath.MAIN_URL);
+                response.sendRedirect(MAIN_URL);
                 return;
             }
         }

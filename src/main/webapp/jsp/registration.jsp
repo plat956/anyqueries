@@ -71,6 +71,9 @@
             </div>
             <input name="email" id="email" class="form-control input-confirmation<ft:field-class-detector field="${validationResult.getField(RequestParameter.EMAIL)}" />"
                    placeholder="<fmt:message key="label.email.placeholder" />" type="email" pattern="${ValidationPattern.EMAIL_REGEXP}" maxlength="100"
+                    <c:if test="${validationResult.containsField(RequestParameter.SEND_LINK)}">
+                           required
+                    </c:if>
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="<fmt:message key="label.email.info" />"
                    value="${validationResult.getValue(RequestParameter.EMAIL)}"
@@ -89,7 +92,10 @@
                 <span class="input-group-text"> <i class="fab fa-telegram"></i> </span>
             </div>
             <input name="telegram" id="telegram" class="form-control input-confirmation<ft:field-class-detector field="${validationResult.getField(RequestParameter.TELEGRAM)}" />"
-                   placeholder="<fmt:message key="label.telegram.placeholder" />" type="text" pattern="${ValidationPattern.TELEGRAM_REGEXP}" maxlength="32" required
+                   placeholder="<fmt:message key="label.telegram.placeholder" />" type="text" pattern="${ValidationPattern.TELEGRAM_REGEXP}" maxlength="32"
+                    <c:if test="${!validationResult.containsField(RequestParameter.SEND_LINK)}">
+                        required
+                    </c:if>
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="<fmt:message key="label.telegram.info" />"
                    value="${validationResult.getValue(RequestParameter.TELEGRAM)}"

@@ -3,28 +3,31 @@ package by.latushko.anyqueries.controller.command.impl.post;
 import by.latushko.anyqueries.controller.command.Command;
 import by.latushko.anyqueries.controller.command.CommandResult;
 import by.latushko.anyqueries.controller.command.ResponseMessage;
-import by.latushko.anyqueries.controller.command.identity.CookieName;
-import by.latushko.anyqueries.controller.command.identity.PagePath;
-import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
 import by.latushko.anyqueries.util.http.CookieHelper;
-import by.latushko.anyqueries.util.i18n.MessageKey;
 import by.latushko.anyqueries.util.i18n.MessageManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.REDIRECT;
+import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
+import static by.latushko.anyqueries.controller.command.identity.CookieName.*;
+import static by.latushko.anyqueries.controller.command.identity.PagePath.LOGIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
+import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_LOGOUT_SUCCESS;
+
 public class LogoutCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
-        CookieHelper.eraseCookie(request, response, CookieName.CREDENTIAL_KEY, CookieName.CREDENTIAL_TOKEN);
+        CookieHelper.eraseCookie(request, response, CREDENTIAL_KEY, CREDENTIAL_TOKEN);
         HttpSession session = request.getSession(false);
         if(session != null) {
             session.invalidate();
         }
-        String userLang = CookieHelper.readCookie(request, CookieName.LANG).orElse(null);
+        String userLang = CookieHelper.readCookie(request, LANG).orElse(null);
         MessageManager manager = MessageManager.getManager(userLang);
-        session = request.getSession(); //todo check, does it need?
-        session.setAttribute(SessionAttribute.MESSAGE, new ResponseMessage(ResponseMessage.Level.SUCCESS, manager.getMessage(MessageKey.MESSAGE_LOGOUT_SUCCESS)));
-        return new CommandResult(PagePath.LOGIN_URL, CommandResult.RoutingType.REDIRECT);
+        session = request.getSession();
+        session.setAttribute(MESSAGE, new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_LOGOUT_SUCCESS)));
+        return new CommandResult(LOGIN_URL, REDIRECT);
     }
 }

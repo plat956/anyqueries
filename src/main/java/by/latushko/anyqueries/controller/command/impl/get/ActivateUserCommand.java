@@ -3,17 +3,12 @@ package by.latushko.anyqueries.controller.command.impl.get;
 import by.latushko.anyqueries.controller.command.Command;
 import by.latushko.anyqueries.controller.command.CommandResult;
 import by.latushko.anyqueries.controller.command.ResponseMessage;
-import by.latushko.anyqueries.controller.command.identity.CookieName;
-import by.latushko.anyqueries.controller.command.identity.PagePath;
-import by.latushko.anyqueries.controller.command.identity.RequestParameter;
-import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.RegistrationService;
 import by.latushko.anyqueries.service.UserService;
 import by.latushko.anyqueries.service.impl.RegistrationServiceImpl;
 import by.latushko.anyqueries.service.impl.UserServiceImpl;
 import by.latushko.anyqueries.util.http.CookieHelper;
-import by.latushko.anyqueries.util.i18n.MessageKey;
 import by.latushko.anyqueries.util.i18n.MessageManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,37 +16,41 @@ import jakarta.servlet.http.HttpSession;
 
 import java.util.Optional;
 
+import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.REDIRECT;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Type.POPUP;
+import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
+import static by.latushko.anyqueries.controller.command.identity.PagePath.LOGIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.PagePath.MAIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.RequestParameter.HASH;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
+import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 
 public class ActivateUserCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
-        String hash = request.getParameter(RequestParameter.HASH);
+        String hash = request.getParameter(HASH);
         RegistrationService registrationService = RegistrationServiceImpl.getInstance();
         Optional<User> activatedUser = registrationService.activateUserByHash(hash);
         HttpSession session = request.getSession();
-        String userLang = CookieHelper.readCookie(request, CookieName.LANG).orElse(null);
+        String userLang = CookieHelper.readCookie(request, LANG).orElse(null);
         MessageManager manager = MessageManager.getManager(userLang);
         ResponseMessage message;
         String redirectUrl;
         if(activatedUser.isPresent()) {
-            message = new ResponseMessage(POPUP, SUCCESS, manager.getMessage(MessageKey.MESSAGE_REGISTRATION_SUCCESS_TITLE),
-                    manager.getMessage(MessageKey.MESSAGE_REGISTRATION_SUCCESS_NOTICE));
-
+            message = new ResponseMessage(POPUP, SUCCESS, manager.getMessage(MESSAGE_REGISTRATION_SUCCESS_TITLE),
+                    manager.getMessage(MESSAGE_REGISTRATION_SUCCESS_NOTICE));
+            session.removeAttribute(INACTIVE_PRINCIPAL);
+            session.setAttribute(PRINCIPAL, activatedUser.get());
             UserService userService = UserServiceImpl.getInstance();
-            session.removeAttribute(SessionAttribute.INACTIVE_PRINCIPAL);
-            session.setAttribute(SessionAttribute.PRINCIPAL, activatedUser.get());
             userService.updateLastLoginDate(activatedUser.get());
-
-            redirectUrl = PagePath.MAIN_URL;
+            redirectUrl = MAIN_URL;
         } else {
-            message = new ResponseMessage(DANGER, manager.getMessage(MessageKey.MESSAGE_ACTIVATION_FAIL));
-            redirectUrl = PagePath.LOGIN_URL;
+            message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ACTIVATION_FAIL));
+            redirectUrl = LOGIN_URL;
         }
-
-        session.setAttribute(SessionAttribute.MESSAGE, message);
-        return new CommandResult(redirectUrl, CommandResult.RoutingType.REDIRECT);
+        session.setAttribute(MESSAGE, message);
+        return new CommandResult(redirectUrl, REDIRECT);
     }
 }

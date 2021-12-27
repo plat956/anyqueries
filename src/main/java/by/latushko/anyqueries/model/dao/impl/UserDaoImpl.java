@@ -55,6 +55,15 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     private static final String SQL_DELETE_HASH_QUERY = """
             DELETE FROM user_hash 
             WHERE user_id = ?""";
+    private static final String SQL_EXISTS_BY_LOGIN = """
+            SELECT 1 FROM users
+            WHERE login = ?""";
+    private static final String SQL_EXISTS_BY_EMAIL = """
+            SELECT 1 FROM users
+            WHERE email = ?""";
+    private static final String SQL_EXISTS_BY_TELEGRAM = """
+            SELECT 1 FROM users
+            WHERE telegram = ?""";
     private final RowMapper<User> mapper = new UserMapper();
 
     @Override
@@ -257,6 +266,42 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find user by calling findUserByCredentialKey(String key) method", e);
+        }
+    }
+
+    @Override
+    public boolean existsByLogin(String login) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_LOGIN)){
+            statement.setString(1, login);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed check if user exists by calling existsByLogin(String login) method", e);
+        }
+    }
+
+    @Override
+    public boolean existsByEmail(String email) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_EMAIL)){
+            statement.setString(1, email);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed check if user exists by calling existsByLogin(String email) method", e);
+        }
+    }
+
+    @Override
+    public boolean existsByTelegram(String telegram) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_TELEGRAM)){
+            statement.setString(1, telegram);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed check if user exists by calling existsByTelegram(String telegram) method", e);
         }
     }
 }

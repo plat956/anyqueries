@@ -14,4 +14,7 @@ public interface UserDao {
     Optional<User> findInactiveUserByTelegram(String account) throws DaoException;
     Optional<User> findUserByLogin(String login) throws DaoException;
     Optional<User> findUserByCredentialKey(String key) throws DaoException;
+    boolean existsByLogin(String login) throws DaoException;
+    boolean existsByEmail(String email) throws DaoException;
+    boolean existsByTelegram(String telegram) throws DaoException;
 }

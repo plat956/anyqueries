@@ -9,11 +9,12 @@ import java.io.IOException;
 @WebFilter(filterName = "characterEncodingFilter", urlPatterns = "/*",
         initParams = @WebInitParam(name = "encoding", value = "UTF-8"))
 public class CharacterEncodingFilter implements Filter {
+    private static final String ENCODING_PARAMETER = "encoding";
     private String correctEncoding;
 
     @Override
     public void init(FilterConfig config) throws ServletException {
-        correctEncoding = config.getInitParameter("encoding");
+        correctEncoding = config.getInitParameter(ENCODING_PARAMETER);
     }
 
     @Override

@@ -20,7 +20,6 @@ public class CommandProvider {
         getCommands.put(CommandType.ACTIVATE_USER, new ActivateUserCommand());
         getCommands.put(CommandType.MAIN_PAGE, new MainPageCommand());
         getCommands.put(CommandType.LIVE_SEARCH, new LiveSearchCommand());
-
         postCommands.put(CommandType.LOGIN, new LoginCommand());
         postCommands.put(CommandType.LOGOUT, new LogoutCommand());
         postCommands.put(CommandType.REGISTRATION, new RegistrationCommand());

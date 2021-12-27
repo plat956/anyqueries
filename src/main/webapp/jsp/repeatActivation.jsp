@@ -38,7 +38,7 @@
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary btn-block" id="btnSubmit">
-                Обновить регистрационные данные
+                <fmt:message key="label.repeatActivation.button" />
             </button>
         </div>
     </form>

@@ -3,7 +3,7 @@ package by.latushko.anyqueries.util.encryption.impl;
 import by.latushko.anyqueries.util.encryption.PasswordEncoder;
 import org.mindrot.jbcrypt.BCrypt;
 
-public class BCryptPasswordEncoder implements PasswordEncoder {
+public final class BCryptPasswordEncoder implements PasswordEncoder {
     private static BCryptPasswordEncoder instance;
 
     private BCryptPasswordEncoder() {

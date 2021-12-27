@@ -7,18 +7,21 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
+import static by.latushko.anyqueries.controller.command.CommandType.*;
+import static by.latushko.anyqueries.controller.filter.security.AccessRole.*;
+
 public final class RestrictedCommand {
     private static final Map<CommandType, EnumSet<AccessRole>> commands = new EnumMap<>(CommandType.class);
 
     static {
-        commands.put(CommandType.LOGIN_PAGE, EnumSet.of(AccessRole.GUEST));
-        commands.put(CommandType.REGISTRATION_PAGE, EnumSet.of(AccessRole.GUEST));
-        commands.put(CommandType.ACTIVATE_USER, EnumSet.of(AccessRole.GUEST, AccessRole.INACTIVE_USER));
-        commands.put(CommandType.LOGIN, EnumSet.of(AccessRole.GUEST));
-        commands.put(CommandType.REGISTRATION, EnumSet.of(AccessRole.GUEST));
-        commands.put(CommandType.LOGOUT, EnumSet.of(AccessRole.ADMIN, AccessRole.USER, AccessRole.INACTIVE_USER, AccessRole.MODERATOR));
-        commands.put(CommandType.REPEAT_ACTIVATION, EnumSet.of(AccessRole.INACTIVE_USER));
-        commands.put(CommandType.REPEAT_ACTIVATION_PAGE, EnumSet.of(AccessRole.INACTIVE_USER));
+        commands.put(LOGIN_PAGE, EnumSet.of(GUEST));
+        commands.put(REGISTRATION_PAGE, EnumSet.of(GUEST));
+        commands.put(ACTIVATE_USER, EnumSet.of(GUEST, INACTIVE_USER));
+        commands.put(LOGIN, EnumSet.of(GUEST));
+        commands.put(REGISTRATION, EnumSet.of(GUEST));
+        commands.put(LOGOUT, EnumSet.of(ADMIN, USER, INACTIVE_USER, MODERATOR));
+        commands.put(REPEAT_ACTIVATION, EnumSet.of(INACTIVE_USER));
+        commands.put(REPEAT_ACTIVATION_PAGE, EnumSet.of(INACTIVE_USER));
         //todo add each admin pages in the future
     }
 

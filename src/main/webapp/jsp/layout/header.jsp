@@ -6,10 +6,12 @@
 <c:set var="current_lang" value="${cookie[CookieName.LANG].value}" scope="request" />
 <fmt:setLocale value="${current_lang}" scope="request"/>
 <fmt:setBundle basename="message" scope="request"/>
-<c:if test="${empty page_title_label}">
-    <c:set var="page_title_label" value="label.unknown-page" />
+<c:set var="page_title" scope="request">
+    <fmt:message key="${page_title_label}" />
+</c:set>
+<c:if test="${empty page_title || fn:startsWith(page_title, '???')}">
+    <fmt:message key="label.unknown-page" var="page_title" scope="request" />
 </c:if>
-<fmt:message key="${page_title_label}" var="page_title" scope="request" />
 <!DOCTYPE html>
 <html>
 <head>

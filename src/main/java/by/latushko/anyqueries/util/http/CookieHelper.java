@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public final class CookieHelper {
+public class CookieHelper {
     private static final int COOKIE_AGE_TO_ERASE = 0;
 
     public static Optional<String> readCookie(HttpServletRequest request, String key) {
