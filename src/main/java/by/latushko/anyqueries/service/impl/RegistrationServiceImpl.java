@@ -13,6 +13,7 @@ import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.model.entity.UserHash;
 import by.latushko.anyqueries.service.RegistrationService;
 import by.latushko.anyqueries.service.UserService;
+import by.latushko.anyqueries.util.i18n.MessageManager;
 import by.latushko.anyqueries.util.mail.MailSender;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static by.latushko.anyqueries.util.AppProperty.APP_HOST;
+import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 
 public class RegistrationServiceImpl implements RegistrationService {
     private static final Logger logger = LogManager.getLogger();
@@ -48,7 +50,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public boolean registerUser(String firstName, String lastName, String middleName, boolean sendLink,
-                                String email, String telegram, String login, String password) {
+                                String email, String telegram, String login, String password, String lang) {
         BaseDao userDao = new UserDaoImpl();
 
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
@@ -60,7 +62,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                     UserHash userHash = userService.generateUserHash(user);
                     ((UserDao) userDao).createUserHash(userHash);
 
-                    sendActivationEmail(user, userHash);
+                    sendActivationEmail(user, userHash, lang);
                 }
 
                 transaction.commit();
@@ -131,13 +133,14 @@ public class RegistrationServiceImpl implements RegistrationService {
         return false;
     }
 
-    private void sendActivationEmail(User user, UserHash userHash) throws MailSenderException {
-        String messageBody = compileActivationEmail(user, userHash);
+    private void sendActivationEmail(User user, UserHash userHash, String lang) throws MailSenderException {
+        MessageManager manager = MessageManager.getManager(lang);
+        String messageBody = compileActivationEmail(user, userHash, manager);
         MailSender sender = MailSender.getInstance();
-        sender.send(user.getEmail(), "Account activation", messageBody);
+        sender.send(user.getEmail(), manager.getMessage(LABEL_ACCOUNT_ACTIVATION), messageBody);
     }
 
-    private String compileActivationEmail(User user, UserHash userHash) {
+    private String compileActivationEmail(User user, UserHash userHash, MessageManager manager) {
         VelocityEngine ve = new VelocityEngine();
         ve.setProperty(RuntimeConstants.RESOURCE_LOADER, VELOCITY_RESOURCES_PATH);
         ve.setProperty(VELOCITY_PROPERTIES_LOADER_CLASS, ClasspathResourceLoader.class.getName());
@@ -145,10 +148,9 @@ public class RegistrationServiceImpl implements RegistrationService {
         Template t = ve.getTemplate(VELOCITY_ACTIVATION_TEMPLATE_PATH);
         VelocityContext context = new VelocityContext();
         context.put("title", "Welcome to ANY-QUERIES.BY"); //todo: read website from app.props file or context-param
-        context.put("text", "Dear " + user.getFio() + ", you've sent a registration request. Please, press the button below to activate your account");
-        context.put("buttonText", "Activate");
+        context.put("text", manager.getMessage(MESSAGE_ACTIVATION_EMAIL_TEXT, user.getFio()));
+        context.put("buttonText", manager.getMessage(LABEL_ACTIVATION_BUTTON));
         context.put("buttonLink", APP_HOST + PagePath.ACTIVATE_URL + "&" + RequestParameter.HASH + "=" + userHash.getHash());
-
         StringWriter writer = new StringWriter();
         t.merge(context, writer);
         return writer.toString();

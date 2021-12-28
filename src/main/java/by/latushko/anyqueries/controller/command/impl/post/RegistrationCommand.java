@@ -66,10 +66,9 @@ public class RegistrationCommand implements Command {
         String password = request.getParameter(PASSWORD);
         boolean sendLink = request.getParameter(SEND_LINK) != null;
 
-        RegistrationService registrationService = RegistrationServiceImpl.getInstance();
-        boolean result = registrationService.registerUser(firstName, lastName, middleName, sendLink, email, telegram, login, password);
-
         String userLang = CookieHelper.readCookie(request, CookieName.LANG).orElse(null);
+        RegistrationService registrationService = RegistrationServiceImpl.getInstance();
+        boolean result = registrationService.registerUser(firstName, lastName, middleName, sendLink, email, telegram, login, password, userLang);
         MessageManager manager = MessageManager.getManager(userLang);
         if (result) {
             String text, notice;
