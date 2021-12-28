@@ -2,15 +2,14 @@ package by.latushko.anyqueries.validator;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class ValidationResult {
     private Map<String, Field> fields = new HashMap<>();
 
     public ValidationResult(Map<String, String[]> formData) {
         for(Map.Entry<String, String[]> field: formData.entrySet()) {
-            Optional<String> value = getFormattedValue(field.getValue());
-            fields.put(field.getKey(), new Field(value.orElse(null)));
+            String value = getFormattedValue(field.getValue());
+            fields.put(field.getKey(), new Field(value));
         }
     }
 
@@ -49,14 +48,14 @@ public class ValidationResult {
         return fields.values().stream().noneMatch(f -> f.getMessage() != null && !f.getMessage().isEmpty());
     }
 
-    private Optional<String> getFormattedValue(String values[]) {
+    private String getFormattedValue(String values[]) {
         if(values != null && values.length > 0) {
             String value = values[0];
             if(!value.isEmpty()) {
-                return Optional.of(value);
+                return value;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     public class Field {

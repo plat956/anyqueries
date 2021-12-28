@@ -19,15 +19,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     private static final String BOT_PROPERTIES_PATH = "config/telegram.properties";
     private static final String BOT_NAME_PARAMETER = "telegram.bot.name";
     private static final String BOT_TOKEN_PARAMETER = "telegram.bot.token";
-    private static final String BOT_DEVELOPER_FIRST_NAME_PARAMETER = "telegram.bot.developer.firstname";
-    private static final String BOT_DEVELOPER_LAST_NAME_PARAMETER = "telegram.bot.developer.lastname";
-    private static final String BOT_DEVELOPER_PHONE_PARAMETER = "telegram.bot.developer.phone";
     private static final String BOT_TOKEN;
     private static final Properties properties;
     public static final String BOT_NAME;
-    public static final String BOT_DEVELOPER_FIRST_NAME;
-    public static final String BOT_DEVELOPER_LAST_NAME;
-    public static final String BOT_DEVELOPER_PHONE;
 
     static {
         properties = new Properties();
@@ -36,9 +30,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             properties.load(inputStream);
             BOT_NAME = properties.getProperty(BOT_NAME_PARAMETER);
             BOT_TOKEN = properties.getProperty(BOT_TOKEN_PARAMETER);
-            BOT_DEVELOPER_FIRST_NAME = properties.getProperty(BOT_DEVELOPER_FIRST_NAME_PARAMETER);
-            BOT_DEVELOPER_LAST_NAME = properties.getProperty(BOT_DEVELOPER_LAST_NAME_PARAMETER);
-            BOT_DEVELOPER_PHONE = properties.getProperty(BOT_DEVELOPER_PHONE_PARAMETER);
         } catch (IOException e) {
             logger.error("Failed to read telegram bot properties from file: " + BOT_PROPERTIES_PATH, e);
             throw new ExceptionInInitializerError("Failed to read telegram bot properties from file: " + BOT_PROPERTIES_PATH);

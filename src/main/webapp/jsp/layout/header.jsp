@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"
-         import="by.latushko.anyqueries.controller.command.identity.CookieName" %>
+         import="by.latushko.anyqueries.controller.command.identity.CookieName,
+         by.latushko.anyqueries.util.AppProperty" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -16,7 +17,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>${fn:toUpperCase(initParam['website'])} | ${page_title}</title>
+    <title>${AppProperty.APP_NAME} | ${page_title}</title>
     <jsp:include page="fragment/resources.jsp" />
 </head>
 <body>

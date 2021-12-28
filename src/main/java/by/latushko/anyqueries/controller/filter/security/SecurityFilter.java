@@ -36,7 +36,7 @@ public class SecurityFilter implements Filter {
             User principal = null;
             if (session.getAttribute(PRINCIPAL) != null) {
                 principal = (User) session.getAttribute(PRINCIPAL);
-                if(!principal.getStatus().equals(User.Status.ACTIVE)) {
+                if(principal.getStatus() != User.Status.ACTIVE) {
                     CookieHelper.eraseCookie(request, response, CREDENTIAL_KEY, CREDENTIAL_TOKEN);
                     session.invalidate();
                     principal = null;
@@ -47,7 +47,7 @@ public class SecurityFilter implements Filter {
                 if (credentialKey.isPresent() && credentialToken.isPresent()) {
                     UserService userService = UserServiceImpl.getInstance();
                     Optional<User> user = userService.findIfExistsByCredentialsKeyAndToken(credentialKey.get(), credentialToken.get());
-                    if (user.isPresent() && user.get().getStatus().equals(User.Status.ACTIVE)) {
+                    if (user.isPresent() && user.get().getStatus() == User.Status.ACTIVE) {
                         session.setAttribute(PRINCIPAL, user.get());
                     } else {
                         CookieHelper.eraseCookie(request, response, CREDENTIAL_KEY, CREDENTIAL_TOKEN);

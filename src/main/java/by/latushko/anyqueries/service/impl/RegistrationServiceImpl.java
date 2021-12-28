@@ -1,7 +1,5 @@
 package by.latushko.anyqueries.service.impl;
 
-import by.latushko.anyqueries.controller.command.identity.PagePath;
-import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.exception.EntityTransactionException;
 import by.latushko.anyqueries.exception.MailSenderException;
@@ -11,30 +9,18 @@ import by.latushko.anyqueries.model.dao.UserDao;
 import by.latushko.anyqueries.model.dao.impl.UserDaoImpl;
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.model.entity.UserHash;
+import by.latushko.anyqueries.service.EmailService;
 import by.latushko.anyqueries.service.RegistrationService;
 import by.latushko.anyqueries.service.UserService;
 import by.latushko.anyqueries.util.i18n.MessageManager;
-import by.latushko.anyqueries.util.mail.MailSender;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
-import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static by.latushko.anyqueries.util.AppProperty.APP_HOST;
-import static by.latushko.anyqueries.util.i18n.MessageKey.*;
-
 public class RegistrationServiceImpl implements RegistrationService {
     private static final Logger logger = LogManager.getLogger();
-    private static final String VELOCITY_PROPERTIES_LOADER_CLASS = "classpath.resource.loader.class";
-    private static final String VELOCITY_RESOURCES_PATH = "classpath";
-    private static final String VELOCITY_ACTIVATION_TEMPLATE_PATH = "/template/mail/activation.vm";
     private static RegistrationServiceImpl instance;
     private final UserService userService = UserServiceImpl.getInstance();
 
@@ -50,7 +36,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public boolean registerUser(String firstName, String lastName, String middleName, boolean sendLink,
-                                String email, String telegram, String login, String password, String lang) {
+                                String email, String telegram, String login, String password, MessageManager manager) {
         BaseDao userDao = new UserDaoImpl();
 
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
@@ -62,7 +48,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                     UserHash userHash = userService.generateUserHash(user);
                     ((UserDao) userDao).createUserHash(userHash);
 
-                    sendActivationEmail(user, userHash, lang);
+                    EmailService emailService = new EmailServiceImpl(manager);
+                    emailService.sendActivationEmail(user, userHash);
                 }
 
                 transaction.commit();
@@ -131,28 +118,5 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         return false;
-    }
-
-    private void sendActivationEmail(User user, UserHash userHash, String lang) throws MailSenderException {
-        MessageManager manager = MessageManager.getManager(lang);
-        String messageBody = compileActivationEmail(user, userHash, manager);
-        MailSender sender = MailSender.getInstance();
-        sender.send(user.getEmail(), manager.getMessage(LABEL_ACCOUNT_ACTIVATION), messageBody);
-    }
-
-    private String compileActivationEmail(User user, UserHash userHash, MessageManager manager) {
-        VelocityEngine ve = new VelocityEngine();
-        ve.setProperty(RuntimeConstants.RESOURCE_LOADER, VELOCITY_RESOURCES_PATH);
-        ve.setProperty(VELOCITY_PROPERTIES_LOADER_CLASS, ClasspathResourceLoader.class.getName());
-        ve.init();
-        Template t = ve.getTemplate(VELOCITY_ACTIVATION_TEMPLATE_PATH);
-        VelocityContext context = new VelocityContext();
-        context.put("title", "Welcome to ANY-QUERIES.BY"); //todo: read website from app.props file or context-param
-        context.put("text", manager.getMessage(MESSAGE_ACTIVATION_EMAIL_TEXT, user.getFio()));
-        context.put("buttonText", manager.getMessage(LABEL_ACTIVATION_BUTTON));
-        context.put("buttonLink", APP_HOST + PagePath.ACTIVATE_URL + "&" + RequestParameter.HASH + "=" + userHash.getHash());
-        StringWriter writer = new StringWriter();
-        t.merge(context, writer);
-        return writer.toString();
     }
 }

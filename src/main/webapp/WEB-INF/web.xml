@@ -24,16 +24,4 @@
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-    <context-param>
-        <param-name>website</param-name>
-        <param-value>any-queries.by</param-value>
-    </context-param>
-    <context-param>
-        <param-name>author-name</param-name>
-        <param-value>Pavel Latushko</param-value>
-    </context-param>
-    <context-param>
-        <param-name>author-telegram</param-name>
-        <param-value>plat956</param-value>
-    </context-param>
 </web-app>

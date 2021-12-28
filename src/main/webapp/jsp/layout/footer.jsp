@@ -1,11 +1,13 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" import="by.latushko.anyqueries.util.AppProperty" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="date" class="java.util.Date" />
 <fmt:formatDate value="${date}" pattern="yyyy" var="currentYear" />
 </div>
 </div>
 <div class="bottom-copyright">
-    © ${currentYear} <a href="http://t.me/${initParam['author-telegram']}" target="_blank">${initParam['author-name']}</a>
+    © ${currentYear} <a href="${AppProperty.APP_TELEGRAM_LINK_HOST}${AppProperty.APP_DEVELOPER_TELEGRAM}" target="_blank">
+        ${AppProperty.APP_DEVELOPER_FIRST_NAME} ${AppProperty.APP_DEVELOPER_LAST_NAME}
+    </a>
 </div>
 </div>
 </div>
