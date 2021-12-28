@@ -25,6 +25,8 @@ public final class MessageKey {
     public static final String MESSAGE_REGISTRATION_WARNING = "message.registration.warning";
     public static final String MESSAGE_ACTIVATION_EMAIL_TEXT = "message.activation.email.text";
     public static final String MESSAGE_ACTIVATION_EMAIL_GREETING = "message.activation.email.greeting";
+    public static final String MESSAGE_SAVE_SUCCESSFUL = "message.save.successful";
+    public static final String MESSAGE_SAVE_FAILED = "message.save.failed";
     static final String MESSAGES_FILE_NAME = "message";
     static final String LOCALE_EN = "en";
     static final String LOCALE_BE = "be";

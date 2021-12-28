@@ -42,7 +42,6 @@ public class RegistrationCommand implements Command {
             return commandResult;
         }
         UserService userService = UserServiceImpl.getInstance();
-        String login = request.getParameter(LOGIN);
         String email = request.getParameter(EMAIL);
         if(email != null && !email.isEmpty() && userService.checkIfExistsByEmail(email)) {
             validationResult.setError(EMAIL, LABEL_EMAIL_EXISTS);
@@ -55,6 +54,7 @@ public class RegistrationCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
+        String login = request.getParameter(LOGIN);
         if(userService.checkIfExistsByLogin(login)) {
             validationResult.setError(LOGIN, LABEL_LOGIN_EXISTS);
             session.setAttribute(VALIDATION_RESULT, validationResult);

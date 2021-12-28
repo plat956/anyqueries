@@ -18,4 +18,8 @@ public interface UserService {
     boolean checkIfExistsByLogin(String login);
     boolean checkIfExistsByEmail(String email);
     boolean checkIfExistsByTelegram(String telegram);
+    boolean checkIfExistsByEmailExceptUserId(String email, Long userId);
+    boolean checkIfExistsByTelegramExceptUserId(String telegram, Long userId);
+
+
 }

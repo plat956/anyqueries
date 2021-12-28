@@ -24,7 +24,7 @@ public class CommandProvider {
         postCommands.put(CommandType.LOGOUT, new LogoutCommand());
         postCommands.put(CommandType.REGISTRATION, new RegistrationCommand());
         postCommands.put(CommandType.CHANGE_LOCALE, new ChangeLocaleCommand());
-        getCommands.put(CommandType.REPEAT_ACTIVATION, new RepeatActivationCommand());
+        postCommands.put(CommandType.REPEAT_ACTIVATION, new RepeatActivationCommand());
     }
 
     public static CommandProvider getInstance() {
