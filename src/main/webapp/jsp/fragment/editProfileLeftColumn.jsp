@@ -7,7 +7,7 @@
         <img src="${pageContext.request.contextPath}${!empty principal.avatar ? principal.avatar : '/static/custom/images/noavatar.png'}" class="avatar img-circle img-thumbnail" alt="avatar">
         <div class="panel panel-default text-center profile-role">
             <div class="panel-body">
-                <span class="badge badge-${principal.role.color} user-role-span">${fn:toLowerCase(principal.role)}</span>
+                <span class="badge badge-${principal.role.color} user-role-span"><fmt:message key="label.role.${fn:toLowerCase(principal.role)}" /></span>
             </div>
         </div>
         <form id="avatar-form" action="${pageContext.request.contextPath}/controller?command=upload_avatar" method="post" enctype="multipart/form-data">
