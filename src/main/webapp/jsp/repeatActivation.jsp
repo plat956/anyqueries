@@ -7,7 +7,7 @@
 <c:set var="page_title_label" value="label.repeatActivation" scope="request"/>
 <jsp:include page="layout/header.jsp"/>
 <div class="col-lg-7 mx-auto">
-    <form id="reg_form" class="needs-validation" method="post"
+    <form id="repeat_form" class="needs-validation" method="post"
           action="${pageContext.request.contextPath}/controller?command=repeat_activation" novalidate>
         <div class="form-group input-group">
             <div class="input-group-prepend">
@@ -22,7 +22,7 @@
             </c:if>
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="<fmt:message key="label.email.info" />"
-                   value="${!empty validationResult.getField(RequestParameter.EMAIL) ? validationResult.getField(RequestParameter.EMAIL) : inactivePrincipal.email}"
+                   value="${!empty validationResult.getField(RequestParameter.EMAIL) ? validationResult.getValue(RequestParameter.EMAIL) : inactivePrincipal.email}"
             >
             <c:if test="${!empty validationResult.getMessage(RequestParameter.EMAIL)}">
                 <div class="invalid-feedback-backend">
@@ -46,7 +46,7 @@
             </c:if>
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="<fmt:message key="label.telegram.info" />"
-                   value="${!empty validationResult.getField(RequestParameter.TELEGRAM) ? validationResult.getField(RequestParameter.TELEGRAM) : inactivePrincipal.telegram}"
+                   value="${!empty validationResult.getField(RequestParameter.TELEGRAM) ? validationResult.getValue(RequestParameter.TELEGRAM) : inactivePrincipal.telegram}"
             >
             <c:if test="${!empty validationResult.getMessage(RequestParameter.TELEGRAM)}">
                 <div class="invalid-feedback-backend">

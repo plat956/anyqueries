@@ -20,6 +20,8 @@ public interface UserService {
     boolean checkIfExistsByTelegram(String telegram);
     boolean checkIfExistsByEmailExceptUserId(String email, Long userId);
     boolean checkIfExistsByTelegramExceptUserId(String telegram, Long userId);
-
-
+    boolean checkIfExistsByLoginExceptUserId(String login, Long userId);
+    boolean updateUserData(User user, String firstName, String lastName, String middleName, String email, String telegram, String login);
+    boolean changePassword(User user, String password);
+    boolean checkPassword(User user, String password);
 }

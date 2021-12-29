@@ -28,6 +28,7 @@ public class EmailServiceImpl implements EmailService {
     private static final String TEMPLATE_TEXT_PARAMETER = "text";
     private static final String TEMPLATE_BUTTON_TEXT_PARAMETER = "buttonText";
     private static final String TEMPLATE_BUTTON_LINK_PARAMETER = "buttonLink";
+    private static final String TEMPLATE_NOT_REPLY_NOTICE = "notReply";
     private MessageManager manager;
 
     public EmailServiceImpl(MessageManager manager) {
@@ -52,6 +53,7 @@ public class EmailServiceImpl implements EmailService {
         context.put(TEMPLATE_TEXT_PARAMETER, manager.getMessage(MESSAGE_ACTIVATION_EMAIL_TEXT, user.getFio()));
         context.put(TEMPLATE_BUTTON_TEXT_PARAMETER, manager.getMessage(LABEL_ACTIVATION_BUTTON));
         context.put(TEMPLATE_BUTTON_LINK_PARAMETER, APP_HOST + PagePath.ACTIVATE_URL + "&" + RequestParameter.HASH + "=" + userHash.getHash());
+        context.put(TEMPLATE_NOT_REPLY_NOTICE, manager.getMessage(MESSAGE_ACTIVATION_NOT_REPLY));
         StringWriter writer = new StringWriter();
         template.merge(context, writer);
         return writer.toString();

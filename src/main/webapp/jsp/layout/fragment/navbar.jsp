@@ -28,15 +28,15 @@
         <ul class="navbar-nav form-inline my-2 my-lg-0">
             <c:choose>
                 <c:when test="${!empty principal}">
-                    <span class="badge badge-warning user-role-span">${fn:toLowerCase(principal.role)}</span>
+                    <span class="badge badge-${principal.role.color} user-role-span">${fn:toLowerCase(principal.role)}</span>
                     <li class="nav-item dropdown user-dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg" width="35" height="35" class="rounded-circle">
+                            <img src="${pageContext.request.contextPath}${!empty principal.avatar ? principal.avatar : '/static/custom/images/noavatar.png'}" width="35" height="35" class="rounded-circle">
                                 ${principal.fio}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="${pageContext.request.contextPath}/controller?command=profile_page"><fmt:message key="label.profile" /></a>
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/controller?command=edit_profile_page"><fmt:message key="label.profile" /></a>
                             <div class="dropdown-divider"></div>
                             <form id="logout_form" action="${pageContext.request.contextPath}/controller?command=logout" method="post"></form>
                             <a class="dropdown-item" href="#" onclick="$('#logout_form').submit();"><fmt:message key="label.logout" /></a>

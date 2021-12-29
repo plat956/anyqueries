@@ -12,15 +12,15 @@ import static by.latushko.anyqueries.util.i18n.MessageKey.LABEL_WRONG_INPUT;
 import static by.latushko.anyqueries.validator.ValidationPattern.EMAIL_REGEXP;
 import static by.latushko.anyqueries.validator.ValidationPattern.TELEGRAM_REGEXP;
 
-public class RepeatActivationValidator implements FormValidator {
+public class RepeatActivationFormValidator implements FormValidator {
     private static FormValidator instance;
 
-    private RepeatActivationValidator() {
+    private RepeatActivationFormValidator() {
     }
 
     public static FormValidator getInstance() {
         if(instance == null) {
-            instance = new RepeatActivationValidator();
+            instance = new RepeatActivationFormValidator();
         }
         return instance;
     }

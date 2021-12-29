@@ -13,6 +13,9 @@ public final class RequestParameter {
     public static final String LANG = "lang";
     public static final String PASSWORD = "password";
     public static final String PASSWORD_CONFIRMED = "password_confirmed";
+    public static final String PASSWORD_OLD = "password_old";
+    public static final String PASSWORD_NEW = "password_new";
+    public static final String PASSWORD_NEW_REPEAT = "password_new_repeat";
     public static final String QUERY_STRING = "query_string";
     public static final String HASH = "hash";
     public static final String REMEMBER_ME = "remember_me";

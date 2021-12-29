@@ -70,6 +70,9 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     private static final String SQL_EXISTS_BY_TELEGRAM_EXCEPT_USER_ID_QUERY = """
             SELECT 1 FROM users
             WHERE telegram = ? and id <> ?""";
+    private static final String SQL_EXISTS_BY_LOGIN_EXCEPT_USER_ID_QUERY = """
+            SELECT 1 FROM users
+            WHERE login = ? and id <> ?""";
     private final RowMapper<User> mapper = new UserMapper();
 
     @Override
@@ -334,6 +337,19 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             }
         } catch (SQLException e) {
             throw new DaoException("Failed check if user exists by calling existsByTelegramExceptUserId(String telegram, Long userId) method", e);
+        }
+    }
+
+    @Override
+    public boolean existsByLoginExceptUserId(String login, Long userId) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_LOGIN_EXCEPT_USER_ID_QUERY)){
+            statement.setString(1, login);
+            statement.setLong(2, userId);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed check if user exists by calling existsByLoginExceptUserId(String login, Long userId) method", e);
         }
     }
 }

@@ -64,6 +64,34 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
+    public boolean updateRegistrationData(User user, String email, String telegram, boolean sendLink, MessageManager manager) {
+        BaseDao userDao = new UserDaoImpl();
+        user.setEmail(email);
+        user.setTelegram(telegram);
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                userDao.update(user);
+
+                if (sendLink) {
+                    UserHash userHash = userService.generateUserHash(user);
+                    ((UserDao) userDao).createUserHash(userHash);
+
+                    EmailService emailService = new EmailServiceImpl(manager);
+                    emailService.sendActivationEmail(user, userHash);
+                }
+
+                transaction.commit();
+                return true;
+            } catch (EntityTransactionException | DaoException | MailSenderException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to update user registration data", e);
+        }
+        return false;
+    }
+
+    @Override
     public Optional<User> activateUserByHash(String hash) {
         BaseDao userDao = new UserDaoImpl();
         Optional<User> activatedUser = Optional.empty();

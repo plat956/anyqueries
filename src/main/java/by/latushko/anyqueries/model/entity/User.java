@@ -7,7 +7,19 @@ public class User extends BaseEntity<Long> {
         ACTIVE, INACTIVE, BANNED;
     }
     public enum Role {
-        ADMIN, USER, MODERATOR;
+        ADMIN("danger"),
+        USER("warning"),
+        MODERATOR("success");
+
+        private String color;
+
+        Role(String color) {
+            this.color = color;
+        }
+
+        public String getColor() {
+            return color;
+        }
     }
     private String firstName;
     private String lastName;

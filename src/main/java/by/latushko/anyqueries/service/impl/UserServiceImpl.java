@@ -229,6 +229,69 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
+    @Override
+    public boolean checkIfExistsByLoginExceptUserId(String login, Long userId) {
+        BaseDao userDao = new UserDaoImpl();
+        boolean result = false;
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                result = ((UserDao)userDao).existsByLoginExceptUserId(login, userId);
+                transaction.commit();
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during checking user existing by login", e);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean updateUserData(User user, String firstName, String lastName, String middleName, String email, String telegram, String login) {
+        BaseDao userDao = new UserDaoImpl();
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setMiddleName(middleName);
+        user.setEmail(email);
+        user.setTelegram(telegram);
+        user.setLogin(login);
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                userDao.update(user);
+                transaction.commit();
+                return true;
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to update user profile data", e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean changePassword(User user, String password) {
+        BaseDao userDao = new UserDaoImpl();
+        user.setPassword(passwordEncoder.encode(password));
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                userDao.update(user);
+                transaction.commit();
+                return true;
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to update user password", e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean checkPassword(User user, String password) {
+        return passwordEncoder.check(password, user.getPassword());
+    }
+
     private String getCredentialTokenSource(User user) {
         return CREDENTIAL_TOKEN_ADDITIONAL_SALT + user.getLogin();
     }

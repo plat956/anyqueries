@@ -19,4 +19,5 @@ public interface UserDao {
     boolean existsByTelegram(String telegram) throws DaoException;
     boolean existsByEmailExceptUserId(String email, Long userId) throws DaoException;
     boolean existsByTelegramExceptUserId(String telegram, Long userId) throws DaoException;
+    boolean existsByLoginExceptUserId(String login, Long userId) throws DaoException;
 }
