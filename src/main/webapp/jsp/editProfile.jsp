@@ -9,7 +9,7 @@
 <jsp:include page="layout/header.jsp" />
 <div class="row">
     <jsp:include page="fragment/editProfileLeftColumn.jsp" />
-    <div class="col-sm-9">
+    <div class="col-sm-9" id="profile-nav">
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 <a class="nav-link active" id="pills-home-tab" href="${pageContext.request.contextPath}/controller?command=edit_profile_page" role="tab" aria-selected="true">
@@ -22,7 +22,7 @@
                 </a>
             </li>
         </ul>
-        <div class="tab-content" id="pills-tabContent" style="margin-top: 20px">
+        <div class="tab-content pills-tab" id="pills-tabContent">
             <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                 <form id="edit_form" class="needs-validation" method="post" action="${pageContext.request.contextPath}/controller?command=edit_profile" novalidate>
                     <div class="form-group input-group">

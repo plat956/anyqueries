@@ -1,4 +1,4 @@
-var forms = {
+var dataForms = {
     spinSubmitButton: function () {
         $("form").on("submit", function() {
             if($(this)[0].checkValidity()) {
@@ -7,6 +7,25 @@ var forms = {
                 button.html('<span class="spinner-grow spinner-grow-sm"></span> ' + message.processing);
             }
         });
+    },
+    uploadFileValidation: function (i) {
+        const valid = [...i.files].every(file => {
+            if (!i.accept) {
+                return true;
+            }
+            return i.accept.replace(/\s/g, '').split(',').filter(accept => {
+                return new RegExp(accept.replace('*', '.\*')).test(file.type);
+            }).length > 0;
+        });
+        return valid;
+    },
+    uploadAvatar: function (input, form) {
+        var result = dataForms.uploadFileValidation(input);
+        if(result) {
+            $('#' + form).submit();
+        } else {
+            toasts.show("error", message.wrong_file_format, message.allowed_file_formats + $(input).attr('accept'));
+        }
     }
 }
 

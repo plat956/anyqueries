@@ -75,7 +75,7 @@
         });
 
         //init form buttons spinner
-        forms.spinSubmitButton();
+        dataForms.spinSubmitButton();
 
         //init popovers
         $('[data-toggle="popover"]').popover();
