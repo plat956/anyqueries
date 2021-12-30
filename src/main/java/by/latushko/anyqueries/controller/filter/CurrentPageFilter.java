@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
+import static by.latushko.anyqueries.controller.command.CommandType.SHOW_IMAGE;
 import static by.latushko.anyqueries.controller.command.identity.PagePath.CONTROLLER_URL;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.CURRENT_PAGE;
 
@@ -19,7 +20,8 @@ public class CurrentPageFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         if (request.getMethod().equals(RequestMethod.GET.name()) &&
                 request.getParameter(RequestParameter.AJAX) == null &&
-                request.getParameter(RequestParameter.COMMAND) != null) {
+                request.getParameter(RequestParameter.COMMAND) != null &&
+                !request.getParameter(RequestParameter.COMMAND).equalsIgnoreCase(SHOW_IMAGE.name())) {
             String currentPage = CONTROLLER_URL + "?" + request.getQueryString();
             HttpSession session = request.getSession();
             session.setAttribute(CURRENT_PAGE, currentPage);

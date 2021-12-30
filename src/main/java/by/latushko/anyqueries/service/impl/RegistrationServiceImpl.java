@@ -21,7 +21,7 @@ import java.util.Optional;
 
 public class RegistrationServiceImpl implements RegistrationService {
     private static final Logger logger = LogManager.getLogger();
-    private static RegistrationServiceImpl instance;
+    private static RegistrationService instance;
     private final UserService userService = UserServiceImpl.getInstance();
 
     private RegistrationServiceImpl() {

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class BaseDao<K, T extends BaseEntity> {
+    public static final String LIKE_MARKER = "%";
     protected Connection connection;
 
     public abstract List<T> findAll() throws DaoException;

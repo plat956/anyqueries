@@ -14,15 +14,18 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <div class="navbar-search input-group">
-                    <input class="form-control py-2 border-left-0 border search-input" type="text"
-                           placeholder="<fmt:message key="label.search.placeholder" />" id="example-search-input" />
-                    <span class="input-group-append">
-                        <button class="navbar-search-btn btn btn-outline-primary border-left-0 border">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </span>
-                </div>
+                <form action="${pageContext.request.contextPath}/controller" method="get">
+                    <input type="hidden" name="command" value="search" />
+                    <div class="navbar-search input-group">
+                        <input class="form-control py-2 border-left-0 border search-input" type="text"
+                               placeholder="<fmt:message key="label.search.placeholder" />" id="search-input" name="query"/>
+                        <span class="input-group-append">
+                            <button type="submit" class="no-loader navbar-search-btn btn btn-outline-primary border-left-0 border">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </form>
             </li>
         </ul>
         <ul class="navbar-nav form-inline my-2 my-lg-0">

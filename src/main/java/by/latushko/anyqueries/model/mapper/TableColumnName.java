@@ -15,6 +15,8 @@ public final class TableColumnName {
     public static final String USER_STATUS = "status";
     public static final String USER_ROLE = "role";
 
+    public static final String QUESTION_TITLE = "title";
+
     private TableColumnName() {
     }
 }
