@@ -196,6 +196,7 @@ body {
 
 .support-label {
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .support-label-span {
@@ -550,4 +551,14 @@ input:checked + .slider:before {
 #avatar-form {
     margin-top:10px;
     margin-bottom: 10px;
+}
+.other-categories {
+    width: 100%;
+    text-align: left;
+}
+.support-label>li>a {
+    text-decoration: none;
+}
+.sidebar-label {
+    padding: 0px 5px 5px 5px;
 }

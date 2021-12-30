@@ -43,4 +43,55 @@ public class QuestionServiceImpl implements QuestionService {
         }
         return result;
     }
+
+    @Override
+    public Long countTotalQuestionsByAuthorId(Long authorId) {
+        BaseDao questionDao = new QuestionDaoImpl();
+        Long count = 0L;
+        try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
+            try {
+                count = ((QuestionDao)questionDao).countTotalQuestionsByAuthorId(authorId);
+                transaction.commit();
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving questions count by author id", e);
+        }
+        return count;
+    }
+
+    @Override
+    public Long countTotalNotClosedQuestions() {
+        BaseDao questionDao = new QuestionDaoImpl();
+        Long count = 0L;
+        try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
+            try {
+                count = ((QuestionDao)questionDao).countTotalNotClosedQuestions();
+                transaction.commit();
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving not closed questions count", e);
+        }
+        return count;
+    }
+
+    @Override
+    public Long countTotalNotClosedQuestionsByAuthorId(Long authorId) {
+        BaseDao questionDao = new QuestionDaoImpl();
+        Long count = 0L;
+        try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
+            try {
+                count = ((QuestionDao)questionDao).countTotalNotClosedQuestionsByAuthorId(authorId);
+                transaction.commit();
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving not closed questions count by author id", e);
+        }
+        return count;
+    }
 }

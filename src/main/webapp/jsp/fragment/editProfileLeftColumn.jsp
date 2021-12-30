@@ -26,7 +26,7 @@
         </form>
     </div>
     <ul class="list-group">
-        <li class="list-group-item text-left"><span class="pull-left"><strong><fmt:message key="label.questions" /></strong></span> 125</li>
-        <li class="list-group-item text-left"><span class="pull-left"><strong><fmt:message key="label.answers" /></strong></span> 13</li>
+        <li class="list-group-item text-left"><span class="pull-left"><strong><fmt:message key="label.questions" /></strong></span> ${totalQuestions}</li>
+        <li class="list-group-item text-left"><span class="pull-left"><strong><fmt:message key="label.answers" /></strong></span> ${totalAnswers}</li>
     </ul>
 </div>

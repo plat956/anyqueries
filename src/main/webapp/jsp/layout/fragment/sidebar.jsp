@@ -5,14 +5,18 @@
     <div class="grid support">
         <div class="grid-body">
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <a class="nav-link active bg-primary" href="${pageContext.request.contextPath}/" aria-selected="true"><fmt:message key="label.allQuestions" /> <span class="badge badge-light">44 todo</span></a>
+                <a class="nav-link active bg-primary" href="${pageContext.request.contextPath}/controller?command=questions_page" aria-selected="true">
+                    <fmt:message key="label.allQuestions" /> <span class="badge badge-light">${layoutTotalQuestions}</span>
+                </a>
                 <c:if test="${!empty principal}">
-                    <a class="nav-link " href="${pageContext.request.contextPath}/" aria-selected="false"><fmt:message key="label.myQuestions" /> <span class="badge badge-primary">1 todo</span></a>
+                    <a class="nav-link " href="${pageContext.request.contextPath}/controller?command=questions_page&mode=my" aria-selected="false">
+                        <fmt:message key="label.myQuestions" /> <span class="badge badge-primary">${layoutTotalUserQuestions}</span>
+                    </a>
                 </c:if>
-                <a class="nav-link" href="${pageContext.request.contextPath}/" aria-selected="false"><fmt:message key="label.leadersList" /></a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=leaderboard_page" aria-selected="false"><fmt:message key="label.leadersList" /></a>
             </div>
             <hr>
-            <strong><fmt:message key="label.categories" /></strong>
+            <h6 class="sidebar-label"><fmt:message key="label.categories" /></h6>
             <ul class="support-label">
                 <li><a href="${pageContext.request.contextPath}/"><span class="support-label-span bg-blue">&#xA0;</span>Природа todo<span class="float-right">2 todo</span></a>
                 </li>
@@ -21,6 +25,17 @@
                 <li><a href="${pageContext.request.contextPath}/"><span class="support-label-span bg-yellow">&#xA0;</span>Кулинария todo<span class="float-right">128 todo</span></a>
                 </li>
             </ul>
+            <a class="btn btn-light btn-sm other-categories" href="${pageContext.request.contextPath}/controller?command=categories_page">
+                <fmt:message key="label.allCategories" />
+            </a>
+            <c:if test="${principal.role == 'MODERATOR'}">
+                <hr>
+                <h6 class="sidebar-label"><fmt:message key="label.controlPanel" /></h6>
+                <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=manage_categories_page" aria-selected="true"><fmt:message key="label.categories" /></a>
+                    <a class="nav-link " href="${pageContext.request.contextPath}/controller?command=manage_users_page" aria-selected="false"><fmt:message key="label.users" /></a>
+                </div>
+            </c:if>
             <hr>
             <form method="post" action="${pageContext.request.contextPath}/controller?command=change_locale" id="locale_form">
             <select class="selectpicker" data-width="100%" name="lang" onchange="$('#locale_form').submit();">

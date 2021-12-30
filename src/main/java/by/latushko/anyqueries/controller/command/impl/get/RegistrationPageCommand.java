@@ -12,7 +12,7 @@ import static by.latushko.anyqueries.controller.command.CommandResult.RoutingTyp
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.WARNING;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
 import static by.latushko.anyqueries.controller.command.identity.PagePath.REGISTRATION_PAGE;
-import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
+import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.MESSAGE;
 import static by.latushko.anyqueries.util.AppProperty.APP_TELEGRAM_LINK_HOST;
 import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_REGISTRATION_WARNING;
 import static by.latushko.anyqueries.util.telegram.TelegramBot.BOT_NAME;

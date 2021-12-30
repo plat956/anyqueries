@@ -21,6 +21,18 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             WHERE title like ? 
             ORDER BY title ASC 
             LIMIT ?""";
+    private static final String SQL_COUNT_BY_AUTHOR_ID_QUERY = """
+            SELECT count(*) 
+            FROM questions 
+            WHERE author_id = ?""";
+    private static final String SQL_COUNT_CLOSED_IS_QUERY = """
+            SELECT count(*) 
+            FROM questions 
+            WHERE closed = ?""";
+    private static final String SQL_COUNT_CLOSED_IS_BY_AUTHOR_ID_QUERY = """
+            SELECT count(*) 
+            FROM questions 
+            WHERE author_id = ? and closed = ?""";
 
     @Override
     public List<Question> findAll() throws DaoException {
@@ -68,5 +80,54 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             throw new DaoException("Failed to find question titles by calling findTitleLike(String pattern, int limit) method", e);
         }
         return result;
+    }
+
+    @Override
+    public Long countTotalQuestionsByAuthorId(Long authorId) throws DaoException {
+        Long count = 0L;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_AUTHOR_ID_QUERY)){
+            statement.setLong(1, authorId);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    count = resultSet.getLong(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to count questions by calling countTotalQuestionsByAuthorId(Long authorId) method", e);
+        }
+        return count;
+    }
+
+    @Override
+    public Long countTotalNotClosedQuestions() throws DaoException {
+        Long count = 0L;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_CLOSED_IS_QUERY)){
+            statement.setLong(1, 0);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    count = resultSet.getLong(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to count questions by calling countTotalNotClosedQuestions() method", e);
+        }
+        return count;
+    }
+
+    @Override
+    public Long countTotalNotClosedQuestionsByAuthorId(Long authorId) throws DaoException {
+        Long count = 0L;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_CLOSED_IS_BY_AUTHOR_ID_QUERY)){
+            statement.setLong(1, authorId);
+            statement.setLong(2, 0);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    count = resultSet.getLong(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to count questions by calling countTotalNotClosedQuestionsByAuthorId(Long authorId) method", e);
+        }
+        return count;
     }
 }
