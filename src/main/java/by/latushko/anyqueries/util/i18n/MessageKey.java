@@ -29,6 +29,11 @@ public final class MessageKey {
     public static final String MESSAGE_SAVE_FAILED = "message.save.failed";
     public static final String MESSAGE_ACTIVATION_NOT_REPLY = "message.activation.notReply";
     public static final String MESSAGE_PASSWORD_OLD_INCORRECT = "message.passwordOld.incorrect";
+    public static final String MESSAGE_AVATAR_WRONG_EXTENSION = "message.avatar.wrongExtension";
+    public static final String MESSAGE_NO_FILE_CHOSEN = "message.file.not.chosen";
+    public static final String MESSAGE_FILE_UPLOAD_ERROR = "message.file.upload.error";
+
+    public static final String MESSAGE_AVATAR_UPLOADED = "message.avatar.uploaded";
     static final String MESSAGES_FILE_NAME = "message";
     static final String LOCALE_EN = "en";
     static final String LOCALE_BE = "be";

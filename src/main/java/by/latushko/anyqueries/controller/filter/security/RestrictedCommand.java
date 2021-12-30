@@ -24,6 +24,7 @@ public final class RestrictedCommand {
         commands.put(REPEAT_ACTIVATION_PAGE, EnumSet.of(INACTIVE_USER));
         commands.put(EDIT_PROFILE_PAGE, EnumSet.of(ADMIN, USER, MODERATOR));
         commands.put(EDIT_PROFILE, EnumSet.of(ADMIN, USER, MODERATOR));
+        commands.put(UPLOAD_AVATAR, EnumSet.of(ADMIN, USER, MODERATOR));
         //todo add each admin pages in the future
     }
 

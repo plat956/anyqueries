@@ -6,6 +6,9 @@ import by.latushko.anyqueries.model.entity.UserHash;
 import java.util.Optional;
 
 public interface UserService {
+    String AVATAR_PREFIX = "avatar_";
+    int AVATAR_MAX_SIZE = 190;
+
     User createNewUser(String firstName, String lastName, String middleName, String email,
                        String telegram, String login, String password);
     UserHash generateUserHash(User user);
@@ -24,4 +27,7 @@ public interface UserService {
     boolean updateUserData(User user, String firstName, String lastName, String middleName, String email, String telegram, String login);
     boolean changePassword(User user, String password);
     boolean checkPassword(User user, String password);
+    boolean updateAvatar(User user, String avatar);
+    boolean resizeAvatar(String avatar);
+    String findUserAvatar(Long userId);
 }

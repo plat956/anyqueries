@@ -6,7 +6,7 @@
     <jsp-config>
         <taglib>
             <taglib-uri>formtags</taglib-uri>
-            <taglib-location>/WEB-INF/tld/fieldClassDetector.tld</taglib-location>
+            <taglib-location>/WEB-INF/tld/formTags.tld</taglib-location>
         </taglib>
     </jsp-config>
     <error-page>

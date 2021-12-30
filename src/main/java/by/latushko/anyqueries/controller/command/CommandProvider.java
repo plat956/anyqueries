@@ -22,6 +22,7 @@ public class CommandProvider {
         getCommands.put(CommandType.MAIN_PAGE, new MainPageCommand());
         getCommands.put(CommandType.LIVE_SEARCH, new LiveSearchCommand());
         getCommands.put(CommandType.CHANGE_PASSWORD_PAGE, new ChangePasswordPageCommand());
+        getCommands.put(CommandType.SHOW_IMAGE, new ShowImageCommand());
         postCommands.put(CommandType.LOGIN, new LoginCommand());
         postCommands.put(CommandType.LOGOUT, new LogoutCommand());
         postCommands.put(CommandType.REGISTRATION, new RegistrationCommand());
@@ -29,6 +30,7 @@ public class CommandProvider {
         postCommands.put(CommandType.REPEAT_ACTIVATION, new RepeatActivationCommand());
         postCommands.put(CommandType.EDIT_PROFILE, new EditProfileCommand());
         postCommands.put(CommandType.CHANGE_PASSWORD, new ChangePasswordCommand());
+        postCommands.put(CommandType.UPLOAD_AVATAR, new UploadAvatarCommand());
     }
 
     public static CommandProvider getInstance() {

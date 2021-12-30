@@ -14,9 +14,16 @@ import by.latushko.anyqueries.util.encryption.impl.BCryptPasswordEncoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static by.latushko.anyqueries.controller.command.impl.get.ShowImageCommand.IMAGE_DIRECTORY_PATH;
 import static by.latushko.anyqueries.util.AppProperty.APP_ACTIVATION_LINK_ALIVE_HOURS;
 
 public class UserServiceImpl implements UserService {
@@ -290,6 +297,71 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean checkPassword(User user, String password) {
         return passwordEncoder.check(password, user.getPassword());
+    }
+
+    @Override
+    public boolean updateAvatar(User user, String avatar) {
+        BaseDao userDao = new UserDaoImpl();
+        String oldAvatar = IMAGE_DIRECTORY_PATH + user.getAvatar();
+        user.setAvatar(avatar);
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                Files.deleteIfExists(new File(oldAvatar).toPath());
+                userDao.update(user);
+                transaction.commit();
+                return true;
+            } catch (IOException | EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to update user avatar", e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean resizeAvatar(String avatar) {
+        try {
+            String file = IMAGE_DIRECTORY_PATH + avatar;
+            File inputFile = new File(file);
+            BufferedImage inputImage = ImageIO.read(inputFile);
+
+            BufferedImage outputImage = new BufferedImage(AVATAR_MAX_SIZE, AVATAR_MAX_SIZE, inputImage.getType());
+
+            Graphics2D g2d = outputImage.createGraphics();
+            g2d.drawImage(inputImage, 0, 0, AVATAR_MAX_SIZE, AVATAR_MAX_SIZE, null);
+            g2d.dispose();
+
+            String formatName = file.substring(file.lastIndexOf(".") + 1);
+
+            ImageIO.write(outputImage, formatName, new File(file));
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public String findUserAvatar(Long userId) {
+        BaseDao userDao = new UserDaoImpl();
+        Optional<String> avatar = null;
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                avatar = ((UserDao)userDao).findAvatarByUserId(userId);
+                transaction.commit();
+
+                if(avatar != null) {
+                    return IMAGE_DIRECTORY_PATH + avatar.get();
+                } else {
+                    return null;
+                }
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to find user avatar", e);
+        }
+        return null;
     }
 
     private String getCredentialTokenSource(User user) {

@@ -20,4 +20,5 @@ public interface UserDao {
     boolean existsByEmailExceptUserId(String email, Long userId) throws DaoException;
     boolean existsByTelegramExceptUserId(String telegram, Long userId) throws DaoException;
     boolean existsByLoginExceptUserId(String login, Long userId) throws DaoException;
+    Optional<String> findAvatarByUserId(Long userId) throws DaoException;
 }

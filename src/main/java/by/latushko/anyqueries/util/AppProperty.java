@@ -5,6 +5,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public final class AppProperty {
@@ -19,6 +21,9 @@ public final class AppProperty {
     private static final String APP_DEVELOPER_LAST_NAME_PARAMETER = "app.developer.lastName";
     private static final String APP_DEVELOPER_TELEGRAM_PARAMETER = "app.developer.telegram";
     private static final String APP_DEVELOPER_PHONE_PARAMETER = "app.developer.phone";
+    private static final String APP_UPLOAD_AVATAR_EXTENSIONS_PARAMETER = "app.upload.avatar.extensions";
+    private static final String APP_UPLOAD_DIR_PARAMETER = "app.upload.dir";
+    private static final String EXTENSION_DELIMITER = ",";
     public static final String APP_NAME;
     public static final String APP_HOST;
     public static final Integer APP_ACTIVATION_LINK_ALIVE_HOURS;
@@ -28,6 +33,8 @@ public final class AppProperty {
     public static final String APP_DEVELOPER_LAST_NAME;
     public static final String APP_DEVELOPER_TELEGRAM;
     public static final String APP_DEVELOPER_PHONE;
+    public static final List<String> APP_UPLOAD_AVATAR_EXTENSIONS;
+    public static final String APP_UPLOAD_DIR;
 
     static {
         Properties properties = new Properties();
@@ -43,6 +50,13 @@ public final class AppProperty {
             APP_DEVELOPER_LAST_NAME = properties.getProperty(APP_DEVELOPER_LAST_NAME_PARAMETER);
             APP_DEVELOPER_TELEGRAM = properties.getProperty(APP_DEVELOPER_TELEGRAM_PARAMETER);
             APP_DEVELOPER_PHONE = properties.getProperty(APP_DEVELOPER_PHONE_PARAMETER);
+            APP_UPLOAD_AVATAR_EXTENSIONS = new ArrayList<>();
+            String avatarExtensions = properties.getProperty(APP_UPLOAD_AVATAR_EXTENSIONS_PARAMETER);
+            if(avatarExtensions != null && !avatarExtensions.isEmpty()) {
+                String[] extensions = avatarExtensions.split(EXTENSION_DELIMITER);
+                APP_UPLOAD_AVATAR_EXTENSIONS.addAll(List.of(extensions));
+            }
+            APP_UPLOAD_DIR = properties.getProperty(APP_UPLOAD_DIR_PARAMETER);
         } catch (IOException e) {
             logger.error("Failed to read application properties from file: " + APP_PARAMETER_PATH, e);
             throw new ExceptionInInitializerError("Failed to read application properties from file: " + APP_PARAMETER_PATH);

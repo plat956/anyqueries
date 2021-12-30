@@ -19,4 +19,14 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
+    <tag>
+        <name>list-formatter</name>
+        <tag-class>by.latushko.anyqueries.util.tag.ListFormatterTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>list</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
 </taglib>

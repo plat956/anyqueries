@@ -7,7 +7,7 @@ import com.mysql.cj.xdevapi.JsonString;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.RESPOND_WITH_JSON;
+import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.JSON;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.QUERY_STRING;
 
 public class LiveSearchCommand implements Command {
@@ -22,6 +22,6 @@ public class LiveSearchCommand implements Command {
         array.addValue(new JsonString().setValue("United Arab Emirates"));
         array.addValue(new JsonString().setValue("Afghanistan"));
 
-        return new CommandResult(array.toString(), RESPOND_WITH_JSON);
+        return new CommandResult(array.toString(), JSON);
     }
 }

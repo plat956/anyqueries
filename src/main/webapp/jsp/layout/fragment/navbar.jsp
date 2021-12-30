@@ -32,7 +32,14 @@
                     <li class="nav-item dropdown user-dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img src="${pageContext.request.contextPath}${!empty principal.avatar ? principal.avatar : '/static/custom/images/noavatar.png'}" width="35" height="35" class="rounded-circle">
+                            <c:choose>
+                                <c:when test="${!empty principal.avatar}">
+                                    <img src="${pageContext.request.contextPath}/controller?command=show_image&file=${principal.avatar}" width="35" height="35" class="rounded-circle">
+                                </c:when>
+                                <c:otherwise>
+                                    <img src="${pageContext.request.contextPath}/static/custom/images/noavatar.png'}" width="35" height="35" class="rounded-circle">
+                                </c:otherwise>
+                            </c:choose>
                                 ${principal.fio}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">

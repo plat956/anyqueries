@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static by.latushko.anyqueries.model.mapper.TableColumnName.USER_AVATAR;
+
 public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     private static final String SQL_FIND_ALL_QUERY = """
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 
@@ -73,6 +75,10 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     private static final String SQL_EXISTS_BY_LOGIN_EXCEPT_USER_ID_QUERY = """
             SELECT 1 FROM users
             WHERE login = ? and id <> ?""";
+    private static final String SQL_FIND_AVATAR_BY_USER_ID = """
+            SELECT avatar FROM users
+            WHERE id = ?""";
+
     private final RowMapper<User> mapper = new UserMapper();
 
     @Override
@@ -350,6 +356,22 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             }
         } catch (SQLException e) {
             throw new DaoException("Failed check if user exists by calling existsByLoginExceptUserId(String login, Long userId) method", e);
+        }
+    }
+
+    @Override
+    public Optional<String> findAvatarByUserId(Long userId) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_AVATAR_BY_USER_ID)){
+            statement.setLong(1, userId);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return Optional.ofNullable(resultSet.getString(USER_AVATAR));
+                } else {
+                    return Optional.empty();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find user avatar by calling findAvatarByUserId(Long userId) method", e);
         }
     }
 }
