@@ -14,6 +14,8 @@
 </section>
 </div>
 <script type="text/javascript">
+    window.history.forward();
+
     // Show the progress bar
     NProgress.start();
 
@@ -27,7 +29,7 @@
     });
 
     // Trigger bar when exiting the page
-    $(window).on('beforeunload', function(){
+    $(window).on('beforeunload', function(e){
         NProgress.start();
         pageEvents.freezeClicks(true);
     });

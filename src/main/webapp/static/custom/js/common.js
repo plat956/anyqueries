@@ -61,6 +61,9 @@ var pageEvents = {
     },
     init: function () {
         document.addEventListener("click", pageEvents.handler, true);
+    },
+    noBack: function () {
+        window.history.forward();
     }
 }
 
