@@ -18,12 +18,13 @@
             <hr>
             <h6 class="sidebar-label"><fmt:message key="label.categories" /></h6>
             <ul class="support-label">
-                <li><a href="${pageContext.request.contextPath}/"><span class="support-label-span bg-blue">&#xA0;</span>Природа todo<span class="float-right">2 todo</span></a>
-                </li>
-                <li><a href="${pageContext.request.contextPath}/"><span class="support-label-span bg-red">&#xA0;</span>Наука todo<span class="float-right">7 todo</span></a>
-                </li>
-                <li><a href="${pageContext.request.contextPath}/"><span class="support-label-span bg-yellow">&#xA0;</span>Кулинария todo<span class="float-right">128 todo</span></a>
-                </li>
+                <c:forEach var="c" items="${layoutTopCategories}">
+                    <li>
+                        <a href="${pageContext.request.contextPath}/controller?command=category_page&id=${c.id}">
+                            <span class="support-label-span" style="background-color: ${c.color}">&#xA0;</span>${c.name}<span class="float-right">${c.questionsCount}</span>
+                        </a>
+                    </li>
+                </c:forEach>
             </ul>
             <a class="btn btn-light btn-sm other-categories" href="${pageContext.request.contextPath}/controller?command=categories_page">
                 <fmt:message key="label.allCategories" />

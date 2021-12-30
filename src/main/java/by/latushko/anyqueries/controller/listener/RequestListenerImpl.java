@@ -1,8 +1,11 @@
 package by.latushko.anyqueries.controller.listener;
 
 import by.latushko.anyqueries.controller.command.identity.RequestAttribute;
+import by.latushko.anyqueries.model.entity.Category;
 import by.latushko.anyqueries.model.entity.User;
+import by.latushko.anyqueries.service.CategoryService;
 import by.latushko.anyqueries.service.QuestionService;
+import by.latushko.anyqueries.service.impl.CategoryServiceImpl;
 import by.latushko.anyqueries.service.impl.QuestionServiceImpl;
 import jakarta.servlet.ServletRequestEvent;
 import jakarta.servlet.ServletRequestListener;
@@ -10,9 +13,12 @@ import jakarta.servlet.annotation.WebListener;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.LAYOUT_TOTAL_QUESTIONS;
-import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.LAYOUT_TOTAL_USER_QUESTIONS;
+import java.util.List;
+
+import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.VALIDATION_RESULT;
 
 @WebListener
 public class RequestListenerImpl implements ServletRequestListener {
@@ -32,7 +38,6 @@ public class RequestListenerImpl implements ServletRequestListener {
             session.removeAttribute(VALIDATION_RESULT);
             request.setAttribute(RequestAttribute.VALIDATION_RESULT, validationResult);
         }
-
         Long totalQuestions = questionService.countTotalNotClosedQuestions();
         request.setAttribute(LAYOUT_TOTAL_QUESTIONS, totalQuestions);
         User user = (User) session.getAttribute(PRINCIPAL);
@@ -40,7 +45,8 @@ public class RequestListenerImpl implements ServletRequestListener {
             Long totalUserQuestions = questionService.countTotalNotClosedQuestionsByAuthorId(user.getId());
             request.setAttribute(LAYOUT_TOTAL_USER_QUESTIONS, totalUserQuestions);
         }
-
-        //todo top 5 categories + join count question in it
+        CategoryService categoryService = CategoryServiceImpl.getInstance();
+        List<Category> categories = categoryService.findTop5Categories();
+        request.setAttribute(LAYOUT_TOP_CATEGORIES, categories);
     }
 }
