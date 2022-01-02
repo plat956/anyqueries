@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" import="by.latushko.anyqueries.util.AppProperty" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:useBean id="date" class="java.util.Date" />
 <fmt:formatDate value="${date}" pattern="yyyy" var="currentYear" />
 </div>
@@ -37,13 +38,17 @@
     //prevent forms double submitting
     $('form').preventDoubleSubmission();
 
-    $(document).on('submit', 'form', function(e) {
+
+    $(document).on('submit', 'form:not(.ck-link-form)', function(e) {
         if($(this)[0].checkValidity()) {
             pageEvents.freezeClicks(true);
         }
     });
 
     $(function () {
+        //disable page refreshing
+        $(document).on("keydown", pageEvents.disableF5);
+
         //check if cookies are enabled
         if (!navigator.cookieEnabled) {
             $('#err-cookie-support').show();
@@ -68,11 +73,23 @@
         })();
 
         //init navbar live search
-        $('input.search-input').typeahead({
+        $('#search-input').typeahead({
             source:  function (query, process) {
                 return $.get('/controller?command=live_search', {query_string: query, ajax: true}, function (data) {
+                    $('#noResults').remove();
+                    if(data.length == 0) {
+                        $('#search-input').after('' +
+                            '<ul class="typeahead dropdown-menu" id="noResults" role="listbox"">' +
+                            '<li class="active">' + message.no_results + '</li>' +
+                            '</ul>')
+                    }
                     return process(data);
                 });
+            }
+        }).on('input', function () {
+            var value = $(this).val();
+            if(value.length == 0) {
+                $('#noResults').remove();
             }
         });
 

@@ -9,6 +9,7 @@
 <script src="${pageContext.request.contextPath}/static/bootstrap/4.2.1/js/toastr.min.js"></script>
 <script src="${pageContext.request.contextPath}/static/bootstrap/4.2.1/js/sweetalert.min.js"></script>
 <script src="${pageContext.request.contextPath}/static/nprogress/0.2.0/js/nprogress.js"></script>
+<script src="${pageContext.request.contextPath}/static/summernote/summernote-bs4.js"></script>
 <c:choose>
     <c:when test="${!empty current_lang}">
         <script src="${pageContext.request.contextPath}/static/custom/js/i18n/${current_lang}.js"></script>
@@ -25,3 +26,4 @@
 <link href="${pageContext.request.contextPath}/static/font-awesome/5.15.4/css/all.css" rel="stylesheet" />
 <link href="${pageContext.request.contextPath}/static/nprogress/0.2.0/css/nprogress.css" rel="stylesheet" />
 <link href="${pageContext.request.contextPath}/static/custom/css/common.css" rel="stylesheet" />
+<link href="${pageContext.request.contextPath}/static/summernote/summernote-bs4.css" rel="stylesheet" />

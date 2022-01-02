@@ -562,3 +562,37 @@ input:checked + .slider:before {
 .sidebar-label {
     padding: 0px 5px 5px 5px;
 }
+#noResults {
+    top: 38px;
+    left: 0px;
+    display: block;
+    padding: 10px 15px 10px 15px;
+    color: #7e7e7e;
+    cursor: default;
+}
+.ck-editor {
+    width: 100%;
+}
+.ck-content {
+    min-height: 220px;
+}
+.attachments li {
+    padding: 0px 5px 0px 10px;
+    list-style: none;
+    border: 1px #c4c4c4 solid;
+    border-radius: 2px;
+    background: #fafafa;
+    margin-bottom: 3px;
+    margin-left: -40px;
+}
+.file-attachment {
+    margin-right: 5px;
+}
+.remove-attachment {
+    float:right;
+    margin-left: 5px;
+    color: #f00 !important;
+}
+.attachments>li>span {
+    cursor: default;
+}

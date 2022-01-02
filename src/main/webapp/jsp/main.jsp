@@ -25,7 +25,7 @@
             </div>
         </div>
         <!-- BEGIN NEW TICKET -->
-        <button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#newIssue">Задать вопрос</button>
+        <a class="btn btn-success float-right" data-toggle="modal" href="${pageContext.request.contextPath}/controller?command=create_question_page">Задать вопрос</a>
 
         <!-- END NEW TICKET -->
         <div class="padding"></div>
