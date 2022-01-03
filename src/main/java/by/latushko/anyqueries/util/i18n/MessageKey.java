@@ -7,6 +7,9 @@ public final class MessageKey {
     public static final String LABEL_TELEGRAM_EXISTS = "label.telegram.exists";
     public static final String LABEL_ACCOUNT_ACTIVATION = "label.account.activation";
     public static final String LABEL_ACTIVATION_BUTTON = "label.activation.button";
+    public static final String LABEL_TELEGRAM_ACTIVATE = "label.telegram.activate";
+    public static final String LABEL_TELEGRAM_HELP = "label.telegram.help";
+    public static final String LABEL_TELEGRAM_CONTACT = "label.telegram.contact";
     public static final String MESSAGE_LANG_CHANGED = "message.lang.changed";
     public static final String MESSAGE_LOGIN_WRONG = "message.login.wrong";
     public static final String MESSAGE_LOGIN_SUCCESS = "message.login.success";
@@ -32,6 +35,10 @@ public final class MessageKey {
     public static final String MESSAGE_AVATAR_WRONG = "message.avatar.wrong";
     public static final String MESSAGE_NO_FILE_CHOSEN = "message.file.not.chosen";
     public static final String MESSAGE_FILE_UPLOAD_ERROR = "message.file.upload.error";
+    public static final String MESSAGE_TELEGRAM_ACTIVATION_SUCCESS = "message.telegram.activation.success";
+    public static final String MESSAGE_TELEGRAM_ACTIVATION_FAIL = "message.telegram.activation.fail";
+    public static final String MESSAGE_TELEGRAM_GREETING = "message.telegram.greeting";
+    public static final String MESSAGE_TELEGRAM_UNKNOWN = "message.telegram.unknown";
 
     public static final String MESSAGE_AVATAR_UPLOADED = "message.avatar.uploaded";
     static final String MESSAGES_FILE_NAME = "message";

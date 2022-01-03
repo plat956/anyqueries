@@ -1,18 +1,25 @@
 package by.latushko.anyqueries.util.telegram.command.impl;
 
-import by.latushko.anyqueries.util.telegram.ResponseMessage;
+import by.latushko.anyqueries.util.i18n.MessageManager;
 import by.latushko.anyqueries.util.telegram.command.BotCommand;
+import by.latushko.anyqueries.util.telegram.command.KeyBoardBuilder;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+
+import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_TELEGRAM_UNKNOWN;
 
 public class UnknownCommand implements BotCommand {
     @Override
-    public BotApiMethod execute(Message inMessage) {
+    public BotApiMethod execute(Update update) {
+        Message inMessage = update.getMessage();
         SendMessage message = new SendMessage();
-        message.setReplyToMessageId(inMessage.getMessageId());
         message.setChatId(String.valueOf(inMessage.getChatId()));
-        message.setText(ResponseMessage.BAD_QUERY);
+        String userLang = inMessage.getFrom().getLanguageCode();
+        MessageManager manager = MessageManager.getManager(userLang);
+        message.setText(manager.getMessage(MESSAGE_TELEGRAM_UNKNOWN));
+        message.setReplyMarkup(KeyBoardBuilder.build(manager));
         return message;
     }
 }

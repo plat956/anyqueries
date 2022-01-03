@@ -1,41 +1,25 @@
 package by.latushko.anyqueries.util.telegram.command.impl;
 
-import by.latushko.anyqueries.util.telegram.ResponseMessage;
+import by.latushko.anyqueries.util.i18n.MessageManager;
 import by.latushko.anyqueries.util.telegram.command.BotCommand;
-import by.latushko.anyqueries.util.telegram.command.BotCommandType;
+import by.latushko.anyqueries.util.telegram.command.KeyBoardBuilder;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.ArrayList;
-import java.util.List;
+import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_TELEGRAM_GREETING;
 
 public class JoinCommand implements BotCommand {
-    private static final int KEYBOARD_ROWS = 2;
-
     @Override
-    public BotApiMethod execute(Message inMessage) {
+    public BotApiMethod execute(Update update) {
+        Message inMessage = update.getMessage();
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(inMessage.getChatId()));
-        message.setText(ResponseMessage.JOIN_GREETING);
-        message.setReplyMarkup(buildKeyboard());
+        String userLang = inMessage.getFrom().getLanguageCode();
+        MessageManager manager = MessageManager.getManager(userLang);
+        message.setText(manager.getMessage(MESSAGE_TELEGRAM_GREETING));
+        message.setReplyMarkup(KeyBoardBuilder.build(manager));
         return message;
-    }
-
-    private ReplyKeyboardMarkup buildKeyboard() {
-        ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup();
-        keyboard.setResizeKeyboard(true);
-        List<KeyboardRow> rows = new ArrayList<>(KEYBOARD_ROWS);
-        KeyboardRow firstRow = new KeyboardRow();
-        firstRow.add(BotCommandType.ACTIVATE_ACCOUNT);
-        firstRow.add(BotCommandType.HELP);
-        rows.add(firstRow);
-        KeyboardRow secondRow = new KeyboardRow();
-        secondRow.add(BotCommandType.CONTACT_TO_DEVELOPER);
-        rows.add(secondRow);
-        keyboard.setKeyboard(rows);
-        return keyboard;
     }
 }

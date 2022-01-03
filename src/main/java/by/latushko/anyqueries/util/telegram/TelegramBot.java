@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -38,20 +37,22 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+        String query = null;
+        Long chatId = null;
         if (update.hasMessage() && update.getMessage().hasText()) {
-            Message inMessage = update.getMessage();
-            Long chatId = inMessage.getChatId();
-            String query = inMessage.getText();
-
-            BotCommandProvider commandProvider = BotCommandProvider.getInstance();
-            BotCommand command = commandProvider.getCommand(query);
-            BotApiMethod method = command.execute(inMessage);
-
-            try {
-                execute(method);
-            } catch (TelegramApiException e) {
-                logger.error("Failed to send message to chatId: " + chatId, e);
-            }
+            query = update.getMessage().getText();
+            chatId = update.getMessage().getChatId();
+        } else if(update.hasCallbackQuery()){
+            query = update.getCallbackQuery().getData();
+            chatId = update.getCallbackQuery().getMessage().getChatId();
+        }
+        BotCommandProvider commandProvider = BotCommandProvider.getInstance();
+        BotCommand command = commandProvider.getCommand(query);
+        BotApiMethod method = command.execute(update);
+        try {
+            execute(method);
+        } catch (TelegramApiException e) {
+            logger.error("Failed to handle message from chatId: " + chatId, e);
         }
     }
 

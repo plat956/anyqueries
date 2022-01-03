@@ -12,7 +12,6 @@ public class BotCommandProvider {
     private BotCommandProvider() {
         commands.put(BotCommandType.JOIN_COMMAND, new JoinCommand());
         commands.put(BotCommandType.ACTIVATE_ACCOUNT, new ActivateAccountCommand());
-        commands.put(BotCommandType.HELP, new HelpCommand());
         commands.put(BotCommandType.CONTACT_TO_DEVELOPER, new ContactToDeveloperCommand());
         commands.put(BotCommandType.UNKNOWN_COMMAND, new UnknownCommand());
     }
