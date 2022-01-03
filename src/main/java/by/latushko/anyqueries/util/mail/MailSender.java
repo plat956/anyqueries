@@ -23,18 +23,27 @@ public class MailSender {
     public static final String USER_PASSWORD_PROPERTY = "mail.user.password";
     public static final String USER_NAME_PROPERTY = "mail.user.name";
     public static final String CONTENT_TYPE_PROPERTY = "mail.content.level";
+    private static final String USER_EMAIL;
+    private static final String USER_NAME;
+    private static final String CONTENT_TYPE;
     private static MailSender instance;
-    private final Properties properties;
+    private static final Properties properties;
 
-    private MailSender() {
-        this.properties = new Properties();
+    static {
+        properties = new Properties();
         try {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(MAIL_PROPERTIES_PATH);
-            this.properties.load(inputStream);
+            InputStream inputStream = MailSender.class.getClassLoader().getResourceAsStream(MAIL_PROPERTIES_PATH);
+            properties.load(inputStream);
+            USER_EMAIL = properties.getProperty(USER_EMAIL_PROPERTY);
+            USER_NAME = properties.getProperty(USER_NAME_PROPERTY);
+            CONTENT_TYPE = properties.getProperty(CONTENT_TYPE_PROPERTY);
         } catch (IOException e) {
             logger.error("Failed to read mail properties from file: " + MAIL_PROPERTIES_PATH, e);
             throw new ExceptionInInitializerError("Failed to read mail properties from file: " + MAIL_PROPERTIES_PATH);
         }
+    }
+
+    private MailSender() {
     }
 
     public static MailSender getInstance(){
@@ -56,19 +65,16 @@ public class MailSender {
     }
 
     private MimeMessage initMessage(String sendTo, String subject, String text) throws MessagingException {
-        String email = properties.getProperty(USER_EMAIL_PROPERTY);
-        String name = properties.getProperty(USER_NAME_PROPERTY);
-        String contentType = properties.getProperty(CONTENT_TYPE_PROPERTY);
         Session mailSession = SessionFactory.createSession(properties);
         MimeMessage message = new MimeMessage(mailSession);
         message.setSubject(subject);
-        message.setContent(text, contentType);
-        InternetAddress senderAddress;
+        message.setContent(text, CONTENT_TYPE);
+        InternetAddress senderAddress = null;
         try {
-            senderAddress = new InternetAddress(email, name);
+            senderAddress = new InternetAddress(USER_EMAIL, USER_NAME);
         } catch (UnsupportedEncodingException e) {
             logger.error("Unsupported sender name encoding in property \"" + USER_NAME_PROPERTY + "\", check the file: " + MAIL_PROPERTIES_PATH);
-            senderAddress = new InternetAddress(email);
+            senderAddress = new InternetAddress(USER_EMAIL);
         }
         message.setFrom(senderAddress);
         message.setRecipient(Message.RecipientType.TO, new InternetAddress(sendTo));

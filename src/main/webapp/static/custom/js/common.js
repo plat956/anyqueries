@@ -41,8 +41,7 @@ var dataForms = {
             toasts.show("error", message.wrong_file_format, message.allowed_file_formats + $(input).attr('accept'));
         }
     },
-    stripHtml: function(html)
-    {
+    stripHtml: function(html) {
         let tmp = document.createElement("DIV");
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText || "";
@@ -166,48 +165,6 @@ var attacher = {
         });
     }
 }
-
-var pageEvents = {
-    freeze: true,
-    handler: function (e) {
-        if (pageEvents.freeze) {
-            e.stopPropagation();
-            e.preventDefault();
-        }
-    },
-    freezeClicks: function (s) {
-        pageEvents.freeze = s;
-        if (s) {
-            $('body').addClass('loading');
-        } else {
-            $('body').removeClass('loading');
-        }
-    },
-    init: function () {
-        document.addEventListener("click", pageEvents.handler, true);
-    },
-    noBack: function () {
-        window.history.forward();
-    },
-    disableF5: function (e) {
-        if ((e.which || e.keyCode) == 116 || (e.which || e.keyCode) == 82)
-            e.preventDefault();
-    }
-}
-
-jQuery.fn.preventDoubleSubmission = function () {
-    $(this).on('submit', function (e) {
-        var $form = $(this);
-        if($form[0].checkValidity()) {
-            if ($form.data('submitted') === true) {
-                e.preventDefault();
-            } else {
-                $form.data('submitted', true);
-            }
-        }
-    });
-    return this;
-};
 
 var toasts = {
     show: function (type, text, notice) {

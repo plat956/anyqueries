@@ -15,8 +15,6 @@
 </section>
 </div>
 <script type="text/javascript">
-    window.history.forward();
-
     // Show the progress bar
     NProgress.start();
 
@@ -24,7 +22,7 @@
     var interval = setInterval(function() { NProgress.inc(); }, 1000);
 
     // Trigger finish when page fully loaded
-    $(window).load(function () {
+    $(window).on('pageshow', function(){
         clearInterval(interval);
         NProgress.done();
     });
@@ -32,23 +30,9 @@
     // Trigger bar when exiting the page
     $(window).on('beforeunload', function(e){
         NProgress.start();
-        pageEvents.freezeClicks(true);
-    });
-
-    //prevent forms double submitting
-    $('form').preventDoubleSubmission();
-
-
-    $(document).on('submit', 'form:not(.ck-link-form)', function(e) {
-        if($(this)[0].checkValidity()) {
-            pageEvents.freezeClicks(true);
-        }
     });
 
     $(function () {
-        //disable page refreshing
-        $(document).on("keydown", pageEvents.disableF5);
-
         //check if cookies are enabled
         if (!navigator.cookieEnabled) {
             $('#err-cookie-support').show();
@@ -104,10 +88,6 @@
 
         //init selects
         $('select').selectpicker();
-
-        setTimeout(function() {
-            pageEvents.freezeClicks(false);
-        }, 1);
     });
 </script>
 </body>
