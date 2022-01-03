@@ -67,10 +67,13 @@
                         }
                         $('.invalid-feedback-backend').remove();
                         form.classList.add('was-validated');
+                        dataForms.bsSelectValidation();
                     }, false);
                 });
             }, false);
         })();
+
+        $('form').change(dataForms.bsSelectValidation);
 
         //init navbar live search
         $('#search-input').typeahead({

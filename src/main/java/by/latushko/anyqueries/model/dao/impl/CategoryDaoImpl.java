@@ -10,6 +10,7 @@ import by.latushko.anyqueries.model.mapper.impl.CategoryMapper;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +22,10 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
             ON c.id = q.category_id
             GROUP BY c.id 
             ORDER BY questions_count DESC LIMIT ?""";
+    private static final String SQL_FIND_ALL_ORDER_BY_NAME_QUERY = """
+            SELECT id, name, color 
+            FROM categories
+            ORDER BY name ASC""";
 
     private RowMapper mapper = new CategoryMapper();
 
@@ -64,6 +69,19 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find top 5 categories by calling findTop5Categories() method", e);
+        }
+        return categories;
+    }
+
+    @Override
+    public List<Category> findAllOrderByNameAsc() throws DaoException {
+        List<Category> categories;
+        try (Statement statement = connection.createStatement()){
+            try(ResultSet resultSet = statement.executeQuery(SQL_FIND_ALL_ORDER_BY_NAME_QUERY)) {
+                categories = mapper.mapRows(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find all categories by calling findAllOrderByNameAsc() method", e);
         }
         return categories;
     }

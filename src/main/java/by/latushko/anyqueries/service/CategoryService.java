@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface CategoryService {
     List<Category> findTop5Categories();
+    List<Category> findAllOrderByNameAsc();
 }

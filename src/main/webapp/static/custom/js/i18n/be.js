@@ -8,5 +8,7 @@ const message = {
     incorrect_files_count_part2: " файлаў",
     incorrect_files_size_part0: "Перавышан дапушчальны памер файла",
     incorrect_files_size_part1: "Памер аднаго файла не павінен перавышаць ",
-    incorrect_files_size_part2: " МБ"
+    incorrect_files_size_part2: " МБ",
+    error: "Памылка",
+    wrong_file_size: "Перавышаны дапушчальны памер файла ў "
 };

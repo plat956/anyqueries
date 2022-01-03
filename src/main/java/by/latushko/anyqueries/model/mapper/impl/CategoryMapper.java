@@ -17,7 +17,9 @@ public class CategoryMapper implements RowMapper<Category> {
             category.setId(resultSet.getLong(CATEGORY_ID));
             category.setName(resultSet.getString(CATEGORY_NAME));
             category.setColor(resultSet.getString(CATEGORY_COLOR));
-            category.setQuestionsCount(resultSet.getLong(CATEGORY_QUESTIONS_COUNT));
+            if(hasColumn(resultSet, CATEGORY_QUESTIONS_COUNT)) {
+                category.setQuestionsCount(resultSet.getLong(CATEGORY_QUESTIONS_COUNT));
+            }
             return Optional.of(category);
         } catch (SQLException e) {
             return Optional.empty();

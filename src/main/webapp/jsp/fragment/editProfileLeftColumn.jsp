@@ -19,8 +19,9 @@
             </div>
         </div>
         <form id="avatar-form" action="${pageContext.request.contextPath}/controller?command=upload_avatar" method="post" enctype="multipart/form-data">
-            <label class="btn btn-primary" for="file-selector">
-                <input id="file-selector" type="file" name="file" accept="<ft:list-formatter list="${AppProperty.APP_UPLOAD_AVATAR_EXTENSIONS}" />" style="display:none" onchange="dataForms.uploadAvatar(this, 'avatar-form');">
+            <label class="btn btn-primary" for="file-selector" data-toggle="popover" data-trigger="hover" data-placement="bottom"
+                   data-content="<fmt:message key="label.attachment.max.notice" /> ${AppProperty.APP_ATTACHMENT_SIZE} <fmt:message key="message.mb" />. <fmt:message key="label.attachment.formats" /> <ft:list-formatter list="${AppProperty.APP_UPLOAD_AVATAR_EXTENSIONS}" />">
+                <input id="file-selector" type="file" name="file" data-max-size="${AppProperty.APP_ATTACHMENT_SIZE}" accept="<ft:list-formatter list="${AppProperty.APP_UPLOAD_AVATAR_EXTENSIONS}" />" style="display:none" onchange="dataForms.uploadAvatar(this, 'avatar-form');">
                 <fmt:message key="label.uploadAvatar" />
             </label>
         </form>

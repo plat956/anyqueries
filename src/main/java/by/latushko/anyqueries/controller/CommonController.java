@@ -20,8 +20,8 @@ import static by.latushko.anyqueries.util.http.MimeType.IMAGE_JPEG;
 
 @WebServlet(name = "commonController", value = "/controller")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024,
-        maxFileSize = 1024 * 1024 * 5,
-        maxRequestSize = 1024 * 1024 * 5 * 5)
+        maxFileSize = 1024 * 1024 * 15,
+        maxRequestSize = 1024 * 1024 * 15 * 10)
 public class CommonController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

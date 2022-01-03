@@ -44,4 +44,21 @@ public class CategoryServiceImpl implements CategoryService {
         }
         return categories;
     }
+
+    @Override
+    public List<Category> findAllOrderByNameAsc() {
+        BaseDao categoryDao = new CategoryDaoImpl();
+        List<Category> categories = new ArrayList<>();
+        try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
+            try {
+                categories.addAll(((CategoryDao)categoryDao).findAllOrderByNameAsc());
+                transaction.commit();
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to find all categories", e);
+        }
+        return categories;
+    }
 }

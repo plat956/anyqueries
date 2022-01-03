@@ -13,9 +13,11 @@
 <c:choose>
     <c:when test="${!empty current_lang}">
         <script src="${pageContext.request.contextPath}/static/custom/js/i18n/${current_lang}.js"></script>
+        <script src="${pageContext.request.contextPath}/static/summernote/lang/summernote-${current_lang}.js"></script>
     </c:when>
     <c:otherwise>
         <script src="${pageContext.request.contextPath}/static/custom/js/i18n/ru.js"></script>
+        <script src="${pageContext.request.contextPath}/static/summernote/lang/summernote-ru.js"></script>
     </c:otherwise>
 </c:choose>
 <script src="${pageContext.request.contextPath}/static/custom/js/common.js"></script>

@@ -6,14 +6,17 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="page_title_label" value="label.createQuestion" scope="request" />
 <jsp:include page="layout/header.jsp" />
-<form id="login_form" class="needs-validation" method="post" action="${pageContext.request.contextPath}/controller?command=create_question" novalidate>
+<form id="create_form" class="needs-validation" method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/controller?command=create_question" novalidate>
     <div class="form-group">
-        <select class="selectpicker" data-width="100%" name="category">
-            <option value="">1</option>
+        <select class="selectpicker" data-width="100%" name="category" required>
+            <option value="" selected disabled><fmt:message key="label.category.placeholder" /></option>
+            <c:forEach var="c" items="${categories}">
+                <option value="${c.id}">${c.name}</option>
+            </c:forEach>
         </select>
-        <c:if test="${!empty validationResult.getMessage(RequestParameter.LOGIN)}">
+        <c:if test="${!empty validationResult.getMessage(RequestParameter.CATEGORY)}">
             <div class="invalid-feedback-backend">
-                <fmt:message key="${validationResult.getMessage(RequestParameter.LOGIN)}" />
+                <fmt:message key="${validationResult.getMessage(RequestParameter.CATEGORY)}" />
             </div>
         </c:if>
         <div class="invalid-feedback">
@@ -21,15 +24,14 @@
         </div>
     </div>
     <div class="form-group">
-        <input name="login" class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.LOGIN)}" />"
-               placeholder="<fmt:message key="label.questionTitle.placeholder" />" type="text" required pattern="${ValidationPattern.LOGIN_REGEXP}" maxlength="20"
+        <textarea name="title" class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.TITLE)}" />"
+               placeholder="<fmt:message key="label.questionTitle.placeholder" />" type="text" required maxlength="200" style="min-height: 70px;max-height: 150px;resize: vertical"
                data-toggle="popover" data-trigger="focus" data-placement="right"
-               data-content="todo <fmt:message key="label.questionTitle.placeholder" />"
-               value="${validationResult.getValue(RequestParameter.LOGIN)}"
-        >
-        <c:if test="${!empty validationResult.getMessage(RequestParameter.LOGIN)}">
+               data-content="<fmt:message key="label.questionTitle.notice" />"
+        >${validationResult.getValue(RequestParameter.TITLE)}</textarea>
+        <c:if test="${!empty validationResult.getMessage(RequestParameter.TITLE)}">
             <div class="invalid-feedback-backend">
-                <fmt:message key="${validationResult.getMessage(RequestParameter.LOGIN)}" />
+                <fmt:message key="${validationResult.getMessage(RequestParameter.TITLE)}" />
             </div>
         </c:if>
         <div class="invalid-feedback">
@@ -37,11 +39,13 @@
         </div>
     </div>
     <div class="form-group">
-        <textarea id="text" name="text" class="summernote form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.LOGIN)}" />"
-                  placeholder="<fmt:message key="label.login.placeholder" />" required maxlength="${AppProperty.APP_TEXTAREA_MAXLENGTH}"></textarea>
-        <c:if test="${!empty validationResult.getMessage(RequestParameter.LOGIN)}">
+        <textarea id="text" name="text" class="summernote form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.TEXT)}" />"
+                  placeholder="<fmt:message key="label.login.placeholder" />" required maxlength="${AppProperty.APP_TEXTAREA_MAXLENGTH}">
+            ${validationResult.getValue(RequestParameter.TEXT)}
+        </textarea>
+        <c:if test="${!empty validationResult.getMessage(RequestParameter.TEXT)}">
             <div class="invalid-feedback-backend">
-                <fmt:message key="${validationResult.getMessage(RequestParameter.LOGIN)}" />
+                <fmt:message key="${validationResult.getMessage(RequestParameter.TEXT)}" />
             </div>
         </c:if>
         <div class="invalid-feedback">
@@ -71,7 +75,7 @@
 </form>
 <script>
     $(function () {
-        dataForms.initSummernote('text', '<fmt:message key="label.question.placeholder" />');
+        dataForms.initSummernote('text', '<fmt:message key="label.question.placeholder" />', '${!empty current_lang ? current_lang : 'ru'}');
         attacher.init('file-selector', 'attachments-list', ${AppProperty.APP_ATTACHMENT_COUNT}, ${AppProperty.APP_ATTACHMENT_SIZE});
     })
 </script>

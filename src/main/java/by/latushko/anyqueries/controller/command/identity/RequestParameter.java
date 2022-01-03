@@ -10,6 +10,9 @@ public final class RequestParameter {
     public static final String SEND_LINK = "send_link";
     public static final String TELEGRAM = "telegram";
     public static final String LOGIN = "login";
+    public static final String TITLE = "title";
+    public static final String CATEGORY = "category";
+    public static final String TEXT = "text";
     public static final String LANG = "lang";
     public static final String PASSWORD = "password";
     public static final String PASSWORD_CONFIRMED = "password_confirmed";

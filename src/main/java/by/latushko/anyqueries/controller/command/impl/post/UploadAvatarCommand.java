@@ -9,7 +9,7 @@ import by.latushko.anyqueries.service.impl.UserServiceImpl;
 import by.latushko.anyqueries.util.file.FileHelper;
 import by.latushko.anyqueries.util.http.CookieHelper;
 import by.latushko.anyqueries.util.i18n.MessageManager;
-import by.latushko.anyqueries.validator.FileUploadValidator;
+import by.latushko.anyqueries.validator.AttachmentValidator;
 import by.latushko.anyqueries.validator.impl.UploadAvatarValidator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.REDIRECT;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.*;
@@ -31,7 +30,6 @@ import static by.latushko.anyqueries.controller.command.identity.SessionAttribut
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
 import static by.latushko.anyqueries.controller.command.impl.get.ShowImageCommand.IMAGE_DIRECTORY_PATH;
 import static by.latushko.anyqueries.service.UserService.AVATAR_PREFIX;
-import static by.latushko.anyqueries.util.AppProperty.APP_UPLOAD_AVATAR_EXTENSIONS;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 
 public class UploadAvatarCommand implements Command {
@@ -51,11 +49,11 @@ public class UploadAvatarCommand implements Command {
         try {
             List<Part> parts = request.getParts().stream().toList();
             if(parts != null && !parts.isEmpty()) {
-                Part part = parts.get(0);
-                String fileName = part.getSubmittedFileName();
-                FileUploadValidator validator = UploadAvatarValidator.getInstance();
-                boolean validationResult = validator.validate(fileName);
+                AttachmentValidator validator = UploadAvatarValidator.getInstance();
+                boolean validationResult = validator.validate(parts);
                 if(validationResult) {
+                    Part part = parts.get(0);
+                    String fileName = part.getSubmittedFileName();
                     String ext = FileHelper.getExtension(fileName).get();
                     fileName = AVATAR_PREFIX + Calendar.getInstance().getTimeInMillis() + ext;
                     part.write(IMAGE_DIRECTORY_PATH + fileName);
@@ -71,8 +69,7 @@ public class UploadAvatarCommand implements Command {
                         message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_FILE_UPLOAD_ERROR));
                     }
                 } else {
-                    String extensions = APP_UPLOAD_AVATAR_EXTENSIONS.stream().collect(Collectors.joining(AVATAR_EXTENSIONS_DELIMITER));
-                    message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_AVATAR_WRONG_EXTENSION, extensions));
+                    message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_AVATAR_WRONG));
                 }
             } else {
                 message = new ResponseMessage(INFO, manager.getMessage(MESSAGE_NO_FILE_CHOSEN));

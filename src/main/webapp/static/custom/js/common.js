@@ -10,7 +10,7 @@ var dataForms = {
             }
         });
     },
-    uploadFileValidation: function (i) {
+    uploadFileCheckExtensions: function (i) {
         const valid = [...i.files].every(file => {
             if (!i.accept) {
                 return true;
@@ -21,51 +21,91 @@ var dataForms = {
         });
         return valid;
     },
+    uploadFileCheckSize: function (i) {
+        const valid = [...i.files].every(file => {
+            var sizeInMB = (file.size / (1024*1024)).toFixed(2);
+            return $(i).data("max-size") > sizeInMB;
+        });
+        return valid;
+    },
     uploadAvatar: function (input, form) {
-        var result = dataForms.uploadFileValidation(input);
+        var result = dataForms.uploadFileCheckExtensions(input);
         if(result) {
-            $('#' + form).submit();
+            result = dataForms.uploadFileCheckSize(input);
+            if(result) {
+                $('#' + form).submit();
+            } else {
+                toasts.show("error", message.error, message.wrong_file_size + $(input).data("max-size") + message.incorrect_files_size_part2);
+            }
         } else {
             toasts.show("error", message.wrong_file_format, message.allowed_file_formats + $(input).attr('accept'));
         }
     },
-    initSummernote: function (textarea, placeholder) {
-        $('#' + textarea).summernote({
+    stripHtml: function(html)
+    {
+        let tmp = document.createElement("DIV");
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || "";
+    },
+    initSummernote: function (textarea, placeholder, lang) {
+        var el = $('#' + textarea).summernote({
             toolbar: [
                 ['style', ['bold', 'italic', 'underline', 'clear']],
                 ['para', ['ul']],
                 ['insert', ['link']]
             ],
+            followingToolbar: false,
             minHeight: 250,
             placeholder: placeholder,
+            lang: lang,
             callbacks: {
                 onKeydown: function (e) {
                     var t = e.currentTarget.innerText;
-                    if (t.trim().length >= $(this).attr('maxlength')) {
+                    if (t.trim().length >= $('#' + textarea).attr('maxlength')) {
                         if (e.keyCode != 8 && !(e.keyCode >=37 && e.keyCode <=40) && e.keyCode != 46 && !(e.keyCode == 88 && e.ctrlKey) && !(e.keyCode == 67 && e.ctrlKey) && !(e.keyCode == 65 && e.ctrlKey))
                             e.preventDefault();
                     }
                 },
                 onChange: function(contents) {
-                    var id = $(this).attr('id') + '-counter';
-                    $('#' + id).text($(this).attr('maxlength') - $(contents).text().trim().length);
+                    var id = textarea + '-counter';
+                    $('#' + id).text($('#' + textarea).attr('maxlength') - dataForms.stripHtml(contents).trim().length);
+                    var text = document.getElementById(textarea);
+                    if($('#' + textarea).attr('required') && el.summernote('isEmpty')) {
+                        text.setCustomValidity("error");
+                    } else {
+                        text.setCustomValidity("");
+                    }
                 },
                 onPaste: function (e) {
                     var t = e.currentTarget.innerText;
                     var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
                     e.preventDefault();
                     var maxPaste = bufferText.length;
-                    if(t.length + bufferText.length > $(this).attr('maxlength')){
-                        maxPaste = $(this).attr('maxlength') - t.length;
+                    if(t.length + bufferText.length > $('#' + textarea).attr('maxlength')){
+                        maxPaste = $('#' + textarea).attr('maxlength') - t.length;
                     }
                     if(maxPaste > 0){
                         document.execCommand('insertText', false, bufferText.substring(0, maxPaste));
                     }
-                    var id = $(this).attr('id') + '-counter';
-                    $('#' + id).text($(this).attr('maxlength') - t.length);
+                    var id = textarea + '-counter';
+                    $('#' + id).text($('#' + textarea).attr('maxlength') - t.length);
                 }
             }
         });
+    },
+    bsSelectValidation: function () {
+        if ($("form").hasClass('was-validated')) {
+            $(".selectpicker").each(function (i, el) {
+                if ($(el).is(":invalid")) {
+                    $(el).closest(".form-group").find(".valid-feedback").removeClass("d-block");
+                    $(el).closest(".form-group").find(".invalid-feedback").addClass("d-block");
+                }
+                else {
+                    $(el).closest(".form-group").find(".invalid-feedback").removeClass("d-block");
+                    $(el).closest(".form-group").find(".valid-feedback").addClass("d-block");
+                }
+            });
+        }
     }
 }
 

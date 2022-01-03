@@ -8,5 +8,7 @@ const message = {
     incorrect_files_count_part2: " files",
     incorrect_files_size_part0: "File size exceeded",
     incorrect_files_size_part1: "The size of one file should not exceed ",
-    incorrect_files_size_part2: " MB"
+    incorrect_files_size_part2: " MB",
+    error: "Error",
+    wrong_file_size: "Exceeded the allowed file size in "
 };
