@@ -21,6 +21,12 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             WHERE title like ? 
             ORDER BY title ASC 
             LIMIT ?""";
+    private static final String SQL_CREATE_QUESTION_QUERY = """
+            INSERT INTO questions(category_id, title, text, creation_date, closed, author_id) 
+            VALUES (?, ?, ?, ?, ?, ?)""";
+    private static final String SQL_CREATE_QUESTION_ATTACHMENT_QUERY = """
+            INSERT INTO question_attachment(question_id, attachment_id) 
+            VALUES (?, ?)""";
     private static final String SQL_COUNT_BY_AUTHOR_ID_QUERY = """
             SELECT count(*) 
             FROM questions 
@@ -46,6 +52,25 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
 
     @Override
     public boolean create(Question question) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_QUESTION_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
+            statement.setLong(1, question.getCategory().getId());
+            statement.setString(2, question.getTitle());
+            statement.setString(3, question.getText());
+            statement.setObject(4, question.getCreationDate());
+            statement.setBoolean(5, question.getClosed());
+            statement.setLong(6, question.getAuthor().getId());
+
+            if(statement.executeUpdate() >= 0) {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if(resultSet.next()) {
+                    Long generatedId = resultSet.getLong(1);
+                    question.setId(generatedId);
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to create question by calling create(Question question) method", e);
+        }
         return false;
     }
 
@@ -129,5 +154,16 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             throw new DaoException("Failed to count questions by calling countTotalNotClosedQuestionsByAuthorId(Long authorId) method", e);
         }
         return count;
+    }
+
+    @Override
+    public boolean createQuestionAttachment(Long questionId, Long attachmentId) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_QUESTION_ATTACHMENT_QUERY)){
+            statement.setLong(1, questionId);
+            statement.setLong(2, attachmentId);
+            return statement.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to create question-attachment relationship by calling createQuestionAttachment(Long questionId, Long attachmentId) method", e);
+        }
     }
 }

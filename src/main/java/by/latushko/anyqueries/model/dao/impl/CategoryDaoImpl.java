@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class CategoryDaoImpl extends BaseDao<Long, Category> implements CategoryDao {
+    private static final String SQL_FIND_BY_ID_QUERY = """
+            SELECT id, name, color 
+            FROM categories 
+            WHERE id = ?""";
     private static final String SQL_FIND_TOP_QUERY = """
             SELECT c.id, c.name, c.color, count(q.id) as questions_count 
             FROM categories c
@@ -36,7 +40,18 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
 
     @Override
     public Optional<Category> findById(Long id) throws DaoException {
-        return Optional.empty();
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID_QUERY)){
+            statement.setLong(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return mapper.mapRow(resultSet);
+                } else {
+                    return Optional.empty();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find category by calling findById(Long id) method", e);
+        }
     }
 
     @Override

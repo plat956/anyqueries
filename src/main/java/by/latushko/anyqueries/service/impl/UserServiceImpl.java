@@ -23,7 +23,7 @@ import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static by.latushko.anyqueries.controller.command.impl.get.ShowImageCommand.IMAGE_DIRECTORY_PATH;
+import static by.latushko.anyqueries.service.AttachmentService.IMAGE_DIRECTORY_PATH;
 import static by.latushko.anyqueries.util.AppProperty.APP_ACTIVATION_LINK_ALIVE_HOURS;
 
 public class UserServiceImpl implements UserService {

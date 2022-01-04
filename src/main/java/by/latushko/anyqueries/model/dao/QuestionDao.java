@@ -9,4 +9,5 @@ public interface QuestionDao {
     Long countTotalQuestionsByAuthorId(Long userId) throws DaoException;
     Long countTotalNotClosedQuestions() throws DaoException;
     Long countTotalNotClosedQuestionsByAuthorId(Long userId) throws DaoException;
+    boolean createQuestionAttachment(Long questionId, Long attachmentId) throws DaoException;
 }

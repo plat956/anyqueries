@@ -28,13 +28,11 @@ import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG
 import static by.latushko.anyqueries.controller.command.identity.PagePath.EDIT_PROFILE_URL;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
-import static by.latushko.anyqueries.controller.command.impl.get.ShowImageCommand.IMAGE_DIRECTORY_PATH;
+import static by.latushko.anyqueries.service.AttachmentService.IMAGE_DIRECTORY_PATH;
 import static by.latushko.anyqueries.service.UserService.AVATAR_PREFIX;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 
 public class UploadAvatarCommand implements Command {
-    private static final String AVATAR_EXTENSIONS_DELIMITER = ", ";
-
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         File uploadDir = new File(IMAGE_DIRECTORY_PATH);

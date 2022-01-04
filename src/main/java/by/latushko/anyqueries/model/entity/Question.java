@@ -11,7 +11,7 @@ public class Question extends BaseEntity<Long> {
     private Boolean closed;
     private Category category;
     private User author;
-    private Set<Attachment> attachments;
+    private transient Set<Attachment> attachments;
 
     public Question() {
     }
