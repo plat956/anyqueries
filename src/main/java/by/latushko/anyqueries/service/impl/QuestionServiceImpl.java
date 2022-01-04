@@ -40,10 +40,10 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public List<String> findTitleLikeOrderedAndLimited(String pattern, int limit) {
         BaseDao questionDao = new QuestionDaoImpl();
-        List<String> result = new ArrayList<>();
+        List<String> titles = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
             try {
-                result.addAll(((QuestionDao)questionDao).findTitleLikeOrderedAndLimited(pattern, limit));
+                titles = ((QuestionDao)questionDao).findTitleLikeOrderedAndLimited(pattern, limit);
                 transaction.commit();
             } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
@@ -51,16 +51,16 @@ public class QuestionServiceImpl implements QuestionService {
         } catch (EntityTransactionException e) {
             logger.error("Something went wrong during retrieving questions titles by pattern", e);
         }
-        return result;
+        return titles;
     }
 
     @Override
-    public Long countTotalQuestionsByAuthorId(Long authorId) {
+    public Long countTotalByAuthorId(Long authorId) {
         BaseDao questionDao = new QuestionDaoImpl();
         Long count = 0L;
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
             try {
-                count = ((QuestionDao)questionDao).countTotalQuestionsByAuthorId(authorId);
+                count = ((QuestionDao)questionDao).countTotalByAuthorId(authorId);
                 transaction.commit();
             } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
@@ -72,12 +72,12 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Long countTotalNotClosedQuestions() {
+    public Long countTotalNotClosed() {
         BaseDao questionDao = new QuestionDaoImpl();
         Long count = 0L;
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
             try {
-                count = ((QuestionDao)questionDao).countTotalNotClosedQuestions();
+                count = ((QuestionDao)questionDao).countTotalNotClosed();
                 transaction.commit();
             } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
@@ -89,12 +89,12 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Long countTotalNotClosedQuestionsByAuthorId(Long authorId) {
+    public Long countTotalNotClosedByAuthorId(Long authorId) {
         BaseDao questionDao = new QuestionDaoImpl();
         Long count = 0L;
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
             try {
-                count = ((QuestionDao)questionDao).countTotalNotClosedQuestionsByAuthorId(authorId);
+                count = ((QuestionDao)questionDao).countTotalNotClosedByAuthorId(authorId);
                 transaction.commit();
             } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();

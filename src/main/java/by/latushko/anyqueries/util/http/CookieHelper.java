@@ -6,19 +6,18 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class CookieHelper {
     private static final int COOKIE_AGE_TO_ERASE = 0;
 
-    public static Optional<String> readCookie(HttpServletRequest request, String key) {
+    public static String readCookie(HttpServletRequest request, String key) {
         if(request != null && request.getCookies() != null) {
             return Arrays.stream(request.getCookies())
                     .filter(c -> key.equals(c.getName()))
                     .map(Cookie::getValue)
-                    .findAny();
+                    .findAny().orElse(null);
         } else {
-            return Optional.empty();
+            return null;
         }
     }
 

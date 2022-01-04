@@ -25,8 +25,8 @@ import static by.latushko.anyqueries.controller.command.ResponseMessage.Type.POP
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Type.TOAST;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_KEY;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_TOKEN;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.LOGIN_URL;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.MAIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.LOGIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.MAIN_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
 import static by.latushko.anyqueries.util.AppProperty.APP_COOKIE_ALIVE_SECONDS;
@@ -35,9 +35,6 @@ import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 public class LoginCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
-        String login = request.getParameter(LOGIN);
-        String password = request.getParameter(PASSWORD);
-        String rememberMe = request.getParameter(REMEMBER_ME);
         String redirectUrl = LOGIN_URL;
         HttpSession session = request.getSession();
         FormValidator validator = LoginFormValidator.getInstance();
@@ -47,9 +44,12 @@ public class LoginCommand implements Command {
             return new CommandResult(redirectUrl, REDIRECT);
         }
         UserService userService = UserServiceImpl.getInstance();
-        String userLang = CookieHelper.readCookie(request, CookieName.LANG).orElse(null);
+        String userLang = CookieHelper.readCookie(request, CookieName.LANG);
         MessageManager manager = MessageManager.getManager(userLang);
-        Optional<User> user = userService.findIfExistsByLoginAndPassword(login, password);
+        String login = request.getParameter(LOGIN);
+        String password = request.getParameter(PASSWORD);
+        String rememberMe = request.getParameter(REMEMBER_ME);
+        Optional<User> user = userService.findByLoginAndPassword(login, password);
         if (user.isEmpty()) {
             session.setAttribute(MESSAGE, new ResponseMessage(DANGER, manager.getMessage(MESSAGE_LOGIN_WRONG)));
             session.setAttribute(VALIDATION_RESULT, validationResult);
@@ -63,7 +63,7 @@ public class LoginCommand implements Command {
                 userService.updateLastLoginDate(user.get());
                 if (rememberMe != null) {
                     CookieHelper.addCookie(response, CREDENTIAL_KEY, user.get().getCredentialKey(), APP_COOKIE_ALIVE_SECONDS);
-                    String token = userService.getCredentialToken(user.get());
+                    String token = userService.generateCredentialToken(user.get());
                     CookieHelper.addCookie(response, CREDENTIAL_TOKEN, token, APP_COOKIE_ALIVE_SECONDS);
                 }
                 if (isFirstLoginTime) {

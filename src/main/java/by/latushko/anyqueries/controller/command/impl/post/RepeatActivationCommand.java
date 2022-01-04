@@ -21,7 +21,7 @@ import static by.latushko.anyqueries.controller.command.CommandResult.RoutingTyp
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.REPEAT_ACTIVATION_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.REPEAT_ACTIVATION_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
 import static by.latushko.anyqueries.util.AppProperty.APP_ACTIVATION_LINK_ALIVE_HOURS;
@@ -56,7 +56,7 @@ public class RepeatActivationCommand implements Command {
         }
         boolean sendLink = request.getParameter(SEND_LINK) != null;
 
-        String userLang = CookieHelper.readCookie(request, LANG).orElse(null);
+        String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
 
         RegistrationService registrationService = RegistrationServiceImpl.getInstance();

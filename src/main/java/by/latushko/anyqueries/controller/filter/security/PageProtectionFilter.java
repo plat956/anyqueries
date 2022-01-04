@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-import static by.latushko.anyqueries.controller.command.identity.PagePath.MAIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.MAIN_URL;
 
 @WebFilter(filterName = "pageProtectionFilter", urlPatterns = "/jsp/*")
 public class PageProtectionFilter implements Filter {

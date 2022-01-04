@@ -38,15 +38,15 @@ public class RequestListenerImpl implements ServletRequestListener {
             session.removeAttribute(VALIDATION_RESULT);
             request.setAttribute(RequestAttribute.VALIDATION_RESULT, validationResult);
         }
-        Long totalQuestions = questionService.countTotalNotClosedQuestions();
+        Long totalQuestions = questionService.countTotalNotClosed();
         request.setAttribute(LAYOUT_TOTAL_QUESTIONS, totalQuestions);
         User user = (User) session.getAttribute(PRINCIPAL);
         if(user != null) {
-            Long totalUserQuestions = questionService.countTotalNotClosedQuestionsByAuthorId(user.getId());
+            Long totalUserQuestions = questionService.countTotalNotClosedByAuthorId(user.getId());
             request.setAttribute(LAYOUT_TOTAL_USER_QUESTIONS, totalUserQuestions);
         }
         CategoryService categoryService = CategoryServiceImpl.getInstance();
-        List<Category> categories = categoryService.findTop5Categories();
+        List<Category> categories = categoryService.findTop5();
         request.setAttribute(LAYOUT_TOP_CATEGORIES, categories);
     }
 }

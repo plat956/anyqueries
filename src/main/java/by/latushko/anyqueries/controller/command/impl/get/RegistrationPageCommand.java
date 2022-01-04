@@ -21,7 +21,7 @@ public class RegistrationPageCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         if(request.getAttribute(MESSAGE) == null) {
-            String userLang = CookieHelper.readCookie(request, LANG).orElse(null);
+            String userLang = CookieHelper.readCookie(request, LANG);
             MessageManager manager = MessageManager.getManager(userLang);
             ResponseMessage message = new ResponseMessage(WARNING,
                     manager.getMessage(MESSAGE_REGISTRATION_WARNING, APP_TELEGRAM_LINK_HOST + BOT_NAME, BOT_NAME));

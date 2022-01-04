@@ -9,8 +9,8 @@ import java.util.Optional;
 
 public interface QuestionService {
     List<String> findTitleLikeOrderedAndLimited(String pattern, int limit);
-    Long countTotalQuestionsByAuthorId(Long userId);
-    Long countTotalNotClosedQuestions();
-    Long countTotalNotClosedQuestionsByAuthorId(Long authorId);
+    Long countTotalByAuthorId(Long userId);
+    Long countTotalNotClosed();
+    Long countTotalNotClosedByAuthorId(Long authorId);
     Optional<Question> create(Long categoryId, String title, String text, User author, List<Part> attachments);
 }

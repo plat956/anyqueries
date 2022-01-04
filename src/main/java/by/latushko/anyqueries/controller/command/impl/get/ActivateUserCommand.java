@@ -21,8 +21,8 @@ import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DA
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Type.POPUP;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.LOGIN_URL;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.MAIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.LOGIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.MAIN_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.HASH;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
@@ -34,7 +34,7 @@ public class ActivateUserCommand implements Command {
         RegistrationService registrationService = RegistrationServiceImpl.getInstance();
         Optional<User> activatedUser = registrationService.activateUserByHash(hash);
         HttpSession session = request.getSession();
-        String userLang = CookieHelper.readCookie(request, LANG).orElse(null);
+        String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
         ResponseMessage message;
         String redirectUrl;

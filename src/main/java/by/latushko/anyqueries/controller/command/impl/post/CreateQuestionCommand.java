@@ -29,8 +29,8 @@ import static by.latushko.anyqueries.controller.command.CommandResult.RoutingTyp
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.CREATE_QUESTION_URL;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.QUESTION_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.CREATE_QUESTION_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTION_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
 import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_ATTACHMENT_WRONG;
@@ -41,8 +41,6 @@ public class CreateQuestionCommand implements Command {
         HttpSession session = request.getSession();
         CommandResult commandResult = new CommandResult(CREATE_QUESTION_URL, REDIRECT);
         ResponseMessage message;
-        String userLang = CookieHelper.readCookie(request, LANG).orElse(null);
-        MessageManager manager = MessageManager.getManager(userLang);
 
         FormValidator validator = CreateQuestionFormValidator.getInstance();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
@@ -51,6 +49,8 @@ public class CreateQuestionCommand implements Command {
             return commandResult;
         }
 
+        String userLang = CookieHelper.readCookie(request, LANG);
+        MessageManager manager = MessageManager.getManager(userLang);
         List<Part> fileParts;
         try {
             fileParts = request.getParts().stream().

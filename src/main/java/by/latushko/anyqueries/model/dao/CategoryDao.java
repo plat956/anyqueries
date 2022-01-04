@@ -6,6 +6,6 @@ import by.latushko.anyqueries.model.entity.Category;
 import java.util.List;
 
 public interface CategoryDao {
-    List<Category> findTop5Categories() throws DaoException;
+    List<Category> findTop(int count) throws DaoException;
     List<Category> findAllOrderByNameAsc() throws DaoException;
 }

@@ -10,15 +10,14 @@ import java.util.Optional;
 public interface UserDao {
     boolean createUserHash(UserHash hash) throws DaoException;
     boolean deleteUserHashByUserId(Long id) throws DaoException;
-    Optional<User> findInactiveUserByHashAndHashIsNotExpired(String hash, LocalDateTime validDate) throws DaoException;
-    Optional<User> findInactiveUserByTelegram(String account) throws DaoException;
-    Optional<User> findUserByLogin(String login) throws DaoException;
-    Optional<User> findUserByCredentialKey(String key) throws DaoException;
+    Optional<User> findInactiveByHashAndHashIsNotExpired(String hash, LocalDateTime validDate) throws DaoException;
+    Optional<User> findInactiveByTelegram(String account) throws DaoException;
+    Optional<User> findByLogin(String login) throws DaoException;
+    Optional<User> findByCredentialKey(String key) throws DaoException;
     boolean existsByLogin(String login) throws DaoException;
     boolean existsByEmail(String email) throws DaoException;
     boolean existsByTelegram(String telegram) throws DaoException;
     boolean existsByEmailExceptUserId(String email, Long userId) throws DaoException;
     boolean existsByTelegramExceptUserId(String telegram, Long userId) throws DaoException;
     boolean existsByLoginExceptUserId(String login, Long userId) throws DaoException;
-    Optional<String> findAvatarByUserId(Long userId) throws DaoException;
 }

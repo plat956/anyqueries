@@ -29,12 +29,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> findTop5Categories() {
+    public List<Category> findTop5() {
         BaseDao categoryDao = new CategoryDaoImpl();
         List<Category> categories = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
             try {
-                categories.addAll(((CategoryDao)categoryDao).findTop5Categories());
+                categories = ((CategoryDao)categoryDao).findTop(5);
                 transaction.commit();
             } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
@@ -51,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categories = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
             try {
-                categories.addAll(((CategoryDao)categoryDao).findAllOrderByNameAsc());
+                categories = ((CategoryDao)categoryDao).findAllOrderByNameAsc();
                 transaction.commit();
             } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();

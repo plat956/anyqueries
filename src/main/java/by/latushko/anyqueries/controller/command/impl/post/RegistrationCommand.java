@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpSession;
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.REDIRECT;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.REGISTRATION_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.REGISTRATION_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.VALIDATION_RESULT;
@@ -66,7 +66,7 @@ public class RegistrationCommand implements Command {
         String password = request.getParameter(PASSWORD);
         boolean sendLink = request.getParameter(SEND_LINK) != null;
 
-        String userLang = CookieHelper.readCookie(request, CookieName.LANG).orElse(null);
+        String userLang = CookieHelper.readCookie(request, CookieName.LANG);
         MessageManager manager = MessageManager.getManager(userLang);
         RegistrationService registrationService = RegistrationServiceImpl.getInstance();
         boolean result = registrationService.registerUser(firstName, lastName, middleName, sendLink, email, telegram, login, password, manager);

@@ -75,29 +75,25 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
     }
 
     @Override
-    public List<Category> findTop5Categories() throws DaoException {
-        List<Category> categories;
+    public List<Category> findTop(int count) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_TOP_QUERY)){
-            statement.setInt(1, 5);
+            statement.setInt(1, count);
             try(ResultSet resultSet = statement.executeQuery()) {
-                categories = mapper.mapRows(resultSet);
+                return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find top 5 categories by calling findTop5Categories() method", e);
         }
-        return categories;
     }
 
     @Override
     public List<Category> findAllOrderByNameAsc() throws DaoException {
-        List<Category> categories;
         try (Statement statement = connection.createStatement()){
             try(ResultSet resultSet = statement.executeQuery(SQL_FIND_ALL_ORDER_BY_NAME_QUERY)) {
-                categories = mapper.mapRows(resultSet);
+                return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find all categories by calling findAllOrderByNameAsc() method", e);
         }
-        return categories;
     }
 }

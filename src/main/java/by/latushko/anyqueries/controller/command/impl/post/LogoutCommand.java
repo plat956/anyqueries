@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpSession;
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.REDIRECT;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.*;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.LOGIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.LOGIN_URL;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
 import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_LOGOUT_SUCCESS;
 
@@ -24,7 +24,7 @@ public class LogoutCommand implements Command {
         if(session != null) {
             session.invalidate();
         }
-        String userLang = CookieHelper.readCookie(request, LANG).orElse(null);
+        String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
         session = request.getSession();
         session.setAttribute(MESSAGE, new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_LOGOUT_SUCCESS)));

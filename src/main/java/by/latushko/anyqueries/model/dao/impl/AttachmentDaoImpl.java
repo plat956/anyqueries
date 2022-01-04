@@ -29,7 +29,6 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
     public boolean create(Attachment attachment) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
             statement.setString(1, attachment.getFile());
-
             if(statement.executeUpdate() >= 0) {
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if(resultSet.next()) {

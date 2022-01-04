@@ -1,19 +1,20 @@
 package by.latushko.anyqueries.model.dao.impl;
 
+import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.model.dao.BaseDao;
 import by.latushko.anyqueries.model.dao.UserDao;
 import by.latushko.anyqueries.model.entity.User;
-import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.model.entity.UserHash;
 import by.latushko.anyqueries.model.mapper.RowMapper;
 import by.latushko.anyqueries.model.mapper.impl.UserMapper;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import static by.latushko.anyqueries.model.mapper.TableColumnName.USER_AVATAR;
 
 public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     private static final String SQL_FIND_ALL_QUERY = """
@@ -41,20 +42,20 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 
             FROM users 
             WHERE credential_key = ?""";
-    private static final String SQL_CREATE_USER_QUERY = """
+    private static final String SQL_CREATE_QUERY = """
             INSERT INTO users(first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
-    private static final String SQL_CREATE_HASH_QUERY = """
+    private static final String SQL_CREATE_USER_HASH_QUERY = """
             INSERT INTO user_hash(hash, expires, user_id) 
             VALUES (?, ?, ?)""";
     private static final String SQL_UPDATE_QUERY = """
             UPDATE users 
             SET first_name = ?, last_name = ?, middle_name = ?, login = ?, password = ?, email = ?, telegram = ?, avatar = ?, credential_key = ?, last_login_date = ?, status = ?, role = ?  
             WHERE id = ?""";
-    private static final String SQL_DELETE_USER_QUERY = """
+    private static final String SQL_DELETE_QUERY = """
             DELETE FROM users 
             WHERE id = ?""";
-    private static final String SQL_DELETE_HASH_QUERY = """
+    private static final String SQL_DELETE_USER_HASH_QUERY = """
             DELETE FROM user_hash 
             WHERE user_id = ?""";
     private static final String SQL_EXISTS_BY_LOGIN_QUERY = """
@@ -75,15 +76,12 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     private static final String SQL_EXISTS_BY_LOGIN_EXCEPT_USER_ID_QUERY = """
             SELECT 1 FROM users
             WHERE login = ? and id <> ?""";
-    private static final String SQL_FIND_AVATAR_BY_USER_ID = """
-            SELECT avatar FROM users
-            WHERE id = ?""";
 
     private final RowMapper<User> mapper = new UserMapper();
 
     @Override
     public boolean create(User user) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_USER_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
             statement.setString(1, user.getFirstName());
             statement.setString(2, user.getLastName());
             statement.setString(3, user.getMiddleName());
@@ -113,15 +111,13 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
 
     @Override
     public List<User> findAll() throws DaoException {
-        List<User> users;
         try (Statement statement = connection.createStatement()){
             try(ResultSet resultSet = statement.executeQuery(SQL_FIND_ALL_QUERY)) {
-                users = mapper.mapRows(resultSet);
+                return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find all users by calling findAll() method", e);
         }
-        return users;
     }
 
     @Override
@@ -168,7 +164,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
 
     @Override
     public boolean delete(User user) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_USER_QUERY)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_QUERY)){
             statement.setLong(1, user.getId());
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
@@ -178,7 +174,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
 
     @Override
     public boolean delete(Long id) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_USER_QUERY)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_QUERY)){
             statement.setLong(1, id);
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
@@ -188,7 +184,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
 
     @Override
     public boolean createUserHash(UserHash hash) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_HASH_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_USER_HASH_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
             statement.setString(1, hash.getHash());
             statement.setObject(2, hash.getExpires());
             statement.setLong(3, hash.getUser().getId());
@@ -209,7 +205,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
 
     @Override
     public boolean deleteUserHashByUserId(Long id) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_HASH_QUERY)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_USER_HASH_QUERY)){
             statement.setLong(1, id);
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
@@ -218,7 +214,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     }
 
     @Override
-    public Optional<User> findInactiveUserByHashAndHashIsNotExpired(String hash, LocalDateTime validDate) throws DaoException {
+    public Optional<User> findInactiveByHashAndHashIsNotExpired(String hash, LocalDateTime validDate) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_INACTIVE_BY_HASH_AND_DATE_QUERY)){
             statement.setString(1, User.Status.INACTIVE.name());
             statement.setString(2, hash);
@@ -236,7 +232,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     }
 
     @Override
-    public Optional<User> findInactiveUserByTelegram(String account) throws DaoException {
+    public Optional<User> findInactiveByTelegram(String account) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_INACTIVE_BY_TELEGRAM_QUERY)){
             statement.setString(1, User.Status.INACTIVE.name());
             statement.setString(2, account);
@@ -253,7 +249,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     }
 
     @Override
-    public Optional<User> findUserByLogin(String login) throws DaoException {
+    public Optional<User> findByLogin(String login) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_LOGIN_QUERY)){
             statement.setString(1, login);
             try(ResultSet resultSet = statement.executeQuery()) {
@@ -269,7 +265,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     }
 
     @Override
-    public Optional<User> findUserByCredentialKey(String key) throws DaoException {
+    public Optional<User> findByCredentialKey(String key) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_CREDENTIAL_KEY_QUERY)){
             statement.setString(1, key);
             try(ResultSet resultSet = statement.executeQuery()) {
@@ -304,7 +300,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed check if user exists by calling existsByLogin(String email) method", e);
+            throw new DaoException("Failed check if user exists by calling existsByEmail(String email) method", e);
         }
     }
 
@@ -356,22 +352,6 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             }
         } catch (SQLException e) {
             throw new DaoException("Failed check if user exists by calling existsByLoginExceptUserId(String login, Long userId) method", e);
-        }
-    }
-
-    @Override
-    public Optional<String> findAvatarByUserId(Long userId) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_AVATAR_BY_USER_ID)){
-            statement.setLong(1, userId);
-            try(ResultSet resultSet = statement.executeQuery()) {
-                if(resultSet.next()) {
-                    return Optional.ofNullable(resultSet.getString(USER_AVATAR));
-                } else {
-                    return Optional.empty();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Failed to find user avatar by calling findAvatarByUserId(Long userId) method", e);
         }
     }
 }

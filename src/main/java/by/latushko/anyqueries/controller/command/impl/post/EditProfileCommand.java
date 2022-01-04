@@ -19,7 +19,7 @@ import static by.latushko.anyqueries.controller.command.CommandResult.RoutingTyp
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.EDIT_PROFILE_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.EDIT_PROFILE_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
@@ -56,13 +56,13 @@ public class EditProfileCommand implements Command {
             return commandResult;
         }
 
-        String userLang = CookieHelper.readCookie(request, LANG).orElse(null);
+        String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
 
         String firstName = request.getParameter(FIRST_NAME);
         String lastName = request.getParameter(LAST_NAME);
         String middleName = request.getParameter(MIDDLE_NAME);
-        boolean result = userService.updateUserData(currentUser, firstName, lastName, middleName, email, telegram, login);
+        boolean result = userService.update(currentUser, firstName, lastName, middleName, email, telegram, login);
 
         ResponseMessage message;
         if (result) {

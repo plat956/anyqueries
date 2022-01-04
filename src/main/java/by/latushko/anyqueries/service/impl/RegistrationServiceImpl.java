@@ -22,7 +22,6 @@ import java.util.Optional;
 public class RegistrationServiceImpl implements RegistrationService {
     private static final Logger logger = LogManager.getLogger();
     private static RegistrationService instance;
-    private final UserService userService = UserServiceImpl.getInstance();
 
     private RegistrationServiceImpl() {
     }
@@ -41,6 +40,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
+                UserService userService = UserServiceImpl.getInstance();
                 User user = userService.createNewUser(firstName, lastName, middleName, email, telegram, login, password);
                 userDao.create(user);
 
@@ -66,13 +66,15 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public boolean updateRegistrationData(User user, String email, String telegram, boolean sendLink, MessageManager manager) {
         BaseDao userDao = new UserDaoImpl();
-        user.setEmail(email);
-        user.setTelegram(telegram);
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
+                user.setEmail(email);
+                user.setTelegram(telegram);
                 userDao.update(user);
 
                 if (sendLink) {
+                    ((UserDao) userDao).deleteUserHashByUserId(user.getId());
+                    UserService userService = UserServiceImpl.getInstance();
                     UserHash userHash = userService.generateUserHash(user);
                     ((UserDao) userDao).createUserHash(userHash);
 
@@ -94,13 +96,12 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public Optional<User> activateUserByHash(String hash) {
         BaseDao userDao = new UserDaoImpl();
-        Optional<User> activatedUser = Optional.empty();
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
                 LocalDateTime validDate = LocalDateTime.now();
-                Optional<User> userOptional = ((UserDao)userDao).findInactiveUserByHashAndHashIsNotExpired(hash, validDate);
+                Optional<User> userOptional = ((UserDao)userDao).findInactiveByHashAndHashIsNotExpired(hash, validDate);
 
-                if (userOptional.isPresent()) {
+                if (userOptional.isPresent()) { //todo: is it ok to skip committing started transaction if optional is empty?
                     User user = userOptional.get();
                     user.setStatus(User.Status.ACTIVE);
                     userDao.update(user);
@@ -108,9 +109,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                     ((UserDao)userDao).deleteUserHashByUserId(user.getId());
                     transaction.commit();
 
-                    activatedUser = userOptional;
+                    return userOptional;
                 }
-                //todo, нужно ли было здесь делать transaction.commit(); ?
             } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
             }
@@ -118,7 +118,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             logger.error("Failed to activate user by hash", e);
         }
 
-        return activatedUser;
+        return Optional.empty();
     }
 
     @Override
@@ -127,7 +127,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
-                Optional<User> userOptional = ((UserDao)userDao).findInactiveUserByTelegram(account);
+                Optional<User> userOptional = ((UserDao)userDao).findInactiveByTelegram(account);
 
                 if (userOptional.isPresent()) {
                     User user = userOptional.get();

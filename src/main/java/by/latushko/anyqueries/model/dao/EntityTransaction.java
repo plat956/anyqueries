@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class EntityTransaction implements AutoCloseable {
     private static final Logger logger = LogManager.getLogger();
@@ -28,9 +29,7 @@ public class EntityTransaction implements AutoCloseable {
             logger.error("Unable to begin transaction because of impossible to disable connection autocommit", e);
             throw new EntityTransactionException("Unable to begin transaction because of impossible to disable connection autocommit", e);
         }
-        for (BaseDao dao : daos) {
-            dao.setConnection(connection);
-        }
+        Arrays.stream(daos).forEach(d -> d.setConnection(connection));
         daoStorage = daos;
     }
 
@@ -53,9 +52,7 @@ public class EntityTransaction implements AutoCloseable {
             throw new EntityTransactionException("Unable to end transaction correctly because of impossible to release used connection", e);
         }
         connection = null;
-        for(BaseDao dao: daoStorage) {
-            dao.setConnection(null);
-        }
+        Arrays.stream(daoStorage).forEach(d -> d.setConnection(null));
     }
 
     public void commit() throws EntityTransactionException {

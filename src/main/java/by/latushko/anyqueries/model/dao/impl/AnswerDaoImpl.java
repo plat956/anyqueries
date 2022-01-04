@@ -13,9 +13,10 @@ import java.util.Optional;
 
 public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
     private static final String SQL_COUNT_BY_USER_ID_QUERY = """
-            SELECT count(*) 
+            SELECT count(id) 
             FROM answers 
             WHERE author_id = ?""";
+
     @Override
     public List<Answer> findAll() throws DaoException {
         return null;
@@ -47,18 +48,17 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
     }
 
     @Override
-    public Long countTotalAnswersByUserId(Long userId) throws DaoException {
-        Long count = 0L;
+    public Long countTotalByUserId(Long userId) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_USER_ID_QUERY)){
             statement.setLong(1, userId);
             try(ResultSet resultSet = statement.executeQuery()) {
                 if(resultSet.next()) {
-                    count = resultSet.getLong(1);
+                    return resultSet.getLong(1);
                 }
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to count answers by calling countTotalAnswersByUserId(Long userId) method", e);
         }
-        return count;
+        return 0L;
     }
 }

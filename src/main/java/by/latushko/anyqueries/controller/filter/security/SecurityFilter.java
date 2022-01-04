@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_KEY;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_TOKEN;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.MAIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.MAIN_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.COMMAND;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.INACTIVE_PRINCIPAL;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
@@ -42,11 +42,11 @@ public class SecurityFilter implements Filter {
                     principal = null;
                 }
             } else {
-                Optional<String> credentialKey = CookieHelper.readCookie(request, CREDENTIAL_KEY);
-                Optional<String> credentialToken = CookieHelper.readCookie(request, CREDENTIAL_TOKEN);
-                if (credentialKey.isPresent() && credentialToken.isPresent()) {
+                String credentialKey = CookieHelper.readCookie(request, CREDENTIAL_KEY);
+                String credentialToken = CookieHelper.readCookie(request, CREDENTIAL_TOKEN);
+                if (credentialKey != null && credentialToken != null) {
                     UserService userService = UserServiceImpl.getInstance();
-                    Optional<User> user = userService.findIfExistsByCredentialsKeyAndToken(credentialKey.get(), credentialToken.get());
+                    Optional<User> user = userService.findByCredentialsKeyAndToken(credentialKey, credentialToken);
                     if (user.isPresent() && user.get().getStatus() == User.Status.ACTIVE) {
                         session.setAttribute(PRINCIPAL, user.get());
                     } else {

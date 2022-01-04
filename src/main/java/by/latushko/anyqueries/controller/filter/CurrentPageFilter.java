@@ -10,11 +10,13 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 import static by.latushko.anyqueries.controller.command.CommandType.SHOW_IMAGE;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.CONTROLLER_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.CONTROLLER_URL;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.CURRENT_PAGE;
 
 @WebFilter(filterName = "currentPageFilter", urlPatterns = "/controller")
 public class CurrentPageFilter implements Filter {
+    private static final String QUERY_STRING_DELIMITER = "?";
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
@@ -22,7 +24,7 @@ public class CurrentPageFilter implements Filter {
                 request.getParameter(RequestParameter.AJAX) == null &&
                 request.getParameter(RequestParameter.COMMAND) != null &&
                 !request.getParameter(RequestParameter.COMMAND).equalsIgnoreCase(SHOW_IMAGE.name())) {
-            String currentPage = CONTROLLER_URL + "?" + request.getQueryString();
+            String currentPage = CONTROLLER_URL + QUERY_STRING_DELIMITER + request.getQueryString();
             HttpSession session = request.getSession();
             session.setAttribute(CURRENT_PAGE, currentPage);
         }

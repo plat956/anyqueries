@@ -1,6 +1,7 @@
 package by.latushko.anyqueries.validator.impl;
 
-import by.latushko.anyqueries.util.file.FileHelper;
+import by.latushko.anyqueries.service.AttachmentService;
+import by.latushko.anyqueries.service.impl.AttachmentServiceImpl;
 import by.latushko.anyqueries.validator.AttachmentValidator;
 import jakarta.servlet.http.Part;
 
@@ -29,7 +30,8 @@ public class UploadAvatarValidator implements AttachmentValidator {
         }
         Part file = attachments.get(0);
         String fileName = file.getSubmittedFileName();
-        Optional<String> extension = FileHelper.getExtension(fileName);
+        AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+        Optional<String> extension = attachmentService.getFileExtension(fileName);
         if(extension.isEmpty() || (extension.isPresent() && !APP_UPLOAD_AVATAR_EXTENSIONS.contains(extension.get()))) {
             return false;
         }

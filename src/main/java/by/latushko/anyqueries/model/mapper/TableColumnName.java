@@ -14,13 +14,12 @@ public final class TableColumnName {
     public static final String USER_CREDENTIAL_KEY = "credential_key";
     public static final String USER_STATUS = "status";
     public static final String USER_ROLE = "role";
-
     public static final String QUESTION_TITLE = "title";
-
     public static final String CATEGORY_ID = "id";
     public static final String CATEGORY_NAME = "name";
     public static final String CATEGORY_COLOR = "color";
     public static final String CATEGORY_QUESTIONS_COUNT = "questions_count";
+
     private TableColumnName() {
     }
 }

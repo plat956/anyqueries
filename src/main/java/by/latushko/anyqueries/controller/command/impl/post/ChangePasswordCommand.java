@@ -19,7 +19,7 @@ import static by.latushko.anyqueries.controller.command.CommandResult.RoutingTyp
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.CHANGE_PASSWORD_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.CHANGE_PASSWORD_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.PASSWORD_NEW;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.PASSWORD_OLD;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
@@ -38,8 +38,6 @@ public class ChangePasswordCommand implements Command {
         }
 
         String oldPassword = request.getParameter(PASSWORD_OLD);
-        String userLang = CookieHelper.readCookie(request, LANG).orElse(null);
-        MessageManager manager = MessageManager.getManager(userLang);
 
         User user = (User) session.getAttribute(PRINCIPAL);
         UserService userService = UserServiceImpl.getInstance();
@@ -52,6 +50,8 @@ public class ChangePasswordCommand implements Command {
         String password = request.getParameter(PASSWORD_NEW);
         boolean result = userService.changePassword(user, password);
 
+        String userLang = CookieHelper.readCookie(request, LANG);
+        MessageManager manager = MessageManager.getManager(userLang);
         ResponseMessage message;
         if (result) {
             message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_SAVE_SUCCESSFUL));

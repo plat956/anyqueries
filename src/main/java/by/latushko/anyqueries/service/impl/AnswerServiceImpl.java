@@ -30,7 +30,7 @@ public class AnswerServiceImpl implements AnswerService {
         Long count = 0L;
         try (EntityTransaction transaction = new EntityTransaction(answerDao)) {
             try {
-                count = ((AnswerDao)answerDao).countTotalAnswersByUserId(userId);
+                count = ((AnswerDao)answerDao).countTotalByUserId(userId);
                 transaction.commit();
             } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();

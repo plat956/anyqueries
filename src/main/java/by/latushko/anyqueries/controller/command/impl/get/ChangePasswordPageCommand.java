@@ -24,7 +24,7 @@ public class ChangePasswordPageCommand implements Command {
         User user = (User) session.getAttribute(PRINCIPAL);
         QuestionService questionService = QuestionServiceImpl.getInstance();
         AnswerService answerService = AnswerServiceImpl.getInstance();
-        Long totalQuestions = questionService.countTotalQuestionsByAuthorId(user.getId());
+        Long totalQuestions = questionService.countTotalByAuthorId(user.getId());
         Long totalAnswers = answerService.countTotalAnswersByUserId(user.getId());
         request.setAttribute(TOTAL_QUESTIONS, totalQuestions);
         request.setAttribute(TOTAL_ANSWERS, totalAnswers);
