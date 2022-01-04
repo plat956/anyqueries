@@ -7,7 +7,7 @@
 <c:set var="page_title_label" value="label.registration" scope="request" />
 <jsp:include page="layout/header.jsp" />
 <div class="col-lg-7 mx-auto">
-    <form id="reg_form" class="needs-validation" method="post" action="${pageContext.request.contextPath}/controller?command=registration" novalidate>
+    <form id="reg_form" class="needs-validation" method="post" action="${pageContext.request.contextPath}/controller?command=registration" novalidate autocomplete="off">
         <div class="form-group input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text"> <i class="fa fa-user"></i> </span>

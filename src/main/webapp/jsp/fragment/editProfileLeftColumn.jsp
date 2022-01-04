@@ -18,7 +18,7 @@
                 <span class="badge badge-${principal.role.color} user-role-span"><fmt:message key="label.role.${fn:toLowerCase(principal.role)}" /></span>
             </div>
         </div>
-        <form id="avatar-form" action="${pageContext.request.contextPath}/controller?command=upload_avatar" method="post" enctype="multipart/form-data">
+        <form id="avatar-form" action="${pageContext.request.contextPath}/controller?command=upload_avatar" method="post" enctype="multipart/form-data" autocomplete="off">
             <label class="btn btn-primary" for="file-selector" data-toggle="popover" data-trigger="hover" data-placement="bottom"
                    data-content="<fmt:message key="label.attachment.max.notice" /> ${AppProperty.APP_ATTACHMENT_SIZE} <fmt:message key="message.mb" />. <fmt:message key="label.attachment.formats" /> <ft:list-formatter list="${AppProperty.APP_UPLOAD_AVATAR_EXTENSIONS}" />">
                 <input id="file-selector" type="file" name="file" data-max-size="${AppProperty.APP_ATTACHMENT_SIZE}" accept="<ft:list-formatter list="${AppProperty.APP_UPLOAD_AVATAR_EXTENSIONS}" />" style="display:none" onchange="dataForms.uploadAvatar(this, 'avatar-form');">

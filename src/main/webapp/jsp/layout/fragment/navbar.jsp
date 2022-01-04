@@ -14,7 +14,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <form action="${pageContext.request.contextPath}/controller" method="get">
+                <form action="${pageContext.request.contextPath}/controller" method="get" autocomplete="off">
                     <input type="hidden" name="command" value="search" />
                     <div class="navbar-search input-group">
                         <input class="form-control py-2 border-left-0 border search-input" type="text"
@@ -48,14 +48,14 @@
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="${pageContext.request.contextPath}/controller?command=edit_profile_page"><fmt:message key="label.profile" /></a>
                             <div class="dropdown-divider"></div>
-                            <form id="logout_form" action="${pageContext.request.contextPath}/controller?command=logout" method="post"></form>
+                            <form id="logout_form" action="${pageContext.request.contextPath}/controller?command=logout" method="post" autocomplete="off"></form>
                             <a class="dropdown-item" href="#" onclick="$('#logout_form').submit();"><fmt:message key="label.logout" /></a>
                         </div>
                     </li>
                 </c:when>
                 <c:when test="${!empty inactivePrincipal}">
                     <li class="nav-item">
-                        <form id="logout_form" action="${pageContext.request.contextPath}/controller?command=logout" method="post"></form>
+                        <form id="logout_form" action="${pageContext.request.contextPath}/controller?command=logout" method="post" autocomplete="off"></form>
                         <a class="nav-link" href="#" onclick="$('#logout_form').submit();"><fmt:message key="label.logout" /></a>
                     </li>
                 </c:when>

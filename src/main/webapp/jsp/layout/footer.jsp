@@ -14,7 +14,12 @@
 </div>
 </section>
 </div>
+
 <script type="text/javascript">
+    pageEvents.init();
+    //disable back button
+    pageEvents.noBack();
+
     // Show the progress bar
     NProgress.start();
 
@@ -23,16 +28,25 @@
 
     // Trigger finish when page fully loaded
     $(window).on('pageshow', function(){
+        dataForms.reset();
         clearInterval(interval);
         NProgress.done();
+        pageEvents.freezeClicks(false);
+        $('#container').show();
     });
 
     // Trigger bar when exiting the page
     $(window).on('beforeunload', function(e){
         NProgress.start();
+        pageEvents.freezeClicks(true);
     });
 
     $(function () {
+        //prevent f5 submitting form data
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+
         //check if cookies are enabled
         if (!navigator.cookieEnabled) {
             $('#err-cookie-support').show();

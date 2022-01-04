@@ -20,8 +20,8 @@
     <title>${AppProperty.APP_NAME} | ${page_title}</title>
     <jsp:include page="fragment/resources.jsp" />
 </head>
-<body>
-<div class="container">
+<body onload="pageEvents.noBack();" onpageshow="if (event.persisted) pageEvents.noBack();" onunload="">
+<div class="container" id="container" style="display: none">
     <jsp:include page="fragment/navbar.jsp" />
     <section class="page-section content">
         <div class="row sidebar-row">

@@ -38,12 +38,12 @@
                 </div>
             </c:if>
             <hr>
-            <form method="post" action="${pageContext.request.contextPath}/controller?command=change_locale" id="locale_form">
-            <select class="selectpicker" data-width="100%" name="lang" onchange="$('#locale_form').submit();">
-                <option  data-content='<i class="flag flag-russia"></i> <fmt:message key="label.lang.ru" />' value="ru"${empty current_lang || current_lang == 'ru' ? ' selected' : ''}><fmt:message key="label.lang.ru" /></option>
-                <option  data-content='<i class="flag flag-belarus"></i> <fmt:message key="label.lang.be" />' value="be"${current_lang == 'be' ? ' selected' : ''}><fmt:message key="label.lang.be" /></option>
-                <option data-content='<i class="flag flag-united-states"></i> <fmt:message key="label.lang.en" />' value="en"${current_lang == 'en' ? ' selected' : ''}><fmt:message key="label.lang.en" /></option>
-            </select>
+            <form method="post" action="${pageContext.request.contextPath}/controller?command=change_locale" id="locale_form" autocomplete="off">
+                <select class="selectpicker" data-width="100%" name="lang" onchange="$('#locale_form').submit();">
+                    <option  data-content='<i class="flag flag-russia"></i> <fmt:message key="label.lang.ru" />' value="ru"${empty current_lang || current_lang == 'ru' ? ' selected' : ''}><fmt:message key="label.lang.ru" /></option>
+                    <option  data-content='<i class="flag flag-belarus"></i> <fmt:message key="label.lang.be" />' value="be"${current_lang == 'be' ? ' selected' : ''}><fmt:message key="label.lang.be" /></option>
+                    <option data-content='<i class="flag flag-united-states"></i> <fmt:message key="label.lang.en" />' value="en"${current_lang == 'en' ? ' selected' : ''}><fmt:message key="label.lang.en" /></option>
+                </select>
             </form>
         </div>
     </div>

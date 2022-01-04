@@ -8,7 +8,7 @@
 <jsp:include page="layout/header.jsp"/>
 <div class="col-lg-7 mx-auto">
     <form id="repeat_form" class="needs-validation" method="post"
-          action="${pageContext.request.contextPath}/controller?command=repeat_activation" novalidate>
+          action="${pageContext.request.contextPath}/controller?command=repeat_activation" novalidate autocomplete="off">
         <div class="form-group input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>

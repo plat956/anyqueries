@@ -24,7 +24,7 @@
         </ul>
         <div class="tab-content pills-tab" id="pills-tabContent">
             <div class="tab-pane fade show active" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                <form id="update_form" class="needs-validation" method="post" action="${pageContext.request.contextPath}/controller?command=change_password" novalidate>
+                <form id="update_form" class="needs-validation" method="post" action="${pageContext.request.contextPath}/controller?command=change_password" novalidate autocomplete="off">
                     <div class="form-group input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-lock"></i> </span>

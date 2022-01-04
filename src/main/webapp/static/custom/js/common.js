@@ -5,8 +5,10 @@ var dataForms = {
                 var button = $("button[type=submit]", this);
                 if(!button.hasClass('no-loader')) {
                     button.prop("disabled", true);
+                    button.data('old-text', button.text());
                     button.html('<span class="spinner-grow spinner-grow-sm"></span> ' + message.processing);
                 }
+                pageEvents.freezeClicks(true);
             }
         });
     },
@@ -105,6 +107,16 @@ var dataForms = {
                 }
             });
         }
+    },
+    reset: function(q) {
+        pageEvents.freezeClicks(false);
+        $('.support-content form').trigger('reset');
+        $('.support-content .summernote').summernote('reset');
+        $('.support-content .selectpicker').val('').selectpicker("refresh");
+        $('.support-content .attachments').empty();
+        var button = $(".support-content form button[type=submit]");
+        button.prop("disabled", false);
+        button.html(button.data('old-text'));
     }
 }
 
@@ -196,5 +208,29 @@ var toasts = {
         } else {
             toastr.error(notice, text, options);
         }
+    }
+}
+
+var pageEvents = {
+    freeze: true,
+    handler: function (e) {
+        if (pageEvents.freeze) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    },
+    freezeClicks: function (s) {
+        pageEvents.freeze = s;
+        if (s) {
+            $('body').addClass('loading');
+        } else {
+            $('body').removeClass('loading');
+        }
+    },
+    init: function () {
+        document.addEventListener("click", pageEvents.handler, true);
+    },
+    noBack: function() {
+        window.history.forward(1);
     }
 }
