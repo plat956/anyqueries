@@ -19,7 +19,7 @@ public class CommandProvider {
         getCommands.put(CommandType.REGISTRATION_PAGE, new RegistrationPageCommand());
         getCommands.put(CommandType.REPEAT_ACTIVATION_PAGE, new RepeatActivationPageCommand());
         getCommands.put(CommandType.ACTIVATE_USER, new ActivateUserCommand());
-        getCommands.put(CommandType.MAIN_PAGE, new MainPageCommand());
+        getCommands.put(CommandType.QUESTIONS_PAGE, new QuestionsPageCommand());
         getCommands.put(CommandType.LIVE_SEARCH, new LiveSearchCommand());
         getCommands.put(CommandType.CHANGE_PASSWORD_PAGE, new ChangePasswordPageCommand());
         getCommands.put(CommandType.SHOW_IMAGE, new ShowImageCommand());

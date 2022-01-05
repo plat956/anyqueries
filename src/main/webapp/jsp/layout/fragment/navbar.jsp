@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary navbar-main-panel">
-    <a class="navbar-brand" href="${pageContext.request.contextPath}/controller?command=main_page">
+    <a class="navbar-brand" href="${pageContext.request.contextPath}/controller?command=questions_page">
         <i class="fa fa-question-circle"></i>
         ${AppProperty.APP_NAME}
     </a>

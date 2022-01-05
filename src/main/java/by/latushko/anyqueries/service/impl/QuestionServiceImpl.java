@@ -143,6 +143,23 @@ public class QuestionServiceImpl implements QuestionService {
         return Optional.empty();
     }
 
+    @Override
+    public List<Question> findWithOffsetAndLimit(int offset, int limit) {
+        BaseDao questionDao = new QuestionDaoImpl();
+        List<Question> questions = new ArrayList<>();
+        try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
+            try {
+                questions = ((QuestionDao)questionDao).findWithOffsetAndLimit(offset, limit);
+                transaction.commit();
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving questions with offset and limit", e);
+        }
+        return questions;
+    }
+
     private Question createNewQuestion(Category category, String title, String text, User author) {
         Question question = new Question();
         question.setCategory(category);

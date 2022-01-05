@@ -22,7 +22,7 @@ import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SU
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Type.POPUP;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.LOGIN_URL;
-import static by.latushko.anyqueries.controller.command.identity.PageUrl.MAIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.HASH;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
@@ -45,7 +45,7 @@ public class ActivateUserCommand implements Command {
             session.setAttribute(PRINCIPAL, activatedUser.get());
             UserService userService = UserServiceImpl.getInstance();
             userService.updateLastLoginDate(activatedUser.get());
-            redirectUrl = MAIN_URL;
+            redirectUrl = QUESTIONS_URL;
         } else {
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ACTIVATION_FAIL));
             redirectUrl = LOGIN_URL;

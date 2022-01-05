@@ -609,4 +609,11 @@ input:checked + .slider:before {
 .note-editor.note-frame {
     border: 1px solid #ced4da !important;
 }
-.custom-checkbox { display: none !important; }
+.custom-checkbox {
+    display: none !important;
+}
+.pagination {
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    margin-top: 15px;
+}

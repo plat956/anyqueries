@@ -3,7 +3,7 @@ package by.latushko.anyqueries.model.entity;
 public class Category extends BaseEntity<Long> {
     private String name;
     private String color;
-    private transient Long questionsCount;
+    private transient long questionsCount;
 
     public Category() {
     }
@@ -24,11 +24,11 @@ public class Category extends BaseEntity<Long> {
         this.color = color;
     }
 
-    public Long getQuestionsCount() {
+    public long getQuestionsCount() {
         return questionsCount;
     }
 
-    public void setQuestionsCount(Long questionsCount) {
+    public void setQuestionsCount(long questionsCount) {
         this.questionsCount = questionsCount;
     }
 

@@ -9,7 +9,7 @@
             <div class="col-md-12 text-center">
                 <span class="display-1 d-block"><fmt:message key="label.error500.title" /></span>
                 <div class="mb-4 lead"><fmt:message key="message.error500.description" /></div>
-                <a href="${pageContext.request.contextPath}/controller?command=main_page" class="btn btn-success">
+                <a href="${pageContext.request.contextPath}/controller?command=questions_page" class="btn btn-success">
                     <fmt:message key="label.backHome" />
                 </a>
             </div>

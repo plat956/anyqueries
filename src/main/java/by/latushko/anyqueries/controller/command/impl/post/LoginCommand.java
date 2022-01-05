@@ -26,7 +26,7 @@ import static by.latushko.anyqueries.controller.command.ResponseMessage.Type.TOA
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_KEY;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_TOKEN;
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.LOGIN_URL;
-import static by.latushko.anyqueries.controller.command.identity.PageUrl.MAIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
 import static by.latushko.anyqueries.util.AppProperty.APP_COOKIE_ALIVE_SECONDS;
@@ -57,7 +57,7 @@ public class LoginCommand implements Command {
         }
         ResponseMessage message = switch (user.get().getStatus()) {
             case ACTIVE -> {
-                redirectUrl = MAIN_URL;
+                redirectUrl = QUESTIONS_URL;
                 session.setAttribute(PRINCIPAL, user.get());
                 boolean isFirstLoginTime = user.get().getLastLoginDate() == null;
                 userService.updateLastLoginDate(user.get());
@@ -75,7 +75,7 @@ public class LoginCommand implements Command {
                 }
             }
             case INACTIVE -> {
-                redirectUrl = MAIN_URL;
+                redirectUrl = QUESTIONS_URL;
                 session.setAttribute(INACTIVE_PRINCIPAL, user.get());
                 yield null;
             }

@@ -4,6 +4,7 @@ import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.model.dao.BaseDao;
 import by.latushko.anyqueries.model.dao.QuestionDao;
 import by.latushko.anyqueries.model.entity.Question;
+import by.latushko.anyqueries.model.mapper.impl.QuestionMapper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -39,6 +40,22 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             SELECT count(id) 
             FROM questions 
             WHERE author_id = ? and closed = ?""";
+    private static final String SQL_FIND_WITH_OFFSET_AND_LIMIT_QUERY = """
+            SELECT q.id, q.title, q.text, q.creation_date, q.editing_date, q.closed, q.category_id, c.name as category_name, c.color as category_color, 
+            q.author_id as user_id, u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
+            u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
+            u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role, count(a.id) as answers_count, count(q.id) OVER() AS total
+            FROM questions q 
+            INNER JOIN users u 
+            ON q.author_id = u.id 
+            INNER JOIN categories c 
+            ON q.category_id = c.id
+            LEFT JOIN answers a 
+            ON q.id = a.question_id 
+            GROUP BY q.id
+            LIMIT ?, ?""";
+
+    private QuestionMapper mapper = new QuestionMapper();
 
     @Override
     public List<Question> findAll() throws DaoException {
@@ -160,6 +177,19 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
             throw new DaoException("Failed to create question-attachment relationship by calling createQuestionAttachment(Long questionId, Long attachmentId) method", e);
+        }
+    }
+
+    @Override
+    public List<Question> findWithOffsetAndLimit(int offset, int limit) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_WITH_OFFSET_AND_LIMIT_QUERY)){
+            statement.setInt(1, offset);
+            statement.setInt(2, limit);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return mapper.mapRows(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find questions by calling findWithOffsetAndLimit(int offset, int limit) method", e);
         }
     }
 }

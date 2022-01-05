@@ -5,7 +5,7 @@ import java.util.Optional;
 public enum CommandType {
     LOGIN_PAGE,
     EDIT_PROFILE_PAGE,
-    MAIN_PAGE,
+    QUESTIONS_PAGE,
     REGISTRATION_PAGE,
     ACTIVATE_USER,
     REPEAT_ACTIVATION,

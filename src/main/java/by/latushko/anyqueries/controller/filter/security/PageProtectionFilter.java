@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-import static by.latushko.anyqueries.controller.command.identity.PageUrl.MAIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
 
 @WebFilter(filterName = "pageProtectionFilter", urlPatterns = "/jsp/*")
 public class PageProtectionFilter implements Filter {
@@ -15,7 +15,7 @@ public class PageProtectionFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        response.sendRedirect(MAIN_URL);
+        response.sendRedirect(QUESTIONS_URL);
         chain.doFilter(request, response);
     }
 }

@@ -23,6 +23,7 @@ public final class RequestParameter {
     public static final String HASH = "hash";
     public static final String FILE = "file";
     public static final String REMEMBER_ME = "remember_me";
+    public static final String PAGE = "page";
 
     private RequestParameter() {
     }

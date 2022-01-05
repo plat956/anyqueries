@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpSession;
 
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.REDIRECT;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
-import static by.latushko.anyqueries.controller.command.identity.PageUrl.MAIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.LANG;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.CURRENT_PAGE;
 import static by.latushko.anyqueries.util.AppProperty.APP_COOKIE_ALIVE_SECONDS;
@@ -29,7 +29,7 @@ public class ChangeLocaleCommand implements Command {
         if(session.getAttribute(CURRENT_PAGE) != null) {
             currentPage = session.getAttribute(CURRENT_PAGE).toString();
         } else {
-            currentPage = MAIN_URL;
+            currentPage = QUESTIONS_URL;
         }
         MessageManager manager = MessageManager.getManager(lang);
         ResponseMessage message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_LANG_CHANGED));

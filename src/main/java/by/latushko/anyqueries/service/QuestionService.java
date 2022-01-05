@@ -13,4 +13,5 @@ public interface QuestionService {
     Long countTotalNotClosed();
     Long countTotalNotClosedByAuthorId(Long authorId);
     Optional<Question> create(Long categoryId, String title, String text, User author, List<Part> attachments);
+    List<Question> findWithOffsetAndLimit(int offset, int limit);
 }

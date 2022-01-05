@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_KEY;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_TOKEN;
-import static by.latushko.anyqueries.controller.command.identity.PageUrl.MAIN_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.COMMAND;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.INACTIVE_PRINCIPAL;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
@@ -63,7 +63,7 @@ public class SecurityFilter implements Filter {
             }
 
             if (!RestrictedCommand.hasAccess(commandType.get(), currentRole)) {
-                response.sendRedirect(MAIN_URL);
+                response.sendRedirect(QUESTIONS_URL);
                 return;
             }
         }

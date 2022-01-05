@@ -1,6 +1,9 @@
 package by.latushko.anyqueries.model.mapper;
 
 public final class TableColumnName {
+    public static final String CATEGORY_PREFIX = "category_";
+    public static final String USER_PREFIX = "user_";
+    public static final String TOTAL = "total";
     public static final String USER_ID = "id";
     public static final String USER_FIRST_NAME = "first_name";
     public static final String USER_LAST_NAME = "last_name";
@@ -14,11 +17,17 @@ public final class TableColumnName {
     public static final String USER_CREDENTIAL_KEY = "credential_key";
     public static final String USER_STATUS = "status";
     public static final String USER_ROLE = "role";
+    public static final String QUESTION_ID = "id";
     public static final String QUESTION_TITLE = "title";
+    public static final String QUESTION_TEXT = "text";
+    public static final String QUESTION_CREATION_DATE = "creation_date";
+    public static final String QUESTION_EDITING_DATE = "editing_date";
+    public static final String QUESTION_CLOSED = "closed";
     public static final String CATEGORY_ID = "id";
     public static final String CATEGORY_NAME = "name";
     public static final String CATEGORY_COLOR = "color";
     public static final String CATEGORY_QUESTIONS_COUNT = "questions_count";
+    public static final String QUESTION_ANSWERS_COUNT = "answers_count";
 
     private TableColumnName() {
     }
