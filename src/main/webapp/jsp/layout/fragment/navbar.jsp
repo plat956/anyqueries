@@ -41,7 +41,7 @@
                                         <img src="${pageContext.request.contextPath}/controller?command=show_image&file=${principal.avatar}" width="35" height="35" class="rounded-circle">
                                     </c:when>
                                     <c:otherwise>
-                                        <img src="${pageContext.request.contextPath}/static/custom/images/noavatar.png'}" width="35" height="35" class="rounded-circle">
+                                        <img src="${pageContext.request.contextPath}/static/custom/images/noavatar.png" width="35" height="35" class="rounded-circle">
                                     </c:otherwise>
                                 </c:choose>
                                     ${principal.fio}

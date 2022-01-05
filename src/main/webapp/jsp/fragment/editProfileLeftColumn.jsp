@@ -10,7 +10,7 @@
                 <img src="${pageContext.request.contextPath}/controller?command=show_image&file=${principal.avatar}" class="avatar img-circle img-thumbnail" alt="avatar">
             </c:when>
             <c:otherwise>
-                <img src="${pageContext.request.contextPath}/static/custom/images/noavatar.png'}" class="avatar img-circle img-thumbnail" alt="avatar">
+                <img src="${pageContext.request.contextPath}/static/custom/images/noavatar.png" class="avatar img-circle img-thumbnail" alt="avatar">
             </c:otherwise>
         </c:choose>
         <div class="panel panel-default text-center profile-role">

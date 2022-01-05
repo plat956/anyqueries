@@ -16,6 +16,9 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
+import static by.latushko.anyqueries.util.AppProperty.APP_NAME;
+import static by.latushko.anyqueries.util.i18n.MessageManager.SPACE_CHARACTER;
+
 public class MailSender {
     private static final Logger logger = LogManager.getLogger();
     private static final String MAIL_PROPERTIES_PATH = "config/mail.properties";
@@ -35,7 +38,7 @@ public class MailSender {
             InputStream inputStream = MailSender.class.getClassLoader().getResourceAsStream(MAIL_PROPERTIES_PATH);
             properties.load(inputStream);
             USER_EMAIL = properties.getProperty(USER_EMAIL_PROPERTY);
-            USER_NAME = properties.getProperty(USER_NAME_PROPERTY);
+            USER_NAME = APP_NAME + SPACE_CHARACTER + properties.getProperty(USER_NAME_PROPERTY);
             CONTENT_TYPE = properties.getProperty(CONTENT_TYPE_PROPERTY);
         } catch (IOException e) {
             logger.error("Failed to read mail properties from file: " + MAIL_PROPERTIES_PATH, e);

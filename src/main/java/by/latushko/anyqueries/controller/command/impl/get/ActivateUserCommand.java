@@ -37,7 +37,7 @@ public class ActivateUserCommand implements Command {
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
         ResponseMessage message;
-        String redirectUrl;
+        String redirectUrl = QUESTIONS_URL;
         if(activatedUser.isPresent()) {
             message = new ResponseMessage(POPUP, SUCCESS, manager.getMessage(MESSAGE_REGISTRATION_SUCCESS_TITLE),
                     manager.getMessage(MESSAGE_REGISTRATION_SUCCESS_NOTICE));
@@ -45,10 +45,11 @@ public class ActivateUserCommand implements Command {
             session.setAttribute(PRINCIPAL, activatedUser.get());
             UserService userService = UserServiceImpl.getInstance();
             userService.updateLastLoginDate(activatedUser.get());
-            redirectUrl = QUESTIONS_URL;
         } else {
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ACTIVATION_FAIL));
-            redirectUrl = LOGIN_URL;
+            if(session.getAttribute(INACTIVE_PRINCIPAL) == null) {
+                redirectUrl = LOGIN_URL;
+            }
         }
         session.setAttribute(MESSAGE, message);
         return new CommandResult(redirectUrl, REDIRECT);
