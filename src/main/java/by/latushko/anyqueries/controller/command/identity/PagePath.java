@@ -8,6 +8,7 @@ public final class PagePath {
     public static final String EDIT_PROFILE_PAGE = "jsp/editProfile.jsp";
     public static final String CHANGE_PASSWORD_PAGE = "jsp/changePassword.jsp";
     public static final String QUESTIONS_PAGE = "jsp/questions.jsp";
+    public static final String BAD_BROWSER_PAGE = "jsp/badBrowser.jsp";
 
     private PagePath() {
     }

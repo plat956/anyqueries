@@ -13,20 +13,28 @@
 <c:if test="${empty page_title || fn:startsWith(page_title, '???')}">
     <fmt:message key="label.unknown-page" var="page_title" scope="request" />
 </c:if>
+<c:set var="bad_browser_command" value="${param['command'] == 'bad_browser_page'}" scope="request" />
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>${AppProperty.APP_NAME} | ${page_title}</title>
     <jsp:include page="fragment/resources.jsp" />
+    <c:if test="${!bad_browser_command}">
+        <noscript>
+            <meta http-equiv="refresh" content="0;url=${pageContext.request.contextPath}/controller?command=bad_browser_page">
+        </noscript>
+    </c:if>
 </head>
 <body onload="pageEvents.noBack();" onpageshow="if (event.persisted) pageEvents.noBack();" onunload="">
-<div class="container" id="container" style="display: none">
+<div class="container" id="container" style="${!bad_browser_command ? 'display:none' : ''}">
     <jsp:include page="fragment/navbar.jsp" />
     <section class="page-section content">
         <div class="row sidebar-row">
-        <jsp:include page="fragment/sidebar.jsp" />
-        <div class="col-lg-9 custom-content">
+        <c:if test="${!bad_browser_command}">
+            <jsp:include page="fragment/sidebar.jsp" />
+        </c:if>
+        <div class="col-lg-${!bad_browser_command ? '9' : '12'} custom-content">
             <jsp:include page="fragment/globalMessage.jsp" />
             <div class="grid support-content">
                 <div class="grid-body">

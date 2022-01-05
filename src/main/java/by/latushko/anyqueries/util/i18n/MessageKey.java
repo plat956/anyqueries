@@ -49,7 +49,7 @@ public final class MessageKey {
     public static final String MESSAGE_TELEGRAM_GREETING = "message.telegram.greeting";
     public static final String MESSAGE_TELEGRAM_UNKNOWN = "message.telegram.unknown";
     public static final String MESSAGE_ATTACHMENT_WRONG = "message.attachment.wrong";
-
+    public static final String MESSAGE_BAD_BROWSER = "message.badBrowser";
     public static final String MESSAGE_AVATAR_UPLOADED = "message.avatar.uploaded";
     static final String MESSAGES_FILE_NAME = "message";
     static final String LOCALE_EN = "en";

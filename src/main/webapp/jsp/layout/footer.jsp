@@ -47,10 +47,12 @@
             window.history.replaceState(null, null, window.location.href);
         }
 
-        //check if cookies are enabled
-        if (!navigator.cookieEnabled) {
-            $('#err-cookie-support').show();
-        }
+        <c:if test="${!bad_browser_command}">
+            //check if cookies are enabled
+            if (!navigator.cookieEnabled) {
+                location.href = '${pageContext.request.contextPath}/controller?command=bad_browser_page';
+            }
+        </c:if>
 
         //init bootstrap forms validation
         (function() {

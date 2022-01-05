@@ -24,6 +24,7 @@ public class CommandProvider {
         getCommands.put(CommandType.CHANGE_PASSWORD_PAGE, new ChangePasswordPageCommand());
         getCommands.put(CommandType.SHOW_IMAGE, new ShowImageCommand());
         getCommands.put(CommandType.CREATE_QUESTION_PAGE, new CreateQuestionPageCommand());
+        getCommands.put(CommandType.BAD_BROWSER_PAGE, new BadBrowserPageCommand());
         postCommands.put(CommandType.LOGIN, new LoginCommand());
         postCommands.put(CommandType.LOGOUT, new LogoutCommand());
         postCommands.put(CommandType.REGISTRATION, new RegistrationCommand());
