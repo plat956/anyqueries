@@ -31,7 +31,7 @@
         <ul class="navbar-nav form-inline my-2 my-lg-0">
             <c:choose>
                 <c:when test="${!empty principal}">
-                    <span class="badge badge-${principal.role.color} user-role-span"><fmt:message key="label.role.${fn:toLowerCase(principal.role)}" /></span>
+                    <span class="badge badge-${principal.role.color} user-role-span" id="navbar-role"><fmt:message key="label.role.${fn:toLowerCase(principal.role)}" /></span>
                     <li class="nav-item dropdown user-dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

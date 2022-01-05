@@ -10,6 +10,15 @@ public final class MessageKey {
     public static final String LABEL_TELEGRAM_ACTIVATE = "label.telegram.activate";
     public static final String LABEL_TELEGRAM_HELP = "label.telegram.help";
     public static final String LABEL_TELEGRAM_CONTACT = "label.telegram.contact";
+    public static final String LABEL_YEAR = "label.year";
+    public static final String LABEL_MONTH = "label.month";
+    public static final String LABEL_WEEK = "label.week";
+    public static final String LABEL_DAY = "label.day";
+    public static final String LABEL_HOUR = "label.hour";
+    public static final String LABEL_MINUTE = "label.minute";
+    public static final String LABEL_SECOND = "label.second";
+    public static final String LABEL_AGO = "label.ago";
+    public static final String LABEL_NO = "label.no";
     public static final String MESSAGE_LANG_CHANGED = "message.lang.changed";
     public static final String MESSAGE_LOGIN_WRONG = "message.login.wrong";
     public static final String MESSAGE_LOGIN_SUCCESS = "message.login.success";

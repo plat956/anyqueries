@@ -29,4 +29,29 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
+    <tag>
+        <name>time-duration</name>
+        <tag-class>by.latushko.anyqueries.util.tag.TimeDurationTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>date</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
+        <name>plural-formatter</name>
+        <tag-class>by.latushko.anyqueries.util.tag.PluralFormatterTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>count</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>key</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
 </taglib>

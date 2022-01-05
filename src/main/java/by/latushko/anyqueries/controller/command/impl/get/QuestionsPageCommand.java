@@ -21,7 +21,7 @@ public class QuestionsPageCommand implements Command {
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         String pageParameter = request.getParameter(PAGE);
         Integer page = pageParameter != null && !pageParameter.isEmpty() ? Integer.valueOf(pageParameter) : 1; //todo check if > 0 and < last page
-        Integer limit = 4;
+        Integer limit = 4; //todo from cfg
         Integer offset = (page - 1) * limit;
         QuestionService questionService = QuestionServiceImpl.getInstance();
 

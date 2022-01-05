@@ -421,6 +421,13 @@ i.flag-ru:before, i.flag-russia:before {
     margin-right: 0;
     margin-left: 0;
 }
+
+@media (max-width: 1200px) {
+    #navbar-role {
+        display: none;
+    }
+}
+
 @media (max-width: 575px) {
     #profile-nav {
         margin-top: 15px;
@@ -436,6 +443,9 @@ i.flag-ru:before, i.flag-russia:before {
     }
     .navbar-search > .typeahead{
         position: absolute;
+    }
+    #navbar-role {
+        display: block;
     }
 }
 @media (min-width: 992px) {
@@ -616,4 +626,27 @@ input:checked + .slider:before {
     padding-bottom: 0px;
     margin-bottom: 0px;
     margin-top: 15px;
+}
+.author-lnk {
+    color: #000 !important;
+}
+.has-solution {
+    margin-left: 10px;
+    margin-top: 1px;
+}
+button:focus {
+    outline:0 !important;
+}
+.questions-group {
+    display: block;
+    margin-left: -5px;
+    margin-right: -5px;
+}
+.create-question {
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    margin-left: 20px !important;
+}
+.container {
+    min-width: 770px !important;
 }
