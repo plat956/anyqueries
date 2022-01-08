@@ -2,7 +2,7 @@
          import="by.latushko.anyqueries.controller.command.identity.RequestParameter,
          by.latushko.anyqueries.util.AppProperty" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="ft" uri="formtags" %>
+<%@ taglib prefix="at" uri="apptags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="page_title_label" value="label.createQuestion" scope="request" />
 <jsp:include page="layout/header.jsp" />
@@ -24,7 +24,7 @@
         </div>
     </div>
     <div class="form-group">
-        <textarea name="title" class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.TITLE)}" />"
+        <textarea name="title" class="form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.TITLE)}" />"
                placeholder="<fmt:message key="label.questionTitle.placeholder" />" type="text" required maxlength="200" style="min-height: 70px;max-height: 150px;resize: vertical"
                data-toggle="popover" data-trigger="focus" data-placement="right"
                data-content="<fmt:message key="label.questionTitle.notice" />"
@@ -39,7 +39,7 @@
         </div>
     </div>
     <div class="form-group">
-        <textarea id="text" name="text" class="summernote form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.TEXT)}" />"
+        <textarea id="text" name="text" class="summernote form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.TEXT)}" />"
                   placeholder="<fmt:message key="label.login.placeholder" />" required maxlength="${AppProperty.APP_TEXTAREA_MAXLENGTH}">
             ${validationResult.getValue(RequestParameter.TEXT)}
         </textarea>

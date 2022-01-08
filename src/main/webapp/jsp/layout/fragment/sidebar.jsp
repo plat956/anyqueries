@@ -5,12 +5,20 @@
     <div class="grid support">
         <div class="grid-body">
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <a class="nav-link active bg-primary" href="${pageContext.request.contextPath}/controller?command=questions_page" aria-selected="true">
-                    <fmt:message key="label.allQuestions" /> <span class="badge badge-light">${layoutTotalQuestions}</span>
+                <c:if test="${empty param['category']}">
+                    <c:if test="${param['command'] == 'questions_page' && param['mode'] != 'my'}">
+                        <c:set var="questionsPage" value="true" />
+                    </c:if>
+                    <c:if test="${param['command'] == 'questions_page' && param['mode'] == 'my'}">
+                        <c:set var="myQuestionsPage" value="true" />
+                    </c:if>
+                </c:if>
+                <a class="nav-link${questionsPage ? ' active bg-primary' : ''}" href="${pageContext.request.contextPath}${questionsPage ? currentPage : '/controller?command=questions_page'}" aria-selected="true">
+                    <fmt:message key="label.allQuestions" /> <span class="badge badge-${questionsPage ? 'light' : 'primary'}">${layoutTotalQuestions}</span>
                 </a>
                 <c:if test="${!empty principal}">
-                    <a class="nav-link " href="${pageContext.request.contextPath}/controller?command=questions_page&mode=my" aria-selected="false">
-                        <fmt:message key="label.myQuestions" /> <span class="badge badge-primary">${layoutTotalUserQuestions}</span>
+                    <a class="nav-link${myQuestionsPage ? ' active bg-primary' : ''}" href="${pageContext.request.contextPath}${myQuestionsPage ? currentPage : '/controller?command=questions_page&mode=my'}" aria-selected="false">
+                        <fmt:message key="label.myQuestions" /> <span class="badge badge-${myQuestionsPage ? 'light' : 'primary'}">${layoutTotalUserQuestions}</span>
                     </a>
                 </c:if>
                 <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=leaderboard_page" aria-selected="false"><fmt:message key="label.leadersList" /></a>
@@ -20,7 +28,14 @@
             <ul class="support-label">
                 <c:forEach var="c" items="${layoutTopCategories}">
                     <li>
-                        <a href="${pageContext.request.contextPath}/controller?command=category_page&id=${c.id}">
+                        <c:choose>
+                            <c:when test="${!empty param['category'] && param['category'] == c.id}">
+                                <a href="${pageContext.request.contextPath}${currentPage}">
+                            </c:when>
+                            <c:otherwise>
+                                <a href="${pageContext.request.contextPath}/controller?command=questions_page&category=${c.id}">
+                            </c:otherwise>
+                        </c:choose>
                             <span class="support-label-span" style="background-color: ${c.color}">&#xA0;</span>${c.name}<span class="float-right">${c.questionsCount}</span>
                         </a>
                     </li>

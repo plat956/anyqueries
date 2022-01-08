@@ -2,7 +2,7 @@
          import="by.latushko.anyqueries.controller.command.identity.RequestParameter,
          by.latushko.anyqueries.validator.ValidationPattern" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="ft" uri="formtags" %>
+<%@ taglib prefix="at" uri="apptags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="page_title_label" value="label.login" scope="request" />
 <jsp:include page="layout/header.jsp" />
@@ -12,7 +12,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text"> <i class="fa fa-user"></i> </span>
             </div>
-            <input name="login" class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.LOGIN)}" />"
+            <input name="login" class="form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.LOGIN)}" />"
                    placeholder="<fmt:message key="label.login.placeholder" />" type="text" required pattern="${ValidationPattern.LOGIN_REGEXP}" maxlength="20"
                    data-toggle="popover" data-trigger="focus" data-placement="right"
                    data-content="<fmt:message key="label.login.info" />"
@@ -31,7 +31,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
             </div>
-            <input class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.PASSWORD)}" />"
+            <input class="form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.PASSWORD)}" />"
                    placeholder="<fmt:message key="label.password.placeholder" />" type="password" name="password" id="password" required
                    pattern="${ValidationPattern.PASSWORD_REGEXP}" maxlength="25"
                    data-toggle="popover" data-trigger="focus" data-placement="right"

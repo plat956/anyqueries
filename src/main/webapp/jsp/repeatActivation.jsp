@@ -3,7 +3,7 @@
                  by.latushko.anyqueries.validator.ValidationPattern" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="ft" uri="formtags" %>
+<%@ taglib prefix="at" uri="apptags" %>
 <c:set var="page_title_label" value="label.repeatActivation" scope="request"/>
 <jsp:include page="layout/header.jsp"/>
 <div class="col-lg-7 mx-auto">
@@ -14,7 +14,7 @@
                 <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
             </div>
             <input name="email" id="email"
-                   class="form-control input-confirmation<ft:field-class-detector field="${validationResult.getField(RequestParameter.EMAIL)}" />"
+                   class="form-control input-confirmation<at:field-class-detector field="${validationResult.getField(RequestParameter.EMAIL)}" />"
                    placeholder="<fmt:message key="label.email.placeholder" />" type="email"
                    pattern="${ValidationPattern.EMAIL_REGEXP}" maxlength="100"
             <c:if test="${validationResult.containsField(RequestParameter.SEND_LINK)}">
@@ -38,7 +38,7 @@
                 <span class="input-group-text"> <i class="fab fa-telegram"></i> </span>
             </div>
             <input name="telegram" id="telegram"
-                   class="form-control input-confirmation<ft:field-class-detector field="${validationResult.getField(RequestParameter.TELEGRAM)}" />"
+                   class="form-control input-confirmation<at:field-class-detector field="${validationResult.getField(RequestParameter.TELEGRAM)}" />"
                    placeholder="<fmt:message key="label.telegram.placeholder" />" type="text"
                    pattern="${ValidationPattern.TELEGRAM_REGEXP}" maxlength="32"
             <c:if test="${!validationResult.containsField(RequestParameter.SEND_LINK)}">

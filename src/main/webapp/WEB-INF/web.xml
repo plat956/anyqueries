@@ -5,8 +5,8 @@
          version="5.0">
     <jsp-config>
         <taglib>
-            <taglib-uri>formtags</taglib-uri>
-            <taglib-location>/WEB-INF/tld/formTags.tld</taglib-location>
+            <taglib-uri>apptags</taglib-uri>
+            <taglib-location>/WEB-INF/tld/appTags.tld</taglib-location>
         </taglib>
     </jsp-config>
     <error-page>

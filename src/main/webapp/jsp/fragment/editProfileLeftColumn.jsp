@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="ft" uri="formtags" %>
+<%@ taglib prefix="at" uri="apptags" %>
 <div class="col-sm-3">
     <div class="text-center">
         <c:choose>
@@ -20,8 +20,8 @@
         </div>
         <form id="avatar-form" action="${pageContext.request.contextPath}/controller?command=upload_avatar" method="post" enctype="multipart/form-data" autocomplete="off">
             <label class="btn btn-primary" for="file-selector" data-toggle="popover" data-trigger="hover" data-placement="bottom"
-                   data-content="<fmt:message key="label.attachment.max.notice" /> ${AppProperty.APP_ATTACHMENT_SIZE} <fmt:message key="message.mb" />. <fmt:message key="label.attachment.formats" /> <ft:list-formatter list="${AppProperty.APP_UPLOAD_AVATAR_EXTENSIONS}" />">
-                <input id="file-selector" type="file" name="file" data-max-size="${AppProperty.APP_ATTACHMENT_SIZE}" accept="<ft:list-formatter list="${AppProperty.APP_UPLOAD_AVATAR_EXTENSIONS}" />" style="display:none" onchange="dataForms.uploadAvatar(this, 'avatar-form');">
+                   data-content="<fmt:message key="label.attachment.max.notice" /> ${AppProperty.APP_ATTACHMENT_SIZE} <fmt:message key="message.mb" />. <fmt:message key="label.attachment.formats" /> <at:list-formatter list="${AppProperty.APP_UPLOAD_AVATAR_EXTENSIONS}" />">
+                <input id="file-selector" type="file" name="file" data-max-size="${AppProperty.APP_ATTACHMENT_SIZE}" accept="<at:list-formatter list="${AppProperty.APP_UPLOAD_AVATAR_EXTENSIONS}" />" style="display:none" onchange="dataForms.uploadAvatar(this, 'avatar-form');">
                 <fmt:message key="label.uploadAvatar" />
             </label>
         </form>

@@ -3,7 +3,7 @@
                  by.latushko.anyqueries.validator.ValidationPattern" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="ft" uri="formtags" %>
+<%@ taglib prefix="at" uri="apptags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="page_title_label" value="label.profile" scope="request" />
 <jsp:include page="layout/header.jsp" />
@@ -29,7 +29,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                         </div>
-                        <input class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.PASSWORD_OLD)}" />"
+                        <input class="form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.PASSWORD_OLD)}" />"
                                placeholder="<fmt:message key="label.passwordOld.placeholder" />" type="password" name="password_old" id="password_old" required
                                pattern="${ValidationPattern.PASSWORD_REGEXP}" maxlength="25"
                                data-toggle="popover" data-trigger="focus" data-placement="right"
@@ -49,7 +49,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                         </div>
-                        <input class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.PASSWORD_NEW)}" />"
+                        <input class="form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.PASSWORD_NEW)}" />"
                                placeholder="<fmt:message key="label.passwordNew.placeholder" />" type="password" name="password_new" id="password_new" required
                                pattern="${ValidationPattern.PASSWORD_REGEXP}" maxlength="25"
                                data-toggle="popover" data-trigger="focus" data-placement="right"
@@ -69,7 +69,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                         </div>
-                        <input class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.PASSWORD_NEW_REPEAT)}" />"
+                        <input class="form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.PASSWORD_NEW_REPEAT)}" />"
                                placeholder="<fmt:message key="label.passwordNew.repeat.placeholder" />" type="password" name="password_new_repeat" id="password_new_repeat" required
                                pattern="${ValidationPattern.PASSWORD_REGEXP}" maxlength="25"
                                data-toggle="popover" data-trigger="focus" data-placement="right"

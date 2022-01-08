@@ -1,12 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="at" uri="apptags" %>
 <nav>
     <ul class="pagination justify-content-center">
         <c:set var="page" value="${!empty param['page'] ? param['page'] : 1}" />
         <c:if test="${page > 1}">
             <li class="page-item">
-                <a class="page-link" href="${pageContext.request.contextPath}/controller?command=questions_page&page=${page - 1}">
+                <a class="page-link" href="${pageContext.request.contextPath}<at:query-parameter-changer key="page" value="${page - 1}"/>">
                     <span aria-hidden="true">«</span>
                 </a>
             </li>
@@ -16,7 +17,7 @@
             <c:choose>
                 <c:when test="${i.index == page}">
                     <li class="page-item active">
-                        <a class="page-link" href="${pageContext.request.contextPath}/controller?command=questions_page&page=${i.index}">
+                        <a class="page-link" href="${pageContext.request.contextPath}<at:query-parameter-changer key="page" value="${i.index}"/>">
                                 ${i.index}
                         </a>
                     </li>
@@ -43,7 +44,7 @@
                 </c:when>
                 <c:otherwise>
                     <li class="page-item">
-                        <a class="page-link" href="${pageContext.request.contextPath}/controller?command=questions_page&page=${i.index}">
+                        <a class="page-link" href="${pageContext.request.contextPath}<at:query-parameter-changer key="page" value="${i.index}"/>">
                                 ${i.index}
                         </a>
                     </li>
@@ -53,7 +54,7 @@
 
         <c:if test="${page < totalPages}">
             <li class="page-item">
-                <a class="page-link" href="${pageContext.request.contextPath}/controller?command=questions_page&page=${page + 1}">
+                <a class="page-link" href="${pageContext.request.contextPath}<at:query-parameter-changer key="page" value="${page + 1}"/>">
                     <span aria-hidden="true">»</span>
                 </a>
             </li>

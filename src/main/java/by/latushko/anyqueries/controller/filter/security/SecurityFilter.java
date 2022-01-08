@@ -2,8 +2,6 @@ package by.latushko.anyqueries.controller.filter.security;
 
 import by.latushko.anyqueries.controller.command.CommandType;
 import by.latushko.anyqueries.model.entity.User;
-import by.latushko.anyqueries.service.UserService;
-import by.latushko.anyqueries.service.impl.UserServiceImpl;
 import by.latushko.anyqueries.util.http.CookieHelper;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
@@ -42,17 +40,7 @@ public class SecurityFilter implements Filter {
                     principal = null;
                 }
             } else {
-                String credentialKey = CookieHelper.readCookie(request, CREDENTIAL_KEY);
-                String credentialToken = CookieHelper.readCookie(request, CREDENTIAL_TOKEN);
-                if (credentialKey != null && credentialToken != null) {
-                    UserService userService = UserServiceImpl.getInstance();
-                    Optional<User> user = userService.findByCredentialsKeyAndToken(credentialKey, credentialToken);
-                    if (user.isPresent() && user.get().getStatus() == User.Status.ACTIVE) {
-                        session.setAttribute(PRINCIPAL, user.get());
-                    } else {
-                        CookieHelper.eraseCookie(request, response, CREDENTIAL_KEY, CREDENTIAL_TOKEN);
-                    }
-                }
+                CookieHelper.eraseCookie(request, response, CREDENTIAL_KEY, CREDENTIAL_TOKEN);
             }
 
             AccessRole currentRole = AccessRole.GUEST;

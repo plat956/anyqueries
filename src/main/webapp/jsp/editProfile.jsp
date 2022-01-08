@@ -3,7 +3,7 @@
                  by.latushko.anyqueries.validator.ValidationPattern" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="ft" uri="formtags" %>
+<%@ taglib prefix="at" uri="apptags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="page_title_label" value="label.profile" scope="request" />
 <jsp:include page="layout/header.jsp" />
@@ -29,7 +29,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                         </div>
-                        <input name="first_name" class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.FIRST_NAME)}" />"
+                        <input name="first_name" class="form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.FIRST_NAME)}" />"
                                placeholder="<fmt:message key="label.firstName.placeholder" />" type="text" required pattern="${ValidationPattern.FIRST_NAME_REGEXP}" maxlength="25"
                                data-toggle="popover" data-trigger="focus" data-placement="right"
                                data-content="<fmt:message key="label.firstName.info" />"
@@ -48,7 +48,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                         </div>
-                        <input name="last_name" class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.LAST_NAME)}" />"
+                        <input name="last_name" class="form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.LAST_NAME)}" />"
                                placeholder="<fmt:message key="label.lastName.placeholder" />" type="text" required pattern="${ValidationPattern.LAST_NAME_REGEXP}" maxlength="25"
                                data-toggle="popover" data-trigger="focus" data-placement="right"
                                data-content="<fmt:message key="label.lastName.info" />"
@@ -67,7 +67,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                         </div>
-                        <input name="middle_name" class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.MIDDLE_NAME)}" />"
+                        <input name="middle_name" class="form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.MIDDLE_NAME)}" />"
                                placeholder="<fmt:message key="label.middleName.placeholder" />" type="text" required pattern="${ValidationPattern.MIDDLE_NAME_REGEXP}" maxlength="25"
                                data-toggle="popover" data-trigger="focus" data-placement="right"
                                data-content="<fmt:message key="label.middleName.info" />"
@@ -87,7 +87,7 @@
                             <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
                         </div>
                         <input name="email" id="email"
-                               class="form-control input-confirmation<ft:field-class-detector field="${validationResult.getField(RequestParameter.EMAIL)}" />"
+                               class="form-control input-confirmation<at:field-class-detector field="${validationResult.getField(RequestParameter.EMAIL)}" />"
                                placeholder="<fmt:message key="label.email.placeholder" />" type="email"
                                pattern="${ValidationPattern.EMAIL_REGEXP}" maxlength="100"
                                data-toggle="popover" data-trigger="focus" data-placement="right"
@@ -108,7 +108,7 @@
                             <span class="input-group-text"> <i class="fab fa-telegram"></i> </span>
                         </div>
                         <input name="telegram" id="telegram"
-                               class="form-control input-confirmation<ft:field-class-detector field="${validationResult.getField(RequestParameter.TELEGRAM)}" />"
+                               class="form-control input-confirmation<at:field-class-detector field="${validationResult.getField(RequestParameter.TELEGRAM)}" />"
                                placeholder="<fmt:message key="label.telegram.placeholder" />" type="text"
                                pattern="${ValidationPattern.TELEGRAM_REGEXP}" maxlength="32"
                                data-toggle="popover" data-trigger="focus" data-placement="right"
@@ -128,7 +128,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                         </div>
-                        <input name="login" class="form-control<ft:field-class-detector field="${validationResult.getField(RequestParameter.LOGIN)}" />"
+                        <input name="login" class="form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.LOGIN)}" />"
                                placeholder="<fmt:message key="label.login.placeholder" />" type="text" required pattern="${ValidationPattern.LOGIN_REGEXP}" maxlength="20"
                                data-toggle="popover" data-trigger="focus" data-placement="right"
                                data-content="<fmt:message key="label.login.info" />"

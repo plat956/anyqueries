@@ -8,7 +8,7 @@
         version="2.0">
     <tlib-version>1.0</tlib-version>
     <short-name>ft</short-name>
-    <uri>formtags</uri>
+    <uri>apptags</uri>
     <tag>
         <name>field-class-detector</name>
         <tag-class>by.latushko.anyqueries.util.tag.FieldClassDetectorTag</tag-class>
@@ -50,6 +50,21 @@
         </attribute>
         <attribute>
             <name>key</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
+        <name>query-parameter-changer</name>
+        <tag-class>by.latushko.anyqueries.util.tag.QueryParameterChangerTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>key</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>value</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
