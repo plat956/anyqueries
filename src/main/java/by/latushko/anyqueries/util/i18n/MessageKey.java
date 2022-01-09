@@ -52,6 +52,9 @@ public final class MessageKey {
     public static final String MESSAGE_ATTACHMENT_WRONG = "message.attachment.wrong";
     public static final String MESSAGE_BAD_BROWSER = "message.badBrowser";
     public static final String MESSAGE_AVATAR_UPLOADED = "message.avatar.uploaded";
+    public static final String MESSAGE_QUESTION_CREATED = "message.question.created";
+    public static final String MESSAGE_ERROR_UNEXPECTED = "message.error.unexpected";
+
     static final String MESSAGES_FILE_NAME = "message";
     static final String LOCALE_EN = "en";
     static final String LOCALE_BE = "be";

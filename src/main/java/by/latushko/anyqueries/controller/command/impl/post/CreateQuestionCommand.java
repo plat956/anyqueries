@@ -33,7 +33,7 @@ import static by.latushko.anyqueries.controller.command.identity.PageUrl.CREATE_
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTION_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
-import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_ATTACHMENT_WRONG;
+import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 
 public class CreateQuestionCommand implements Command {
     @Override
@@ -56,7 +56,7 @@ public class CreateQuestionCommand implements Command {
             fileParts = request.getParts().stream().
                     filter(part -> RequestParameter.FILE.equals(part.getName()) && part.getSize() > 0).toList();
         } catch (IOException | ServletException e) {
-            message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ATTACHMENT_WRONG)); //todo msg
+            message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ERROR_UNEXPECTED));
             session.setAttribute(MESSAGE, message);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
@@ -77,11 +77,11 @@ public class CreateQuestionCommand implements Command {
         QuestionService questionService = QuestionServiceImpl.getInstance();
         Optional<Question> result = questionService.create(category, title, text, user, fileParts);
         if(result.isPresent()) {
-            message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_ATTACHMENT_WRONG)); //msg
+            message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_QUESTION_CREATED));
             session.setAttribute(MESSAGE, message);
             return new CommandResult(QUESTION_URL + result.get().getId(), REDIRECT);
         } else {
-            message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ATTACHMENT_WRONG)); //todo msg
+            message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ERROR_UNEXPECTED));
             session.setAttribute(MESSAGE, message);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;

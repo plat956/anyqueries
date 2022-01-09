@@ -4,8 +4,10 @@ import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.model.entity.Category;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CategoryDao {
     List<Category> findTop(int count) throws DaoException;
     List<Category> findAllOrderByNameAsc() throws DaoException;
+    Optional<String> findNameById(Long id) throws DaoException;
 }

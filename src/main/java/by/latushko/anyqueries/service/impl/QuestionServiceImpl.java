@@ -14,6 +14,8 @@ import by.latushko.anyqueries.model.entity.Question;
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.AttachmentService;
 import by.latushko.anyqueries.service.QuestionService;
+import by.latushko.anyqueries.util.pagination.Paginated;
+import by.latushko.anyqueries.util.pagination.RequestPage;
 import jakarta.servlet.http.Part;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -144,20 +146,20 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<Question> findWithOffsetAndLimit(int offset, int limit) {
+    public Paginated<Question> findByQueryParametersOrderByNewest(RequestPage page, boolean resolved, boolean newestFirst, Long authorId, Long categoryId, String titlePattern) {
         BaseDao questionDao = new QuestionDaoImpl();
         List<Question> questions = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
             try {
-                questions = ((QuestionDao)questionDao).findWithOffsetAndLimit(offset, limit);
+                questions = ((QuestionDao)questionDao).findLimitedByResolvedAndAuthorIdAndCategoryIdAndTitleLikeOrderByNewest(page.getOffset(), page.getLimit(), resolved, newestFirst, authorId, categoryId, titlePattern);
                 transaction.commit();
             } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving questions with offset and limit", e);
+            logger.error("Something went wrong during retrieving questions with requested limit and parameters", e);
         }
-        return questions;
+        return new Paginated<>(questions);
     }
 
     private Question createNewQuestion(Category category, String title, String text, User author) {

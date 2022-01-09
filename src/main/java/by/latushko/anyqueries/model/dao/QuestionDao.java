@@ -11,5 +11,7 @@ public interface QuestionDao {
     Long countTotalNotClosed() throws DaoException;
     Long countTotalNotClosedByAuthorId(Long userId) throws DaoException;
     boolean createQuestionAttachment(Long questionId, Long attachmentId) throws DaoException;
-    List<Question> findWithOffsetAndLimit(int offset, int limit) throws DaoException;
+    List<Question> findLimitedByResolvedAndAuthorIdAndCategoryIdAndTitleLikeOrderByNewest(int offset, int limit, boolean resolved,
+                                                                                          boolean newestFirst, Long authorId, Long categoryId,
+                                                                                          String titlePattern) throws DaoException;
 }

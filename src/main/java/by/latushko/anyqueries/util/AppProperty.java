@@ -26,6 +26,7 @@ public final class AppProperty {
     private static final String APP_ATTACHMENT_COUNT_PARAMETER = "app.attachment.count";
     private static final String APP_UPLOAD_DIR_PARAMETER = "app.upload.dir";
     private static final String APP_TEXTAREA_MAXLENGTH_PARAMETER = "app.textarea.maxlength";
+    private static final String APP_RECORDS_PER_PAGE_PARAMETER = "app.records.per.page";
     private static final String EXTENSION_DELIMITER = ",";
     public static final String APP_NAME;
     public static final String APP_HOST;
@@ -41,6 +42,7 @@ public final class AppProperty {
     public static final Integer APP_ATTACHMENT_SIZE;
     public static final Integer APP_ATTACHMENT_COUNT;
     public static final Integer APP_TEXTAREA_MAXLENGTH;
+    public static final Integer APP_RECORDS_PER_PAGE;
 
     static {
         Properties properties = new Properties();
@@ -60,6 +62,7 @@ public final class AppProperty {
             APP_ATTACHMENT_SIZE = Integer.valueOf(properties.getProperty(APP_ATTACHMENT_SIZE_PARAMETER));
             APP_ATTACHMENT_COUNT = Integer.valueOf(properties.getProperty(APP_ATTACHMENT_COUNT_PARAMETER));
             APP_TEXTAREA_MAXLENGTH = Integer.valueOf(properties.getProperty(APP_TEXTAREA_MAXLENGTH_PARAMETER));
+            APP_RECORDS_PER_PAGE = Integer.valueOf(properties.getProperty(APP_RECORDS_PER_PAGE_PARAMETER));
             String avatarExtensions = properties.getProperty(APP_UPLOAD_AVATAR_EXTENSIONS_PARAMETER);
             if(avatarExtensions != null && !avatarExtensions.isEmpty()) {
                 String[] extensions = avatarExtensions.split(EXTENSION_DELIMITER);

@@ -14,6 +14,8 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
+import static by.latushko.anyqueries.model.mapper.TableColumnName.CATEGORY_NAME;
+
 public class CategoryDaoImpl extends BaseDao<Long, Category> implements CategoryDao {
     private static final String SQL_FIND_BY_ID_QUERY = """
             SELECT id, name, color 
@@ -30,6 +32,10 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
             SELECT id, name, color 
             FROM categories
             ORDER BY name ASC""";
+    private static final String SQL_FIND_NAME_BY_ID_QUERY = """
+            SELECT name  
+            FROM categories
+            WHERE id = ?""";
 
     private RowMapper mapper = new CategoryMapper();
 
@@ -95,5 +101,20 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
         } catch (SQLException e) {
             throw new DaoException("Failed to find all categories by calling findAllOrderByNameAsc() method", e);
         }
+    }
+
+    @Override
+    public Optional<String> findNameById(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_NAME_BY_ID_QUERY)){
+            statement.setLong(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return Optional.ofNullable(resultSet.getString(CATEGORY_NAME));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find category name by calling findNameById(Long id) method", e);
+        }
+        return Optional.empty();
     }
 }

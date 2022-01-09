@@ -4,7 +4,7 @@
 <%@ taglib prefix="at" uri="apptags" %>
 <c:choose>
     <c:when test="${!empty param['category']}">
-        <c:set var="page_title" value="category name TODO" scope="request"/>
+        <c:set var="page_title" value="${category_name}" scope="request"/>
     </c:when>
     <c:when test="${param['mode'] == 'my'}">
         <c:set var="page_title_label" value="label.myQuestions" scope="request"/>
@@ -61,7 +61,12 @@
                 <li class="list-group-item" style="border-radius: 0;border-left: 0;border-right: 0;" onclick="location.href = '${pageContext.request.contextPath}/controller?command=question_page&id=${q.id}'">
                     <div class="media"><i class="fa fa-question-circle" aria-hidden="true"></i>
                         <div class="media-body"><strong>${q.title}</strong>
-                            <span class="number float-right"># ${q.id}</span>
+                            <span class="number float-right" style="margin-top: 12px;">
+                                <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=question_edit_page&id=${q.id}'">
+                                    <i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i>
+                                </a>
+                                <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
+                            </span>
                             <p class="info"><fmt:message key="label.author" />: <a class="author-lnk" onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.author.id}, event); return false;">${q.author.fio}</a> <at:time-duration date="${q.creationDate}"/> <i class="fa fa-comments"></i>
                                 <at:plural-formatter count="${q.answersCount}" key="label.answer"/>
                             </p>
@@ -69,6 +74,11 @@
                     </div>
                 </li>
             </c:forEach>
+            <c:if test="${empty questions}">
+                <div class="alert alert-secondary" role="alert" style="margin: 0px 15px 0px 15px;">
+                    <fmt:message key="message.no.results" />
+                </div>
+            </c:if>
         </ul>
     </div>
 </div>

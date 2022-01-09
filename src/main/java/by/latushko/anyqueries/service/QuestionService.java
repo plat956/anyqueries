@@ -2,6 +2,8 @@ package by.latushko.anyqueries.service;
 
 import by.latushko.anyqueries.model.entity.Question;
 import by.latushko.anyqueries.model.entity.User;
+import by.latushko.anyqueries.util.pagination.Paginated;
+import by.latushko.anyqueries.util.pagination.RequestPage;
 import jakarta.servlet.http.Part;
 
 import java.util.List;
@@ -13,5 +15,5 @@ public interface QuestionService {
     Long countTotalNotClosed();
     Long countTotalNotClosedByAuthorId(Long authorId);
     Optional<Question> create(Long categoryId, String title, String text, User author, List<Part> attachments);
-    List<Question> findWithOffsetAndLimit(int offset, int limit);
+    Paginated<Question> findByQueryParametersOrderByNewest(RequestPage page, boolean resolved, boolean newestFirst, Long authorId, Long categoryId, String titlePattern);
 }

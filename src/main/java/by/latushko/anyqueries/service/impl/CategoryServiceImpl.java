@@ -5,14 +5,18 @@ import by.latushko.anyqueries.exception.EntityTransactionException;
 import by.latushko.anyqueries.model.dao.BaseDao;
 import by.latushko.anyqueries.model.dao.CategoryDao;
 import by.latushko.anyqueries.model.dao.EntityTransaction;
+import by.latushko.anyqueries.model.dao.UserDao;
 import by.latushko.anyqueries.model.dao.impl.CategoryDaoImpl;
+import by.latushko.anyqueries.model.dao.impl.UserDaoImpl;
 import by.latushko.anyqueries.model.entity.Category;
+import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.CategoryService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CategoryServiceImpl implements CategoryService {
     private static final Logger logger = LogManager.getLogger();
@@ -60,5 +64,22 @@ public class CategoryServiceImpl implements CategoryService {
             logger.error("Failed to find all categories", e);
         }
         return categories;
+    }
+
+    @Override
+    public Optional<String> findNameById(Long id) {
+        BaseDao categoryDao = new CategoryDaoImpl();
+        Optional<String> name = Optional.empty();
+        try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
+            try {
+                name = ((CategoryDao)categoryDao).findNameById(id);
+                transaction.commit();
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving category name by id", e);
+        }
+        return name;
     }
 }

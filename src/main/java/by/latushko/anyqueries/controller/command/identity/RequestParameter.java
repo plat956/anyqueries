@@ -25,6 +25,9 @@ public final class RequestParameter {
     public static final String FILE = "file";
     public static final String REMEMBER_ME = "remember_me";
     public static final String PAGE = "page";
+    public static final String RESOLVED = "resolved";
+    public static final String SORT = "sort";
+    public static final String MODE = "mode";
 
     private RequestParameter() {
     }

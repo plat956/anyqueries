@@ -10,6 +10,7 @@ public final class RequestAttribute {
     public static final String LAYOUT_TOTAL_USER_QUESTIONS = "layoutTotalUserQuestions";
     public static final String LAYOUT_TOP_CATEGORIES = "layoutTopCategories";
     public static final String QUESTIONS = "questions";
+    public static final String CATEGORY_NAME = "category_name";
     public static final String TOTAL_PAGES = "totalPages";
     private RequestAttribute() {
     }

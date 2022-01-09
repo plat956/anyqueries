@@ -40,20 +40,29 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             SELECT count(id) 
             FROM questions 
             WHERE author_id = ? and closed = ?""";
-    private static final String SQL_FIND_WITH_OFFSET_AND_LIMIT_QUERY = """
+    private static final String SQL_FIND_ALL_QUERY = """
             SELECT q.id, q.title, q.text, q.creation_date, q.editing_date, q.closed, q.category_id, c.name as category_name, c.color as category_color, 
             q.author_id as user_id, u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
             u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
-            u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role, count(a.id) as answers_count, count(q.id) OVER() AS total
+            u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role, count(a.id) as answers_count, count(q.id) OVER() AS total, 
+            s.id as solution_id
             FROM questions q 
             INNER JOIN users u 
             ON q.author_id = u.id 
             INNER JOIN categories c 
             ON q.category_id = c.id
             LEFT JOIN answers a 
-            ON q.id = a.question_id 
-            GROUP BY q.id
-            LIMIT ?, ?""";
+            ON q.id = a.question_id
+            LEFT JOIN answers s 
+            ON q.id = s.question_id AND s.solution = true""";
+    private static final String SQL_WHERE_EXPRESSION = " WHERE ";
+    private static final String SQL_AND_EXPRESSION = " AND ";
+    private static final String SQL_WHERE_RESOLVED_CLAUSE = "s.id is not null ";
+    private static final String SQL_WHERE_AUTHOR_CLAUSE = "q.author_id = ? ";
+    private static final String SQL_WHERE_CATEGORY_CLAUSE = "q.category_id = ? ";
+    private static final String SQL_FIND_ALL_GROUP_ORDER_LIMIT_CLAUSE = " GROUP BY q.id ORDER BY %s DESC LIMIT ?, ?";
+    private static final String SQL_CREATION_DATE_FIELD = "q.creation_date";
+    private static final String SQL_ANSWERS_COUNT_FIELD = "answers_count";
 
     private QuestionMapper mapper = new QuestionMapper();
 
@@ -181,15 +190,52 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     }
 
     @Override
-    public List<Question> findWithOffsetAndLimit(int offset, int limit) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_WITH_OFFSET_AND_LIMIT_QUERY)){
-            statement.setInt(1, offset);
-            statement.setInt(2, limit);
+    public List<Question> findLimitedByResolvedAndAuthorIdAndCategoryIdAndTitleLikeOrderByNewest(int offset, int limit, boolean resolved, boolean newestFirst,
+                                                                                                 Long authorId, Long categoryId, String titlePattern) throws DaoException {
+        String query = buildQuestionsQuery(resolved, newestFirst, authorId, categoryId, titlePattern);
+        try (PreparedStatement statement = connection.prepareStatement(query)){
+            int index = 0;
+            if(authorId != null) {
+                index = 1;
+                statement.setLong(index, authorId);
+            }
+            if(categoryId != null) {
+                statement.setLong(++index, categoryId);
+            }
+            statement.setInt(index + 1, offset);
+            statement.setInt(index + 2, limit);
+
             try(ResultSet resultSet = statement.executeQuery()) {
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find questions by calling findWithOffsetAndLimit(int offset, int limit) method", e);
+            throw new DaoException("Failed to find questions by calling findLimitedByResolvedAndAuthorIdAndCategoryIdAndTitleLikeOrderByNewest method", e);
         }
+    }
+
+    private String buildQuestionsQuery(boolean resolved, boolean newestFirst, Long authorId, Long categoryId, String titlePattern) {
+        StringBuffer query = new StringBuffer(SQL_FIND_ALL_QUERY);
+        StringBuffer whereClause = new StringBuffer();
+        if(resolved) {
+            whereClause.append(SQL_WHERE_RESOLVED_CLAUSE);
+        }
+        if(authorId != null) {
+            if(!whereClause.isEmpty()) {
+                whereClause.append(SQL_AND_EXPRESSION);
+            }
+            whereClause.append(SQL_WHERE_AUTHOR_CLAUSE);
+        }
+        if(categoryId != null) {
+            if(!whereClause.isEmpty()) {
+                whereClause.append(SQL_AND_EXPRESSION);
+            }
+            whereClause.append(SQL_WHERE_CATEGORY_CLAUSE);
+        }
+        if(!whereClause.isEmpty()) {
+            query.append(SQL_WHERE_EXPRESSION).append(whereClause);
+        }
+        query.append(String.format(SQL_FIND_ALL_GROUP_ORDER_LIMIT_CLAUSE, newestFirst ? SQL_CREATION_DATE_FIELD : SQL_ANSWERS_COUNT_FIELD));
+
+        return query.toString();
     }
 }
