@@ -22,6 +22,7 @@ public enum CommandType {
     LOGOUT,
     REGISTRATION,
     CHANGE_LOCALE,
+    PROFILE_PAGE,
     LIVE_SEARCH;
 
     public static Optional<CommandType> getByName(String commandName) {

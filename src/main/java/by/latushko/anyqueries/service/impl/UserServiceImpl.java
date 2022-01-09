@@ -310,6 +310,23 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    @Override
+    public Optional<User> findById(Long id) {
+        BaseDao userDao = new UserDaoImpl();
+        Optional<User> userOptional = Optional.empty();
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                userOptional = userDao.findById(id);
+                transaction.commit();
+            } catch (EntityTransactionException | DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving user by id", e);
+        }
+        return userOptional;
+    }
+
     private String getCredentialTokenSource(User user) {
         return CREDENTIAL_TOKEN_ADDITIONAL_SALT + user.getLogin();
     }

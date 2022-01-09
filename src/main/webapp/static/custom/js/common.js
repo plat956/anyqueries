@@ -234,3 +234,49 @@ var pageEvents = {
         window.history.forward(1);
     }
 }
+
+var questions = {
+    showProfile: function (context, id, ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        $.ajax({
+            url: context + "/controller?command=profile_page",
+            data: {id: id, ajax: true},
+            dataType: 'json',
+            success: function (res) {
+                if(res == undefined || res == null || $.isEmptyObject(res)) {
+                    toasts.show("error", message.incorrect_profile, message.incorrect_profile_text);
+                } else {
+                    $('.modal-title').text(res.fio);
+                    if (res.avatar != undefined) {
+                        $('.img-thumbnail').attr('src', context + '/controller?command=show_image&file=' + res.avatar);
+                    } else {
+                        $('.img-thumbnail').attr('src', context + '/static/custom/images/noavatar.png');
+                    }
+                    $('.user-role-span').text(res.role_name);
+                    $('.user-role-span').removeClass(function (index, className) {
+                        return (className.match(/(^|\s)badge-\S+/g) || []).join(' ');
+                    });
+                    $('.user-role-span').addClass('badge-' + res.role_color);
+                    $('#fname').text(res.first_name);
+                    $('#lname').text(res.last_name);
+                    $('#mname').text(res.middle_name);
+                    $('#email').text(res.email);
+                    if (res.telegram != undefined) {
+                        $('#telegram').html('<a href="' + res.telegram_lnk + '" target="_blank">@' + res.telegram + '</a>');
+                    } else {
+                        $('#telegram').empty();
+                    }
+                    if (res.email != undefined) {
+                        $('#email').html('<a href="mailto:' + res.email + '" target="_blank">' + res.email + '</a>');
+                    } else {
+                        $('#email').empty();
+                    }
+                    $('#q_count').text(res.q_count);
+                    $('#a_count').text(res.a_count);
+                    $('#showProfileModal').modal('show');
+                }
+            }
+        });
+    }
+}

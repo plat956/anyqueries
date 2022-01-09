@@ -62,7 +62,7 @@
                     <div class="media"><i class="fa fa-question-circle" aria-hidden="true"></i>
                         <div class="media-body"><strong>${q.title}</strong>
                             <span class="number float-right"># ${q.id}</span>
-                            <p class="info"><fmt:message key="label.author" />: <a class="author-lnk" onclick="alert();">${q.author.fio}</a> <at:time-duration date="${q.creationDate}"/> <i class="fa fa-comments"></i>
+                            <p class="info"><fmt:message key="label.author" />: <a class="author-lnk" onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.author.id}, event); return false;">${q.author.fio}</a> <at:time-duration date="${q.creationDate}"/> <i class="fa fa-comments"></i>
                                 <at:plural-formatter count="${q.answersCount}" key="label.answer"/>
                             </p>
                         </div>
@@ -82,4 +82,5 @@
         }
     }
 </script>
+<jsp:include page="fragment/showProfileModal.jsp" />
 <jsp:include page="layout/footer.jsp"/>

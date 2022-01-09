@@ -9,6 +9,8 @@ const message = {
     incorrect_files_size_part0: "File size exceeded",
     incorrect_files_size_part1: "The size of one file should not exceed ",
     incorrect_files_size_part2: " MB",
+    incorrect_profile: "Can't find profile",
+    incorrect_profile_text: "No information was found for the requested user",
     error: "Error",
     wrong_file_size: "Exceeded the allowed file size in "
 };

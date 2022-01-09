@@ -9,6 +9,8 @@ const message = {
     incorrect_files_size_part0: "Превышен допустимый размер файла",
     incorrect_files_size_part1: "Размер одного файла не должен превышать ",
     incorrect_files_size_part2: " МБ",
+    incorrect_profile: "Не удается найти профиль",
+    incorrect_profile_text: "Информация по запрашиваемому пользователю не найдена",
     error: "Ошибка",
     wrong_file_size: "Превышен допустимый размер файла в "
 };

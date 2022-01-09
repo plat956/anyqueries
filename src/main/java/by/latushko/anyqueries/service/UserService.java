@@ -12,6 +12,7 @@ public interface UserService {
     Optional<User> findByCredentialKey(String key);
     Optional<User> findByLoginAndPassword(String login, String password);
     Optional<User> findByCredentialsKeyAndToken(String key, String token);
+    Optional<User> findById(Long id);
     boolean checkIfExistsByLogin(String login);
     boolean checkIfExistsByEmail(String email);
     boolean checkIfExistsByTelegram(String telegram);
