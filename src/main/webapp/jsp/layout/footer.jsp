@@ -78,16 +78,23 @@
         //init navbar live search
         $('#search-input').typeahead({
             source:  function (query, process) {
-                return $.get('/controller?command=live_search', {query_string: query, ajax: true}, function (data) {
-                    $('#noResults').remove();
-                    if(data.length == 0) {
-                        $('#search-input').after('' +
-                            '<ul class="typeahead dropdown-menu" id="noResults" role="listbox"">' +
-                            '<li class="active">' + message.no_results + '</li>' +
-                            '</ul>')
-                    }
-                    return process(data);
-                });
+                return $.get('/controller?command=live_search',
+                    {
+                        query_string: query,
+                        ajax: true,
+                        <c:if test="${param['mode'] == 'my'}">current: true,</c:if>
+                        <c:if test="${!empty param['category']}">category: '${param['category']}',</c:if>
+                    },
+                    function (data) {
+                        $('#noResults').remove();
+                        if(data.length == 0) {
+                            $('#search-input').after('' +
+                                '<ul class="typeahead dropdown-menu" id="noResults" role="listbox"">' +
+                                '<li class="active">' + message.no_results + '</li>' +
+                                '</ul>')
+                        }
+                        return process(data);
+                    });
             }
         }).on('input', function () {
             var value = $(this).val();

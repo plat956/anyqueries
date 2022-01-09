@@ -40,18 +40,18 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<String> findTitleLikeOrderedAndLimited(String pattern, int limit) {
+    public List<String> findTitleByTitleLikeAndCategoryIdAndAuthorIdOrderedAndLimited(String pattern, Long categoryId, Long userId, int limit) {
         BaseDao questionDao = new QuestionDaoImpl();
         List<String> titles = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
             try {
-                titles = ((QuestionDao)questionDao).findTitleLikeOrderedAndLimited(pattern, limit);
+                titles = ((QuestionDao)questionDao).findTitleByTitleLikeAndCategoryIdAndAuthorIdLikeOrderedAndLimited(pattern, categoryId, userId, limit);
                 transaction.commit();
             } catch (EntityTransactionException | DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving questions titles by pattern", e);
+            logger.error("Something went wrong during retrieving questions titles by pattern and parameters", e);
         }
         return titles;
     }

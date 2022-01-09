@@ -19,9 +19,7 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     private static final String SQL_FIND_TITLE_LIKE_ORDERED_AND_LIMITED_QUERY = """
             SELECT title 
             FROM questions 
-            WHERE title like ? 
-            ORDER BY title ASC 
-            LIMIT ?""";
+            WHERE title like ?""";
     private static final String SQL_CREATE_QUERY = """
             INSERT INTO questions(category_id, title, text, creation_date, closed, author_id) 
             VALUES (?, ?, ?, ?, ?, ?)""";
@@ -60,7 +58,11 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     private static final String SQL_WHERE_RESOLVED_CLAUSE = "s.id is not null ";
     private static final String SQL_WHERE_AUTHOR_CLAUSE = "q.author_id = ? ";
     private static final String SQL_WHERE_CATEGORY_CLAUSE = "q.category_id = ? ";
+    private static final String SQL_WHERE_TITLE_LIKE_CLAUSE = "q.title like ? ";
     private static final String SQL_FIND_ALL_GROUP_ORDER_LIMIT_CLAUSE = " GROUP BY q.id ORDER BY %s DESC LIMIT ?, ?";
+    private static final String SQL_SEARCH_END_CLAUSE = "ORDER BY title ASC LIMIT ?";
+    private static final String SQL_SEARCH_WHERE_CATEGORY_CLAUSE = " AND category_id = ? ";
+    private static final String SQL_SEARCH_WHERE_AUTHOR_CLAUSE = " AND author_id = ? ";
     private static final String SQL_CREATION_DATE_FIELD = "q.creation_date";
     private static final String SQL_ANSWERS_COUNT_FIELD = "answers_count";
 
@@ -116,18 +118,26 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     }
 
     @Override
-    public List<String> findTitleLikeOrderedAndLimited(String likePattern, int limit) throws DaoException {
+    public List<String> findTitleByTitleLikeAndCategoryIdAndAuthorIdLikeOrderedAndLimited(String likePattern, Long categoryId, Long authorId, int limit) throws DaoException {
         List<String> result = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_TITLE_LIKE_ORDERED_AND_LIMITED_QUERY)){
-            statement.setString(1, LIKE_MARKER + likePattern + LIKE_MARKER);
-            statement.setInt(2, limit);
+        String query = buildSearchQuery(categoryId, authorId);
+        try (PreparedStatement statement = connection.prepareStatement(query)){
+            int index = 0;
+            statement.setString(++index, LIKE_MARKER + likePattern + LIKE_MARKER);
+            if(categoryId != null) {
+                statement.setLong(++index, categoryId);
+            } else if(authorId != null) {
+                statement.setLong(++index, authorId);
+            }
+
+            statement.setInt(++index, limit);
             try(ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()) {
                     result.add(resultSet.getString(QUESTION_TITLE));
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find question titles by calling findTitleLikeOrderedAndLimited(String pattern, int limit) method", e);
+            throw new DaoException("Failed to find question titles by calling findTitleByTitleLikeAndCategoryIdAndAuthorIdLikeOrderedAndLimited method", e);
         }
         return result;
     }
@@ -196,14 +206,16 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
         try (PreparedStatement statement = connection.prepareStatement(query)){
             int index = 0;
             if(authorId != null) {
-                index = 1;
-                statement.setLong(index, authorId);
+                statement.setLong(++index, authorId);
             }
             if(categoryId != null) {
                 statement.setLong(++index, categoryId);
             }
-            statement.setInt(index + 1, offset);
-            statement.setInt(index + 2, limit);
+            if(titlePattern != null) {
+                statement.setString(++index, LIKE_MARKER + titlePattern + LIKE_MARKER);
+            }
+            statement.setInt(++index, offset);
+            statement.setInt(++index, limit);
 
             try(ResultSet resultSet = statement.executeQuery()) {
                 return mapper.mapRows(resultSet);
@@ -231,11 +243,28 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             }
             whereClause.append(SQL_WHERE_CATEGORY_CLAUSE);
         }
+        if(titlePattern != null) {
+            if(!whereClause.isEmpty()) {
+                whereClause.append(SQL_AND_EXPRESSION);
+            }
+            whereClause.append(SQL_WHERE_TITLE_LIKE_CLAUSE);
+        }
         if(!whereClause.isEmpty()) {
             query.append(SQL_WHERE_EXPRESSION).append(whereClause);
         }
         query.append(String.format(SQL_FIND_ALL_GROUP_ORDER_LIMIT_CLAUSE, newestFirst ? SQL_CREATION_DATE_FIELD : SQL_ANSWERS_COUNT_FIELD));
 
+        return query.toString();
+    }
+
+    private String buildSearchQuery(Long categoryId, Long authorId) {
+        StringBuffer query = new StringBuffer(SQL_FIND_TITLE_LIKE_ORDERED_AND_LIMITED_QUERY);
+        if(categoryId != null) {
+            query.append(SQL_SEARCH_WHERE_CATEGORY_CLAUSE);
+        } else if(authorId != null) {
+            query.append(SQL_SEARCH_WHERE_AUTHOR_CLAUSE);
+        }
+        query.append(SQL_SEARCH_END_CLAUSE);
         return query.toString();
     }
 }

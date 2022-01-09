@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="at" uri="apptags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:choose>
     <c:when test="${!empty param['category']}">
         <c:set var="page_title" value="${category_name}" scope="request"/>
@@ -13,6 +14,9 @@
         <c:set var="page_title_label" value="label.allQuestions" scope="request"/>
     </c:otherwise>
 </c:choose>
+<c:if test="${!empty param['title']}">
+    <c:set var="page_title_postfix" value=": «${fn:substring(param['title'], 0, 40)}»" scope="request" />
+</c:if>
 <jsp:include page="layout/header.jsp"/>
 <div class="btn-group">
     <div class="dropdown">

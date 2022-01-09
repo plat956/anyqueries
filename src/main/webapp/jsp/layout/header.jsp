@@ -40,6 +40,6 @@
             <jsp:include page="fragment/globalMessage.jsp" />
             <div class="grid support-content">
                 <div class="grid-body">
-                    <h5>${page_title}</h5>
+                    <h5>${page_title}${page_title_postfix}</h5>
                     <hr class="page-title-hr">
                     <jsp:include page="fragment/message.jsp" />

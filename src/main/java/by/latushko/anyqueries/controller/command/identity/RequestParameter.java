@@ -28,6 +28,7 @@ public final class RequestParameter {
     public static final String RESOLVED = "resolved";
     public static final String SORT = "sort";
     public static final String MODE = "mode";
+    public static final String CURRENT = "current";
 
     private RequestParameter() {
     }

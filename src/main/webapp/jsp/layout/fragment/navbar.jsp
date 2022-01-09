@@ -16,10 +16,28 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
                     <form action="${pageContext.request.contextPath}/controller" method="get" autocomplete="off">
-                        <input type="hidden" name="command" value="search" />
+                        <input type="hidden" name="command" value="questions_page" />
+                        <c:if test="${param['command'] == 'questions_page'}">
+                            <c:if test="${!empty param['mode']}"><input type="hidden" name="mode" value="${param['mode']}" /></c:if>
+                            <c:if test="${!empty param['sort']}"><input type="hidden" name="sort" value="${param['sort']}" /></c:if>
+                            <c:if test="${!empty param['resolved']}"><input type="hidden" name="resolved" value="${param['resolved']}" /></c:if>
+                            <c:if test="${!empty param['category']}"><input type="hidden" name="category" value="${param['category']}" /></c:if>
+                        </c:if>
+                        <c:choose>
+                            <c:when test="${!empty param['category']}">
+                                <fmt:message key="label.search.category.placeholder" var="search_placeholder" />
+                                <c:set var="search_placeholder" value="${search_placeholder} «${category_name}»" />
+                            </c:when>
+                            <c:when test="${param['mode'] == 'my'}">
+                                <fmt:message key="label.search.my.placeholder" var="search_placeholder" />
+                            </c:when>
+                            <c:otherwise>
+                                <fmt:message key="label.search.placeholder" var="search_placeholder" />
+                            </c:otherwise>
+                        </c:choose>
                         <div class="navbar-search input-group">
-                            <input class="form-control py-2 border-left-0 border search-input" type="text"
-                                   placeholder="<fmt:message key="label.search.placeholder" />" id="search-input" name="query"/>
+                            <input class="form-control py-2 border-left-0 border search-input" type="search" value="${fn:substring(param['title'], 0, 40)}"
+                                   placeholder="${search_placeholder}" id="search-input" name="title" maxlength="40"/>
                             <span class="input-group-append">
                                 <button type="submit" class="no-loader navbar-search-btn btn btn-outline-primary border-left-0 border">
                                     <i class="fa fa-search"></i>
