@@ -42,6 +42,9 @@
     });
 
     $(function () {
+        //tooltips init
+        $('[data-toggle="tooltip"]').tooltip();
+
         //prevent f5 submitting form data
         if (window.history.replaceState) {
             window.history.replaceState(null, null, window.location.href);

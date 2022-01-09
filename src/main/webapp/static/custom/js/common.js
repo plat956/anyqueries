@@ -278,5 +278,30 @@ var questions = {
                 }
             }
         });
+    },
+    delete: function (ev, context, id) {
+        ev.stopPropagation();
+        bootbox.confirm({
+            title: message.warn,
+            message: message.delete_question,
+            buttons: {
+                confirm: {
+                    label: message.confirm,
+                    className: "btn-danger"
+                },
+                cancel: {
+                    label: message.cancel,
+                    className: "btn-secondary"
+                }
+            },
+            callback: function (result) {
+                if(result) {
+                    $(document.body).append('<form action="' + context + '/controller?command=delete_question" method="post" style="display: none" id="deleteForm">' +
+                        '<input type="hidden" name="id" value="' + id + '">' +
+                        '</form>');
+                    $('#deleteForm').submit();
+                }
+            }
+        });
     }
 }

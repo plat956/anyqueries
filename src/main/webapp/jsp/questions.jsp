@@ -66,10 +66,12 @@
                     <div class="media"><i class="fa fa-question-circle" aria-hidden="true"></i>
                         <div class="media-body"><strong>${q.title}</strong>
                             <span class="number float-right" style="margin-top: 12px;">
-                                <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=question_edit_page&id=${q.id}'">
+                                <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=question_edit_page&id=${q.id}'" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.edit" />">
                                     <i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i>
                                 </a>
-                                <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
+                                <a onclick="questions.delete(event, '${pageContext.request.contextPath}', ${q.id})" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.delete" />">
+                                    <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
+                                </a>
                             </span>
                             <p class="info"><fmt:message key="label.author" />: <a class="author-lnk" onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.author.id}, event); return false;">${q.author.fio}</a> <at:time-duration date="${q.creationDate}"/> <i class="fa fa-comments"></i>
                                 <at:plural-formatter count="${q.answersCount}" key="label.answer"/>

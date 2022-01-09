@@ -44,12 +44,11 @@
             <a class="btn btn-light btn-sm other-categories" href="${pageContext.request.contextPath}/controller?command=categories_page">
                 <fmt:message key="label.allCategories" />
             </a>
-            <c:if test="${principal.role == 'MODERATOR'}">
+            <c:if test="${principal.role == 'ADMIN'}">
                 <hr>
                 <h6 class="sidebar-label"><fmt:message key="label.controlPanel" /></h6>
                 <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=manage_categories_page" aria-selected="true"><fmt:message key="label.categories" /></a>
-                    <a class="nav-link " href="${pageContext.request.contextPath}/controller?command=manage_users_page" aria-selected="false"><fmt:message key="label.users" /></a>
+                    <a class="nav-link " href="${pageContext.request.contextPath}/controller?command=users_page" aria-selected="false"><fmt:message key="label.users" /></a>
                 </div>
             </c:if>
             <hr>

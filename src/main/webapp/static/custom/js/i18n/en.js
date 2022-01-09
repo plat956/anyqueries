@@ -12,5 +12,9 @@ const message = {
     incorrect_profile: "Can't find profile",
     incorrect_profile_text: "No information was found for the requested user",
     error: "Error",
-    wrong_file_size: "Exceeded the allowed file size in "
+    wrong_file_size: "Exceeded the allowed file size in ",
+    delete_question: "Are you sure you want to delete this question?",
+    warn: "Attention!",
+    cancel: "Cancel",
+    confirm: "Yes"
 };
