@@ -29,11 +29,9 @@ public class DeleteQuestionCommand implements Command {
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(PRINCIPAL);
-        String currentPage;
+        String currentPage = QUESTIONS_URL;
         if(session.getAttribute(CURRENT_PAGE) != null) {
             currentPage = session.getAttribute(CURRENT_PAGE).toString();
-        } else {
-            currentPage = QUESTIONS_URL;
         }
         currentPage = QueryParameterHelper.removeParameter(currentPage, PAGE);
 

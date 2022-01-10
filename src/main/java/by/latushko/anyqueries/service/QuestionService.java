@@ -20,4 +20,5 @@ public interface QuestionService {
     boolean checkManagementAccess(Long questionId, User user);
     Optional<Question> create(Long categoryId, String title, String text, User author, List<Part> attachments);
     boolean delete(Long id, User initiator);
+    boolean update(Long questionId, Long categoryId, String title, String text, List<Part> attachments);
 }

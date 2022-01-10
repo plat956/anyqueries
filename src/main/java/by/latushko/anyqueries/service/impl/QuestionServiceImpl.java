@@ -222,6 +222,53 @@ public class QuestionServiceImpl implements QuestionService {
         return questionOptional;
     }
 
+    @Override
+    public boolean update(Long questionId, Long categoryId, String title, String text, List<Part> attachments) {
+        BaseDao questionDao = new QuestionDaoImpl();
+        BaseDao categoryDao = new CategoryDaoImpl();
+        BaseDao attachmentDao = new AttachmentDaoImpl();
+
+        try (EntityTransaction transaction = new EntityTransaction(questionDao, categoryDao, attachmentDao)) {
+            try {
+                Optional<Category> category = categoryDao.findById(categoryId);
+                if(category.isEmpty())  {
+                    throw new EntityTransactionException("Failed to update question. Category with id " + categoryId + " does not exist"); //todo: or return false?
+                }
+                Optional<Question> questionOptional = questionDao.findById(questionId);
+                if(questionOptional.isEmpty()) {
+                    throw new EntityTransactionException("Failed to update question. Question with id " + questionId + " does not exist"); //todo: or return false?
+                }
+                Question question = updateQuestion(questionOptional.get(), category.get(), title, text);
+                questionDao.update(question);
+
+                if(!attachments.isEmpty()) {
+                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                    List<Attachment> oldAttachments = ((AttachmentDaoImpl) attachmentDao).findByQuestionId(questionId);
+                    ((AttachmentDao)attachmentDao).deleteByQuestionId(questionId);
+                    attachmentService.deleteAttachmentsFiles(oldAttachments);
+                    for (Part p : attachments) {
+                        Optional<String> fileName = attachmentService.uploadFile(p);
+                        if (fileName.isEmpty()) {
+                            throw new EntityTransactionException("Failed to upload file."); //todo: or return false?
+                        }
+                        Attachment attachment = new Attachment();
+                        attachment.setFile(fileName.get());
+                        attachmentDao.create(attachment);
+                        ((QuestionDao) questionDao).createQuestionAttachment(question.getId(), attachment.getId());
+                    }
+                }
+
+                transaction.commit();
+                return true;
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to update question", e);
+        }
+        return false;
+    }
+
     private Optional<Long> findAuthorIdById(Long id) {
         BaseDao questionDao = new QuestionDaoImpl();
         Optional<Long> authorId = Optional.empty();
@@ -246,6 +293,14 @@ public class QuestionServiceImpl implements QuestionService {
         question.setAuthor(author);
         question.setCreationDate(LocalDateTime.now());
         question.setClosed(false);
+        return question;
+    }
+
+    private Question updateQuestion(Question question, Category category, String title, String text) {
+        question.setCategory(category);
+        question.setTitle(title);
+        question.setText(text);
+        question.setEditingDate(LocalDateTime.now());
         return question;
     }
 }

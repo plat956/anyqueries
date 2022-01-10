@@ -9,16 +9,16 @@ import static by.latushko.anyqueries.controller.command.identity.RequestParamete
 import static by.latushko.anyqueries.util.AppProperty.APP_TEXTAREA_MAXLENGTH;
 import static by.latushko.anyqueries.util.i18n.MessageKey.LABEL_WRONG_INPUT;
 
-public class CreateQuestionFormValidator implements FormValidator {
+public class QuestionFormValidator implements FormValidator {
     private static final int TITLE_MAX_LENGTH = 200;
     private static FormValidator instance;
 
-    private CreateQuestionFormValidator() {
+    private QuestionFormValidator() {
     }
 
     public static FormValidator getInstance() {
         if(instance == null) {
-            instance = new CreateQuestionFormValidator();
+            instance = new QuestionFormValidator();
         }
         return instance;
     }

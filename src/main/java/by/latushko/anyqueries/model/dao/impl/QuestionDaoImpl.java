@@ -57,6 +57,10 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     private static final String SQL_DELETE_QUERY = """
             DELETE FROM questions 
             WHERE id = ?""";
+    private static final String SQL_UPDATE_QUERY = """
+            UPDATE questions 
+            SET title = ?, text = ?, creation_date = ?, editing_date = ?, closed = ?, category_id = ?, author_id = ?   
+            WHERE id = ?""";
     private static final String SQL_FIND_LIMITED_BY_PARAMETERS_QUERY = """
             SELECT q.id, q.title, q.text, q.creation_date, q.editing_date, q.closed, q.category_id, c.name as category_name, c.color as category_color, 
             q.author_id as user_id, u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
@@ -134,6 +138,22 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
 
     @Override
     public Optional<Question> update(Question question) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_QUERY)){
+            statement.setString(1, question.getTitle());
+            statement.setString(2, question.getText());
+            statement.setObject(3, question.getCreationDate());
+            statement.setObject(4, question.getEditingDate());
+            statement.setBoolean(5, question.getClosed());
+            statement.setLong(6, question.getCategory().getId());
+            statement.setLong(7, question.getAuthor().getId());
+            statement.setLong(8, question.getId());
+
+            if(statement.executeUpdate() >= 0) {
+                return Optional.of(question);
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to update question by calling update(Question question) method", e);
+        }
         return Optional.empty();
     }
 

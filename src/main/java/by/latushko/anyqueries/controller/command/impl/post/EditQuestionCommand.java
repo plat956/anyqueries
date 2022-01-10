@@ -4,8 +4,6 @@ import by.latushko.anyqueries.controller.command.Command;
 import by.latushko.anyqueries.controller.command.CommandResult;
 import by.latushko.anyqueries.controller.command.ResponseMessage;
 import by.latushko.anyqueries.controller.command.identity.RequestParameter;
-import by.latushko.anyqueries.model.entity.Question;
-import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.QuestionService;
 import by.latushko.anyqueries.service.impl.QuestionServiceImpl;
 import by.latushko.anyqueries.util.http.CookieHelper;
@@ -23,26 +21,27 @@ import jakarta.servlet.http.Part;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.REDIRECT;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
-import static by.latushko.anyqueries.controller.command.identity.PageUrl.*;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.EDIT_QUESTION_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 
-public class CreateQuestionCommand implements Command {
+public class EditQuestionCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        String currentPage = QUESTIONS_URL;
-        if(session.getAttribute(CURRENT_PAGE) != null) {
-            currentPage = session.getAttribute(CURRENT_PAGE).toString();
+        Long id = Long.valueOf(request.getParameter(ID));
+        String previousPage = QUESTIONS_URL;
+        if(session.getAttribute(PREVIOUS_PAGE) != null) {
+            previousPage = session.getAttribute(PREVIOUS_PAGE).toString();
         }
-        CommandResult commandResult = new CommandResult(currentPage, REDIRECT);
+        CommandResult commandResult = new CommandResult(EDIT_QUESTION_URL + id, REDIRECT);
         ResponseMessage message;
 
         FormValidator validator = QuestionFormValidator.getInstance();
@@ -72,17 +71,16 @@ public class CreateQuestionCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-
-        User user = (User) session.getAttribute(PRINCIPAL);
+        //todo гдето тут удалять аттачменты прі валідаціі
         Long category = Long.valueOf(request.getParameter(CATEGORY));
         String title = request.getParameter(TITLE);
         String text = request.getParameter(TEXT);
         QuestionService questionService = QuestionServiceImpl.getInstance();
-        Optional<Question> result = questionService.create(category, title, text, user, fileParts);
-        if(result.isPresent()) {
-            message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_QUESTION_CREATED));
+        boolean result = questionService.update(id, category, title, text, fileParts);
+        if(result) {
+            message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_QUESTION_UPDATED));
             session.setAttribute(MESSAGE, message);
-            return new CommandResult(QUESTION_URL + result.get().getId(), REDIRECT);
+            return new CommandResult(previousPage, REDIRECT);
         } else {
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ERROR_UNEXPECTED));
             session.setAttribute(MESSAGE, message);

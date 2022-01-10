@@ -67,7 +67,7 @@
                         <div class="media-body"><strong>${q.title}</strong>
                             <c:if test="${!empty principal && (q.author.id == principal.id || principal.role == 'ADMIN' || principal.role == 'MODERATOR')}">
                                 <span class="number float-right" style="margin-top: 12px;">
-                                    <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=question_edit_page&id=${q.id}'" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.edit" />">
+                                    <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=edit_question_page&id=${q.id}'" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.edit" />">
                                         <i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i>
                                     </a>
                                     <a onclick="questions.delete(event, '${pageContext.request.contextPath}', ${q.id})" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.delete" />">
@@ -83,7 +83,7 @@
                 </li>
             </c:forEach>
             <c:if test="${empty questions}">
-                <div class="alert alert-secondary" role="alert" style="margin: 0px 15px 0px 15px;">
+                <div class="alert alert-secondary" role="alert" style="margin: 0px 15px 15px 15px;">
                     <fmt:message key="message.no.results" />
                 </div>
             </c:if>

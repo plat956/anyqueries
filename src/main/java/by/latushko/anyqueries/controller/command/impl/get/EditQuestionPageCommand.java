@@ -26,7 +26,7 @@ import static by.latushko.anyqueries.controller.command.identity.RequestAttribut
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.ID;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
 
-public class QuestionEditPageCommand implements Command {
+public class EditQuestionPageCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         Long id = Long.valueOf(request.getParameter(ID));
@@ -46,7 +46,9 @@ public class QuestionEditPageCommand implements Command {
         List<Category> categories = categoryService.findAllOrderByNameAsc();
         request.setAttribute(ATTACHMENTS, attachments);
         request.setAttribute(CATEGORIES, categories);
-        request.setAttribute(QUESTION, question.get());
+        if(request.getAttribute(VALIDATION_RESULT) == null) {
+            request.setAttribute(QUESTION, question.get());
+        }
         return new CommandResult(EDIT_QUESTION_PAGE, FORWARD);
     }
 }
