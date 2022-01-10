@@ -8,6 +8,8 @@ import by.latushko.anyqueries.model.dao.EntityTransaction;
 import by.latushko.anyqueries.model.dao.impl.CategoryDaoImpl;
 import by.latushko.anyqueries.model.entity.Category;
 import by.latushko.anyqueries.service.CategoryService;
+import by.latushko.anyqueries.util.pagination.Paginated;
+import by.latushko.anyqueries.util.pagination.RequestPage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -78,5 +80,22 @@ public class CategoryServiceImpl implements CategoryService {
             logger.error("Something went wrong during retrieving category name by id", e);
         }
         return name;
+    }
+
+    @Override
+    public Paginated<Category> findAllPaginatedOrderByNameAsc(RequestPage page) {
+        BaseDao categoryDao = new CategoryDaoImpl();
+        List<Category> categories = new ArrayList<>();
+        try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
+            try {
+                categories = ((CategoryDao)categoryDao).findLimitedByOrderByNameAsc(page.getOffset(), page.getLimit());
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving categories with requested limit", e);
+        }
+        return new Paginated<>(categories);
     }
 }

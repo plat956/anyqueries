@@ -36,6 +36,11 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
             SELECT name  
             FROM categories
             WHERE id = ?""";
+    private static final String SQL_FIND_ALL_LIMITED_ORDER_BY_NAME_ASC_QUERY = """
+            SELECT id, name, color, count(id) OVER() AS total 
+            FROM categories
+            ORDER BY name ASC 
+            LIMIT ?,?""";
 
     private RowMapper mapper = new CategoryMapper();
 
@@ -116,5 +121,19 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
             throw new DaoException("Failed to find category name by calling findNameById(Long id) method", e);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public List<Category> findLimitedByOrderByNameAsc(int offset, int limit) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_ALL_LIMITED_ORDER_BY_NAME_ASC_QUERY)){
+            statement.setInt(1, offset);
+            statement.setInt(2, limit);
+
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return mapper.mapRows(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find categories by calling findLimitedByOrderByNameAsc(int offset, int limit) method", e);
+        }
     }
 }

@@ -26,7 +26,7 @@ public enum CommandType {
     PROFILE_PAGE,
     EDIT_QUESTION_PAGE,
     LIVE_SEARCH,
-    EDIT_QUESTION;
+    EDIT_QUESTION, CATEGORIES_PAGE;
 
     public static Optional<CommandType> getByName(String commandName) {
         if (commandName == null) {

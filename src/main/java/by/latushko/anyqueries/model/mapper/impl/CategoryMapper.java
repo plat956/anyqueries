@@ -20,6 +20,9 @@ public class CategoryMapper implements RowMapper<Category> {
             if(hasColumn(resultSet, fieldPrefix + CATEGORY_QUESTIONS_COUNT)) {
                 category.setQuestionsCount(resultSet.getLong(fieldPrefix + CATEGORY_QUESTIONS_COUNT));
             }
+            if(hasColumn(resultSet, fieldPrefix + TOTAL)) {
+                category.setTotal(resultSet.getLong(fieldPrefix + TOTAL));
+            }
             return Optional.of(category);
         } catch (SQLException e) {
             return Optional.empty();

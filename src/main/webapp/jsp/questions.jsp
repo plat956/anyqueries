@@ -52,7 +52,7 @@
 </div>
 <c:if test="${!empty principal}">
 <a class="btn btn-success float-right create-question" data-toggle="modal"
-   href="${pageContext.request.contextPath}/controller?command=create_question_page"><fmt:message key="label.questions.create" /></a>
+   href="${pageContext.request.contextPath}/controller?command=create_question_page<c:if test="${!empty param['category']}">&category=${param['category']}</c:if>"><fmt:message key="label.questions.create" /></a>
 </c:if>
 <div class="padding"></div>
 <div class="row">

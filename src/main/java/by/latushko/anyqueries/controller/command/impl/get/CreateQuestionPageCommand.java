@@ -13,6 +13,8 @@ import java.util.List;
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.FORWARD;
 import static by.latushko.anyqueries.controller.command.identity.PagePath.CREATE_QUESTION_PAGE;
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.CATEGORIES;
+import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.VALIDATION_RESULT;
+import static by.latushko.anyqueries.controller.command.identity.RequestParameter.CATEGORY;
 
 public class CreateQuestionPageCommand implements Command {
     @Override
@@ -20,6 +22,10 @@ public class CreateQuestionPageCommand implements Command {
         CategoryService categoryService = CategoryServiceImpl.getInstance();
         List<Category> categories = categoryService.findAllOrderByNameAsc();
         request.setAttribute(CATEGORIES, categories);
+        if(request.getAttribute(VALIDATION_RESULT) == null) {
+            String category = request.getParameter(CATEGORY);
+            request.setAttribute(CATEGORY, category);
+        }
         return new CommandResult(CREATE_QUESTION_PAGE, FORWARD);
     }
 }
