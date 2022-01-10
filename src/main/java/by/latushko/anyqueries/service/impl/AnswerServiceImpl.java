@@ -32,7 +32,7 @@ public class AnswerServiceImpl implements AnswerService {
             try {
                 count = ((AnswerDao)answerDao).countTotalByUserId(userId);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {

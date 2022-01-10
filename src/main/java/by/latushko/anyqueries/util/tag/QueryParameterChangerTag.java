@@ -4,16 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.tagext.TagSupport;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URIBuilder;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Iterator;
-import java.util.List;
 
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.CURRENT_PAGE;
+import static by.latushko.anyqueries.util.http.QueryParameterHelper.addParameter;
 
 public class QueryParameterChangerTag extends TagSupport {
     private String key;
@@ -40,23 +36,9 @@ public class QueryParameterChangerTag extends TagSupport {
         try {
             page = addParameter(page, key, value);
             pageContext.getOut().write(page);
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException e) {
             throw new JspException(e.getMessage());
         }
         return SKIP_BODY;
-    }
-
-    private String addParameter(String url, String key, String value) throws URISyntaxException {
-        URIBuilder uriBuilder = new URIBuilder(url);
-        List<NameValuePair> queryParameters = uriBuilder.getQueryParams();
-        for (Iterator<NameValuePair> queryParameterItr = queryParameters.iterator(); queryParameterItr.hasNext();) {
-            NameValuePair queryParameter = queryParameterItr.next();
-            if (queryParameter.getName().equals(key)) {
-                queryParameterItr.remove();
-            }
-        }
-        uriBuilder.setParameters(queryParameters);
-        uriBuilder.addParameter(key, value);
-        return uriBuilder.build().toString();
     }
 }

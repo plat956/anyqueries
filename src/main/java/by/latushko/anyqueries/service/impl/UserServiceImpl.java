@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
             try {
                 userOptional = ((UserDao)userDao).findByLogin(login);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
             try {
                 userOptional = ((UserDao)userDao).findByCredentialKey(key);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
                 userDao.update(user);
                 transaction.commit();
                 return true;
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
             try {
                 result = ((UserDao)userDao).existsByLogin(login);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -167,7 +167,7 @@ public class UserServiceImpl implements UserService {
             try {
                 result = ((UserDao)userDao).existsByEmail(email);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -184,7 +184,7 @@ public class UserServiceImpl implements UserService {
             try {
                 result = ((UserDao)userDao).existsByTelegram(telegram);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -201,7 +201,7 @@ public class UserServiceImpl implements UserService {
             try {
                 result = ((UserDao)userDao).existsByEmailExceptUserId(email, userId);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -218,7 +218,7 @@ public class UserServiceImpl implements UserService {
             try {
                 result = ((UserDao)userDao).existsByTelegramExceptUserId(telegram, userId);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -235,7 +235,7 @@ public class UserServiceImpl implements UserService {
             try {
                 result = ((UserDao)userDao).existsByLoginExceptUserId(login, userId);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -258,7 +258,7 @@ public class UserServiceImpl implements UserService {
                 userDao.update(user);
                 transaction.commit();
                 return true;
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -276,7 +276,7 @@ public class UserServiceImpl implements UserService {
                 userDao.update(user);
                 transaction.commit();
                 return true;
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -301,7 +301,7 @@ public class UserServiceImpl implements UserService {
                 userDao.update(user);
                 transaction.commit();
                 return true;
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -318,7 +318,7 @@ public class UserServiceImpl implements UserService {
             try {
                 userOptional = userDao.findById(id);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {

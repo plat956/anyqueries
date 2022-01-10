@@ -39,6 +39,8 @@ public final class MessageKey {
     public static final String MESSAGE_ACTIVATION_EMAIL_TEXT = "message.activation.email.text";
     public static final String MESSAGE_ACTIVATION_EMAIL_GREETING = "message.activation.email.greeting";
     public static final String MESSAGE_SAVE_SUCCESSFUL = "message.save.successful";
+    public static final String MESSAGE_DELETE_SUCCESSFUL = "message.delete.successful";
+    public static final String MESSAGE_DELETE_FAILED = "message.delete.failed";
     public static final String MESSAGE_SAVE_FAILED = "message.save.failed";
     public static final String MESSAGE_ACTIVATION_NOT_REPLY = "message.activation.notReply";
     public static final String MESSAGE_PASSWORD_OLD_INCORRECT = "message.passwordOld.incorrect";

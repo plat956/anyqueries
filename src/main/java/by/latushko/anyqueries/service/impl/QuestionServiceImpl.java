@@ -2,6 +2,7 @@ package by.latushko.anyqueries.service.impl;
 
 import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.exception.EntityTransactionException;
+import by.latushko.anyqueries.model.dao.AttachmentDao;
 import by.latushko.anyqueries.model.dao.BaseDao;
 import by.latushko.anyqueries.model.dao.EntityTransaction;
 import by.latushko.anyqueries.model.dao.QuestionDao;
@@ -47,7 +48,7 @@ public class QuestionServiceImpl implements QuestionService {
             try {
                 titles = ((QuestionDao)questionDao).findTitleByTitleLikeAndCategoryIdAndAuthorIdLikeOrderedAndLimited(pattern, categoryId, userId, limit);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -64,7 +65,7 @@ public class QuestionServiceImpl implements QuestionService {
             try {
                 count = ((QuestionDao)questionDao).countTotalByAuthorId(authorId);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -81,7 +82,7 @@ public class QuestionServiceImpl implements QuestionService {
             try {
                 count = ((QuestionDao)questionDao).countTotalNotClosed();
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -98,7 +99,7 @@ public class QuestionServiceImpl implements QuestionService {
             try {
                 count = ((QuestionDao)questionDao).countTotalNotClosedByAuthorId(authorId);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -136,7 +137,7 @@ public class QuestionServiceImpl implements QuestionService {
 
                 transaction.commit();
                 return Optional.of(question);
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -153,13 +154,71 @@ public class QuestionServiceImpl implements QuestionService {
             try {
                 questions = ((QuestionDao)questionDao).findLimitedByResolvedAndAuthorIdAndCategoryIdAndTitleLikeOrderByNewest(page.getOffset(), page.getLimit(), resolved, newestFirst, authorId, categoryId, titlePattern);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
             logger.error("Something went wrong during retrieving questions with requested limit and parameters", e);
         }
         return new Paginated<>(questions);
+    }
+
+    @Override
+    public boolean delete(Long id, User initiator) {
+        if(!checkManagementAccess(id, initiator)) {
+            return false;
+        }
+        boolean result = false;
+        BaseDao questionDao = new QuestionDaoImpl();
+        BaseDao attachmentDao = new AttachmentDaoImpl();
+        try (EntityTransaction transaction = new EntityTransaction(questionDao, attachmentDao)) {
+            try {
+                List<Attachment> attachments = ((AttachmentDaoImpl) attachmentDao).findByQuestionId(id);
+                result = ((AttachmentDao)attachmentDao).deleteByQuestionId(id);
+                if(result) {
+                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                    result = attachmentService.deleteAttachmentsFiles(attachments);
+                    if(result) {
+                        result = questionDao.delete(id);
+                        transaction.commit();
+                    }
+                }
+                //todo?? call rollback if commit is not reached?
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to delete question", e);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean checkManagementAccess(Long questionId, User user) {
+        if (user == null) {
+            return false;
+        }
+        if(user.getRole() == User.Role.ADMIN || user.getRole() == User.Role.MODERATOR) {
+            return true;
+        }
+        Optional<Long> authorId = findAuthorIdById(questionId);
+        return authorId.isPresent() && authorId.get().equals(user.getId());
+    }
+
+    private Optional<Long> findAuthorIdById(Long id) {
+        BaseDao questionDao = new QuestionDaoImpl();
+        Optional<Long> authorId = Optional.empty();
+        try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
+            try {
+                authorId = ((QuestionDao)questionDao).findAuthorIdById(id);
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving authorId by id", e);
+        }
+        return authorId;
     }
 
     private Question createNewQuestion(Category category, String title, String text, User author) {

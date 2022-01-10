@@ -4,6 +4,8 @@ import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.model.dao.AttachmentDao;
 import by.latushko.anyqueries.model.dao.BaseDao;
 import by.latushko.anyqueries.model.entity.Attachment;
+import by.latushko.anyqueries.model.mapper.RowMapper;
+import by.latushko.anyqueries.model.mapper.impl.AttachmentMapper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +17,20 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
     private static final String SQL_CREATE_QUERY = """
             INSERT INTO attachments(file) 
             VALUES (?)""";
+    private static final String SQL_DELETE_BY_QUESTION_ID_QUERY = """
+            DELETE a 
+            FROM attachments a 
+            INNER JOIN question_attachment qa 
+            ON a.id = qa.attachment_id 
+            AND qa.question_id = ?""";
+    private static final String SQL_FIND_BY_QUESTION_ID_QUERY = """
+            SELECT a.id, a.file  
+            FROM attachments a 
+            INNER JOIN question_attachment qa 
+            ON a.id = qa.attachment_id 
+            AND qa.question_id = ?""";
+    private RowMapper mapper = new AttachmentMapper();
+
     @Override
     public List<Attachment> findAll() throws DaoException {
         return null;
@@ -56,5 +72,27 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
     @Override
     public boolean delete(Long id) throws DaoException {
         return false;
+    }
+
+    @Override
+    public boolean deleteByQuestionId(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_QUESTION_ID_QUERY)){
+            statement.setLong(1, id);
+            return statement.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to delete attachment by calling deleteByQuestionId(Long id) method", e);
+        }
+    }
+
+    @Override
+    public List<Attachment> findByQuestionId(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_QUESTION_ID_QUERY)){
+            statement.setLong(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return mapper.mapRows(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find attachments by calling findByQuestionId(Long id) method", e);
+        }
     }
 }

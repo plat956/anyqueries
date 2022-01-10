@@ -5,11 +5,8 @@ import by.latushko.anyqueries.exception.EntityTransactionException;
 import by.latushko.anyqueries.model.dao.BaseDao;
 import by.latushko.anyqueries.model.dao.CategoryDao;
 import by.latushko.anyqueries.model.dao.EntityTransaction;
-import by.latushko.anyqueries.model.dao.UserDao;
 import by.latushko.anyqueries.model.dao.impl.CategoryDaoImpl;
-import by.latushko.anyqueries.model.dao.impl.UserDaoImpl;
 import by.latushko.anyqueries.model.entity.Category;
-import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.CategoryService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
             try {
                 categories = ((CategoryDao)categoryDao).findTop(5);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -57,7 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
             try {
                 categories = ((CategoryDao)categoryDao).findAllOrderByNameAsc();
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -74,7 +71,7 @@ public class CategoryServiceImpl implements CategoryService {
             try {
                 name = ((CategoryDao)categoryDao).findNameById(id);
                 transaction.commit();
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {

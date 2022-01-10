@@ -1,5 +1,6 @@
 package by.latushko.anyqueries.service;
 
+import by.latushko.anyqueries.model.entity.Attachment;
 import jakarta.servlet.http.Part;
 
 import java.io.File;
@@ -15,5 +16,7 @@ public interface AttachmentService {
     Optional<String> uploadFile(Part part);
     Optional<String> uploadAvatar(List<Part> parts);
     boolean deleteAvatar(String avatar);
+    boolean deleteFile(String file);
+    boolean deleteAttachmentsFiles(List<Attachment> attachments);
     Optional<String> getFileExtension(String fileName);
 }

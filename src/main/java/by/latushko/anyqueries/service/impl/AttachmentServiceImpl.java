@@ -1,5 +1,6 @@
 package by.latushko.anyqueries.service.impl;
 
+import by.latushko.anyqueries.model.entity.Attachment;
 import by.latushko.anyqueries.service.AttachmentService;
 import jakarta.servlet.http.Part;
 
@@ -91,6 +92,26 @@ public class AttachmentServiceImpl implements AttachmentService {
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public boolean deleteFile(String file) {
+        try {
+            return Files.deleteIfExists(Paths.get(FILE_DIRECTORY_PATH + file));
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteAttachmentsFiles(List<Attachment> attachments) {
+        for(Attachment a: attachments) {
+            boolean result = deleteFile(a.getFile());
+            if(!result) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean resizeAvatar(String avatar) {

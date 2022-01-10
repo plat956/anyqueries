@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static by.latushko.anyqueries.model.mapper.TableColumnName.QUESTION_AUTHOR_ID;
 import static by.latushko.anyqueries.model.mapper.TableColumnName.QUESTION_TITLE;
 
 public class QuestionDaoImpl extends BaseDao<Long, Question> implements QuestionDao {
@@ -20,6 +21,10 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             SELECT title 
             FROM questions 
             WHERE title like ?""";
+    private static final String SQL_FIND_AUHTOR_ID_BY_ID_QUERY = """
+            SELECT author_id 
+            FROM questions 
+            WHERE id = ?""";
     private static final String SQL_CREATE_QUERY = """
             INSERT INTO questions(category_id, title, text, creation_date, closed, author_id) 
             VALUES (?, ?, ?, ?, ?, ?)""";
@@ -38,6 +43,9 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             SELECT count(id) 
             FROM questions 
             WHERE author_id = ? and closed = ?""";
+    private static final String SQL_DELETE_QUERY = """
+            DELETE FROM questions 
+            WHERE id = ?""";
     private static final String SQL_FIND_ALL_QUERY = """
             SELECT q.id, q.title, q.text, q.creation_date, q.editing_date, q.closed, q.category_id, c.name as category_name, c.color as category_color, 
             q.author_id as user_id, u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
@@ -114,7 +122,12 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
 
     @Override
     public boolean delete(Long id) throws DaoException {
-        return false;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_QUERY)){
+            statement.setLong(1, id);
+            return statement.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to delete question by calling delete(Long id) method", e);
+        }
     }
 
     @Override
@@ -223,6 +236,21 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
         } catch (SQLException e) {
             throw new DaoException("Failed to find questions by calling findLimitedByResolvedAndAuthorIdAndCategoryIdAndTitleLikeOrderByNewest method", e);
         }
+    }
+
+    @Override
+    public Optional<Long> findAuthorIdById(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_AUHTOR_ID_BY_ID_QUERY)){
+            statement.setLong(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return Optional.ofNullable(resultSet.getLong(QUESTION_AUTHOR_ID));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find question authorId by calling findAuthorIdById(Long id) method", e);
+        }
+        return Optional.empty();
     }
 
     private String buildQuestionsQuery(boolean resolved, boolean newestFirst, Long authorId, Long categoryId, String titlePattern) {

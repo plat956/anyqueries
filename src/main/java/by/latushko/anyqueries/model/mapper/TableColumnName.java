@@ -23,11 +23,14 @@ public final class TableColumnName {
     public static final String QUESTION_CREATION_DATE = "creation_date";
     public static final String QUESTION_EDITING_DATE = "editing_date";
     public static final String QUESTION_CLOSED = "closed";
+    public static final String QUESTION_AUTHOR_ID = "author_id";
+    public static final String QUESTION_ANSWERS_COUNT = "answers_count";
     public static final String CATEGORY_ID = "id";
     public static final String CATEGORY_NAME = "name";
     public static final String CATEGORY_COLOR = "color";
     public static final String CATEGORY_QUESTIONS_COUNT = "questions_count";
-    public static final String QUESTION_ANSWERS_COUNT = "answers_count";
+    public static final String ATTACHMENT_ID = "id";
+    public static final String ATTACHMENT_FILE = "file";
 
     private TableColumnName() {
     }

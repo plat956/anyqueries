@@ -54,7 +54,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
                 transaction.commit();
                 return true;
-            } catch (EntityTransactionException | DaoException | MailSenderException e) {
+            } catch (DaoException | MailSenderException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -84,7 +84,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
                 transaction.commit();
                 return true;
-            } catch (EntityTransactionException | DaoException | MailSenderException e) {
+            } catch (DaoException | MailSenderException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -111,7 +111,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
                     return userOptional;
                 }
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
@@ -138,7 +138,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                     return true;
                 }
 
-            } catch (EntityTransactionException | DaoException e) {
+            } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {

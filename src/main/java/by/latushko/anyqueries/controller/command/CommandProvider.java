@@ -35,6 +35,7 @@ public class CommandProvider {
         postCommands.put(CommandType.CHANGE_PASSWORD, new ChangePasswordCommand());
         postCommands.put(CommandType.UPLOAD_AVATAR, new UploadAvatarCommand());
         postCommands.put(CommandType.CREATE_QUESTION, new CreateQuestionCommand());
+        postCommands.put(CommandType.DELETE_QUESTION, new DeleteQuestionCommand());
     }
 
     public static CommandProvider getInstance() {
