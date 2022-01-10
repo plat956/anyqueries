@@ -1,8 +1,16 @@
 package by.latushko.anyqueries.service.impl;
 
+import by.latushko.anyqueries.exception.DaoException;
+import by.latushko.anyqueries.exception.EntityTransactionException;
+import by.latushko.anyqueries.model.dao.AttachmentDao;
+import by.latushko.anyqueries.model.dao.BaseDao;
+import by.latushko.anyqueries.model.dao.EntityTransaction;
+import by.latushko.anyqueries.model.dao.impl.AttachmentDaoImpl;
 import by.latushko.anyqueries.model.entity.Attachment;
 import by.latushko.anyqueries.service.AttachmentService;
 import jakarta.servlet.http.Part;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -11,11 +19,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
 public class AttachmentServiceImpl implements AttachmentService {
+    private static final Logger logger = LogManager.getLogger();
     private static final String UNDER_SCORE_CHARACTER = "_";
     private static final String FILE_EXTENSION_DELIMITER = ".";
     private static final String AVATAR_PREFIX = "avatar_";
@@ -112,6 +122,23 @@ public class AttachmentServiceImpl implements AttachmentService {
             }
         }
         return true;
+    }
+
+    @Override
+    public List<Attachment> findByQuestionId(Long id) {
+        BaseDao attachmentDao = new AttachmentDaoImpl();
+        List<Attachment> attachments = new ArrayList<>();
+        try (EntityTransaction transaction = new EntityTransaction(attachmentDao)) {
+            try {
+                attachments = ((AttachmentDao)attachmentDao).findByQuestionId(id);
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving attachment by question id", e);
+        }
+        return attachments;
     }
 
     private boolean resizeAvatar(String avatar) {

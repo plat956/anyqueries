@@ -26,6 +26,7 @@ public class CommandProvider {
         getCommands.put(CommandType.CREATE_QUESTION_PAGE, new CreateQuestionPageCommand());
         getCommands.put(CommandType.BAD_BROWSER_PAGE, new BadBrowserPageCommand());
         getCommands.put(CommandType.PROFILE_PAGE, new ProfilePageCommand());
+        getCommands.put(CommandType.QUESTION_EDIT_PAGE, new QuestionEditPageCommand());
         postCommands.put(CommandType.LOGIN, new LoginCommand());
         postCommands.put(CommandType.LOGOUT, new LogoutCommand());
         postCommands.put(CommandType.REGISTRATION, new RegistrationCommand());

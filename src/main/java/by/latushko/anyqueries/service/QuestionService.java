@@ -12,11 +12,12 @@ import java.util.Optional;
 public interface QuestionService {
     Integer QUESTION_SEARCH_QUERY_MAX_LENGTH = 40;
     List<String> findTitleByTitleLikeAndCategoryIdAndAuthorIdOrderedAndLimited(String pattern, Long categoryId, Long userId, int limit);
+    Paginated<Question> findByQueryParametersOrderByNewest(RequestPage page, boolean resolved, boolean newestFirst, Long authorId, Long categoryId, String titlePattern);
+    Optional<Question> findById(Long id);
     Long countTotalByAuthorId(Long userId);
     Long countTotalNotClosed();
     Long countTotalNotClosedByAuthorId(Long authorId);
     boolean checkManagementAccess(Long questionId, User user);
     Optional<Question> create(Long categoryId, String title, String text, User author, List<Part> attachments);
-    Paginated<Question> findByQueryParametersOrderByNewest(RequestPage page, boolean resolved, boolean newestFirst, Long authorId, Long categoryId, String titlePattern);
     boolean delete(Long id, User initiator);
 }

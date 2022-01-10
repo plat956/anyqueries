@@ -25,6 +25,17 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             SELECT author_id 
             FROM questions 
             WHERE id = ?""";
+    private static final String SQL_FIND_BY_ID_QUERY = """
+            SELECT q.id, q.title, q.text, q.creation_date, q.editing_date, q.closed, q.category_id, c.name as category_name, c.color as category_color, 
+            q.author_id as user_id, u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
+            u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
+            u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role 
+            FROM questions q 
+            INNER JOIN users u 
+            ON q.author_id = u.id 
+            INNER JOIN categories c 
+            ON q.category_id = c.id
+            WHERE q.id = ?""";
     private static final String SQL_CREATE_QUERY = """
             INSERT INTO questions(category_id, title, text, creation_date, closed, author_id) 
             VALUES (?, ?, ?, ?, ?, ?)""";
@@ -46,7 +57,7 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     private static final String SQL_DELETE_QUERY = """
             DELETE FROM questions 
             WHERE id = ?""";
-    private static final String SQL_FIND_ALL_QUERY = """
+    private static final String SQL_FIND_LIMITED_BY_PARAMETERS_QUERY = """
             SELECT q.id, q.title, q.text, q.creation_date, q.editing_date, q.closed, q.category_id, c.name as category_name, c.color as category_color, 
             q.author_id as user_id, u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
             u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
@@ -83,7 +94,18 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
 
     @Override
     public Optional<Question> findById(Long id) throws DaoException {
-        return Optional.empty();
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID_QUERY)){
+            statement.setLong(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return mapper.mapRow(resultSet);
+                } else {
+                    return Optional.empty();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find question by calling findById(Long id) method", e);
+        }
     }
 
     @Override
@@ -254,7 +276,7 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     }
 
     private String buildQuestionsQuery(boolean resolved, boolean newestFirst, Long authorId, Long categoryId, String titlePattern) {
-        StringBuffer query = new StringBuffer(SQL_FIND_ALL_QUERY);
+        StringBuffer query = new StringBuffer(SQL_FIND_LIMITED_BY_PARAMETERS_QUERY);
         StringBuffer whereClause = new StringBuffer();
         if(resolved) {
             whereClause.append(SQL_WHERE_RESOLVED_CLAUSE);

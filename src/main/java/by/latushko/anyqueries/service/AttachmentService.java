@@ -19,4 +19,5 @@ public interface AttachmentService {
     boolean deleteFile(String file);
     boolean deleteAttachmentsFiles(List<Attachment> attachments);
     Optional<String> getFileExtension(String fileName);
+    List<Attachment> findByQuestionId(Long id);
 }

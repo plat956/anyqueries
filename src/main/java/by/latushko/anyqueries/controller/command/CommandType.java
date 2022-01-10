@@ -24,6 +24,7 @@ public enum CommandType {
     REGISTRATION,
     CHANGE_LOCALE,
     PROFILE_PAGE,
+    QUESTION_EDIT_PAGE,
     LIVE_SEARCH;
 
     public static Optional<CommandType> getByName(String commandName) {

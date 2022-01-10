@@ -60,6 +60,16 @@ var dataForms = {
             placeholder: placeholder,
             lang: lang,
             callbacks: {
+                onInit: function (){
+                    var text = document.getElementById(textarea);
+                    var id = textarea + '-counter';
+                    $('#' + id).text($('#' + textarea).attr('maxlength') - dataForms.stripHtml(text.value).trim().length);
+                    if($('#' + textarea).attr('required') && $.trim(text.value).length == 0) {
+                        text.setCustomValidity("error");
+                    } else {
+                        text.setCustomValidity("");
+                    }
+                },
                 onKeydown: function (e) {
                     var t = e.currentTarget.innerText;
                     if (t.trim().length >= $('#' + textarea).attr('maxlength')) {
@@ -111,9 +121,6 @@ var dataForms = {
     reset: function(q) {
         pageEvents.freezeClicks(false);
         $('.support-content form').trigger('reset');
-        $('.support-content .summernote').summernote('reset');
-        $('.support-content .selectpicker').val('').selectpicker("refresh");
-        $('.support-content .attachments').empty();
         var button = $(".support-content form button[type=submit]");
         button.prop("disabled", false);
         button.html(button.data('old-text'));

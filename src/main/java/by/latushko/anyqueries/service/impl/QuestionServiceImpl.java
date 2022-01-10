@@ -205,6 +205,23 @@ public class QuestionServiceImpl implements QuestionService {
         return authorId.isPresent() && authorId.get().equals(user.getId());
     }
 
+    @Override
+    public Optional<Question> findById(Long id) {
+        BaseDao questionDao = new QuestionDaoImpl();
+        Optional<Question> questionOptional = Optional.empty();
+        try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
+            try {
+                questionOptional = questionDao.findById(id);
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving question by id", e);
+        }
+        return questionOptional;
+    }
+
     private Optional<Long> findAuthorIdById(Long id) {
         BaseDao questionDao = new QuestionDaoImpl();
         Optional<Long> authorId = Optional.empty();
