@@ -14,14 +14,20 @@ import static by.latushko.anyqueries.controller.command.CommandResult.RoutingTyp
 import static by.latushko.anyqueries.controller.command.identity.PagePath.USERS_PAGE;
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.*;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.PAGE;
+import static by.latushko.anyqueries.controller.command.identity.RequestParameter.QUERY;
+import static by.latushko.anyqueries.service.QuestionService.QUESTION_SEARCH_QUERY_MAX_LENGTH;
 
 public class UsersPageCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
+        String login = request.getParameter(QUERY);
+        if(login != null && login.length() > QUESTION_SEARCH_QUERY_MAX_LENGTH) {
+            login = login.substring(0, QUESTION_SEARCH_QUERY_MAX_LENGTH);
+        }
         String pageParameter = request.getParameter(PAGE);
         RequestPage page = new RequestPage(pageParameter);
         UserService userService = UserServiceImpl.getInstance();
-        Paginated<User> users = userService.findAllPaginatedOrderByRoleAsc(page);
+        Paginated<User> users = userService.findPaginatedByLoginLikeOrderByRoleAsc(page, login);
         request.setAttribute(TOTAL_PAGES, users.getTotalPages());
         request.setAttribute(USERS, users.getContent());
         return new CommandResult(USERS_PAGE, FORWARD);

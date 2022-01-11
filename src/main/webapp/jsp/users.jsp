@@ -18,7 +18,7 @@
             <c:forEach var="q" items="${users}">
                 <li class="list-group-item" style="border-radius: 0;border-left: 0;border-right: 0;" onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;">
                     <div class="media" style="font-size: 15px;">
-                        <div class="media-body"><span class="badge badge-${q.role.color} user-role-span"><fmt:message key="label.role.${fn:toLowerCase(q.role)}" /></span>&nbsp;&nbsp;<strong>${q.fio}</strong>
+                        <div class="media-body"><span class="badge badge-${q.role.color} user-role-span"><fmt:message key="label.role.${fn:toLowerCase(q.role)}" /></span>&nbsp;&nbsp;<strong>${q.login}</strong> <span>(${q.fio})</span>
                             <span class="number float-right">
                                     <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=edit_user_page&id=${q.id}'" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.edit" />">
                                         <i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i>

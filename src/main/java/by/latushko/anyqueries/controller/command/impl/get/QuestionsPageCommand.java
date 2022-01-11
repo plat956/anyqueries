@@ -42,7 +42,7 @@ public class QuestionsPageCommand implements Command {
         boolean newestFirst = sortParameter == null || sortParameter.equalsIgnoreCase(NEWEST_SORT_VALUE);
         Long authorId = modeParameter != null && modeParameter.equalsIgnoreCase(MODE_MY_VALUE) ? user.getId() : null;
         Long category = categoryParameter != null ? Long.valueOf(categoryParameter) : null;
-        String title = request.getParameter(TITLE);
+        String title = request.getParameter(QUERY);
         if(title != null && title.length() > QUESTION_SEARCH_QUERY_MAX_LENGTH) {
             title = title.substring(0, QUESTION_SEARCH_QUERY_MAX_LENGTH);
         }

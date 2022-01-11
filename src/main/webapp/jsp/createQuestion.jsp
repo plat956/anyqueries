@@ -10,8 +10,9 @@
     <div class="form-group">
         <select class="selectpicker" data-width="100%" name="category" required>
             <option value="" selected disabled><fmt:message key="label.category.placeholder" /></option>
+            <c:set var="selected_category" value="${!empty validationResult ? validationResult.getValue(RequestParameter.CATEGORY) : category}" />
             <c:forEach var="c" items="${categories}">
-                <option value="${c.id}"${category == c.id || validationResult.getValue(RequestParameter.CATEGORY) == c.id ? ' selected' : ''}>${c.name}</option>
+                <option value="${c.id}"${selected_category == c.id  ? ' selected' : ''}>${c.name}</option>
             </c:forEach>
         </select>
         <c:if test="${!empty validationResult.getMessage(RequestParameter.CATEGORY)}">

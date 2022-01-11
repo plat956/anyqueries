@@ -46,9 +46,7 @@ public class EditQuestionPageCommand implements Command {
         List<Category> categories = categoryService.findAllOrderByNameAsc();
         request.setAttribute(ATTACHMENTS, attachments);
         request.setAttribute(CATEGORIES, categories);
-        if(request.getAttribute(VALIDATION_RESULT) == null) {
-            request.setAttribute(QUESTION, question.get());
-        }
+        request.setAttribute(QUESTION, question.get());
         return new CommandResult(EDIT_QUESTION_PAGE, FORWARD);
     }
 }

@@ -15,14 +15,20 @@ import static by.latushko.anyqueries.controller.command.identity.PagePath.CATEGO
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.CATEGORIES;
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.TOTAL_PAGES;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.PAGE;
+import static by.latushko.anyqueries.controller.command.identity.RequestParameter.QUERY;
+import static by.latushko.anyqueries.service.QuestionService.QUESTION_SEARCH_QUERY_MAX_LENGTH;
 
 public class CategoriesPageCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
+        String name = request.getParameter(QUERY);
+        if(name != null && name.length() > QUESTION_SEARCH_QUERY_MAX_LENGTH) {
+            name = name.substring(0, QUESTION_SEARCH_QUERY_MAX_LENGTH);
+        }
         String pageParameter = request.getParameter(PAGE);
         RequestPage page = new RequestPage(pageParameter);
         CategoryService categoryService = CategoryServiceImpl.getInstance();
-        Paginated<Category> categories = categoryService.findAllPaginatedOrderByNameAsc(page);
+        Paginated<Category> categories = categoryService.findAllPaginatedByNameLikeOrderByNameAsc(page, name);
         request.setAttribute(TOTAL_PAGES, categories.getTotalPages());
         request.setAttribute(CATEGORIES, categories.getContent());
         return new CommandResult(CATEGORIES_PAGE, FORWARD);

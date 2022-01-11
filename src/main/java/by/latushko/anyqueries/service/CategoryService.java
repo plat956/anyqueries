@@ -11,11 +11,12 @@ public interface CategoryService {
     List<Category> findTop5();
     List<Category> findAllOrderByNameAsc();
     Optional<String> findNameById(Long id);
-    Paginated<Category> findAllPaginatedOrderByNameAsc(RequestPage page);
+    Paginated<Category> findAllPaginatedByNameLikeOrderByNameAsc(RequestPage page, String namePattern);
     boolean checkIfExistsByName(String name);
     boolean checkIfExistsByNameAndIdNot(String name, Long id);
     Optional<Category> create(String name, String color);
     Optional<Category> findById(Long id);
     boolean update(Long id, String name, String color);
     boolean delete(Long id);
+    List<String> findNameByNameLikeOrderedAndLimited(String namePattern, int limit);
 }

@@ -332,12 +332,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Paginated<User> findAllPaginatedOrderByRoleAsc(RequestPage page) {
+    public Paginated<User> findPaginatedByLoginLikeOrderByRoleAsc(RequestPage page, String loginPattern) {
         BaseDao userDao = new UserDaoImpl();
         List<User> users = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
-                users = ((UserDao)userDao).findLimitedOrderByRoleAsc(page.getOffset(), page.getLimit());
+                users = ((UserDao)userDao).findLimitedByLoginLikeOrderByRoleAsc(page.getOffset(), page.getLimit(), loginPattern);
                 transaction.commit();
             } catch (DaoException e) {
                 transaction.rollback();
@@ -346,6 +346,23 @@ public class UserServiceImpl implements UserService {
             logger.error("Something went wrong during retrieving users with requested limit", e);
         }
         return new Paginated<>(users);
+    }
+
+    @Override
+    public List<String> findLoginByLoginLikeOrderedAndLimited(String loginPattern, int limit) {
+        BaseDao userDao = new UserDaoImpl();
+        List<String> logins = new ArrayList<>();
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                logins = ((UserDao)userDao).findLoginByLoginLikeOrderedAndLimited(loginPattern, limit);
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving users logins by pattern", e);
+        }
+        return logins;
     }
 
     private String getCredentialTokenSource(User user) {

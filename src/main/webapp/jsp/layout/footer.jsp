@@ -86,6 +86,8 @@
                         query_string: query,
                         ajax: true,
                         <c:if test="${param['mode'] == 'my'}">current: true,</c:if>
+                        <c:if test="${param['command'] == 'users_page'}">users: true,</c:if>
+                        <c:if test="${param['command'] == 'categories_page'}">categories: true,</c:if>
                         <c:if test="${!empty param['category']}">category: '${param['category']}',</c:if>
                     },
                     function (data) {

@@ -15,11 +15,12 @@ public interface UserDao {
     Optional<User> findInactiveByTelegram(String account) throws DaoException;
     Optional<User> findByLogin(String login) throws DaoException;
     Optional<User> findByCredentialKey(String key) throws DaoException;
-    List<User> findLimitedOrderByRoleAsc(int offset, int limit) throws DaoException;
+    List<User> findLimitedByLoginLikeOrderByRoleAsc(int offset, int limit, String loginPattern) throws DaoException;
     boolean existsByLogin(String login) throws DaoException;
     boolean existsByEmail(String email) throws DaoException;
     boolean existsByTelegram(String telegram) throws DaoException;
     boolean existsByEmailExceptUserId(String email, Long userId) throws DaoException;
     boolean existsByTelegramExceptUserId(String telegram, Long userId) throws DaoException;
     boolean existsByLoginExceptUserId(String login, Long userId) throws DaoException;
+    List<String> findLoginByLoginLikeOrderedAndLimited(String loginPatter, int limit) throws DaoException;
 }

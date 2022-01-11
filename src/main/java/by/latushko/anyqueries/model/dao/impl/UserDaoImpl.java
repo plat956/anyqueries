@@ -13,8 +13,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static by.latushko.anyqueries.model.mapper.TableColumnName.USER_LOGIN;
 
 public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     private static final String SQL_FIND_ALL_QUERY = """
@@ -76,11 +79,16 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     private static final String SQL_EXISTS_BY_LOGIN_EXCEPT_USER_ID_QUERY = """
             SELECT 1 FROM users
             WHERE login = ? and id <> ?""";
-    private static final String SQL_FIND_ALL_LIMITED_ORDER_BY_ROLE_ASC_QUERY = """
+    private static final String SQL_FIND_LIMITED_BY_LOGIN_LIKE_ORDER_BY_ROLE_ASC_QUERY = """
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role, count(id) OVER() AS total 
-            FROM users
-            ORDER BY role ASC 
-            LIMIT ?,?""";
+            FROM users""";
+    private static final String SQL_FIND_LOGIN_BY_LOGIN_LIKE_ORDER_ASC_QUERY = """
+            SELECT login 
+            FROM users 
+            WHERE login like ?
+            LIMIT ?""";
+    private static final String SQL_LOGIN_LIKE_CLAUSE = " WHERE login like ? ";
+    private static final String SQL_LIMITED_QUERY_END_CLAUSE = " ORDER BY role ASC LIMIT ?,?";
 
     private final RowMapper<User> mapper = new UserMapper();
 
@@ -361,16 +369,42 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     }
 
     @Override
-    public List<User> findLimitedOrderByRoleAsc(int offset, int limit) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_ALL_LIMITED_ORDER_BY_ROLE_ASC_QUERY)){
-            statement.setInt(1, offset);
-            statement.setInt(2, limit);
+    public List<User> findLimitedByLoginLikeOrderByRoleAsc(int offset, int limit, String loginPattern) throws DaoException {
+        StringBuffer query = new StringBuffer(SQL_FIND_LIMITED_BY_LOGIN_LIKE_ORDER_BY_ROLE_ASC_QUERY);
+        if(loginPattern != null) {
+            query.append(SQL_LOGIN_LIKE_CLAUSE);
+        }
+        query.append(SQL_LIMITED_QUERY_END_CLAUSE);
 
+        try (PreparedStatement statement = connection.prepareStatement(query.toString())){
+            int index = 0;
+            if(loginPattern != null) {
+                statement.setString(++index, LIKE_MARKER + loginPattern + LIKE_MARKER);
+            }
+            statement.setInt(++index, offset);
+            statement.setInt(++index, limit);
             try(ResultSet resultSet = statement.executeQuery()) {
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find users by calling findLimitedOrderByLoginAsc(int offset, int limit) method", e);
         }
+    }
+
+    @Override
+    public List<String> findLoginByLoginLikeOrderedAndLimited(String loginPatter, int limit) throws DaoException {
+        List<String> result = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_LOGIN_BY_LOGIN_LIKE_ORDER_ASC_QUERY)){
+            statement.setString(1, LIKE_MARKER + loginPatter + LIKE_MARKER);
+            statement.setInt(2, limit);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                while(resultSet.next()) {
+                    result.add(resultSet.getString(USER_LOGIN));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find users logins by calling findLoginByLoginLikeOrderedAndLimited method", e);
+        }
+        return result;
     }
 }

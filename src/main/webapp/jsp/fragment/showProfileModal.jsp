@@ -19,7 +19,7 @@
                             <img src="" class="avatar img-circle img-thumbnail" alt="avatar">
                             <div class="panel panel-default text-center profile-role">
                                 <div class="panel-body">
-                                    <span class="badge user-role-span"></span>
+                                    <span class="badge user-role-span profile-role-span"></span>
                                 </div>
                             </div>
                         </div>

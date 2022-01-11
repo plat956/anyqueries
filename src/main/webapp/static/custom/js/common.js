@@ -254,33 +254,33 @@ var questions = {
                 if(res == undefined || res == null || $.isEmptyObject(res)) {
                     toasts.show("error", message.incorrect_profile, message.incorrect_profile_text);
                 } else {
-                    $('.modal-title').text(res.fio);
+                    $('#showProfileModal .modal-title').text(res.fio);
                     if (res.avatar != undefined) {
-                        $('.img-thumbnail').attr('src', context + '/controller?command=show_image&file=' + res.avatar);
+                        $('#showProfileModal .img-thumbnail').attr('src', context + '/controller?command=show_image&file=' + res.avatar);
                     } else {
-                        $('.img-thumbnail').attr('src', context + '/static/custom/images/noavatar.png');
+                        $('#showProfileModal .img-thumbnail').attr('src', context + '/static/custom/images/noavatar.png');
                     }
-                    $('.user-role-span').text(res.role_name);
-                    $('.user-role-span').removeClass(function (index, className) {
+                    $('#showProfileModal .profile-role-span').text(res.role_name);
+                    $('#showProfileModal .profile-role-span').removeClass(function (index, className) {
                         return (className.match(/(^|\s)badge-\S+/g) || []).join(' ');
                     });
-                    $('.user-role-span').addClass('badge-' + res.role_color);
-                    $('#fname').text(res.first_name);
-                    $('#lname').text(res.last_name);
-                    $('#mname').text(res.middle_name);
-                    $('#email').text(res.email);
+                    $('#showProfileModal .profile-role-span').addClass('badge-' + res.role_color);
+                    $('#showProfileModal #fname').text(res.first_name);
+                    $('#showProfileModal #lname').text(res.last_name);
+                    $('#showProfileModal #mname').text(res.middle_name);
+                    $('#showProfileModal #email').text(res.email);
                     if (res.telegram != undefined && res.telegram.length > 0) {
-                        $('#telegram').html('<a href="' + res.telegram_lnk + '" target="_blank">@' + res.telegram + '</a>');
+                        $('#showProfileModal #telegram').html('<a href="' + res.telegram_lnk + '" target="_blank">@' + res.telegram + '</a>');
                     } else {
-                        $('#telegram').empty();
+                        $('#showProfileModal #telegram').empty();
                     }
                     if (res.email != undefined && res.email.length > 0) {
-                        $('#email').html('<a href="mailto:' + res.email + '" target="_blank">' + res.email + '</a>');
+                        $('#showProfileModal #email').html('<a href="mailto:' + res.email + '" target="_blank">' + res.email + '</a>');
                     } else {
-                        $('#email').empty();
+                        $('#showProfileModal #email').empty();
                     }
-                    $('#q_count').text(res.q_count);
-                    $('#a_count').text(res.a_count);
+                    $('#showProfileModal #q_count').text(res.q_count);
+                    $('#showProfileModal #a_count').text(res.a_count);
                     $('#showProfileModal').modal('show');
                 }
             }

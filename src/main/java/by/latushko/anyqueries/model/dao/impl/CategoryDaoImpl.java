@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,11 +37,9 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
             SELECT name  
             FROM categories
             WHERE id = ?""";
-    private static final String SQL_FIND_ALL_LIMITED_ORDER_BY_NAME_ASC_QUERY = """
+    private static final String SQL_FIND_LIMITED_BY_NAME_LIKE_ORDER_BY_NAME_ASC_QUERY = """
             SELECT id, name, color, count(id) OVER() AS total 
-            FROM categories
-            ORDER BY name ASC 
-            LIMIT ?,?""";
+            FROM categories""";
     private static final String SQL_EXISTS_BY_NAME_QUERY = """
             SELECT 1 FROM categories
             WHERE name = ?""";
@@ -57,6 +56,13 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
     private static final String SQL_DELETE_QUERY = """
             DELETE FROM categories 
             WHERE id = ?""";
+    private static final String SQL_FIND_NAME_BY_NAME_LIKE_ORDER_ASC_QUERY = """
+            SELECT name 
+            FROM categories 
+            WHERE name like ?
+            LIMIT ?""";
+    private static final String SQL_NAME_LIKE_CLAUSE = " WHERE name like ? ";
+    private static final String SQL_LIMITED_QUERY_END_CLAUSE = " ORDER BY name ASC LIMIT ?,?";
 
     private RowMapper mapper = new CategoryMapper();
 
@@ -171,10 +177,20 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
     }
 
     @Override
-    public List<Category> findLimitedOrderByNameAsc(int offset, int limit) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_ALL_LIMITED_ORDER_BY_NAME_ASC_QUERY)){
-            statement.setInt(1, offset);
-            statement.setInt(2, limit);
+    public List<Category> findLimitedByNameAscOrderByNameAsc(int offset, int limit, String namePattern) throws DaoException {
+        StringBuffer query = new StringBuffer(SQL_FIND_LIMITED_BY_NAME_LIKE_ORDER_BY_NAME_ASC_QUERY);
+        if(namePattern != null) {
+            query.append(SQL_NAME_LIKE_CLAUSE);
+        }
+        query.append(SQL_LIMITED_QUERY_END_CLAUSE);
+
+        try (PreparedStatement statement = connection.prepareStatement(query.toString())){
+            int index = 0;
+            if(namePattern != null) {
+                statement.setString(++index, LIKE_MARKER + namePattern + LIKE_MARKER);
+            }
+            statement.setInt(++index, offset);
+            statement.setInt(++index, limit);
 
             try(ResultSet resultSet = statement.executeQuery()) {
                 return mapper.mapRows(resultSet);
@@ -207,5 +223,22 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
         } catch (SQLException e) {
             throw new DaoException("Failed check if category exists by calling existsByNameAndIdNot(String name, Long id) method", e);
         }
+    }
+
+    @Override
+    public List<String> findNameByNameLikeOrderedAndLimited(String namePatter, int limit) throws DaoException {
+        List<String> result = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_NAME_BY_NAME_LIKE_ORDER_ASC_QUERY)){
+            statement.setString(1, LIKE_MARKER + namePatter + LIKE_MARKER);
+            statement.setInt(2, limit);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                while(resultSet.next()) {
+                    result.add(resultSet.getString(CATEGORY_NAME));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find categories names by calling findNameByNameLikeOrderedAndLimited method", e);
+        }
+        return result;
     }
 }

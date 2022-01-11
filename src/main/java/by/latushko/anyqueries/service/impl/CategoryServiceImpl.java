@@ -87,12 +87,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Paginated<Category> findAllPaginatedOrderByNameAsc(RequestPage page) {
+    public Paginated<Category> findAllPaginatedByNameLikeOrderByNameAsc(RequestPage page, String namePattern) {
         BaseDao categoryDao = new CategoryDaoImpl();
         List<Category> categories = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
             try {
-                categories = ((CategoryDao)categoryDao).findLimitedOrderByNameAsc(page.getOffset(), page.getLimit());
+                categories = ((CategoryDao)categoryDao).findLimitedByNameAscOrderByNameAsc(page.getOffset(), page.getLimit(), namePattern);
                 transaction.commit();
             } catch (DaoException e) {
                 transaction.rollback();
@@ -224,5 +224,22 @@ public class CategoryServiceImpl implements CategoryService {
             logger.error("Failed to delete category", e);
         }
         return result;
+    }
+
+    @Override
+    public List<String> findNameByNameLikeOrderedAndLimited(String namePattern, int limit) {
+        BaseDao categoryDao = new CategoryDaoImpl();
+        List<String> names = new ArrayList<>();
+        try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
+            try {
+                names = ((CategoryDao)categoryDao).findNameByNameLikeOrderedAndLimited(namePattern, limit);
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving categories names by pattern", e);
+        }
+        return names;
     }
 }

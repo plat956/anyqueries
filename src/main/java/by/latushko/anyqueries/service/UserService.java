@@ -5,6 +5,7 @@ import by.latushko.anyqueries.model.entity.UserHash;
 import by.latushko.anyqueries.util.pagination.Paginated;
 import by.latushko.anyqueries.util.pagination.RequestPage;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -28,5 +29,6 @@ public interface UserService {
     boolean changePassword(User user, String password);
     boolean checkPassword(User user, String password);
     boolean updateAvatar(User user, String avatar);
-    Paginated<User> findAllPaginatedOrderByRoleAsc(RequestPage page);
+    Paginated<User> findPaginatedByLoginLikeOrderByRoleAsc(RequestPage page, String loginPattern);
+    List<String> findLoginByLoginLikeOrderedAndLimited(String loginPattern, int limit);
 }

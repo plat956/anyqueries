@@ -11,8 +11,9 @@
     <div class="form-group">
         <select class="selectpicker" data-width="100%" name="category" required>
             <option value="" selected disabled><fmt:message key="label.category.placeholder" /></option>
+            <c:set var="selected_category" value="${!empty validationResult ? validationResult.getValue(RequestParameter.CATEGORY) : question.category.id}" />
             <c:forEach var="c" items="${categories}">
-                <option value="${c.id}"${question.category.id == c.id || validationResult.getValue(RequestParameter.CATEGORY) == c.id ? ' selected' : ''}>${c.name}</option>
+                <option value="${c.id}"${selected_category == c.id ? ' selected' : ''}>${c.name}</option>
             </c:forEach>
         </select>
         <c:if test="${!empty validationResult.getMessage(RequestParameter.CATEGORY)}">
@@ -29,7 +30,7 @@
                   placeholder="<fmt:message key="label.questionTitle.placeholder" />" type="text" required maxlength="200" style="min-height: 70px;max-height: 150px;resize: vertical"
                   data-toggle="popover" data-trigger="focus" data-placement="right"
                   data-content="<fmt:message key="label.questionTitle.notice" />"
-        >${question.title}${validationResult.getValue(RequestParameter.TITLE)}</textarea>
+        >${!empty validationResult ? validationResult.getValue(RequestParameter.TITLE) : question.title}</textarea>
         <c:if test="${!empty validationResult.getMessage(RequestParameter.TITLE)}">
             <div class="invalid-feedback-backend">
                 <fmt:message key="${validationResult.getMessage(RequestParameter.TITLE)}" />
@@ -42,7 +43,7 @@
     <div class="form-group">
         <textarea id="text" name="text" class="summernote form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.TEXT)}" />"
                    required maxlength="${AppProperty.APP_TEXTAREA_MAXLENGTH}">
-            ${question.text}${validationResult.getValue(RequestParameter.TEXT)}
+            ${!empty validationResult ? validationResult.getValue(RequestParameter.TEXT) : question.text}
         </textarea>
         <c:if test="${!empty validationResult.getMessage(RequestParameter.TEXT)}">
             <div class="invalid-feedback-backend">

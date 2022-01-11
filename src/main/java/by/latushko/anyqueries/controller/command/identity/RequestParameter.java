@@ -11,6 +11,7 @@ public final class RequestParameter {
     public static final String TELEGRAM = "telegram";
     public static final String LOGIN = "login";
     public static final String TITLE = "title";
+    public static final String QUERY = "query";
     public static final String CATEGORY = "category";
     public static final String TEXT = "text";
     public static final String LANG = "lang";
@@ -31,6 +32,8 @@ public final class RequestParameter {
     public static final String CURRENT = "current";
     public static final String NAME = "name";
     public static final String COLOR = "color";
+    public static final String USERS = "users";
+    public static final String CATEGORIES = "categories";
 
     private RequestParameter() {
     }
