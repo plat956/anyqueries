@@ -20,7 +20,7 @@ Jakarta EE, MySQL, HTML/CSS/Javascript
   <li>Download sources from this repository;</li>
   <li>Restore database backup from the <b>dump.sql</b> file located in root;</li>
   <li>Unpack <b>uploads.zip</b> insides located in root to uploads folder on your server and change <b>app.upload.dir</b> value in <b>application.properties</b> file;</li>
-  <li>Change database properties in <b>database.properties</b>;</li>
+  <li>Set your values in <b>database.properties</b>;</li>
   <li>If you wanna test the application together with a telegram bot, please create this one with help of <a href="https://t.me/botfather">@BotFather</a>, then make changes in <b>telegram.properties</b>. Unfortunately, I can't provide access to my created bot and share its credentials because it can be executing on my server at the same time with your project running. If you don't want to create an use bot, please switch <b>telegram.bot.alive</b> value in <b>telegram.properties</b> to <b>false</b>;</li>
   <li>Build and deploy the application.</li>
 </ul>
