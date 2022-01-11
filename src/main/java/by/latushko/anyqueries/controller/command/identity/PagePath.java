@@ -12,6 +12,7 @@ public final class PagePath {
     public static final String CHANGE_PASSWORD_PAGE = "jsp/changePassword.jsp";
     public static final String QUESTIONS_PAGE = "jsp/questions.jsp";
     public static final String CATEGORIES_PAGE = "jsp/categories.jsp";
+    public static final String USERS_PAGE = "jsp/users.jsp";
     public static final String BAD_BROWSER_PAGE = "jsp/badBrowser.jsp";
     public static final String ERROR_404_PAGE = "jsp/error/error404.jsp";
 

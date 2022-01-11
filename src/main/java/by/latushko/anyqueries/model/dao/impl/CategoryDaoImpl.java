@@ -171,7 +171,7 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
     }
 
     @Override
-    public List<Category> findLimitedByOrderByNameAsc(int offset, int limit) throws DaoException {
+    public List<Category> findLimitedOrderByNameAsc(int offset, int limit) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_ALL_LIMITED_ORDER_BY_NAME_ASC_QUERY)){
             statement.setInt(1, offset);
             statement.setInt(2, limit);

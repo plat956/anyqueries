@@ -31,7 +31,9 @@ public enum CommandType {
     CREATE_CATEGORY_PAGE,
     CREATE_CATEGORY,
     EDIT_CATEGORY,
-    EDIT_CATEGORY_PAGE, DELETE_CATEGORY;
+    EDIT_CATEGORY_PAGE,
+    DELETE_CATEGORY,
+    USERS_PAGE;
 
     public static Optional<CommandType> getByName(String commandName) {
         if (commandName == null) {

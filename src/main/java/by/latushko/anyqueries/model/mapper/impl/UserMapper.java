@@ -28,6 +28,9 @@ public class UserMapper implements RowMapper<User> {
             user.setCredentialKey(resultSet.getString(fieldPrefix + USER_CREDENTIAL_KEY));
             user.setStatus(User.Status.valueOf(resultSet.getString(fieldPrefix + USER_STATUS)));
             user.setRole(User.Role.valueOf(resultSet.getString(fieldPrefix + USER_ROLE)));
+            if(hasColumn(resultSet, fieldPrefix + TOTAL)) {
+                user.setTotal(resultSet.getLong(fieldPrefix + TOTAL));
+            }
             return Optional.of(user);
         } catch (SQLException e) {
             return Optional.empty();

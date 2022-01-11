@@ -2,6 +2,8 @@ package by.latushko.anyqueries.service;
 
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.model.entity.UserHash;
+import by.latushko.anyqueries.util.pagination.Paginated;
+import by.latushko.anyqueries.util.pagination.RequestPage;
 
 import java.util.Optional;
 
@@ -26,4 +28,5 @@ public interface UserService {
     boolean changePassword(User user, String password);
     boolean checkPassword(User user, String password);
     boolean updateAvatar(User user, String avatar);
+    Paginated<User> findAllPaginatedOrderByRoleAsc(RequestPage page);
 }

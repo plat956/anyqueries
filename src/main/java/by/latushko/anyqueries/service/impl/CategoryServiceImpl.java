@@ -92,7 +92,7 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categories = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
             try {
-                categories = ((CategoryDao)categoryDao).findLimitedByOrderByNameAsc(page.getOffset(), page.getLimit());
+                categories = ((CategoryDao)categoryDao).findLimitedOrderByNameAsc(page.getOffset(), page.getLimit());
                 transaction.commit();
             } catch (DaoException e) {
                 transaction.rollback();

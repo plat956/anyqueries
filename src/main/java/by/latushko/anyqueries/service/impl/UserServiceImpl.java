@@ -12,10 +12,14 @@ import by.latushko.anyqueries.service.AttachmentService;
 import by.latushko.anyqueries.service.UserService;
 import by.latushko.anyqueries.util.encryption.PasswordEncoder;
 import by.latushko.anyqueries.util.encryption.impl.BCryptPasswordEncoder;
+import by.latushko.anyqueries.util.pagination.Paginated;
+import by.latushko.anyqueries.util.pagination.RequestPage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static by.latushko.anyqueries.util.AppProperty.APP_ACTIVATION_LINK_ALIVE_HOURS;
@@ -325,6 +329,23 @@ public class UserServiceImpl implements UserService {
             logger.error("Something went wrong during retrieving user by id", e);
         }
         return userOptional;
+    }
+
+    @Override
+    public Paginated<User> findAllPaginatedOrderByRoleAsc(RequestPage page) {
+        BaseDao userDao = new UserDaoImpl();
+        List<User> users = new ArrayList<>();
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                users = ((UserDao)userDao).findLimitedOrderByRoleAsc(page.getOffset(), page.getLimit());
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving users with requested limit", e);
+        }
+        return new Paginated<>(users);
     }
 
     private String getCredentialTokenSource(User user) {

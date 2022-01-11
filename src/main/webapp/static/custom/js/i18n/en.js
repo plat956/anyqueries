@@ -15,6 +15,7 @@ const message = {
     wrong_file_size: "Exceeded the allowed file size in ",
     delete_question: "Are you sure you want to delete this question?",
     delete_category: "Are you sure you want to delete this category?",
+    delete_user: "Are you sure you want to delete this user?",
     warn: "Attention!",
     cancel: "Cancel",
     confirm: "Yes"

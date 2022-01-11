@@ -76,6 +76,11 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     private static final String SQL_EXISTS_BY_LOGIN_EXCEPT_USER_ID_QUERY = """
             SELECT 1 FROM users
             WHERE login = ? and id <> ?""";
+    private static final String SQL_FIND_ALL_LIMITED_ORDER_BY_ROLE_ASC_QUERY = """
+            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role, count(id) OVER() AS total 
+            FROM users
+            ORDER BY role ASC 
+            LIMIT ?,?""";
 
     private final RowMapper<User> mapper = new UserMapper();
 
@@ -352,6 +357,20 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             }
         } catch (SQLException e) {
             throw new DaoException("Failed check if user exists by calling existsByLoginExceptUserId(String login, Long userId) method", e);
+        }
+    }
+
+    @Override
+    public List<User> findLimitedOrderByRoleAsc(int offset, int limit) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_ALL_LIMITED_ORDER_BY_ROLE_ASC_QUERY)){
+            statement.setInt(1, offset);
+            statement.setInt(2, limit);
+
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return mapper.mapRows(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find users by calling findLimitedOrderByLoginAsc(int offset, int limit) method", e);
         }
     }
 }

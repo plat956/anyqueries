@@ -14,6 +14,8 @@ public final class RequestAttribute {
     public static final String CATEGORY_NAME = "category_name";
     public static final String TOTAL_PAGES = "totalPages";
     public static final String QUESTION = "question";
+    public static final String USERS = "users";
+    public static final String USER = "user";
     private RequestAttribute() {
     }
 }

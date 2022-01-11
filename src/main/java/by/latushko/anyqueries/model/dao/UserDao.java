@@ -5,6 +5,7 @@ import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.model.entity.UserHash;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserDao {
@@ -14,6 +15,7 @@ public interface UserDao {
     Optional<User> findInactiveByTelegram(String account) throws DaoException;
     Optional<User> findByLogin(String login) throws DaoException;
     Optional<User> findByCredentialKey(String key) throws DaoException;
+    List<User> findLimitedOrderByRoleAsc(int offset, int limit) throws DaoException;
     boolean existsByLogin(String login) throws DaoException;
     boolean existsByEmail(String email) throws DaoException;
     boolean existsByTelegram(String telegram) throws DaoException;

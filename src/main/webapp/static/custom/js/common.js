@@ -269,12 +269,12 @@ var questions = {
                     $('#lname').text(res.last_name);
                     $('#mname').text(res.middle_name);
                     $('#email').text(res.email);
-                    if (res.telegram != undefined) {
+                    if (res.telegram != undefined && res.telegram.length > 0) {
                         $('#telegram').html('<a href="' + res.telegram_lnk + '" target="_blank">@' + res.telegram + '</a>');
                     } else {
                         $('#telegram').empty();
                     }
-                    if (res.email != undefined) {
+                    if (res.email != undefined && res.email.length > 0) {
                         $('#email').html('<a href="mailto:' + res.email + '" target="_blank">' + res.email + '</a>');
                     } else {
                         $('#email').empty();
@@ -332,6 +332,34 @@ var categories = {
             callback: function (result) {
                 if(result) {
                     $(document.body).append('<form action="' + context + '/controller?command=delete_category" method="post" style="display: none" id="deleteForm">' +
+                        '<input type="hidden" name="id" value="' + id + '">' +
+                        '</form>');
+                    $('#deleteForm').submit();
+                }
+            }
+        });
+    }
+}
+
+var users = {
+    delete: function (ev, context, id) {
+        ev.stopPropagation();
+        bootbox.confirm({
+            title: message.warn,
+            message: message.delete_user,
+            buttons: {
+                confirm: {
+                    label: message.confirm,
+                    className: "btn-danger"
+                },
+                cancel: {
+                    label: message.cancel,
+                    className: "btn-secondary"
+                }
+            },
+            callback: function (result) {
+                if(result) {
+                    $(document.body).append('<form action="' + context + '/controller?command=delete_user" method="post" style="display: none" id="deleteForm">' +
                         '<input type="hidden" name="id" value="' + id + '">' +
                         '</form>');
                     $('#deleteForm').submit();

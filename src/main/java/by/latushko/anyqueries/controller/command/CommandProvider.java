@@ -30,6 +30,7 @@ public class CommandProvider {
         getCommands.put(CommandType.CATEGORIES_PAGE, new CategoriesPageCommand());
         getCommands.put(CommandType.CREATE_CATEGORY_PAGE, new CreateCategoryPage());
         getCommands.put(CommandType.EDIT_CATEGORY_PAGE, new EditCategoryPageCommand());
+        getCommands.put(CommandType.USERS_PAGE, new UsersPageCommand());
         postCommands.put(CommandType.LOGIN, new LoginCommand());
         postCommands.put(CommandType.LOGOUT, new LogoutCommand());
         postCommands.put(CommandType.REGISTRATION, new RegistrationCommand());
