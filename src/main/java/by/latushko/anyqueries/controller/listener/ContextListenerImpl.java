@@ -11,6 +11,8 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import static by.latushko.anyqueries.util.telegram.TelegramBot.BOT_ALIVE;
+
 @WebListener
 public class ContextListenerImpl implements ServletContextListener {
     private static final Logger logger = LogManager.getLogger();
@@ -18,13 +20,14 @@ public class ContextListenerImpl implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent event) {
         ConnectionPool.getInstance();
-
-        try {
-            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-            botsApi.registerBot(new TelegramBot());
-        } catch (TelegramApiException e) {
-            logger.error("Unable to start telegram bot", e);
-            throw new ExceptionInInitializerError("Unable to start telegram bot");
+        if(BOT_ALIVE) {
+            try {
+                TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+                botsApi.registerBot(new TelegramBot());
+            } catch (TelegramApiException e) {
+                logger.error("Unable to start telegram bot", e);
+                throw new ExceptionInInitializerError("Unable to start telegram bot");
+            }
         }
     }
 
