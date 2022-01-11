@@ -25,5 +25,5 @@ Jakarta EE, MySQL, HTML/CSS/Javascript
   <li>Build and deploy the application.</li>
 </ul>
 
-## Demo on mycloud.by
-<a href="">todo</a>
+## Demo
+<a href="">link will be here</a>
