@@ -98,4 +98,41 @@ public class CategoryServiceImpl implements CategoryService {
         }
         return new Paginated<>(categories);
     }
+
+    @Override
+    public boolean checkIfExistsByName(String name) {
+        BaseDao categoryDao = new CategoryDaoImpl();
+        boolean result = false;
+        try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
+            try {
+                result = ((CategoryDao)categoryDao).existsByName(name);
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during checking category existing by name", e);
+        }
+        return result;
+    }
+
+    @Override
+    public Optional<Category> create(String name, String color) {
+        BaseDao categoryDao = new CategoryDaoImpl();
+        try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
+            try {
+                Category category = new Category();
+                category.setName(name);
+                category.setColor(color);
+                categoryDao.create(category);
+                transaction.commit();
+                return Optional.of(category);
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to create category", e);
+        }
+        return Optional.empty();
+    }
 }

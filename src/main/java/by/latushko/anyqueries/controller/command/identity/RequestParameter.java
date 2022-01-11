@@ -29,6 +29,8 @@ public final class RequestParameter {
     public static final String SORT = "sort";
     public static final String MODE = "mode";
     public static final String CURRENT = "current";
+    public static final String NAME = "name";
+    public static final String COLOR = "color";
 
     private RequestParameter() {
     }

@@ -21,7 +21,7 @@
                         <fmt:message key="label.myQuestions" /> <span class="badge badge-${myQuestionsPage ? 'light' : 'primary'}">${layoutTotalUserQuestions}</span>
                     </a>
                 </c:if>
-                <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=leaderboard_page" aria-selected="false"><fmt:message key="label.leadersList" /></a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/controller?command=users_page" aria-selected="false"><fmt:message key="label.users" /></a>
             </div>
             <hr>
             <h6 class="sidebar-label"><fmt:message key="label.categories" /></h6>
@@ -44,13 +44,6 @@
             <a class="btn btn-light btn-sm other-categories" href="${pageContext.request.contextPath}/controller?command=categories_page">
                 <fmt:message key="label.allCategories" />
             </a>
-            <c:if test="${principal.role == 'ADMIN'}">
-                <hr>
-                <h6 class="sidebar-label"><fmt:message key="label.controlPanel" /></h6>
-                <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
-                    <a class="nav-link " href="${pageContext.request.contextPath}/controller?command=users_page" aria-selected="false"><fmt:message key="label.users" /></a>
-                </div>
-            </c:if>
             <hr>
             <form method="post" action="${pageContext.request.contextPath}/controller?command=change_locale" id="locale_form" autocomplete="off">
                 <select class="selectpicker" data-width="100%" name="lang" onchange="$('#locale_form').submit();">

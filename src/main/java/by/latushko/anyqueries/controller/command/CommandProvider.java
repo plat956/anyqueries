@@ -28,6 +28,7 @@ public class CommandProvider {
         getCommands.put(CommandType.PROFILE_PAGE, new ProfilePageCommand());
         getCommands.put(CommandType.EDIT_QUESTION_PAGE, new EditQuestionPageCommand());
         getCommands.put(CommandType.CATEGORIES_PAGE, new CategoriesPageCommand());
+        getCommands.put(CommandType.CREATE_CATEGORY_PAGE, new CreateCategoryPage());
         postCommands.put(CommandType.LOGIN, new LoginCommand());
         postCommands.put(CommandType.LOGOUT, new LogoutCommand());
         postCommands.put(CommandType.REGISTRATION, new RegistrationCommand());
@@ -39,6 +40,7 @@ public class CommandProvider {
         postCommands.put(CommandType.CREATE_QUESTION, new CreateQuestionCommand());
         postCommands.put(CommandType.DELETE_QUESTION, new DeleteQuestionCommand());
         postCommands.put(CommandType.EDIT_QUESTION, new EditQuestionCommand());
+        postCommands.put(CommandType.CREATE_CATEGORY, new CreateCategoryCommand());
     }
 
     public static CommandProvider getInstance() {

@@ -41,6 +41,12 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
             FROM categories
             ORDER BY name ASC 
             LIMIT ?,?""";
+    private static final String SQL_EXISTS_BY_NAME_QUERY = """
+            SELECT 1 FROM categories
+            WHERE name = ?""";
+    private static final String SQL_CREATE_QUERY = """
+            INSERT INTO categories(name, color) 
+            VALUES (?, ?)""";
 
     private RowMapper mapper = new CategoryMapper();
 
@@ -67,6 +73,21 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
 
     @Override
     public boolean create(Category category) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
+            statement.setString(1, category.getName());
+            statement.setString(2, category.getColor());
+
+            if(statement.executeUpdate() >= 0) {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if(resultSet.next()) {
+                    Long generatedId = resultSet.getLong(1);
+                    category.setId(generatedId);
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to create category by calling create(Category category) method", e);
+        }
         return false;
     }
 
@@ -134,6 +155,18 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find categories by calling findLimitedByOrderByNameAsc(int offset, int limit) method", e);
+        }
+    }
+
+    @Override
+    public boolean existsByName(String name) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_NAME_QUERY)){
+            statement.setString(1, name);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed check if category exists by calling existsByName(String name) method", e);
         }
     }
 }

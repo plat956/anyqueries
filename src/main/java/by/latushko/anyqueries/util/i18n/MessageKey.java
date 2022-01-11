@@ -58,6 +58,8 @@ public final class MessageKey {
     public static final String MESSAGE_ERROR_UNEXPECTED = "message.error.unexpected";
     public static final String MESSAGE_ACCESS_FORBIDDEN = "message.access.forbidden";
     public static final String MESSAGE_QUESTION_UPDATED = "message.question.updated";
+    public static final String MESSAGE_CATEGORY_CREATED = "message.category.created";
+    public static final String MESSAGE_CATEGORY_WRONG = "message.category.wrong";
 
     static final String MESSAGES_FILE_NAME = "message";
     static final String LOCALE_EN = "en";
