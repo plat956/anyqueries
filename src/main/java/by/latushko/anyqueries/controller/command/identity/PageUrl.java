@@ -14,6 +14,7 @@ public final class PageUrl {
     public static final String CATEGORIES_URL = "/controller?command=categories_page";
     public static final String EDIT_QUESTION_URL = "/controller?command=edit_question_page&id=";
     public static final String CREATE_CATEGORY_URL = "/controller?command=create_category_page";
+    public static final String EDIT_CATEGORY_URL = "/controller?command=edit_category_page&id=";
 
     private PageUrl() {
     }

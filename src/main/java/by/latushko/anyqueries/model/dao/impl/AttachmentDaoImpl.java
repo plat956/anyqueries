@@ -23,12 +23,24 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
             INNER JOIN question_attachment qa 
             ON a.id = qa.attachment_id 
             AND qa.question_id = ?""";
+    private static final String SQL_DELETE_BY_CATEGORY_ID_QUERY = """
+            DELETE a 
+            FROM attachments a
+            INNER JOIN question_attachment qa ON a.id = attachment_id
+            INNER JOIN questions q ON q.id = qa.question_id
+            WHERE q.category_id = ?""";
     private static final String SQL_FIND_BY_QUESTION_ID_QUERY = """
             SELECT a.id, a.file  
             FROM attachments a 
             INNER JOIN question_attachment qa 
             ON a.id = qa.attachment_id 
             AND qa.question_id = ?""";
+    private static final String SQL_FIND_BY_CATEGORY_ID_QUERY = """
+            SELECT a.id, a.file  
+            FROM attachments a
+            INNER JOIN question_attachment qa ON a.id = attachment_id
+            INNER JOIN questions q ON q.id = qa.question_id
+            WHERE q.category_id = ?""";
     private RowMapper mapper = new AttachmentMapper();
 
     @Override
@@ -93,6 +105,28 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find attachments by calling findByQuestionId(Long id) method", e);
+        }
+    }
+
+    @Override
+    public boolean deleteByCategoryId(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_CATEGORY_ID_QUERY)){
+            statement.setLong(1, id);
+            return statement.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to delete attachment by calling deleteByCategoryId(Long id) method", e);
+        }
+    }
+
+    @Override
+    public List<Attachment> findByCategoryId(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_CATEGORY_ID_QUERY)){
+            statement.setLong(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return mapper.mapRows(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find attachments by calling findByCategoryId(Long id) method", e);
         }
     }
 }

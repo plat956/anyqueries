@@ -12,4 +12,5 @@ public interface CategoryDao {
     Optional<String> findNameById(Long id) throws DaoException;
     List<Category> findLimitedByOrderByNameAsc(int offset, int limit) throws DaoException;
     boolean existsByName(String name) throws DaoException;
+    boolean existsByNameAndIdNot(String name, Long id) throws DaoException;
 }

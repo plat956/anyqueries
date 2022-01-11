@@ -2,11 +2,15 @@ package by.latushko.anyqueries.service.impl;
 
 import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.exception.EntityTransactionException;
+import by.latushko.anyqueries.model.dao.AttachmentDao;
 import by.latushko.anyqueries.model.dao.BaseDao;
 import by.latushko.anyqueries.model.dao.CategoryDao;
 import by.latushko.anyqueries.model.dao.EntityTransaction;
+import by.latushko.anyqueries.model.dao.impl.AttachmentDaoImpl;
 import by.latushko.anyqueries.model.dao.impl.CategoryDaoImpl;
+import by.latushko.anyqueries.model.entity.Attachment;
 import by.latushko.anyqueries.model.entity.Category;
+import by.latushko.anyqueries.service.AttachmentService;
 import by.latushko.anyqueries.service.CategoryService;
 import by.latushko.anyqueries.util.pagination.Paginated;
 import by.latushko.anyqueries.util.pagination.RequestPage;
@@ -117,6 +121,23 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public boolean checkIfExistsByNameAndIdNot(String name, Long id) {
+        BaseDao categoryDao = new CategoryDaoImpl();
+        boolean result = false;
+        try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
+            try {
+                result = ((CategoryDao)categoryDao).existsByNameAndIdNot(name, id);
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during checking category existing by name and id not", e);
+        }
+        return result;
+    }
+
+    @Override
     public Optional<Category> create(String name, String color) {
         BaseDao categoryDao = new CategoryDaoImpl();
         try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
@@ -134,5 +155,74 @@ public class CategoryServiceImpl implements CategoryService {
             logger.error("Failed to create category", e);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Optional<Category> findById(Long id) {
+        BaseDao categoryDao = new CategoryDaoImpl();
+        Optional<Category> categoryOptional = Optional.empty();
+        try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
+            try {
+                categoryOptional = categoryDao.findById(id);
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving category by id", e);
+        }
+        return categoryOptional;
+    }
+
+    @Override
+    public boolean update(Long id, String name, String color) {
+        BaseDao categoryDao = new CategoryDaoImpl();
+
+        try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
+            try {
+                Optional<Category> categoryOptional = categoryDao.findById(id);
+                if(categoryOptional.isEmpty())  {
+                    throw new EntityTransactionException("Failed to update category. Category with id " + id + " does not exist"); //todo: or return false?
+                }
+                Category category = categoryOptional.get();
+                category.setName(name);
+                category.setColor(color);
+                categoryDao.update(category);
+                transaction.commit();
+                return true;
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to update category", e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean delete(Long id) {
+        boolean result = false;
+        BaseDao categoryDao = new CategoryDaoImpl();
+        BaseDao attachmentDao = new AttachmentDaoImpl();
+        try (EntityTransaction transaction = new EntityTransaction(categoryDao, attachmentDao)) {
+            try {
+                List<Attachment> attachments = ((AttachmentDaoImpl) attachmentDao).findByCategoryId(id);
+                result = ((AttachmentDao)attachmentDao).deleteByCategoryId(id);
+                if(result) {
+                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                    result = attachmentService.deleteAttachmentsFiles(attachments);
+                    if(result) {
+                        result = categoryDao.delete(id);
+                        transaction.commit();
+                    }
+                }
+                //todo?? call rollback if commit is not reached?
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to delete category", e);
+        }
+        return result;
     }
 }

@@ -60,6 +60,7 @@ public final class MessageKey {
     public static final String MESSAGE_QUESTION_UPDATED = "message.question.updated";
     public static final String MESSAGE_CATEGORY_CREATED = "message.category.created";
     public static final String MESSAGE_CATEGORY_WRONG = "message.category.wrong";
+    public static final String MESSAGE_CATEGORY_UPDATED = "message.category.updated";
 
     static final String MESSAGES_FILE_NAME = "message";
     static final String LOCALE_EN = "en";

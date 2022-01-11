@@ -13,5 +13,9 @@ public interface CategoryService {
     Optional<String> findNameById(Long id);
     Paginated<Category> findAllPaginatedOrderByNameAsc(RequestPage page);
     boolean checkIfExistsByName(String name);
+    boolean checkIfExistsByNameAndIdNot(String name, Long id);
     Optional<Category> create(String name, String color);
+    Optional<Category> findById(Long id);
+    boolean update(Long id, String name, String color);
+    boolean delete(Long id);
 }

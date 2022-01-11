@@ -44,9 +44,19 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
     private static final String SQL_EXISTS_BY_NAME_QUERY = """
             SELECT 1 FROM categories
             WHERE name = ?""";
+    private static final String SQL_EXISTS_BY_NAME_AND_ID_NOT_QUERY = """
+            SELECT 1 FROM categories
+            WHERE name = ? and id <> ?""";
     private static final String SQL_CREATE_QUERY = """
             INSERT INTO categories(name, color) 
             VALUES (?, ?)""";
+    private static final String SQL_UPDATE_QUERY = """
+            UPDATE categories 
+            SET name = ?, color = ? 
+            WHERE id = ?""";
+    private static final String SQL_DELETE_QUERY = """
+            DELETE FROM categories 
+            WHERE id = ?""";
 
     private RowMapper mapper = new CategoryMapper();
 
@@ -93,6 +103,17 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
 
     @Override
     public Optional<Category> update(Category category) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_QUERY)){
+            statement.setString(1, category.getName());
+            statement.setString(2, category.getColor());
+            statement.setLong(3, category.getId());
+
+            if(statement.executeUpdate() >= 0) {
+                return Optional.of(category);
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to update category by calling update(Category category) method", e);
+        }
         return Optional.empty();
     }
 
@@ -103,7 +124,12 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
 
     @Override
     public boolean delete(Long id) throws DaoException {
-        return false;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_QUERY)){
+            statement.setLong(1, id);
+            return statement.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to delete category by calling delete(Long id) method", e);
+        }
     }
 
     @Override
@@ -167,6 +193,19 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
             }
         } catch (SQLException e) {
             throw new DaoException("Failed check if category exists by calling existsByName(String name) method", e);
+        }
+    }
+
+    @Override
+    public boolean existsByNameAndIdNot(String name, Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_NAME_AND_ID_NOT_QUERY)){
+            statement.setString(1, name);
+            statement.setLong(2, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed check if category exists by calling existsByNameAndIdNot(String name, Long id) method", e);
         }
     }
 }
