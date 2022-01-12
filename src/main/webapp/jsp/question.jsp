@@ -4,6 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="at" uri="apptags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="page_title" value="${question.title}" scope="request" />
 <jsp:include page="layout/header.jsp" />
 <style>
@@ -23,7 +24,7 @@
                     <label class="form-check-label" for="status">
                         <fmt:message key="label.status.${question.closed ? 'closed' : 'open'}" />
                     </label>
-                <label class="switch">
+                <label class="switch" style="margin-top: -5px;">
                     <input type="checkbox" class="form-check-input" data-toggle="switchbutton" name="status" id="status" checked>
                     <span class="slider slider-light round"></span>
                 </label>
@@ -38,6 +39,7 @@
         <div class="dx-separator"></div>
         <div class="dx-comment dx-ticket-comment main-post">
             <div>
+                <div>
                 <img class="dx-comment-img" src="
                         <c:choose>
                         <c:when test="${!empty question.author.avatar}">
@@ -48,6 +50,11 @@
                         </c:otherwise>
                     </c:choose>
                     " alt="">
+                    <span class="badge badge-${question.author.role.color} user-role-span" style="display: table;margin: 0 auto;margin-top:5px">
+                        <fmt:message key="label.role.${fn:toLowerCase(principal.role)}" var="roleName"/>
+                        ${fn:substring(roleName, 0, 1)}
+                    </span>
+                </div>
                 <div class="dx-comment-cont">
                     <a href="#" onclick="questions.showProfile('${pageContext.request.contextPath}', ${question.author.id}, event); return false;" class="dx-comment-name">${question.author.fio}</a>
                     <div class="dx-comment-date"><at:time-duration date="${question.creationDate}"/></div>
