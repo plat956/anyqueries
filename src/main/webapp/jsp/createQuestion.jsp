@@ -41,7 +41,7 @@
     </div>
     <div class="form-group">
         <textarea id="text" name="text" class="summernote form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.TEXT)}" />"
-                  required maxlength="${AppProperty.APP_TEXTAREA_MAXLENGTH}">
+                  required maxlength="${AppProperty.APP_QUESTION_MAXLENGTH}">
             ${validationResult.getValue(RequestParameter.TEXT)}
         </textarea>
         <c:if test="${!empty validationResult.getMessage(RequestParameter.TEXT)}">
@@ -52,7 +52,7 @@
         <div class="invalid-feedback">
             <fmt:message key="label.wrong-input" />
         </div>
-        <fmt:message key="label.textarea.remaining" /> <span id="text-counter">${AppProperty.APP_TEXTAREA_MAXLENGTH}</span>
+        <fmt:message key="label.textarea.remaining" /> <span id="text-counter">${AppProperty.APP_QUESTION_MAXLENGTH}</span>
     </div>
 
     <div class="form-group">
@@ -72,7 +72,7 @@
 </form>
 <script>
     $(function () {
-        dataForms.initSummernote('text', '<fmt:message key="label.question.placeholder" />', '${!empty current_lang ? current_lang : 'ru'}');
+        dataForms.initSummernote('text', '<fmt:message key="label.question.placeholder" />', '${!empty current_lang ? current_lang : 'ru'}', 250);
         attacher.init('file-selector', 'attachments-list', ${AppProperty.APP_ATTACHMENT_COUNT}, ${AppProperty.APP_ATTACHMENT_SIZE});
     })
 </script>

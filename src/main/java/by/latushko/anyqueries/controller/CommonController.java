@@ -12,17 +12,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.COMMAND;
-import static by.latushko.anyqueries.util.http.MimeType.APPLICATION_JSON;
-import static by.latushko.anyqueries.util.http.MimeType.IMAGE_JPEG;
 
 @WebServlet(name = "commonController", value = "/controller")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024,
         maxFileSize = 1024 * 1024 * 15,
         maxRequestSize = 1024 * 1024 * 15 * 10)
 public class CommonController extends HttpServlet {
+    public static final String CONTENT_DISPOSITION_HEADER = "Content-disposition";
+    private static final String CONTENT_DISPOSITION_DEFAULT_VALUE = "inline";
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doRequest(request, response);
@@ -49,28 +52,30 @@ public class CommonController extends HttpServlet {
         switch (result.routingType()) {
             case FORWARD -> request.getRequestDispatcher(result.page()).forward(request, response);
             case REDIRECT -> response.sendRedirect(result.page());
-            case JSON -> renderJsonData(response, result);
-            case IMAGE -> renderImage(response, result);
+            case DATA -> renderData(response, result);
+            case FILE -> sendFile(response, result);
             default -> response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
-    private void renderJsonData(HttpServletResponse response, CommandResult result) throws IOException {
-        response.setContentType(APPLICATION_JSON);
+    private void renderData(HttpServletResponse response, CommandResult result) throws IOException {
         PrintWriter writer = response.getWriter();
         writer.print(result.page());
     }
 
-    private void renderImage(HttpServletResponse response, CommandResult result) throws IOException {
-        response.setContentType(IMAGE_JPEG);
+    private void sendFile(HttpServletResponse response, CommandResult result) throws IOException {
+        if(!Files.exists(Paths.get(result.page()))) {
+            response.setContentType(null);
+            response.setHeader(CONTENT_DISPOSITION_HEADER, CONTENT_DISPOSITION_DEFAULT_VALUE);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
         try (BufferedInputStream bin = new BufferedInputStream(new FileInputStream(result.page()));
              BufferedOutputStream bout = new BufferedOutputStream(response.getOutputStream())) {
             int ch;
             while ((ch = bin.read()) != -1) {
                 bout.write(ch);
             }
-        } catch (FileNotFoundException ex) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 }

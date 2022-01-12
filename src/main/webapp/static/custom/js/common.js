@@ -48,16 +48,23 @@ var dataForms = {
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText || "";
     },
-    initSummernote: function (textarea, placeholder, lang) {
+    reply: function(user){
+        $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+        $('#text').summernote('code', '<b><i>' + user + ',</i></b><span>&nbsp;');
+        $('.note-editable').placeCursorAtEnd();
+    },
+    initSummernote: function (textarea, placeholder, lang, height) {
         var el = $('#' + textarea).summernote({
             toolbar: [
                 ['style', ['bold', 'italic', 'underline', 'clear']],
                 ['para', ['ul']],
                 ['insert', ['link']]
             ],
+            shortcuts: false,
             followingToolbar: false,
-            minHeight: 250,
+            minHeight: height,
             placeholder: placeholder,
+            disableDragAndDrop:true,
             lang: lang,
             callbacks: {
                 onInit: function (){
@@ -72,14 +79,14 @@ var dataForms = {
                 },
                 onKeydown: function (e) {
                     var t = e.currentTarget.innerText;
-                    if (t.trim().length >= $('#' + textarea).attr('maxlength')) {
+                    if (t.length >= $('#' + textarea).attr('maxlength')) {
                         if (e.keyCode != 8 && !(e.keyCode >=37 && e.keyCode <=40) && e.keyCode != 46 && !(e.keyCode == 88 && e.ctrlKey) && !(e.keyCode == 67 && e.ctrlKey) && !(e.keyCode == 65 && e.ctrlKey))
                             e.preventDefault();
                     }
                 },
                 onChange: function(contents) {
                     var id = textarea + '-counter';
-                    $('#' + id).text($('#' + textarea).attr('maxlength') - dataForms.stripHtml(contents).trim().length);
+                    $('#' + id).text($('#' + textarea).attr('maxlength') - dataForms.stripHtml(contents).length);
                     var text = document.getElementById(textarea);
                     if($('#' + textarea).attr('required') && el.summernote('isEmpty')) {
                         text.setCustomValidity("error");
@@ -243,6 +250,9 @@ var pageEvents = {
 }
 
 var questions = {
+    downloadAttachment: function (file) {
+        window.open(file, '_blank');
+    },
     showProfile: function (context, id, ev) {
         ev.preventDefault();
         ev.stopPropagation();
@@ -368,3 +378,25 @@ var users = {
         });
     }
 }
+
+$.fn.extend({
+    placeCursorAtEnd: function() {
+        // Places the cursor at the end of a contenteditable container (should also work for textarea / input)
+        if (this.length === 0) {
+            throw new Error("Cannot manipulate an element if there is no element!");
+        }
+        var el = this[0];
+        var range = document.createRange();
+        var sel = window.getSelection();
+        var childLength = el.childNodes.length;
+        if (childLength > 0) {
+            var lastNode = el.childNodes[childLength - 1];
+            var lastNodeChildren = lastNode.childNodes.length;
+            range.setStart(lastNode, lastNodeChildren);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        return this;
+    }
+});

@@ -33,7 +33,9 @@ public enum CommandType {
     EDIT_CATEGORY,
     EDIT_CATEGORY_PAGE,
     DELETE_CATEGORY,
-    USERS_PAGE;
+    USERS_PAGE,
+    QUESTION_PAGE,
+    DOWNLOAD;
 
     public static Optional<CommandType> getByName(String commandName) {
         if (commandName == null) {

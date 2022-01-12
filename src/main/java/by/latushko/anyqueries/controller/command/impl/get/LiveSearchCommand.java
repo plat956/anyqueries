@@ -17,15 +17,17 @@ import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
 
-import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.JSON;
+import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.DATA;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
 import static by.latushko.anyqueries.service.QuestionService.QUESTION_SEARCH_QUERY_MAX_LENGTH;
+import static by.latushko.anyqueries.util.http.MimeType.APPLICATION_JSON;
 
 public class LiveSearchCommand implements Command {
     private static final int LIVE_SEARCH_PREDICTIONS_LIMIT = 7;
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
+        response.setContentType(APPLICATION_JSON);
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(PRINCIPAL);
         String queryString = request.getParameter(QUERY_STRING);
@@ -56,6 +58,6 @@ public class LiveSearchCommand implements Command {
         for(String item: result) {
             array.addValue(new JsonString().setValue(item));
         }
-        return new CommandResult(array.toString(), JSON);
+        return new CommandResult(array.toString(), DATA);
     }
 }

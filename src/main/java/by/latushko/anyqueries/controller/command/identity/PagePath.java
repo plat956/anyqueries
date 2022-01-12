@@ -15,6 +15,7 @@ public final class PagePath {
     public static final String USERS_PAGE = "jsp/users.jsp";
     public static final String BAD_BROWSER_PAGE = "jsp/badBrowser.jsp";
     public static final String ERROR_404_PAGE = "jsp/error/error404.jsp";
+    public static final String QUESTION_PAGE = "jsp/question.jsp";
 
     private PagePath() {
     }

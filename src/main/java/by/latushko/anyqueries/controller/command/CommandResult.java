@@ -4,7 +4,7 @@ public record CommandResult(String page, RoutingType routingType) {
     public enum RoutingType {
         FORWARD,
         REDIRECT,
-        JSON,
-        IMAGE
+        DATA,
+        FILE
     }
 }

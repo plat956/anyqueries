@@ -17,25 +17,28 @@ import org.json.JSONObject;
 
 import java.util.Optional;
 
-import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.JSON;
+import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.DATA;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
 import static by.latushko.anyqueries.controller.command.identity.JsonName.*;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.ID;
 import static by.latushko.anyqueries.util.AppProperty.APP_TELEGRAM_LINK_HOST;
+import static by.latushko.anyqueries.util.http.MimeType.APPLICATION_JSON;
 import static by.latushko.anyqueries.util.i18n.MessageKey.LABEL_ROLE_PREFIX;
 
 public class ProfilePageCommand implements Command {
 
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
+        response.setContentType(APPLICATION_JSON);
+
         String id = request.getParameter(ID);
         if(id == null || id.isEmpty()) {
-            return new CommandResult(new JSONObject().toString(), JSON);
+            return new CommandResult(new JSONObject().toString(), DATA);
         }
         UserService userService = UserServiceImpl.getInstance();
         Optional<User> userOptional = userService.findById(Long.valueOf(id));
         if(userOptional.isEmpty()) {
-            return new CommandResult(new JSONObject().toString(), JSON);
+            return new CommandResult(new JSONObject().toString(), DATA);
         }
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
@@ -57,6 +60,6 @@ public class ProfilePageCommand implements Command {
         Long totalAnswers = answerService.countTotalAnswersByUserId(user.getId());
         result.put(QUESTIONS_COUNT, totalQuestions);
         result.put(ANSWERS_COUNT, totalAnswers);
-        return new CommandResult(result.toString(), JSON);
+        return new CommandResult(result.toString(), DATA);
     }
 }
