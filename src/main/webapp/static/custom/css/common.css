@@ -925,6 +925,9 @@ img {
 }
 .reply-link {
     cursor: pointer;
+    bottom: 5px;
+    right: 20px;
+    position: absolute;
 }
 .reply-link:hover {
     text-decoration: underline !important;
@@ -935,4 +938,13 @@ img {
 }
 .like-none {
     cursor: pointer !important;
+}
+.solution-link {
+    cursor: pointer;
+    top: 20px;
+    right: 20px;
+    position: absolute;
+}
+.solution-link:hover {
+    text-decoration: underline !important;
 }

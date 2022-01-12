@@ -5,9 +5,9 @@ import by.latushko.anyqueries.controller.command.CommandResult;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class ChangeRatingCommand implements Command {
+public class MarkSolutionCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
-        return new CommandResult(null, null);
+        return null;
     }
 }

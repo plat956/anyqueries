@@ -74,7 +74,7 @@
                     </ul>
                     <c:if test="${!question.closed}">
                         <p></p>
-                        <a class="reply-link" onclick="dataForms.reply('${question.author.fio}');"><fmt:message key="label.reply.button" /></a>
+                        <a class="reply-link" onclick="dataForms.reply('${question.author.fio}');"><i class="fa fa-reply" aria-hidden="true"></i> <fmt:message key="label.reply.button" /></a>
                     </c:if>
                 </div>
             </div>
@@ -101,7 +101,7 @@
                     </div>
                     <div class="dx-comment-cont">
                         <a href="#" onclick="questions.showProfile('${pageContext.request.contextPath}', ${a.author.id}, event); return false;" class="dx-comment-name">${a.author.fio}</a>
-                        <div class="dx-comment-date"><at:time-duration date="${a.creationDate}"/></div>
+                        <div class="dx-comment-date"><at:time-duration date="${a.creationDate}"/><c:if test="${!empty a.editingDate}"> (<fmt:message key="label.edit.short" />. <at:time-duration date="${a.editingDate}"/>)</c:if></div>
                         <div class="dx-comment-text">
                             <p class="mb-0">
                                     ${a.text}
@@ -149,7 +149,8 @@
                         </div>
                     </div>
                     <c:if test="${!question.closed}">
-                    <a class="reply-link" onclick="dataForms.reply('${a.author.fio}');"><fmt:message key="label.reply.button" /></a>
+                    <a class="reply-link" onclick="dataForms.reply('${a.author.fio}');"><i class="fa fa-reply" aria-hidden="true"></i> <fmt:message key="label.reply.button" /></a>
+                    <a class="solution-link" onclick="" data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.solution" />"><i class="far fa-check-square"></i></a>
                     </c:if>
                 </div>
             </div>
