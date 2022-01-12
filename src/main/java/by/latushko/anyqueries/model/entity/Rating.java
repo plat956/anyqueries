@@ -1,18 +1,18 @@
 package by.latushko.anyqueries.model.entity;
 
 public class Rating extends BaseEntity<Long> {
-    private Boolean grade;
+    private Integer grade;
     private User user;
     private Answer answer;
 
     public Rating() {
     }
 
-    public Boolean getGrade() {
+    public Integer getGrade() {
         return grade;
     }
 
-    public void setGrade(Boolean grade) {
+    public void setGrade(Integer grade) {
         this.grade = grade;
     }
 

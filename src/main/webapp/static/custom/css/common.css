@@ -923,3 +923,16 @@ input[type="search"].dark::-webkit-search-cancel-button {
 img {
     pointer-events: none !important;
 }
+.reply-link {
+    cursor: pointer;
+}
+.reply-link:hover {
+    text-decoration: underline !important;
+}
+.like-btn {
+    cursor: default !important;
+    color: #000 !important;
+}
+.like-none {
+    cursor: pointer !important;
+}

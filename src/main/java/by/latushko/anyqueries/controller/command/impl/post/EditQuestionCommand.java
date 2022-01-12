@@ -37,13 +37,34 @@ public class EditQuestionCommand implements Command {
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         Long id = Long.valueOf(request.getParameter(ID));
+        String closeParameter = request.getParameter(CLOSE);
         String previousPage = QUESTIONS_URL;
         if(session.getAttribute(PREVIOUS_PAGE) != null) {
             previousPage = session.getAttribute(PREVIOUS_PAGE).toString();
         }
-        CommandResult commandResult = new CommandResult(EDIT_QUESTION_URL + id, REDIRECT);
+        QuestionService questionService = QuestionServiceImpl.getInstance();
+
+        String userLang = CookieHelper.readCookie(request, LANG);
+        MessageManager manager = MessageManager.getManager(userLang);
         ResponseMessage message;
 
+        if(closeParameter != null) {
+            String currentPage = QUESTIONS_URL;
+            if(session.getAttribute(CURRENT_PAGE) != null) {
+                currentPage = session.getAttribute(CURRENT_PAGE).toString();
+            }
+            boolean close = Boolean.valueOf(closeParameter);
+            boolean result = questionService.changeStatus(id, close);
+            if(result) {
+                message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_SUCCESS));
+            } else {
+                message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ERROR_UNEXPECTED));
+            }
+            session.setAttribute(MESSAGE, message);
+            return new CommandResult(currentPage, REDIRECT);
+        }
+
+        CommandResult commandResult = new CommandResult(EDIT_QUESTION_URL + id, REDIRECT);
         FormValidator validator = QuestionFormValidator.getInstance();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
         if(!validationResult.getStatus()) {
@@ -51,8 +72,6 @@ public class EditQuestionCommand implements Command {
             return commandResult;
         }
 
-        String userLang = CookieHelper.readCookie(request, LANG);
-        MessageManager manager = MessageManager.getManager(userLang);
         List<Part> fileParts;
         try {
             fileParts = request.getParts().stream().
@@ -75,7 +94,6 @@ public class EditQuestionCommand implements Command {
         Long category = Long.valueOf(request.getParameter(CATEGORY));
         String title = request.getParameter(TITLE);
         String text = request.getParameter(TEXT);
-        QuestionService questionService = QuestionServiceImpl.getInstance();
         boolean result = questionService.update(id, category, title, text, fileParts);
         if(result) {
             message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_QUESTION_UPDATED));

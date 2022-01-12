@@ -23,6 +23,12 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
             INNER JOIN question_attachment qa 
             ON a.id = qa.attachment_id 
             AND qa.question_id = ?""";
+    private static final String SQL_FIND_BY_ANSWER_ID_QUERY = """
+            SELECT a.id, a.file  
+            FROM attachments a 
+            INNER JOIN answer_attachment aa 
+            ON a.id = aa.attachment_id 
+            AND aa.answer_id = ?""";
     private static final String SQL_DELETE_BY_CATEGORY_ID_QUERY = """
             DELETE a 
             FROM attachments a
@@ -127,6 +133,18 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find attachments by calling findByCategoryId(Long id) method", e);
+        }
+    }
+
+    @Override
+    public List<Attachment> findByAnswerId(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ANSWER_ID_QUERY)){
+            statement.setLong(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return mapper.mapRows(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find attachments by calling findByAnswerId(Long id) method", e);
         }
     }
 }

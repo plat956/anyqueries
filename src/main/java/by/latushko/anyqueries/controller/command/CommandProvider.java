@@ -47,6 +47,7 @@ public class CommandProvider {
         postCommands.put(CommandType.EDIT_QUESTION, new EditQuestionCommand());
         postCommands.put(CommandType.CREATE_CATEGORY, new CreateCategoryCommand());
         postCommands.put(CommandType.EDIT_CATEGORY, new EditCategoryCommand());
+        postCommands.put(CommandType.CHANGE_RATING, new ChangeRatingCommand());
     }
 
     public static CommandProvider getInstance() {

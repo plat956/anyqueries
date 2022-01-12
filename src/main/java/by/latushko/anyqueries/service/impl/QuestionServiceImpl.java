@@ -269,6 +269,29 @@ public class QuestionServiceImpl implements QuestionService {
         return false;
     }
 
+    @Override
+    public boolean changeStatus(Long id, boolean status) {
+        BaseDao questionDao = new QuestionDaoImpl();
+        try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
+            try {
+                Optional<Question> questionOptional = questionDao.findById(id);
+                if(questionOptional.isEmpty()) {
+                    throw new EntityTransactionException("Failed to change question status. Question with id " + id + " does not exist"); //todo: or return false?
+                }
+                Question question = questionOptional.get();
+                question.setClosed(status);
+                questionDao.update(question);
+                transaction.commit();
+                return true;
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to change question status", e);
+        }
+        return false;
+    }
+
     private Optional<Long> findAuthorIdById(Long id) {
         BaseDao questionDao = new QuestionDaoImpl();
         Optional<Long> authorId = Optional.empty();

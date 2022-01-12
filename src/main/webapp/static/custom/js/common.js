@@ -49,7 +49,7 @@ var dataForms = {
         return tmp.textContent || tmp.innerText || "";
     },
     reply: function(user){
-        $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+        window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight);
         $('#text').summernote('code', '<b><i>' + user + ',</i></b><span>&nbsp;');
         $('.note-editable').placeCursorAtEnd();
     },
@@ -250,6 +250,42 @@ var pageEvents = {
 }
 
 var questions = {
+    likeAnswer: function (context, id, grade) {
+        $.ajax({
+            url: context + "/controller?command=change_rating",
+            data: {id: id, ajax: true, grade: grade},
+            type: "POST",
+            dataType: 'json',
+            success: function (res) {
+                $('#rating_' + id).text(res.grade);
+                $('#rating_' + id).removeClass(function (index, className) {
+                    return (className.match(/(^|\s)badge-\S+/g) || []).join(' ');
+                });
+
+                if(res.grade > 0) {
+                    $('#rating_' + id).addClass('badge-success');
+                } else if(res.grade < 0) {
+                    $('#rating_' + id).addClass('badge-danger');
+                } else {
+                    $('#rating_' + id).addClass('badge-secondary');
+                }
+
+                if(grade) {
+                    $('#like_' + id).removeAttr('onclick').removeClass('like-none').addClass('like-done');
+                    $('#like_' + id).html('<i class="fas fa-thumbs-up"></i>');
+
+                    $('#unlike_' + id).attr('onclick', 'questions.likeAnswer(\'' + context + '\', ' + id + ', false);').removeClass('like-done').addClass('like-none');
+                    $('#unlike_' + id).html('<i class="far fa-thumbs-down"></i>');
+                } else {
+                    $('#unlike_' + id).removeAttr('onclick').removeClass('like-none').addClass('like-done');
+                    $('#unlike_' + id).html('<i class="fas fa-thumbs-down"></i>');
+
+                    $('#like_' + id).attr('onclick', 'questions.likeAnswer(\'' + context + '\', ' + id + ', true);').removeClass('like-done').addClass('like-none');
+                    $('#like_' + id).html('<i class="far fa-thumbs-up"></i>');
+                }
+            }
+        });
+    },
     downloadAttachment: function (file) {
         window.open(file, '_blank');
     },
@@ -320,6 +356,14 @@ var questions = {
                 }
             }
         });
+    },
+    changeStatus: function (context, el, id) {
+        var close = $(el).is(':checked');
+        $(document.body).append('<form action="' + context + '/controller?command=edit_question" method="post" style="display: none" id="deleteForm">' +
+            '<input type="hidden" name="id" value="' + id + '">' +
+            '<input type="hidden" name="close" value="' + close + '">' +
+            '</form>');
+        $('#deleteForm').submit();
     }
 }
 

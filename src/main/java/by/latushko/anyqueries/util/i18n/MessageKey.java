@@ -61,6 +61,7 @@ public final class MessageKey {
     public static final String MESSAGE_CATEGORY_CREATED = "message.category.created";
     public static final String MESSAGE_CATEGORY_WRONG = "message.category.wrong";
     public static final String MESSAGE_CATEGORY_UPDATED = "message.category.updated";
+    public static final String MESSAGE_SUCCESS = "message.success";
 
     static final String MESSAGES_FILE_NAME = "message";
     static final String LOCALE_EN = "en";

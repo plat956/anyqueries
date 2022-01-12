@@ -1,7 +1,7 @@
 package by.latushko.anyqueries.model.entity;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 public class Answer extends BaseEntity<Long> {
     private String text;
@@ -10,8 +10,9 @@ public class Answer extends BaseEntity<Long> {
     private Boolean solution;
     private Question question;
     private User author;
-    private Answer parent;
-    private Set<Attachment> attachments;
+    private transient Integer rating;
+    private transient Integer currentUserGrade;
+    private transient List<Attachment> attachments;
 
     public Answer() {
     }
@@ -64,20 +65,28 @@ public class Answer extends BaseEntity<Long> {
         this.author = author;
     }
 
-    public Answer getParent() {
-        return parent;
-    }
-
-    public void setParent(Answer parent) {
-        this.parent = parent;
-    }
-
-    public Set<Attachment> getAttachments() {
+    public List<Attachment> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(Set<Attachment> attachments) {
+    public void setAttachments(List<Attachment> attachments) {
         this.attachments = attachments;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+
+    public Integer getCurrentUserGrade() {
+        return currentUserGrade;
+    }
+
+    public void setCurrentUserGrade(Integer currentUserGrade) {
+        this.currentUserGrade = currentUserGrade;
     }
 
     @Override
@@ -93,9 +102,7 @@ public class Answer extends BaseEntity<Long> {
         if (editingDate != null ? !editingDate.equals(answer.editingDate) : answer.editingDate != null) return false;
         if (solution != null ? !solution.equals(answer.solution) : answer.solution != null) return false;
         if (question != null ? !question.equals(answer.question) : answer.question != null) return false;
-        if (author != null ? !author.equals(answer.author) : answer.author != null) return false;
-        if (parent != null ? !parent.equals(answer.parent) : answer.parent != null) return false;
-        return attachments != null ? attachments.equals(answer.attachments) : answer.attachments == null;
+        return author != null ? author.equals(answer.author) : answer.author == null;
     }
 
     @Override
@@ -106,8 +113,6 @@ public class Answer extends BaseEntity<Long> {
         result = 31 * result + (solution != null ? solution.hashCode() : 0);
         result = 31 * result + (question != null ? question.hashCode() : 0);
         result = 31 * result + (author != null ? author.hashCode() : 0);
-        result = 31 * result + (parent != null ? parent.hashCode() : 0);
-        result = 31 * result + (attachments != null ? attachments.hashCode() : 0);
         return result;
     }
 
@@ -120,8 +125,6 @@ public class Answer extends BaseEntity<Long> {
         sb.append(", solution=").append(solution);
         sb.append(", question=").append(question);
         sb.append(", author=").append(author);
-        sb.append(", parent=").append(parent);
-        sb.append(", attachments=").append(attachments);
         sb.append('}');
         return sb.toString();
     }

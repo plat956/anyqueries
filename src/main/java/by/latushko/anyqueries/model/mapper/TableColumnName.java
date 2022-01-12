@@ -31,6 +31,13 @@ public final class TableColumnName {
     public static final String CATEGORY_QUESTIONS_COUNT = "questions_count";
     public static final String ATTACHMENT_ID = "id";
     public static final String ATTACHMENT_FILE = "file";
+    public static final String ANSWER_ID = "id";
+    public static final String ANSWER_TEXT = "text";
+    public static final String ANSWER_CREATION_DATE = "creation_date";
+    public static final String ANSWER_EDITING_DATE = "editing_date";
+    public static final String ANSWER_SOLUTION = "solution";
+    public static final String ANSWER_RATING = "rating";
+    public static final String ANSWER_CURRENT_USER_GRADE = "grade";
 
     private TableColumnName() {
     }

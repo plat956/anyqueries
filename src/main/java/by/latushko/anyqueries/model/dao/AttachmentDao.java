@@ -10,4 +10,5 @@ public interface AttachmentDao {
     boolean deleteByCategoryId(Long id) throws DaoException;
     List<Attachment> findByQuestionId(Long id) throws DaoException;
     List<Attachment> findByCategoryId(Long id) throws DaoException;
+    List<Attachment> findByAnswerId(Long id) throws DaoException;
 }
