@@ -250,46 +250,6 @@ var pageEvents = {
 }
 
 var questions = {
-    likeAnswer: function (context, id, grade) {
-        $.ajax({
-            url: context + "/controller?command=change_rating",
-            data: {id: id, ajax: true, grade: grade},
-            type: "POST",
-            dataType: 'json',
-            success: function (res) {
-                if(res.grade == undefined) {
-                    toasts.show("error", message.error, message.wrong_mark);
-                    return;
-                }
-                $('#rating_' + id).text(res.grade);
-                $('#rating_' + id).removeClass(function (index, className) {
-                    return (className.match(/(^|\s)badge-\S+/g) || []).join(' ');
-                });
-
-                if(res.grade > 0) {
-                    $('#rating_' + id).addClass('badge-success');
-                } else if(res.grade < 0) {
-                    $('#rating_' + id).addClass('badge-danger');
-                } else {
-                    $('#rating_' + id).addClass('badge-secondary');
-                }
-
-                if(grade) {
-                    $('#like_' + id).removeAttr('onclick').removeClass('like-none').addClass('like-done');
-                    $('#like_' + id).html('<i class="fas fa-thumbs-up"></i>');
-
-                    $('#unlike_' + id).attr('onclick', 'questions.likeAnswer(\'' + context + '\', ' + id + ', false);').removeClass('like-done').addClass('like-none');
-                    $('#unlike_' + id).html('<i class="far fa-thumbs-down"></i>');
-                } else {
-                    $('#unlike_' + id).removeAttr('onclick').removeClass('like-none').addClass('like-done');
-                    $('#unlike_' + id).html('<i class="fas fa-thumbs-down"></i>');
-
-                    $('#like_' + id).attr('onclick', 'questions.likeAnswer(\'' + context + '\', ' + id + ', true);').removeClass('like-done').addClass('like-none');
-                    $('#like_' + id).html('<i class="far fa-thumbs-up"></i>');
-                }
-            }
-        });
-    },
     downloadAttachment: function (file) {
         window.open(file, '_blank');
     },
@@ -424,6 +384,85 @@ var users = {
                 }
             }
         });
+    }
+}
+
+var answers = {
+    like: function (context, id, grade) {
+        $.ajax({
+            url: context + "/controller?command=change_rating",
+            data: {id: id, ajax: true, grade: grade},
+            type: "POST",
+            dataType: 'json',
+            success: function (res) {
+                if(res.grade == undefined) {
+                    toasts.show("error", message.error, message.wrong_mark);
+                    return;
+                }
+                $('#rating_' + id).text(res.grade);
+                $('#rating_' + id).removeClass(function (index, className) {
+                    return (className.match(/(^|\s)badge-\S+/g) || []).join(' ');
+                });
+
+                if(res.grade > 0) {
+                    $('#rating_' + id).addClass('badge-success');
+                } else if(res.grade < 0) {
+                    $('#rating_' + id).addClass('badge-danger');
+                } else {
+                    $('#rating_' + id).addClass('badge-secondary');
+                }
+
+                if(grade) {
+                    $('#like_' + id).removeAttr('onclick').removeClass('like-none').addClass('like-done');
+                    $('#like_' + id).html('<i class="fas fa-thumbs-up"></i>');
+
+                    $('#unlike_' + id).attr('onclick', 'answers.like(\'' + context + '\', ' + id + ', false);').removeClass('like-done').addClass('like-none');
+                    $('#unlike_' + id).html('<i class="far fa-thumbs-down"></i>');
+                } else {
+                    $('#unlike_' + id).removeAttr('onclick').removeClass('like-none').addClass('like-done');
+                    $('#unlike_' + id).html('<i class="fas fa-thumbs-down"></i>');
+
+                    $('#like_' + id).attr('onclick', 'answers.like(\'' + context + '\', ' + id + ', true);').removeClass('like-done').addClass('like-none');
+                    $('#like_' + id).html('<i class="far fa-thumbs-up"></i>');
+                }
+            }
+        });
+    },
+    markAsSolution: function (context, id, check) {
+        var check = $('#solution_' + id).children().hasClass('far');
+
+         // $.ajax({
+         //     url: context + "/controller?command=mark_solution",
+         //     data: {id: id, ajax: true, check: check},
+         //     type: "POST",
+         //     dataType: 'json',
+         //     success: function (res) {
+         //         if(!res.result) {
+         //             toasts.show("error", message.error, message.wrong_solution);
+         //             return;
+         //         }
+
+                $('.solution-link').each(function(i, el) {
+                    $(el).html('<i class="far fa-check-square"></i>');
+                    $(el).removeClass("solution-mark");
+                    $(el).attr('title', $(el).data('def-title'));
+                    $(el).attr('data-original-title', $(el).data('def-title'));
+                    $(el).tooltip('update');
+                    if(!check && $(el).attr('id') == ('solution_' + id)) {
+                        $(el).tooltip('show');
+                    }
+                });
+                if(check) {
+                    $('#solution_' + id).html('<i class="fas fa-check-square"></i>');
+                    $('#solution_' + id).addClass("solution-mark");
+                    $('#solution_' + id).attr('title', message.remove_solution);
+                    $('#solution_' + id).attr('data-original-title', message.remove_solution);
+                    $('#solution_' + id).tooltip('update');
+                    $('#solution_' + id).tooltip('show');
+                }
+
+         //     }
+         // });
     }
 }
 

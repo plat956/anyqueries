@@ -134,7 +134,7 @@
                                     <a class="like-done" id="unlike_${a.id}"><i class="fas fa-thumbs-down"></i></a>
                                 </c:when>
                                 <c:otherwise>
-                                    <a id="unlike_${a.id}" onclick="questions.likeAnswer('${pageContext.request.contextPath}', ${a.id}, false);" class="like-none"><i class="far fa-thumbs-down"></i></a>
+                                    <a id="unlike_${a.id}" onclick="answers.like('${pageContext.request.contextPath}', ${a.id}, false);" class="like-none"><i class="far fa-thumbs-down"></i></a>
                                 </c:otherwise>
                             </c:choose>
                             <span class="badge badge-${rating_color}" style="cursor: default" id="rating_${a.id}">${a.rating}</span>
@@ -143,14 +143,14 @@
                                     <a id="like_${a.id}" class="like-done"><i class="fas fa-thumbs-up"></i></a>
                                 </c:when>
                                 <c:otherwise>
-                                    <a id="like_${a.id}" onclick="questions.likeAnswer('${pageContext.request.contextPath}', ${a.id}, true);" class="like-none"><i class="far fa-thumbs-up"></i></a>
+                                    <a id="like_${a.id}" onclick="answers.like('${pageContext.request.contextPath}', ${a.id}, true);" class="like-none"><i class="far fa-thumbs-up"></i></a>
                                 </c:otherwise>
                             </c:choose>
                         </div>
                     </div>
                     <c:if test="${!question.closed}">
                     <a class="reply-link" onclick="dataForms.reply('${a.author.fio}');"><i class="fa fa-reply" aria-hidden="true"></i> <fmt:message key="label.reply.button" /></a>
-                    <a class="solution-link" onclick="" data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.solution" />"><i class="far fa-check-square"></i></a>
+                    <a class="solution-link" id="solution_${a.id}" onclick="answers.markAsSolution('${pageContext.request.contextPath}', '${a.id}');" data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.solution" />" data-def-title="<fmt:message key="label.solution" />"><i class="far fa-check-square"></i></a>
                     </c:if>
                 </div>
             </div>

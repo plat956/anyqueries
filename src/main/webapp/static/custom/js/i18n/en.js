@@ -13,6 +13,8 @@ const message = {
     incorrect_profile_text: "No information was found for the requested user",
     error: "Error",
     wrong_mark: "Unable to change rating",
+    wrong_solution: "Unable to mark solution",
+    remove_solution: "Remove solution mark",
     wrong_file_size: "Exceeded the allowed file size in ",
     delete_question: "Are you sure you want to delete this question?",
     delete_category: "Are you sure you want to delete this category?",

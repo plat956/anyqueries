@@ -948,3 +948,7 @@ img {
 .solution-link:hover {
     text-decoration: underline !important;
 }
+.solution-mark {
+    font-size: 1.5em;
+    color: #28a745 !important;
+}
