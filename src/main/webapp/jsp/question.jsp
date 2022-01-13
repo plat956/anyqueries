@@ -30,9 +30,7 @@
                 </label>
                 </span></li>
                 <li><span><span class="dx-blog-post-info-title"><fmt:message key="label.modified" /></span>
-                    <fmt:parseDate value="${!empty question.editingDate ? question.editingDate : question.creationDate}" pattern="y-M-dd'T'H:m:s" var="parsedDate" />
-                    <fmt:formatDate value="${parsedDate}"  pattern="dd.MM.yyyy HH:mm:ss" />
-                    (<at:time-duration date="${!empty question.editingDate ? question.editingDate : question.creationDate}"/>)
+                    <at:time-duration date="${!empty question.editingDate ? question.editingDate : question.creationDate}"/>
                 </span></li>
             </ul>
         </div>

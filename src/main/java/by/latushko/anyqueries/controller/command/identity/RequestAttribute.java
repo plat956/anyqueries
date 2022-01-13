@@ -20,6 +20,7 @@ public final class RequestAttribute {
     public static final String RESULT = "result";
     public static final String GRADE = "grade";
     public static final String CREATED_ANSWER = "createdAnswer";
+    public static final String ACTIVATION_MESSAGE = "activationMessage";
 
     private RequestAttribute() {
     }

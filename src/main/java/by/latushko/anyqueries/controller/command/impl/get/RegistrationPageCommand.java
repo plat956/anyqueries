@@ -12,6 +12,7 @@ import static by.latushko.anyqueries.controller.command.CommandResult.RoutingTyp
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.WARNING;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
 import static by.latushko.anyqueries.controller.command.identity.PagePath.REGISTRATION_PAGE;
+import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.ACTIVATION_MESSAGE;
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.MESSAGE;
 import static by.latushko.anyqueries.util.AppProperty.APP_TELEGRAM_LINK_HOST;
 import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_REGISTRATION_WARNING;
@@ -20,13 +21,10 @@ import static by.latushko.anyqueries.util.telegram.TelegramBot.BOT_NAME;
 public class RegistrationPageCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
-        if(request.getAttribute(MESSAGE) == null) {
-            String userLang = CookieHelper.readCookie(request, LANG);
-            MessageManager manager = MessageManager.getManager(userLang);
-            ResponseMessage message = new ResponseMessage(WARNING,
-                    manager.getMessage(MESSAGE_REGISTRATION_WARNING, APP_TELEGRAM_LINK_HOST + BOT_NAME, BOT_NAME));
-            request.setAttribute(MESSAGE, message);
-        }
+        String userLang = CookieHelper.readCookie(request, LANG);
+        MessageManager manager = MessageManager.getManager(userLang);
+        String message = manager.getMessage(MESSAGE_REGISTRATION_WARNING, APP_TELEGRAM_LINK_HOST + BOT_NAME, BOT_NAME);
+        request.setAttribute(ACTIVATION_MESSAGE, message);
         return new CommandResult(REGISTRATION_PAGE, FORWARD);
     }
 }

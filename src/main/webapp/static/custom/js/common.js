@@ -1,4 +1,8 @@
 var dataForms = {
+    clearSearch: function() {
+        $('.search-input').val('');
+        $('#searchForm').submit();
+    },
     spinSubmitButton: function () {
         $("form").on("submit", function() {
             if($(this)[0].checkValidity()) {

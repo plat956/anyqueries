@@ -82,6 +82,10 @@
 
         //init navbar live search
         $('#search-input').typeahead({
+            afterSelect: function (item) {
+                $('#searchInput').val(item);
+                $('#searchForm').submit();
+            },
             source:  function (query, process) {
                 return $.get('/controller?command=live_search',
                     {
@@ -107,6 +111,9 @@
             var value = $(this).val();
             if(value.length == 0) {
                 $('#noResults').remove();
+                $('#clearSearch').css('opacity', 0);
+            } else {
+                $('#clearSearch').css('opacity', 1);
             }
         });
 

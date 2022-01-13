@@ -4,6 +4,9 @@
 <%@ taglib prefix="at" uri="apptags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="page_title_label" value="label.users" scope="request"/>
+<c:if test="${!empty param['query']}">
+    <c:set var="page_title_postfix" value=": «${fn:substring(param['query'], 0, 40)}»" scope="request" />
+</c:if>
 <jsp:include page="layout/header.jsp"/>
 <style>
     .page-title-hr {

@@ -15,7 +15,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <form action="${pageContext.request.contextPath}/controller" method="get" autocomplete="off">
+                    <form action="${pageContext.request.contextPath}/controller" id="searchForm" method="get" autocomplete="off">
                         <c:choose>
                             <c:when test="${param['command'] == 'categories_page'}">
                                 <input type="hidden" name="command" value="categories_page" />
@@ -50,10 +50,13 @@
                             <c:if test="${!empty param['category']}"><input type="hidden" name="category" value="${param['category']}" /></c:if>
                         </c:if>
                         <div class="navbar-search input-group">
-                            <input class="form-control py-2 border-left-0 border search-input" type="search" value="${fn:substring(param['query'], 0, 40)}"
+                            <input class="form-control py-2 border-left-0 border search-input" type="text" value="${fn:substring(param['query'], 0, 40)}"
                                    placeholder="${search_placeholder}" id="search-input" name="query" maxlength="40"/>
-                            <span class="input-group-append">
-                                <button type="submit" class="no-loader navbar-search-btn btn btn-outline-primary border-left-0 border">
+                            <div id="clearSearch" onclick="dataForms.clearSearch();" style="opacity: ${!empty param['query'] ? '1' : '0'}">
+                                &times;
+                            </div>
+                            <span class="input-group-append" style="margin-left: -15px;">
+                                <button type="submit" id="searchButton" class="no-loader navbar-search-btn btn btn-outline-primary border-left-0 border">
                                     <i class="fa fa-search"></i>
                                 </button>
                             </span>

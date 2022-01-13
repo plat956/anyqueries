@@ -965,3 +965,34 @@ img {
 .note-editor.note-frame.success-valid {
     border-color: #28a745 !important;
 }
+#clearSearch {
+    position: relative;
+    float: right;
+    height: 15px;
+    width: 15px;
+    top: 12px;
+    right: 25px;
+    border-radius: 4px;
+    background: #c5c5c5;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: .1s;
+    line-height: 12px;
+    font-size: 15px;
+    z-index: 999;
+}
+#clearSearch:hover {
+    background: #ccc;
+}
+#warning-inactive {
+    border: 1px #c5c5c5 solid;
+}
+.page_title_right {
+    float: right;
+}
+#activationInfo {
+    font-size: 15px;
+    cursor: pointer;
+}

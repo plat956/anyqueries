@@ -6,6 +6,9 @@
 <%@ taglib prefix="at" uri="apptags" %>
 <c:set var="page_title_label" value="label.registration" scope="request" />
 <jsp:include page="layout/header.jsp" />
+<a id="activationInfo" data-toggle="modal" data-target="#activationInfoModal">
+    <i class="fas fa-question-circle"></i> <fmt:message key="label.activation.info" />
+</a>
 <div class="col-lg-7 mx-auto">
     <form id="reg_form" class="needs-validation" method="post" action="${pageContext.request.contextPath}/controller?command=registration" novalidate autocomplete="off">
         <div class="form-group input-group">
@@ -187,6 +190,10 @@
     </form>
 </div>
 <script type="text/javascript">
+    $(function () {
+        $('.page_title_right').empty();
+        $('#activationInfo').appendTo(".page_title_right");
+    });
     //custom password check
     $('#reg_form').on('input', function () {
         var password = document.getElementById("password");
@@ -199,4 +206,5 @@
         }
     });
 </script>
+<c:import url="fragment/activationInfoModal.jsp" />
 <jsp:include page="layout/footer.jsp" />
