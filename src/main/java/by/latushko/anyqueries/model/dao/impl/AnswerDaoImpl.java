@@ -54,6 +54,16 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             FROM answers a
             WHERE id = ? 
             AND author_id <> ?""";
+    private static final String SQL_CREATE_QUERY = """
+            INSERT INTO answers(text, creation_date, editing_date, solution, question_id, author_id) 
+            VALUES (?, ?, ?, ?, ?, ?)""";
+    private static final String SQL_CREATE_ANSWER_ATTACHMENT_QUERY = """
+            INSERT INTO answer_attachment(answer_id, attachment_id) 
+            VALUES (?, ?)""";
+    private static final String SQL_COUNT_BY_QUESTION_ID_QUERY = """
+            SELECT count(id) 
+            FROM answers 
+            WHERE question_id = ?""";
 
     RowMapper mapper = new AnswerMapper();
 
@@ -69,6 +79,25 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
 
     @Override
     public boolean create(Answer answer) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
+            statement.setString(1, answer.getText());
+            statement.setObject(2, answer.getCreationDate());
+            statement.setObject(3, answer.getEditingDate());
+            statement.setBoolean(4, answer.getSolution());
+            statement.setObject(5, answer.getQuestionId());
+            statement.setObject(6, answer.getAuthor().getId());
+
+            if(statement.executeUpdate() >= 0) {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if(resultSet.next()) {
+                    Long generatedId = resultSet.getLong(1);
+                    answer.setId(generatedId);
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to create answer by calling create(Answer answer) method", e);
+        }
         return false;
     }
 
@@ -102,7 +131,7 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
     }
 
     @Override
-    public Long countTotalByUserId(Long userId) throws DaoException {
+    public Long countByUserId(Long userId) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_USER_ID_QUERY)){
             statement.setLong(1, userId);
             try(ResultSet resultSet = statement.executeQuery()) {
@@ -172,5 +201,31 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
         } catch (SQLException e) {
             throw new DaoException("Failed to answer solution category by calling updateSolutionByQuestionIdAndSolution method", e);
         }
+    }
+
+    @Override
+    public boolean createAnswerAttachment(Long answerId, Long attachmentId) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_ANSWER_ATTACHMENT_QUERY)){
+            statement.setLong(1, answerId);
+            statement.setLong(2, attachmentId);
+            return statement.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to create answer-attachment relationship by calling createAnswerAttachment(Long answerId, Long attachmentId) method", e);
+        }
+    }
+
+    @Override
+    public Long countByQuestionId(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_QUESTION_ID_QUERY)){
+            statement.setLong(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return resultSet.getLong(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to count answers by calling countTotalByQuestionId(Long id) method", e);
+        }
+        return 0L;
     }
 }

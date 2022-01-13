@@ -67,7 +67,7 @@
                         <c:forEach var="a" items="${attachments}">
                             <li onclick="questions.downloadAttachment('${pageContext.request.contextPath}/controller?command=download&file=${a.file}')">
                                 <span>
-                                    <i class="fa fa-file file-attachment" aria-hidden="true"></i>${a.file}
+                                    <i class="fa fa-file file-attachment file-i" aria-hidden="true"></i>${a.file}
                                 </span>
                             </li>
                         </c:forEach>
@@ -81,7 +81,7 @@
         </div>
 
         <c:forEach var="a" items="${answers}">
-            <div class="dx-comment dx-ticket-comment">
+            <div class="dx-comment dx-ticket-comment" id="answer-box-${a.id}">
                 <div>
                     <div>
                         <img class="dx-comment-img" src="
@@ -111,7 +111,7 @@
                             <c:forEach var="at" items="${a.attachments}">
                                 <li onclick="questions.downloadAttachment('${pageContext.request.contextPath}/controller?command=download&file=${at.file}')">
                                 <span>
-                                    <i class="fa fa-file file-attachment" aria-hidden="true"></i>${at.file}
+                                    <i class="fa fa-file file-attachment file-i" aria-hidden="true"></i>${at.file}
                                 </span>
                                 </li>
                             </c:forEach>
@@ -176,25 +176,36 @@
                     " alt="">
                 </div>
                 <div class="dx-comment-cont" style="width: 100%;">
-                    <h3 class="h6 mb-10"><fmt:message key="label.reply" /></h3>
-                    <textarea class="summernote" name="text" id="text" maxlength="${AppProperty.APP_ANSWER_MAXLENGTH}"></textarea>
-                    <fmt:message key="label.textarea.remaining" /> <span id="text-counter">${AppProperty.APP_ANSWER_MAXLENGTH}</span>
-                    <div class="form-group">
-                        <label class="" for="file-selector" data-toggle="popover" data-trigger="hover" data-placement="bottom" style="cursor:pointer;"
-                               data-content="<fmt:message key="message.attachment.info.part1" /> ${AppProperty.APP_ATTACHMENT_COUNT}. <fmt:message key="message.attachment.info.part2" /> ${AppProperty.APP_ATTACHMENT_SIZE} <fmt:message key="message.mb" />">
-                            <input id="file-selector" type="file" multiple name="file" style="display:none">
-                            <div style="margin: 10px 10px -10px 0px;">
-                                <i class="fa fa-paperclip" aria-hidden="true"></i> <fmt:message key="label.uploadAttachments" />
+                    <form id="answerForm" class="needs-validation" method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/controller?command=create_answer" novalidate autocomplete="off">
+                        <input type="hidden" value="${question.id}" name="question" />
+                        <h3 class="h6 mb-10"><fmt:message key="label.reply" /></h3>
+                        <textarea class="summernote form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.TEXT)}" />" name="text" id="text" maxlength="${AppProperty.APP_ANSWER_MAXLENGTH}" required>${validationResult.getValue(RequestParameter.TEXT)}</textarea>
+                        <c:if test="${!empty validationResult.getMessage(RequestParameter.TEXT)}">
+                            <div class="invalid-feedback-backend">
+                                <fmt:message key="${validationResult.getMessage(RequestParameter.TEXT)}" />
                             </div>
-                        </label>
-                        <ul class="attachments" id="attachments-list" style="margin-top: 10px"></ul>
-                    </div>
+                        </c:if>
+                        <div class="invalid-feedback">
+                            <fmt:message key="label.wrong-input" />
+                        </div>
+                        <fmt:message key="label.textarea.remaining" /> <span id="text-counter">${AppProperty.APP_ANSWER_MAXLENGTH}</span>
+                        <div class="form-group">
+                            <label class="" for="file-selector" data-toggle="popover" data-trigger="hover" data-placement="bottom" style="cursor:pointer;height: 40px;margin-bottom: 0px;"
+                                   data-content="<fmt:message key="message.attachment.info.part1" /> ${AppProperty.APP_ATTACHMENT_COUNT}. <fmt:message key="message.attachment.info.part2" /> ${AppProperty.APP_ATTACHMENT_SIZE} <fmt:message key="message.mb" />">
+                                <input id="file-selector" type="file" multiple name="file" style="display:none">
+                                <div style="margin: 10px 10px -10px 0px;">
+                                    <i class="fa fa-paperclip" aria-hidden="true"></i> <fmt:message key="label.uploadAttachments" />
+                                </div>
+                            </label>
+                            <ul class="attachments" id="attachments-list" style="margin-top: 10px"></ul>
+                        </div>
 
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">
-                            <fmt:message key="label.reply.button" />
-                        </button>
-                    </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary" id="replyButton">
+                                <fmt:message key="label.reply.button" />
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -209,8 +220,19 @@
     $(function () {
         dataForms.initSummernote('text', '<fmt:message key="label.reply.placeholder" />', '${!empty current_lang ? current_lang : 'ru'}', 120);
         attacher.init('file-selector', 'attachments-list', ${AppProperty.APP_ATTACHMENT_COUNT}, ${AppProperty.APP_ATTACHMENT_SIZE});
-    })
+    });
+    <c:if test="${!empty createdAnswer || !empty validationResult}">
+    $(window).load(function() {
+        pageEvents.scrollBottom(1);
+        <c:if test="${!empty createdAnswer}">
+            toasts.show("success", message.success, message.answer_created);
+            $('#answer-box-${createdAnswer.id}').css('background-color', 'rgb(255 230 170)');
+            $('#answer-box-${createdAnswer.id}').animate({backgroundColor: "#fff"}, 1000 );
+        </c:if>
+    });
+    </c:if>
 </script>
 </c:if>
+
 <jsp:include page="fragment/showProfileModal.jsp" />
 <jsp:include page="layout/footer.jsp" />

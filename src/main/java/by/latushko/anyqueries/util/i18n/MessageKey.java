@@ -17,6 +17,7 @@ public final class MessageKey {
     public static final String LABEL_HOUR = "label.hour";
     public static final String LABEL_MINUTE = "label.minute";
     public static final String LABEL_SECOND = "label.second";
+    public static final String LABEL_NOW = "label.now";
     public static final String LABEL_AGO = "label.ago";
     public static final String LABEL_NO = "label.no";
     public static final String LABEL_ROLE_PREFIX = "label.role.";

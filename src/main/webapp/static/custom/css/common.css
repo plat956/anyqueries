@@ -586,6 +586,12 @@ input:checked + .slider:before {
 .ck-content {
     min-height: 220px;
 }
+.file-i {
+    display: inline !important;
+}
+.attachments {
+    word-break: break-word !important;
+}
 .attachments li {
     padding: 0px 5px 0px 10px;
     list-style: none;
@@ -848,6 +854,7 @@ input[type="search"].dark::-webkit-search-cancel-button {
 .dx-comment .dx-comment-cont .dx-comment-date+.dx-comment-text {
     margin-top: 5px;
     margin-bottom: -6px;
+    word-break: break-word !important;
 }
 .dx-ticket-comment .dx-comment-text+.dx-comment-file {
     margin-top: 30px;
@@ -951,4 +958,10 @@ img {
 .solution-mark {
     font-size: 1.5em;
     color: #28a745 !important;
+}
+.note-editor.note-frame.error-invalid {
+    border-color: #dc3545 !important;
+}
+.note-editor.note-frame.success-valid {
+    border-color: #28a745 !important;
 }

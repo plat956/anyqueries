@@ -51,6 +51,9 @@ public class AttachmentServiceImpl implements AttachmentService {
         if(extension.isEmpty()) {
             return Optional.empty();
         }
+        if(fileName.contains(FILE_EXTENSION_DELIMITER)) {
+            fileName = fileName.substring(0, fileName.lastIndexOf(FILE_EXTENSION_DELIMITER));
+        }
         fileName += UNDER_SCORE_CHARACTER + Calendar.getInstance().getTimeInMillis() + extension.get();
         try {
             part.write(FILE_DIRECTORY_PATH + fileName);

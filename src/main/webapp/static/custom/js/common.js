@@ -49,7 +49,7 @@ var dataForms = {
         return tmp.textContent || tmp.innerText || "";
     },
     reply: function(user){
-        window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight);
+        pageEvents.scrollBottom(500);
         $('#text').summernote('code', '<b><i>' + user + ',</i></b><span>&nbsp;');
         $('.note-editable').placeCursorAtEnd();
     },
@@ -67,18 +67,12 @@ var dataForms = {
             disableDragAndDrop:true,
             lang: lang,
             callbacks: {
-                onInit: function (){
-                    var text = document.getElementById(textarea);
-                    var id = textarea + '-counter';
-                    $('#' + id).text($('#' + textarea).attr('maxlength') - dataForms.stripHtml(text.value).trim().length);
-                    if($('#' + textarea).attr('required') && $.trim(text.value).length == 0) {
-                        text.setCustomValidity("error");
-                    } else {
-                        text.setCustomValidity("");
-                    }
-                },
                 onKeydown: function (e) {
-                    var t = e.currentTarget.innerText;
+                    if (e.keyCode == 9 || e.keyCode == 13) {
+                        e.preventDefault();
+                        return;
+                    }
+                    var t = dataForms.stripHtml(e.currentTarget.innerHTML);
                     if (t.length >= $('#' + textarea).attr('maxlength')) {
                         if (e.keyCode != 8 && !(e.keyCode >=37 && e.keyCode <=40) && e.keyCode != 46 && !(e.keyCode == 88 && e.ctrlKey) && !(e.keyCode == 67 && e.ctrlKey) && !(e.keyCode == 65 && e.ctrlKey))
                             e.preventDefault();
@@ -88,25 +82,24 @@ var dataForms = {
                     var id = textarea + '-counter';
                     $('#' + id).text($('#' + textarea).attr('maxlength') - dataForms.stripHtml(contents).length);
                     var text = document.getElementById(textarea);
-                    if($('#' + textarea).attr('required') && el.summernote('isEmpty')) {
-                        text.setCustomValidity("error");
-                    } else {
-                        text.setCustomValidity("");
-                    }
+                    var form = $(text).closest("form");
+                     if ($('#' + textarea).attr('required') && el.summernote('isEmpty')) {
+                         text.setCustomValidity("error");
+                         if(form.hasClass('was-validated')) {
+                             $(text).next('.note-editor').removeClass('success-valid');
+                             $(text).next('.note-editor').addClass('error-invalid');
+                         }
+                     } else {
+                         text.setCustomValidity("");
+                         if(form.hasClass('was-validated')) {
+                             $(text).next('.note-editor').removeClass('error-invalid');
+                             $(text).next('.note-editor').addClass('success-valid');
+                         }
+                     }
                 },
                 onPaste: function (e) {
-                    var t = e.currentTarget.innerText;
-                    var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData).getData('Text');
                     e.preventDefault();
-                    var maxPaste = bufferText.length;
-                    if(t.length + bufferText.length > $('#' + textarea).attr('maxlength')){
-                        maxPaste = $('#' + textarea).attr('maxlength') - t.length;
-                    }
-                    if(maxPaste > 0){
-                        document.execCommand('insertText', false, bufferText.substring(0, maxPaste));
-                    }
-                    var id = textarea + '-counter';
-                    $('#' + id).text($('#' + textarea).attr('maxlength') - t.length);
+                    return;
                 }
             }
         });
@@ -121,6 +114,20 @@ var dataForms = {
                 else {
                     $(el).closest(".form-group").find(".invalid-feedback").removeClass("d-block");
                     $(el).closest(".form-group").find(".valid-feedback").addClass("d-block");
+                }
+            });
+        }
+    },
+    bsSummernoteValidation: function () {
+        if ($("form").hasClass('was-validated')) {
+            $(".summernote").each(function (i, el) {
+                if ($(el).is(":invalid")) {
+                    $(el).next('.note-editor').removeClass('success-valid');
+                    $(el).next('.note-editor').addClass('error-invalid');
+                }
+                else {
+                    $(el).next('.note-editor').removeClass('error-invalid');
+                    $(el).next('.note-editor').addClass('success-valid');
                 }
             });
         }
@@ -154,7 +161,7 @@ var attacher = {
     updateList: function (files) {
         Array.prototype.forEach.call(files, (file) => {
             let li=document.createElement("li");
-            li.innerHTML="<span><i class='fa fa-file file-attachment' aria-hidden='true'></i>"+file.name+"</span>";
+            li.innerHTML="<span><i class='fa fa-file file-attachment file-i' aria-hidden='true'></i>"+file.name+"</span>";
             attacher.list.appendChild(li);
         });
     },
@@ -226,6 +233,7 @@ var toasts = {
 }
 
 var pageEvents = {
+    scrollMark: false,
     freeze: true,
     handler: function (e) {
         if (pageEvents.freeze) {
@@ -246,6 +254,14 @@ var pageEvents = {
     },
     noBack: function() {
         window.history.forward(1);
+    },
+    scrollBottom: function (timeout) {
+        if(!pageEvents.scrollMark) {
+            pageEvents.scrollMark = true;
+            $("html, body").animate({ scrollTop: $(document).height() }, timeout, function () {
+                pageEvents.scrollMark = false;
+            });
+        }
     }
 }
 

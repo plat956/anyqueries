@@ -36,6 +36,7 @@ public final class RequestParameter {
     public static final String USERS = "users";
     public static final String CATEGORIES = "categories";
     public static final String CHECK = "check";
+    public static final String QUESTION = "question";
 
     private RequestParameter() {
     }

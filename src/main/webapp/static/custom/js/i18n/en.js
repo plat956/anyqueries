@@ -12,6 +12,8 @@ const message = {
     incorrect_profile: "Can't find profile",
     incorrect_profile_text: "No information was found for the requested user",
     error: "Error",
+    success: "Success!",
+    answer_created: "Answer published",
     wrong_mark: "Unable to change rating",
     wrong_solution: "Unable to mark solution",
     wrong_file_size: "Exceeded the allowed file size in ",

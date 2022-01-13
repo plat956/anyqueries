@@ -37,7 +37,8 @@ public enum CommandType {
     QUESTION_PAGE,
     DOWNLOAD,
     CHANGE_RATING,
-    MARK_SOLUTION;
+    MARK_SOLUTION,
+    CREATE_ANSWER;
 
     public static Optional<CommandType> getByName(String commandName) {
         if (commandName == null) {

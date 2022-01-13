@@ -7,6 +7,7 @@ public final class SessionAttribute {
     public static final String PREVIOUS_PAGE = "previousPage";
     public static final String PRINCIPAL = "principal";
     public static final String INACTIVE_PRINCIPAL = "inactivePrincipal";
+    public static final String CREATED_ANSWER = "createdAnswer";
 
     private SessionAttribute() {
     }

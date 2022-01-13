@@ -10,6 +10,7 @@ public final class ValidationPattern {
     public static final String TELEGRAM_REGEXP = "[a-z0-9_]{5,32}";
     public static final String CATEGORY_NAME_REGEXP = "[a-zA-Zа-яА-Я\\s0-9]{1,25}";
     public static final String HEX_COLOR_REGEXP = "^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$";
+    public static final String HTML_TAGS_REGEXP = "(?s)<[^>]*>(\\s*<[^>]*>)*";
 
     private ValidationPattern() {
     }

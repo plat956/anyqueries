@@ -41,27 +41,27 @@
     </div>
     <div class="form-group">
         <textarea id="text" name="text" class="summernote form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.TEXT)}" />"
-                  required maxlength="${AppProperty.APP_QUESTION_MAXLENGTH}">
-            ${validationResult.getValue(RequestParameter.TEXT)}
-        </textarea>
+                  required maxlength="${AppProperty.APP_QUESTION_MAXLENGTH}">${validationResult.getValue(RequestParameter.TEXT)}</textarea>
         <c:if test="${!empty validationResult.getMessage(RequestParameter.TEXT)}">
             <div class="invalid-feedback-backend">
                 <fmt:message key="${validationResult.getMessage(RequestParameter.TEXT)}" />
             </div>
         </c:if>
-        <div class="invalid-feedback">
+        <div class="invalid-feedback" id="invalid-feedback-text">
             <fmt:message key="label.wrong-input" />
         </div>
         <fmt:message key="label.textarea.remaining" /> <span id="text-counter">${AppProperty.APP_QUESTION_MAXLENGTH}</span>
     </div>
 
     <div class="form-group">
-        <label class="btn btn-primary" for="file-selector" data-toggle="popover" data-trigger="hover" data-placement="bottom"
+        <label class="" for="file-selector" data-toggle="popover" data-trigger="hover" data-placement="bottom" style="cursor:pointer;height: 40px;margin-bottom: 0px;margin-top: -10px;"
                data-content="<fmt:message key="message.attachment.info.part1" /> ${AppProperty.APP_ATTACHMENT_COUNT}. <fmt:message key="message.attachment.info.part2" /> ${AppProperty.APP_ATTACHMENT_SIZE} <fmt:message key="message.mb" />">
             <input id="file-selector" type="file" multiple name="file" style="display:none">
-            <fmt:message key="label.uploadAttachments" />
+            <div style="margin: 10px 10px -10px 0px;">
+                <i class="fa fa-paperclip" aria-hidden="true"></i> <fmt:message key="label.uploadAttachments" />
+            </div>
         </label>
-        <ul class="attachments" id="attachments-list"></ul>
+        <ul class="attachments" id="attachments-list" style="margin-top: 10px"></ul>
     </div>
 
     <div class="form-group">

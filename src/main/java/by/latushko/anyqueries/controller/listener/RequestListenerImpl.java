@@ -22,6 +22,7 @@ import java.util.Optional;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_KEY;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_TOKEN;
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.*;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.CREATED_ANSWER;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.VALIDATION_RESULT;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
@@ -49,6 +50,8 @@ public class RequestListenerImpl implements ServletRequestListener {
 
         Object message = session.getAttribute(MESSAGE);
         Object validationResult = session.getAttribute(VALIDATION_RESULT);
+        Object createdAnswer = session.getAttribute(CREATED_ANSWER);
+
         if(message != null) {
             session.removeAttribute(MESSAGE);
             request.setAttribute(RequestAttribute.MESSAGE, message);
@@ -56,6 +59,10 @@ public class RequestListenerImpl implements ServletRequestListener {
         if(validationResult != null) {
             session.removeAttribute(VALIDATION_RESULT);
             request.setAttribute(RequestAttribute.VALIDATION_RESULT, validationResult);
+        }
+        if(createdAnswer != null) {
+            session.removeAttribute(CREATED_ANSWER);
+            request.setAttribute(RequestAttribute.CREATED_ANSWER, createdAnswer);
         }
         Long totalQuestions = questionService.countTotalNotClosed();
         request.setAttribute(LAYOUT_TOTAL_QUESTIONS, totalQuestions);

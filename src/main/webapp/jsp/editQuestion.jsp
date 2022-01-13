@@ -57,16 +57,18 @@
     </div>
 
     <div class="form-group">
-        <label class="btn btn-primary" for="file-selector" data-toggle="popover" data-trigger="hover" data-placement="bottom"
+        <label class="" for="file-selector" data-toggle="popover" data-trigger="hover" data-placement="bottom" style="cursor:pointer;height: 40px;margin-bottom: 0px;margin-top: -10px;"
                data-content="<fmt:message key="message.attachment.info.part1" /> ${AppProperty.APP_ATTACHMENT_COUNT}. <fmt:message key="message.attachment.info.part2" /> ${AppProperty.APP_ATTACHMENT_SIZE} <fmt:message key="message.mb" />">
             <input id="file-selector" type="file" multiple name="file" style="display:none">
-            <fmt:message key="label.uploadAttachments" />
+            <div style="margin: 10px 10px -10px 0px;">
+                <i class="fa fa-paperclip" aria-hidden="true"></i> <fmt:message key="label.uploadAttachments" />
+            </div
         </label>
-        <ul class="attachments" id="attachments-list">
+        <ul class="attachments" id="attachments-list" style="margin-top: 20px">
             <c:forEach var="c" items="${attachments}">
                 <li>
                     <span>
-                        <i class="fa fa-file file-attachment" aria-hidden="true"></i>${c.file}
+                        <i class="fa fa-file file-attachment file-i" aria-hidden="true"></i>${c.file}
                     </span>
                 </li>
             </c:forEach>

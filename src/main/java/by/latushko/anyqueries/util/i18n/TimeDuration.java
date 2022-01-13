@@ -33,7 +33,12 @@ public class TimeDuration {
         } else if(seconds > 0) {
             result = manager.getMessageInPlural(LABEL_SECOND, seconds);
         }
-        result += SPACE_CHARACTER + manager.getMessage(LABEL_AGO);
+
+        if (result.isEmpty()) {
+            return manager.getMessage(LABEL_NOW);
+        } else {
+            result += SPACE_CHARACTER + manager.getMessage(LABEL_AGO);
+        }
 
         return result;
     }

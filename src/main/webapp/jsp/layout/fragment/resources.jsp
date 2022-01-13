@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link type="image/x-icon" href="${pageContext.request.contextPath}/static/custom/images/favicon.ico" rel="icon" />
 <script src="${pageContext.request.contextPath}/static/jquery/1.10.2/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath}/static/jquery/1.10.2/jquery.color.js"></script>
 <script src="${pageContext.request.contextPath}/static/popperjs/1.12.5/popper.min.js"></script>
 <script src="${pageContext.request.contextPath}/static/bootstrap/4.2.1/js/bootstrap.js"></script>
 <script src="${pageContext.request.contextPath}/static/bootstrap/4.2.1/js/bootstrap-select.min.js"></script>

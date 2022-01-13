@@ -2,23 +2,24 @@ package by.latushko.anyqueries.validator.impl;
 
 import by.latushko.anyqueries.validator.FormValidator;
 import by.latushko.anyqueries.validator.ValidationResult;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import java.util.Map;
 
-import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
-import static by.latushko.anyqueries.util.AppProperty.APP_QUESTION_MAXLENGTH;
+import static by.latushko.anyqueries.controller.command.identity.RequestParameter.TEXT;
+import static by.latushko.anyqueries.util.AppProperty.APP_ANSWER_MAXLENGTH;
 import static by.latushko.anyqueries.util.i18n.MessageKey.LABEL_WRONG_INPUT;
+import static by.latushko.anyqueries.validator.ValidationPattern.HTML_TAGS_REGEXP;
 
-public class QuestionFormValidator implements FormValidator {
-    private static final int TITLE_MAX_LENGTH = 200;
+public class AnswerFormValidator implements FormValidator {
     private static FormValidator instance;
 
-    private QuestionFormValidator() {
+    private AnswerFormValidator() {
     }
 
     public static FormValidator getInstance() {
         if(instance == null) {
-            instance = new QuestionFormValidator();
+            instance = new AnswerFormValidator();
         }
         return instance;
     }
@@ -26,14 +27,8 @@ public class QuestionFormValidator implements FormValidator {
     @Override
     public ValidationResult validate(Map<String, String[]> formData) {
         ValidationResult result = new ValidationResult(formData);
-        if(result.getValue(CATEGORY).isEmpty()) {
-            result.setError(CATEGORY, LABEL_WRONG_INPUT);
-        }
-        if(result.getValue(TITLE).isEmpty() || result.getValue(TITLE).length() > TITLE_MAX_LENGTH) {
-            result.setError(TITLE, LABEL_WRONG_INPUT);
-        }
         String text = stripHtml(result.getValue(TEXT));
-        if(text.isEmpty() || text.length() > APP_QUESTION_MAXLENGTH) {
+        if(text.isEmpty() || text.length() > APP_ANSWER_MAXLENGTH) {
             result.setError(TEXT, LABEL_WRONG_INPUT);
         }
         return result;

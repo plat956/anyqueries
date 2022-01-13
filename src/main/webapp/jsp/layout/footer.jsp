@@ -71,12 +71,14 @@
                         $('.invalid-feedback-backend').remove();
                         form.classList.add('was-validated');
                         dataForms.bsSelectValidation();
+                        dataForms.bsSummernoteValidation();
                     }, false);
                 });
             }, false);
         })();
 
         $('form').change(dataForms.bsSelectValidation);
+        $('form').change(dataForms.bsSummernoteValidation);
 
         //init navbar live search
         $('#search-input').typeahead({

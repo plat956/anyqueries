@@ -12,6 +12,8 @@ const message = {
     incorrect_profile: "Не удается найти профиль",
     incorrect_profile_text: "Информация по запрашиваемому пользователю не найдена",
     error: "Ошибка",
+    success: "Успех!",
+    answer_created: "Ответ опубликован",
     wrong_mark: "Невозможно изменить рейтинг",
     wrong_solution: "Невозможно отметить решение",
     wrong_file_size: "Превышен допустимый размер файла в ",

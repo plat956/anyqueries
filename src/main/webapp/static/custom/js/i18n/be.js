@@ -12,6 +12,8 @@ const message = {
     incorrect_profile: "Немагчыма знайсці профіль",
     incorrect_profile_text: "Інфармацыя па запытанаму карыстальніку не знойдзена",
     error: "Памылка",
+    success: "Поспех!",
+    answer_created: "Адказ апублікаваны",
     wrong_mark: "Немагчыма змяніць рэйтынг",
     wrong_solution: "Немагчыма адзначыць рашэнне",
     wrong_file_size: "Перавышаны дапушчальны памер файла ў ",
