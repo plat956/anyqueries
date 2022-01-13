@@ -36,6 +36,7 @@ public final class TableColumnName {
     public static final String ANSWER_CREATION_DATE = "creation_date";
     public static final String ANSWER_EDITING_DATE = "editing_date";
     public static final String ANSWER_SOLUTION = "solution";
+    public static final String ANSWER_QUESTION_ID = "question_id";
     public static final String ANSWER_RATING = "rating";
     public static final String ANSWER_CURRENT_USER_GRADE = "grade";
     public static final String RATING_ID = "id";

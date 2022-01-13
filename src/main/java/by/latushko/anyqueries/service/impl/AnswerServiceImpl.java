@@ -122,4 +122,34 @@ public class AnswerServiceImpl implements AnswerService {
         }
         return result;
     }
+
+    @Override
+    public boolean setSolution(Long answerId, boolean solution, Long userId) {
+        BaseDao answerDao = new AnswerDaoImpl();
+        try (EntityTransaction transaction = new EntityTransaction(answerDao)) {
+            try {
+                Optional<Answer> answerOptional = ((AnswerDao)answerDao).findByIdAndQuestionAuthorId(answerId, userId);
+                if(answerOptional.isPresent()) {
+                    Answer answer = answerOptional.get();
+                    boolean updateOthers;
+                    if(solution) {
+                        updateOthers = ((AnswerDao)answerDao).updateSolutionByQuestionIdAndSolution(answer.getQuestionId(), false);
+                    } else {
+                        updateOthers = true;
+                    }
+                    if(updateOthers) {
+                        answer.setSolution(solution);
+                        answerDao.update(answer);
+                        transaction.commit();
+                        return true;
+                    }
+                }
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during setting answer solution", e);
+        }
+        return false;
+    }
 }

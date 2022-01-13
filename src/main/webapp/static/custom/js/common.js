@@ -431,17 +431,16 @@ var answers = {
     markAsSolution: function (context, id, check) {
         var check = $('#solution_' + id).children().hasClass('far');
 
-         // $.ajax({
-         //     url: context + "/controller?command=mark_solution",
-         //     data: {id: id, ajax: true, check: check},
-         //     type: "POST",
-         //     dataType: 'json',
-         //     success: function (res) {
-         //         if(!res.result) {
-         //             toasts.show("error", message.error, message.wrong_solution);
-         //             return;
-         //         }
-
+         $.ajax({
+             url: context + "/controller?command=mark_solution",
+             data: {id: id, ajax: true, check: check},
+             type: "POST",
+             dataType: 'json',
+             success: function (res) {
+                 if(!res.result) {
+                     toasts.show("error", message.error, message.wrong_solution);
+                     return;
+                 }
                 $('.solution-link').each(function(i, el) {
                     $(el).html('<i class="far fa-check-square"></i>');
                     $(el).removeClass("solution-mark");
@@ -455,14 +454,13 @@ var answers = {
                 if(check) {
                     $('#solution_' + id).html('<i class="fas fa-check-square"></i>');
                     $('#solution_' + id).addClass("solution-mark");
-                    $('#solution_' + id).attr('title', message.remove_solution);
-                    $('#solution_' + id).attr('data-original-title', message.remove_solution);
+                    $('#solution_' + id).attr('title', $('#solution_' + id).data('rm-title'));
+                    $('#solution_' + id).attr('data-original-title', $('#solution_' + id).data('rm-title'));
                     $('#solution_' + id).tooltip('update');
                     $('#solution_' + id).tooltip('show');
                 }
-
-         //     }
-         // });
+             }
+         });
     }
 }
 

@@ -35,7 +35,7 @@ public final class RequestParameter {
     public static final String COLOR = "color";
     public static final String USERS = "users";
     public static final String CATEGORIES = "categories";
-    public static final String GRADE = "grade";
+    public static final String CHECK = "check";
 
     private RequestParameter() {
     }

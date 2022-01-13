@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import org.json.JSONObject;
 
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.DATA;
-import static by.latushko.anyqueries.controller.command.identity.RequestParameter.GRADE;
+import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.GRADE;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.ID;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
 import static by.latushko.anyqueries.util.http.MimeType.APPLICATION_JSON;

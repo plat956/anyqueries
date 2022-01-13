@@ -150,7 +150,9 @@
                     </div>
                     <c:if test="${!question.closed}">
                     <a class="reply-link" onclick="dataForms.reply('${a.author.fio}');"><i class="fa fa-reply" aria-hidden="true"></i> <fmt:message key="label.reply.button" /></a>
-                    <a class="solution-link" id="solution_${a.id}" onclick="answers.markAsSolution('${pageContext.request.contextPath}', '${a.id}');" data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.solution" />" data-def-title="<fmt:message key="label.solution" />"><i class="far fa-check-square"></i></a>
+                    <a class="solution-link<c:if test="${a.solution}"> solution-mark</c:if>" id="solution_${a.id}" onclick="answers.markAsSolution('${pageContext.request.contextPath}', '${a.id}');" data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.solution${a.solution ? '.remove' : ''}" />" data-def-title="<fmt:message key="label.solution" />" data-rm-title="<fmt:message key="label.solution.remove" />">
+                        <i class="fa${a.solution ? 's' : 'r'} fa-check-square"></i>
+                    </a>
                     </c:if>
                 </div>
             </div>

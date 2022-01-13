@@ -21,6 +21,7 @@ public class AnswerMapper implements RowMapper<Answer> {
             answer.setCreationDate(resultSet.getObject(fieldPrefix + ANSWER_CREATION_DATE, LocalDateTime.class));
             answer.setEditingDate(resultSet.getObject(fieldPrefix + ANSWER_EDITING_DATE, LocalDateTime.class));
             answer.setSolution(resultSet.getBoolean(fieldPrefix + ANSWER_SOLUTION));
+            answer.setQuestionId(resultSet.getLong(fieldPrefix + ANSWER_QUESTION_ID));
             if(hasColumn(resultSet, fieldPrefix + ANSWER_CURRENT_USER_GRADE)) {
                 answer.setCurrentUserGrade(resultSet.getInt(fieldPrefix + ANSWER_CURRENT_USER_GRADE));
             }

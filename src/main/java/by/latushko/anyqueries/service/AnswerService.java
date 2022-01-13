@@ -9,4 +9,5 @@ public interface AnswerService {
     Paginated<Answer> findPaginatedByQuestionIdOrderByCreationDateAsc(RequestPage page, Long questionId, Long userId);
     boolean changeRating(Long answerId, Boolean grade, Long userId);
     Integer calculateRatingByAnswerId(Long answerId);
+    boolean setSolution(Long answerId, boolean solution, Long userId);
 }

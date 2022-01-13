@@ -17,6 +17,8 @@ public final class RequestAttribute {
     public static final String ANSWERS = "answers";
     public static final String USERS = "users";
     public static final String USER = "user";
+    public static final String RESULT = "result";
+    public static final String GRADE = "grade";
     private RequestAttribute() {
     }
 }

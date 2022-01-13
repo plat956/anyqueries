@@ -8,7 +8,7 @@ public class Answer extends BaseEntity<Long> {
     private LocalDateTime creationDate;
     private LocalDateTime editingDate;
     private Boolean solution;
-    private Question question;
+    private Long questionId;
     private User author;
     private transient Integer rating;
     private transient Integer currentUserGrade;
@@ -49,12 +49,12 @@ public class Answer extends BaseEntity<Long> {
         this.solution = solution;
     }
 
-    public Question getQuestion() {
-        return question;
+    public Long getQuestionId() {
+        return questionId;
     }
 
-    public void setQuestion(Question question) {
-        this.question = question;
+    public void setQuestionId(Long questionId) {
+        this.questionId = questionId;
     }
 
     public User getAuthor() {
@@ -101,8 +101,12 @@ public class Answer extends BaseEntity<Long> {
             return false;
         if (editingDate != null ? !editingDate.equals(answer.editingDate) : answer.editingDate != null) return false;
         if (solution != null ? !solution.equals(answer.solution) : answer.solution != null) return false;
-        if (question != null ? !question.equals(answer.question) : answer.question != null) return false;
-        return author != null ? author.equals(answer.author) : answer.author == null;
+        if (questionId != null ? !questionId.equals(answer.questionId) : answer.questionId != null) return false;
+        if (author != null ? !author.equals(answer.author) : answer.author != null) return false;
+        if (rating != null ? !rating.equals(answer.rating) : answer.rating != null) return false;
+        if (currentUserGrade != null ? !currentUserGrade.equals(answer.currentUserGrade) : answer.currentUserGrade != null)
+            return false;
+        return attachments != null ? attachments.equals(answer.attachments) : answer.attachments == null;
     }
 
     @Override
@@ -111,8 +115,11 @@ public class Answer extends BaseEntity<Long> {
         result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
         result = 31 * result + (editingDate != null ? editingDate.hashCode() : 0);
         result = 31 * result + (solution != null ? solution.hashCode() : 0);
-        result = 31 * result + (question != null ? question.hashCode() : 0);
+        result = 31 * result + (questionId != null ? questionId.hashCode() : 0);
         result = 31 * result + (author != null ? author.hashCode() : 0);
+        result = 31 * result + (rating != null ? rating.hashCode() : 0);
+        result = 31 * result + (currentUserGrade != null ? currentUserGrade.hashCode() : 0);
+        result = 31 * result + (attachments != null ? attachments.hashCode() : 0);
         return result;
     }
 
@@ -123,8 +130,11 @@ public class Answer extends BaseEntity<Long> {
         sb.append(", creationDate=").append(creationDate);
         sb.append(", editingDate=").append(editingDate);
         sb.append(", solution=").append(solution);
-        sb.append(", question=").append(question);
+        sb.append(", questionId=").append(questionId);
         sb.append(", author=").append(author);
+        sb.append(", rating=").append(rating);
+        sb.append(", currentUserGrade=").append(currentUserGrade);
+        sb.append(", attachments=").append(attachments);
         sb.append('}');
         return sb.toString();
     }
