@@ -257,6 +257,10 @@ var questions = {
             type: "POST",
             dataType: 'json',
             success: function (res) {
+                if(res.grade == undefined) {
+                    toasts.show("error", message.error, message.wrong_mark);
+                    return;
+                }
                 $('#rating_' + id).text(res.grade);
                 $('#rating_' + id).removeClass(function (index, className) {
                     return (className.match(/(^|\s)badge-\S+/g) || []).join(' ');

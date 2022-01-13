@@ -38,6 +38,11 @@ public final class TableColumnName {
     public static final String ANSWER_SOLUTION = "solution";
     public static final String ANSWER_RATING = "rating";
     public static final String ANSWER_CURRENT_USER_GRADE = "grade";
+    public static final String RATING_ID = "id";
+    public static final String RATING_ANSWER_ID = "answer_id";
+    public static final String RATING_USER_ID = "user_id";
+    public static final String RATING_GRADE = "grade";
+    public static final String RATING_GRADE_SUM = "grade_sum";
 
     private TableColumnName() {
     }

@@ -31,6 +31,11 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             GROUP BY a.id 
             ORDER BY a.creation_date ASC 
             LIMIT ?, ?""";
+    private static final String SQL_EXISTS_BY_ID_AND_AUTHOR_ID_NOT_QUERY = """
+            SELECT 1
+            FROM answers a
+            WHERE id = ? 
+            AND author_id <> ?""";
 
     RowMapper mapper = new AnswerMapper();
 
@@ -92,6 +97,19 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find answers by calling findLimitedByQuestionIdOrderByCreationDateAsc method", e);
+        }
+    }
+
+    @Override
+    public boolean checkIfExistsByIdAndAuthorIdNot(Long answerId, Long authorId) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_ID_AND_AUTHOR_ID_NOT_QUERY)){
+            statement.setLong(1, answerId);
+            statement.setLong(2, authorId);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find answer by calling checkIfExistByIdAndAuthorIdNot(Long answerId, Long authorId) method", e);
         }
     }
 }

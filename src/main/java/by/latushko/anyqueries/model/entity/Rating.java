@@ -2,8 +2,8 @@ package by.latushko.anyqueries.model.entity;
 
 public class Rating extends BaseEntity<Long> {
     private Integer grade;
-    private User user;
-    private Answer answer;
+    private Long userId;
+    private Long answerId;
 
     public Rating() {
     }
@@ -16,20 +16,20 @@ public class Rating extends BaseEntity<Long> {
         this.grade = grade;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public Answer getAnswer() {
-        return answer;
+    public Long getAnswerId() {
+        return answerId;
     }
 
-    public void setAnswer(Answer answer) {
-        this.answer = answer;
+    public void setAnswerId(Long answerId) {
+        this.answerId = answerId;
     }
 
     @Override
@@ -40,15 +40,15 @@ public class Rating extends BaseEntity<Long> {
         Rating rating = (Rating) o;
 
         if (grade != null ? !grade.equals(rating.grade) : rating.grade != null) return false;
-        if (user != null ? !user.equals(rating.user) : rating.user != null) return false;
-        return answer != null ? answer.equals(rating.answer) : rating.answer == null;
+        if (userId != null ? !userId.equals(rating.userId) : rating.userId != null) return false;
+        return answerId != null ? answerId.equals(rating.answerId) : rating.answerId == null;
     }
 
     @Override
     public int hashCode() {
         int result = grade != null ? grade.hashCode() : 0;
-        result = 31 * result + (user != null ? user.hashCode() : 0);
-        result = 31 * result + (answer != null ? answer.hashCode() : 0);
+        result = 31 * result + (userId != null ? userId.hashCode() : 0);
+        result = 31 * result + (answerId != null ? answerId.hashCode() : 0);
         return result;
     }
 
@@ -56,8 +56,8 @@ public class Rating extends BaseEntity<Long> {
     public String toString() {
         final StringBuilder sb = new StringBuilder("Rating{");
         sb.append("grade=").append(grade);
-        sb.append(", user=").append(user);
-        sb.append(", answer=").append(answer);
+        sb.append(", userId=").append(userId);
+        sb.append(", answerId=").append(answerId);
         sb.append('}');
         return sb.toString();
     }
