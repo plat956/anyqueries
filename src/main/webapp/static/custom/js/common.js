@@ -1,4 +1,7 @@
 var dataForms = {
+    scrollToDiv: function (el) {
+        $("html, body").animate({ scrollTop: $("#" + el).offset().top }, 1);
+    },
     clearSearch: function() {
         $('.search-input').val('');
         $('#searchForm').submit();
@@ -71,6 +74,16 @@ var dataForms = {
             disableDragAndDrop:true,
             lang: lang,
             callbacks: {
+                onInit: function (){
+                    var text = document.getElementById(textarea);
+                    var id = textarea + '-counter';
+                    $('#' + id).text($('#' + textarea).attr('maxlength') - dataForms.stripHtml(text.value).trim().length);
+                    if($('#' + textarea).attr('required') && $.trim(text.value).length == 0) {
+                        text.setCustomValidity("error");
+                    } else {
+                        text.setCustomValidity("");
+                    }
+                },
                 onKeydown: function (e) {
                     if (e.keyCode == 9 || e.keyCode == 13) {
                         e.preventDefault();
@@ -408,6 +421,35 @@ var users = {
 }
 
 var answers = {
+    edit: function (id) {
+        $('#comment-data-' + id).hide();
+        $('#reply-link' + id).hide();
+        $('#comment-edit-data-' + id).show();
+    },
+    delete: function (ev, context, id) {
+        bootbox.confirm({
+            title: message.warn,
+            message: message.delete_answer,
+            buttons: {
+                confirm: {
+                    label: message.confirm,
+                    className: "btn-danger"
+                },
+                cancel: {
+                    label: message.cancel,
+                    className: "btn-secondary"
+                }
+            },
+            callback: function (result) {
+                if(result) {
+                    $(document.body).append('<form action="' + context + '/controller?command=delete_answer" method="post" style="display: none" id="deleteForm">' +
+                        '<input type="hidden" name="id" value="' + id + '">' +
+                        '</form>');
+                    $('#deleteForm').submit();
+                }
+            }
+        });
+    },
     like: function (context, id, grade) {
         $.ajax({
             url: context + "/controller?command=change_rating",

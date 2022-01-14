@@ -25,11 +25,9 @@ public class ChangeLocaleCommand implements Command {
         String lang = request.getParameter(LANG);
         CookieHelper.addCookie(response, CookieName.LANG, lang, APP_COOKIE_ALIVE_SECONDS);
         HttpSession session = request.getSession();
-        String currentPage;
+        String currentPage = QUESTIONS_URL;
         if(session.getAttribute(CURRENT_PAGE) != null) {
             currentPage = session.getAttribute(CURRENT_PAGE).toString();
-        } else {
-            currentPage = QUESTIONS_URL;
         }
         MessageManager manager = MessageManager.getManager(lang);
         ResponseMessage message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_LANG_CHANGED));

@@ -29,10 +29,16 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
             INNER JOIN answer_attachment aa 
             ON a.id = aa.attachment_id 
             AND aa.answer_id = ?""";
+    private static final String SQL_DELETE_BY_ANSWER_ID_QUERY = """
+            DELETE a 
+            FROM attachments a
+            INNER JOIN answer_attachment aa ON a.id = aa.attachment_id
+            WHERE aa.answer_id = ?""";
+
     private static final String SQL_DELETE_BY_CATEGORY_ID_QUERY = """
             DELETE a 
             FROM attachments a
-            INNER JOIN question_attachment qa ON a.id = attachment_id
+            INNER JOIN question_attachment qa ON a.id = qa.attachment_id
             INNER JOIN questions q ON q.id = qa.question_id
             WHERE q.category_id = ?""";
     private static final String SQL_FIND_BY_QUESTION_ID_QUERY = """
@@ -145,6 +151,16 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find attachments by calling findByAnswerId(Long id) method", e);
+        }
+    }
+
+    @Override
+    public boolean deleteByAnswerId(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ANSWER_ID_QUERY)){
+            statement.setLong(1, id);
+            return statement.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to delete attachment by calling deleteByAnswerId(Long id) method", e);
         }
     }
 }

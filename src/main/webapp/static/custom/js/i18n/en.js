@@ -11,6 +11,7 @@ const message = {
     incorrect_files_size_part2: " MB",
     incorrect_profile: "Can't find profile",
     incorrect_profile_text: "No information was found for the requested user",
+    answer_edit_error: "Unable to edit answer",
     error: "Error",
     success: "Success!",
     answer_created: "Answer published",
@@ -20,6 +21,7 @@ const message = {
     delete_question: "Are you sure you want to delete this question?",
     delete_category: "Are you sure you want to delete this category?",
     delete_user: "Are you sure you want to delete this user?",
+    delete_answer: "Are you sure you want to delete this answer?",
     warn: "Attention!",
     cancel: "Cancel",
     confirm: "Yes"

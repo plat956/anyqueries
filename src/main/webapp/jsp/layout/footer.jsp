@@ -14,7 +14,6 @@
 </div>
 </section>
 </div>
-
 <script type="text/javascript">
     pageEvents.init();
     //disable back button

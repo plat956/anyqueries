@@ -842,16 +842,16 @@ input[type="search"].dark::-webkit-search-cancel-button {
     -o-transition: color .2s ease-in-out;
     transition: color .2s ease-in-out;
 }
-.dx-comment .dx-comment-cont .dx-comment-name+.dx-comment-date {
+.dx-comment-date {
     margin-top: -10px;
     cursor: default;
 }
-.dx-comment .dx-comment-cont .dx-comment-date {
+.dx-comment-date {
     display: block;
     font-size: .875rem;
     color: #7a7a7a;
 }
-.dx-comment .dx-comment-cont .dx-comment-date+.dx-comment-text {
+.dx-comment-text {
     margin-top: 5px;
     margin-bottom: -6px;
     word-break: break-word !important;
@@ -995,4 +995,23 @@ img {
 #activationInfo {
     font-size: 15px;
     cursor: pointer;
+}
+.edit-answer-btn {
+    cursor: pointer;
+    position: absolute;
+    top: 14px;
+    margin-left: 10px;
+}
+.answer-dropdown {
+    font-size: 1em;
+}
+.drop-lnk {
+    cursor: pointer;
+}
+.drop-lnk:active {
+    color: #fff !important;
+}
+.comment-data {
+    display: none;
+    margin-bottom: 15px;
 }

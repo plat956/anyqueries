@@ -11,6 +11,7 @@ const message = {
     incorrect_files_size_part2: " МБ",
     incorrect_profile: "Немагчыма знайсці профіль",
     incorrect_profile_text: "Інфармацыя па запытанаму карыстальніку не знойдзена",
+    answer_edit_error: "Немагчыма змяніць адказ",
     error: "Памылка",
     success: "Поспех!",
     answer_created: "Адказ апублікаваны",
@@ -20,6 +21,7 @@ const message = {
     delete_question: "Вы сапраўды хочаце выдаліць гэтае пытанне?",
     delete_category: "Вы сапраўды хочаце выдаліць гэту катэгорыю?",
     delete_user: "Вы сапраўды хочаце выдаліць гэтага карыстальніка?",
+    delete_answer: "Вы сапраўды хочаце выдаліць гэты адказ?",
     warn: "Увага!",
     cancel: "Адмена",
     confirm: "Да"

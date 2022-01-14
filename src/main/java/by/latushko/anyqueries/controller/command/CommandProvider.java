@@ -50,6 +50,8 @@ public class CommandProvider {
         postCommands.put(CommandType.CHANGE_RATING, new ChangeRatingCommand());
         postCommands.put(CommandType.MARK_SOLUTION, new MarkSolutionCommand());
         postCommands.put(CommandType.CREATE_ANSWER, new CreateAnswerCommand());
+        postCommands.put(CommandType.DELETE_ANSWER, new DeleteAnswerCommand());
+        postCommands.put(CommandType.EDIT_ANSWER, new EditAnswerCommand());
     }
 
     public static CommandProvider getInstance() {

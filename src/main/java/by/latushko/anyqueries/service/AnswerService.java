@@ -17,4 +17,6 @@ public interface AnswerService {
     boolean setSolution(Long answerId, boolean solution, Long userId);
     Optional<Answer> create(Long question, String text, User user, List<Part> attachments);
     Integer calculateLastPageByQuestionId(Long id);
+    boolean delete(Long id);
+    Optional<Answer> update(Long id, String text, List<Part> attachments);
 }

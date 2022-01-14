@@ -13,6 +13,7 @@ import jakarta.servlet.http.Part;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -210,5 +211,77 @@ public class AnswerServiceImpl implements AnswerService {
             logger.error("Something went wrong during calculating answers last page", e);
         }
         return result;
+    }
+
+    @Override
+    public boolean delete(Long id) {
+        boolean result = false;
+        BaseDao answerDao = new AnswerDaoImpl();
+        BaseDao attachmentDao = new AttachmentDaoImpl();
+        try (EntityTransaction transaction = new EntityTransaction(answerDao, attachmentDao)) {
+            try {
+                List<Attachment> attachments = ((AttachmentDaoImpl) attachmentDao).findByAnswerId(id);
+                result = ((AttachmentDao)attachmentDao).deleteByAnswerId(id);
+                if(result) {
+                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                    result = attachmentService.deleteAttachmentsFiles(attachments);
+                    if(result) {
+                        result = answerDao.delete(id);
+                        transaction.commit();
+                    }
+                }
+                //todo?? call rollback if commit is not reached?
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to delete answer", e);
+        }
+        return result;
+    }
+
+    @Override
+    public Optional<Answer> update(Long id, String text, List<Part> attachments) {
+        BaseDao answerDao = new AnswerDaoImpl();
+        BaseDao attachmentDao = new AttachmentDaoImpl();
+
+        try (EntityTransaction transaction = new EntityTransaction(answerDao, attachmentDao)) {
+            try {
+                Optional<Answer> answerOptional = answerDao.findById(id);
+                if(answerOptional.isEmpty())  {
+                    throw new EntityTransactionException("Failed to update answer. Answer with id " + id + " does not exist"); //todo: or return false?
+                }
+                Answer answer = answerOptional.get();
+                answer.setText(text);
+                answer.setEditingDate(LocalDateTime.now());
+                answerDao.update(answer);
+
+
+                if(!attachments.isEmpty()) {
+                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                    List<Attachment> oldAttachments = ((AttachmentDaoImpl) attachmentDao).findByAnswerId(id);
+                    ((AttachmentDao)attachmentDao).deleteByAnswerId(id);
+                    attachmentService.deleteAttachmentsFiles(oldAttachments);
+                    for (Part p : attachments) {
+                        Optional<String> fileName = attachmentService.uploadFile(p);
+                        if (fileName.isEmpty()) {
+                            throw new EntityTransactionException("Failed to upload file."); //todo: or return false?
+                        }
+                        Attachment attachment = new Attachment();
+                        attachment.setFile(fileName.get());
+                        attachmentDao.create(attachment);
+                        ((AnswerDao) answerDao).createAnswerAttachment(answer.getId(), attachment.getId());
+                    }
+                }
+
+                transaction.commit();
+                return Optional.of(answer);
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to update answer", e);
+        }
+        return Optional.empty();
     }
 }

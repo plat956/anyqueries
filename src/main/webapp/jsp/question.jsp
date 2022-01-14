@@ -5,7 +5,15 @@
 <%@ taglib prefix="at" uri="apptags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:set var="page_title" value="${question.title}" scope="request" />
+<c:choose>
+    <c:when test="${empty param['edit']}">
+        <c:set var="page_title" value="${question.title}" scope="request" />
+    </c:when>
+    <c:otherwise>
+        <c:set var="page_title_label" value="label.answer.editing" scope="request" />
+        <c:set var="page_title_prefix" value="${question.title} | " scope="request" />
+    </c:otherwise>
+</c:choose>
 <jsp:include page="layout/header.jsp" />
 <style>
     .note-editor {
@@ -55,6 +63,15 @@
                 </div>
                 <div class="dx-comment-cont">
                     <a href="#" onclick="questions.showProfile('${pageContext.request.contextPath}', ${question.author.id}, event); return false;" class="dx-comment-name">${question.author.fio}</a>
+                    <span id="dropdownMenuButton${a.id}" data-toggle="dropdown">
+                        <a  class="edit-answer-btn" data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.question.management" />">
+                            <i class="fas fa-cog"></i>
+                        </a>
+                        <div class="dropdown-menu answer-dropdown" aria-labelledby="dropdownMenuButton${question.id}">
+                            <a class="dropdown-item drop-lnk" onclick="location.href = '${pageContext.request.contextPath}/controller?command=edit_question_page&id=${question.id}'"><i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i> <fmt:message key="label.edit" /></a>
+                            <a class="dropdown-item drop-lnk" onclick="questions.delete(event, '${pageContext.request.contextPath}', ${question.id})"><i class="fa fa-trash" aria-hidden="true" style="color: red"></i> <fmt:message key="label.delete" /></a>
+                        </div>
+                    </span>
                     <div class="dx-comment-date"><at:time-duration date="${question.creationDate}"/></div>
                     <div class="dx-comment-text">
                         <p class="mb-0">
@@ -72,7 +89,9 @@
                     </ul>
                     <c:if test="${!question.closed}">
                         <p></p>
+                        <c:if test="${empty param['edit']}">
                         <a class="reply-link" onclick="dataForms.reply('${question.author.fio}');"><i class="fa fa-reply" aria-hidden="true"></i> <fmt:message key="label.reply.button" /></a>
+                        </c:if>
                     </c:if>
                 </div>
             </div>
@@ -97,69 +116,129 @@
                         ${fn:substring(roleName, 0, 1)}
                     </span>
                     </div>
-                    <div class="dx-comment-cont">
-                        <a href="#" onclick="questions.showProfile('${pageContext.request.contextPath}', ${a.author.id}, event); return false;" class="dx-comment-name">${a.author.fio}</a>
-                        <div class="dx-comment-date"><at:time-duration date="${a.creationDate}"/><c:if test="${!empty a.editingDate}"> (<fmt:message key="label.edit.short" />. <at:time-duration date="${a.editingDate}"/>)</c:if></div>
-                        <div class="dx-comment-text">
-                            <p class="mb-0">
-                                    ${a.text}
-                            </p>
-                        </div>
-                        <ul class="attachments download" style="margin-top:10px;margin-bottom: 10px;">
-                            <c:forEach var="at" items="${a.attachments}">
-                                <li onclick="questions.downloadAttachment('${pageContext.request.contextPath}/controller?command=download&file=${at.file}')">
-                                <span>
-                                    <i class="fa fa-file file-attachment file-i" aria-hidden="true"></i>${at.file}
-                                </span>
-                                </li>
-                            </c:forEach>
-                        </ul>
-                        <div style="font-size: 1.1em;">
-                            <c:choose>
-                                <c:when test="${a.rating > 0}">
-                                    <c:set var="rating_color" value="success" />
-                                </c:when>
-                                <c:when test="${a.rating < 0}">
-                                    <c:set var="rating_color" value="danger" />
-                                </c:when>
-                                <c:otherwise>
-                                    <c:set var="rating_color" value="secondary" />
-                                </c:otherwise>
-                            </c:choose>
 
-                            <c:choose>
-                                <c:when test="${a.currentUserGrade < 0}">
-                                    <a class="like-done" id="unlike_${a.id}"><i class="fas fa-thumbs-down"></i></a>
-                                </c:when>
-                                <c:otherwise>
-                                    <a id="unlike_${a.id}" onclick="answers.like('${pageContext.request.contextPath}', ${a.id}, false);" class="like-none"><i class="far fa-thumbs-down"></i></a>
-                                </c:otherwise>
-                            </c:choose>
-                            <span class="badge badge-${rating_color}" style="cursor: default" id="rating_${a.id}">${a.rating}</span>
-                            <c:choose>
-                                <c:when test="${a.currentUserGrade > 0}">
-                                    <a id="like_${a.id}" class="like-done"><i class="fas fa-thumbs-up"></i></a>
-                                </c:when>
-                                <c:otherwise>
-                                    <a id="like_${a.id}" onclick="answers.like('${pageContext.request.contextPath}', ${a.id}, true);" class="like-none"><i class="far fa-thumbs-up"></i></a>
-                                </c:otherwise>
-                            </c:choose>
+                        <div class="dx-comment-cont">
+                            <a href="#" onclick="questions.showProfile('${pageContext.request.contextPath}', ${a.author.id}, event); return false;" class="dx-comment-name">${a.author.fio}</a>
+                            <span id="dropdownMenuButton${a.id}" data-toggle="dropdown">
+                                <a class="edit-answer-btn" data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.answer.management" />">
+                                    <i class="fas fa-cog"></i>
+                                </a>
+                                <div class="dropdown-menu answer-dropdown" aria-labelledby="dropdownMenuButton${a.id}">
+                                    <c:if test="${param['edit'] != a.id}">
+                                    <a class="dropdown-item drop-lnk" onclick="location.href = '<at:query-parameter-changer key="edit" value="${a.id}"/>'"><i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i> <fmt:message key="label.edit" /></a>
+                                    </c:if>
+                                    <a class="dropdown-item drop-lnk" onclick="answers.delete(event, '${pageContext.request.contextPath}', ${a.id})"><i class="fa fa-trash" aria-hidden="true" style="color: red"></i> <fmt:message key="label.delete" /></a>
+                                </div>
+                            </span>
+                            <div class="dx-comment-date"><at:time-duration date="${a.creationDate}"/><c:if test="${!empty a.editingDate}"> (<fmt:message key="label.edit.short" />. <at:time-duration date="${a.editingDate}"/>)</c:if></div>
+                            <c:if test="${param['edit'] != a.id || question.closed}">
+                                <div id="comment-data-${a.id}">
+                                    <div class="dx-comment-text">
+                                        <p class="mb-0">
+                                                ${a.text}
+                                        </p>
+                                    </div>
+                                    <ul class="attachments download" style="margin-top:10px;margin-bottom: 10px;">
+                                        <c:forEach var="at" items="${a.attachments}">
+                                            <li onclick="questions.downloadAttachment('${pageContext.request.contextPath}/controller?command=download&file=${at.file}')">
+                                            <span>
+                                                <i class="fa fa-file file-attachment file-i" aria-hidden="true"></i>${at.file}
+                                            </span>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                    <div style="font-size: 1.1em;">
+                                        <c:choose>
+                                            <c:when test="${a.rating > 0}">
+                                                <c:set var="rating_color" value="success" />
+                                            </c:when>
+                                            <c:when test="${a.rating < 0}">
+                                                <c:set var="rating_color" value="danger" />
+                                            </c:when>
+                                            <c:otherwise>
+                                                <c:set var="rating_color" value="secondary" />
+                                            </c:otherwise>
+                                        </c:choose>
+
+                                        <c:choose>
+                                            <c:when test="${a.currentUserGrade < 0}">
+                                                <a class="like-done" id="unlike_${a.id}"><i class="fas fa-thumbs-down"></i></a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a id="unlike_${a.id}" onclick="answers.like('${pageContext.request.contextPath}', ${a.id}, false);" class="like-none"><i class="far fa-thumbs-down"></i></a>
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <span class="badge badge-${rating_color}" style="cursor: default" id="rating_${a.id}">${a.rating}</span>
+                                        <c:choose>
+                                            <c:when test="${a.currentUserGrade > 0}">
+                                                <a id="like_${a.id}" class="like-done"><i class="fas fa-thumbs-up"></i></a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a id="like_${a.id}" onclick="answers.like('${pageContext.request.contextPath}', ${a.id}, true);" class="like-none"><i class="far fa-thumbs-up"></i></a>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <c:if test="${param['edit'] == a.id && !question.closed}">
+                                <div id="comment-edit-data-${a.id}">
+                                    <form class="needs-validation" method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/controller?command=edit_answer" novalidate autocomplete="off">
+                                        <input type="hidden" value="${a.id}" name="id" />
+                                        <textarea class="summernote form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.ANSWER_TEXT)}" />" name="answer_text" id="answer_text${a.id}" maxlength="${AppProperty.APP_ANSWER_MAXLENGTH}" required>${!empty validationResult ? validationResult.getValue(RequestParameter.ANSWER_TEXT) : a.text}</textarea>
+                                        <c:if test="${!empty validationResult.getMessage(RequestParameter.ANSWER_TEXT)}">
+                                            <div class="invalid-feedback-backend">
+                                                <fmt:message key="${validationResult.getMessage(RequestParameter.ANSWER_TEXT)}" />
+                                            </div>
+                                        </c:if>
+                                        <div class="invalid-feedback">
+                                            <fmt:message key="label.wrong-input" />
+                                        </div>
+                                        <fmt:message key="label.textarea.remaining" /> <span id="answer_text${a.id}-counter">${AppProperty.APP_ANSWER_MAXLENGTH}</span>
+                                        <div class="form-group">
+                                            <label class="" for="file-selector${a.id}" data-toggle="popover" data-trigger="hover" data-placement="bottom" style="cursor:pointer;height: 40px;margin-bottom: 0px;"
+                                                   data-content="<fmt:message key="message.attachment.info.part1" /> ${AppProperty.APP_ATTACHMENT_COUNT}. <fmt:message key="message.attachment.info.part2" /> ${AppProperty.APP_ATTACHMENT_SIZE} <fmt:message key="message.mb" />">
+                                                <input id="file-selector${a.id}" type="file" multiple name="file" style="display:none">
+                                                <div style="margin: 10px 10px -10px 0px;">
+                                                    <i class="fa fa-paperclip" aria-hidden="true"></i> <fmt:message key="label.uploadAttachments" />
+                                                </div>
+                                            </label>
+                                            <ul class="attachments" id="attachments-list${a.id}" style="margin-top: 10px">
+                                                <c:forEach var="c" items="${a.attachments}">
+                                                    <li>
+                                                        <span>
+                                                            <i class="fa fa-file file-attachment file-i" aria-hidden="true"></i>${c.file}
+                                                        </span>
+                                                    </li>
+                                                </c:forEach>
+                                            </ul>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary" id="replyButton${a.id}">
+                                                <fmt:message key="label.save.button" />
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </c:if>
                         </div>
-                    </div>
-                    <c:if test="${!question.closed}">
-                    <a class="reply-link" onclick="dataForms.reply('${a.author.fio}');"><i class="fa fa-reply" aria-hidden="true"></i> <fmt:message key="label.reply.button" /></a>
-                    <a class="solution-link<c:if test="${a.solution}"> solution-mark</c:if>" id="solution_${a.id}" onclick="answers.markAsSolution('${pageContext.request.contextPath}', '${a.id}');" data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.solution${a.solution ? '.remove' : ''}" />" data-def-title="<fmt:message key="label.solution" />" data-rm-title="<fmt:message key="label.solution.remove" />">
-                        <i class="fa${a.solution ? 's' : 'r'} fa-check-square"></i>
-                    </a>
-                    </c:if>
+                        <c:if test="${!question.closed}">
+                            <c:if test="${empty param['edit']}">
+                                <a class="reply-link" id="reply-link${a.id}" onclick="dataForms.reply('${a.author.fio}');"><i class="fa fa-reply" aria-hidden="true"></i> <fmt:message key="label.reply.button" /></a>
+                            </c:if>
+                            <a class="solution-link<c:if test="${a.solution}"> solution-mark</c:if>" id="solution_${a.id}" onclick="answers.markAsSolution('${pageContext.request.contextPath}', '${a.id}');" data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.solution${a.solution ? '.remove' : ''}" />" data-def-title="<fmt:message key="label.solution" />" data-rm-title="<fmt:message key="label.solution.remove" />">
+                                <i class="fa${a.solution ? 's' : 'r'} fa-check-square"></i>
+                            </a>
+                        </c:if>
+
                 </div>
             </div>
         </c:forEach>
         <c:if test="${question.closed || totalPages > 1}">
             <jsp:include page="fragment/pagination.jsp" />
         </c:if>
-        <c:if test="${!question.closed}">
-            <div class="dx-comment dx-ticket-comment dx-comment-replied dx-comment-new" style="margin-bottom: -20px;">
+        <c:if test="${!question.closed && empty param['edit']}">
+            <div class="dx-comment dx-ticket-comment dx-comment-replied dx-comment-new" style="margin-bottom: -20px;" id="replyForm">
             <div>
                 <div class="dx-comment-img">
                     <img src="
@@ -208,24 +287,41 @@
             </div>
         </div>
         </c:if>
-        <c:if test="${question.closed && empty totalPages}">
+        <c:if test="${(!empty param['edit'] && totalPages <= 1) || question.closed && empty totalPages}">
             <div style="margin-top: -20px"></div>
         </c:if>
     </div>
-
 <c:if test="${!question.closed}">
 <script>
-    $(function () {
-        dataForms.initSummernote('text', '<fmt:message key="label.reply.placeholder" />', '${!empty current_lang ? current_lang : 'ru'}', 120);
-        attacher.init('file-selector', 'attachments-list', ${AppProperty.APP_ATTACHMENT_COUNT}, ${AppProperty.APP_ATTACHMENT_SIZE});
-    });
-    <c:if test="${!empty createdAnswer || !empty validationResult}">
+    <c:if test="${!empty param['edit']}">
     $(window).load(function() {
-        pageEvents.scrollBottom(1);
-        <c:if test="${!empty createdAnswer}">
+        setTimeout(function () {
+            dataForms.scrollToDiv('answer-box-${param['edit']}');
+        }, 1);
+    });
+    </c:if>
+    $(function () {
+        <c:choose>
+            <c:when test="${empty param['edit']}">
+                dataForms.initSummernote('text', '<fmt:message key="label.reply.placeholder" />', '${!empty current_lang ? current_lang : 'ru'}', 120);
+                attacher.init('file-selector', 'attachments-list', ${AppProperty.APP_ATTACHMENT_COUNT}, ${AppProperty.APP_ATTACHMENT_SIZE});
+            </c:when>
+            <c:otherwise>
+                dataForms.initSummernote('answer_text${param['edit']}', '<fmt:message key="label.reply.placeholder" />', '${!empty current_lang ? current_lang : 'ru'}', 120);
+                attacher.init('file-selector${param['edit']}', 'attachments-list${param['edit']}', ${AppProperty.APP_ATTACHMENT_COUNT}, ${AppProperty.APP_ATTACHMENT_SIZE});
+            </c:otherwise>
+        </c:choose>
+    });
+
+    <c:if test="${!empty answerObject || !empty validationResult}">
+    $(window).load(function() {
+        <c:if test="${!empty createRecord}">
+            pageEvents.scrollBottom(1);
+        </c:if>
+        <c:if test="${!empty answerObject}">
             toasts.show("success", message.success, message.answer_created);
-            $('#answer-box-${createdAnswer.id}').css('background-color', 'rgb(255 230 170)');
-            $('#answer-box-${createdAnswer.id}').animate({backgroundColor: "#fff"}, 1000 );
+            $('#answer-box-${answerObject.id}').css('background-color', 'rgb(255 230 170)');
+            $('#answer-box-${answerObject.id}').animate({backgroundColor: "#fff"}, 1000 );
         </c:if>
     });
     </c:if>

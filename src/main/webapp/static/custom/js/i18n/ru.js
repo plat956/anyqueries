@@ -11,6 +11,7 @@ const message = {
     incorrect_files_size_part2: " МБ",
     incorrect_profile: "Не удается найти профиль",
     incorrect_profile_text: "Информация по запрашиваемому пользователю не найдена",
+    answer_edit_error: "Невозможно изменить ответ",
     error: "Ошибка",
     success: "Успех!",
     answer_created: "Ответ опубликован",
@@ -20,6 +21,7 @@ const message = {
     delete_question: "Вы действительно хотите удалить этот вопрос?",
     delete_category: "Вы действительно хотите удалить эту категорию?",
     delete_user: "Вы действительно хотите удалить этого пользователя?",
+    delete_answer: "Вы действительно хотите удалить этот ответ?",
     warn: "Внимание!",
     cancel: "Отмена",
     confirm: "Да"

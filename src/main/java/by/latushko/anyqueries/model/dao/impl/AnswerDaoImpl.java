@@ -64,6 +64,17 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             SELECT count(id) 
             FROM answers 
             WHERE question_id = ?""";
+    private static final String SQL_DELETE_QUERY = """
+            DELETE FROM answers 
+            WHERE id = ?""";
+    private static final String SQL_FIND_BY_ID_QUERY = """
+            SELECT a.id, a.text, a.creation_date, a.editing_date, a.solution, a.question_id, count(a.id) OVER() AS total, a.author_id as user_id, u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
+            u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
+            u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role 
+            FROM answers a 
+            INNER JOIN users u 
+            ON a.author_id = u.id 
+            WHERE a.id = ?""";
 
     RowMapper mapper = new AnswerMapper();
 
@@ -74,7 +85,18 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
 
     @Override
     public Optional<Answer> findById(Long id) throws DaoException {
-        return Optional.empty();
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID_QUERY)){
+            statement.setLong(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return mapper.mapRow(resultSet);
+                } else {
+                    return Optional.empty();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find answer by calling findById(Long id) method", e);
+        }
     }
 
     @Override
@@ -127,7 +149,12 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
 
     @Override
     public boolean delete(Long id) throws DaoException {
-        return false;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_QUERY)){
+            statement.setLong(1, id);
+            return statement.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to delete answer by calling delete(Long id) method", e);
+        }
     }
 
     @Override
@@ -228,4 +255,6 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
         }
         return 0L;
     }
+
+
 }

@@ -5,16 +5,19 @@ import by.latushko.anyqueries.controller.command.CommandResult;
 import by.latushko.anyqueries.controller.command.ResponseMessage;
 import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.model.entity.Answer;
-import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.AnswerService;
+import by.latushko.anyqueries.service.CategoryService;
 import by.latushko.anyqueries.service.impl.AnswerServiceImpl;
+import by.latushko.anyqueries.service.impl.CategoryServiceImpl;
 import by.latushko.anyqueries.util.http.CookieHelper;
+import by.latushko.anyqueries.util.http.QueryParameterHelper;
 import by.latushko.anyqueries.util.i18n.MessageManager;
 import by.latushko.anyqueries.validator.AttachmentValidator;
 import by.latushko.anyqueries.validator.FormValidator;
 import by.latushko.anyqueries.validator.ValidationResult;
 import by.latushko.anyqueries.validator.impl.AnswerFormValidator;
 import by.latushko.anyqueries.validator.impl.AttachmentValidatorImpl;
+import by.latushko.anyqueries.validator.impl.CategoryValidator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,24 +30,26 @@ import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.REDIRECT;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
+import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
-import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
-import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTION_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.*;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.CURRENT_PAGE;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
-import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_ERROR_UNEXPECTED;
 
-public class CreateAnswerCommand implements Command {
-    private static final String URL_PAGE_PART = "&page=";
-
+public class EditAnswerCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
+        Long id = Long.valueOf(request.getParameter(ID));
         String currentPage = QUESTIONS_URL;
         if(session.getAttribute(CURRENT_PAGE) != null) {
             currentPage = session.getAttribute(CURRENT_PAGE).toString();
+            currentPage = QueryParameterHelper.removeParameter(currentPage, "edit");
         }
+
+        String answer = request.getParameter(ANSWER_TEXT);
         CommandResult commandResult = new CommandResult(currentPage, REDIRECT);
         ResponseMessage message;
 
@@ -76,21 +81,20 @@ public class CreateAnswerCommand implements Command {
             return commandResult;
         }
 
-        User user = (User) session.getAttribute(PRINCIPAL);
-        String text = request.getParameter(TEXT);
-        Long question = Long.valueOf(request.getParameter(RequestParameter.QUESTION));
 
+        //todo checking
         AnswerService answerService = AnswerServiceImpl.getInstance();
-        Optional<Answer> result = answerService.create(question, text, user, fileParts);
+//        boolean exists = categoryService.checkIfExistsByNameAndIdNot(name, id);
+//        if(exists) {
+//            message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_CATEGORY_WRONG));
+//            session.setAttribute(MESSAGE, message);
+//            session.setAttribute(VALIDATION_RESULT, validationResult);
+//            return commandResult;
+//        }
+        Optional<Answer> result = answerService.update(id, answer, fileParts);
         if(result.isPresent()) {
-            Integer page = answerService.calculateLastPageByQuestionId(question);
-            String url = QUESTION_URL + question;
-            if(page > 1) {
-                url += URL_PAGE_PART + page;
-            }
             session.setAttribute(ANSWER_OBJECT, result.get());
-            //session.setAttribute(CREATE_RECORD, true);
-            return new CommandResult(url, REDIRECT);
+            return commandResult;
         } else {
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ERROR_UNEXPECTED));
             session.setAttribute(MESSAGE, message);
