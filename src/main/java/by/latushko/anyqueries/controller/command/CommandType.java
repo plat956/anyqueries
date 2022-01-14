@@ -40,7 +40,10 @@ public enum CommandType {
     MARK_SOLUTION,
     CREATE_ANSWER,
     DELETE_ANSWER,
-    EDIT_ANSWER;
+    EDIT_ANSWER,
+    DELETE_USER,
+    EDIT_USER_PAGE,
+    EDIT_USER;
 
     public static Optional<CommandType> getByName(String commandName) {
         if (commandName == null) {

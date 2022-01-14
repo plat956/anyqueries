@@ -8,40 +8,52 @@
     <c:set var="page_title_postfix" value=": «${fn:substring(param['query'], 0, 40)}»" scope="request" />
 </c:if>
 <jsp:include page="layout/header.jsp"/>
+<c:if test="${!empty users}">
 <style>
     .page-title-hr {
         display: none !important;
     }
 </style>
+</c:if>
 <div class="row" style="padding-top:10px">
-    <div class="col-lg-12" style="
-    padding: 0;
-    border-radius: 0px;">
-        <ul class="list-group fa-padding questions-group">
-            <c:forEach var="q" items="${users}">
-                <li class="list-group-item" style="border-radius: 0;border-left: 0;border-right: 0;" onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;">
-                    <div class="media" style="font-size: 15px;">
-                        <div class="media-body"><span class="badge badge-${q.role.color} user-role-span"><fmt:message key="label.role.${fn:toLowerCase(q.role)}" /></span>&nbsp;&nbsp;<strong>${q.login}</strong> <span>(${q.fio})</span>
-                            <span class="number float-right">
-                                    <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=edit_user_page&id=${q.id}'" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.edit" />">
-                                        <i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i>
-                                    </a>
-                                    <a onclick="users.delete(event, '${pageContext.request.contextPath}', ${q.id})" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.delete" />">
-                                        <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
-                                    </a>
-                                </span>
-                        </div>
-                    </div>
-                </li>
-            </c:forEach>
-            <c:if test="${empty users}">
-                <div class="alert alert-secondary" role="alert" style="margin: 0px 15px 15px 15px;">
-                    <fmt:message key="message.no.results" />
-                </div>
-            </c:if>
-        </ul>
+<c:if test="${!empty users}">
+    <table class="table table-hover" style="margin-bottom: 5px">
+        <thead>
+        <tr>
+            <th scope="col"><fmt:message key="label.login.placeholder" /></th>
+            <th scope="col"><fmt:message key="label.fio" /></th>
+            <th scope="col"><fmt:message key="label.status" /></th>
+            <th scope="col"><fmt:message key="label.role" /></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach var="q" items="${users}">
+        <tr style="cursor: pointer">
+            <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;">${q.login}</td>
+            <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;">${q.fio}</td>
+            <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;"><span class="badge badge-${q.status == 'ACTIVE' ? 'success' : (q.status == 'INACTIVE' ? 'secondary' : 'danger')} user-role-span"><fmt:message key="label.status.${fn:toLowerCase(q.status)}" /></span></td>
+            <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;"><span class="badge badge-${q.role.color} user-role-span"><fmt:message key="label.role.${fn:toLowerCase(q.role)}" /></span></td>
+            <td align="right">
+                <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=edit_user_page&id=${q.id}'" style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.edit" />">
+                    <i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i>
+                </a>&nbsp;
+                <a onclick="users.delete(event, '${pageContext.request.contextPath}', ${q.id})" data-toggle="tooltip" data-placement="top" style="cursor:pointer" title="<fmt:message key="label.delete" />">
+                    <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
+                </a>
+            </td>
+        </tr>
+        </c:forEach>
+        </tbody>
+    </table>
+</c:if>
+<c:if test="${empty users}">
+    <div class="alert alert-secondary" role="alert" style="margin: -10px 15px 15px 15px;width:100%">
+        <fmt:message key="message.no.results" />
     </div>
+</c:if>
 </div>
 <jsp:include page="fragment/pagination.jsp" />
+
 <jsp:include page="fragment/showProfileModal.jsp" />
 <jsp:include page="layout/footer.jsp"/>

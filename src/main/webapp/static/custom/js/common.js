@@ -329,8 +329,10 @@ var questions = {
             }
         });
     },
-    delete: function (ev, context, id) {
-        ev.stopPropagation();
+    delete: function (ev, context, id, inner) {
+        if(!inner) {
+            ev.stopPropagation();
+        }
         bootbox.confirm({
             title: message.warn,
             message: message.delete_question,

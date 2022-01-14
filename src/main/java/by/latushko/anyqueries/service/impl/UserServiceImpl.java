@@ -2,10 +2,13 @@ package by.latushko.anyqueries.service.impl;
 
 import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.exception.EntityTransactionException;
+import by.latushko.anyqueries.model.dao.AttachmentDao;
 import by.latushko.anyqueries.model.dao.BaseDao;
 import by.latushko.anyqueries.model.dao.EntityTransaction;
 import by.latushko.anyqueries.model.dao.UserDao;
+import by.latushko.anyqueries.model.dao.impl.AttachmentDaoImpl;
 import by.latushko.anyqueries.model.dao.impl.UserDaoImpl;
+import by.latushko.anyqueries.model.entity.Attachment;
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.model.entity.UserHash;
 import by.latushko.anyqueries.service.AttachmentService;
@@ -363,6 +366,34 @@ public class UserServiceImpl implements UserService {
             logger.error("Something went wrong during retrieving users logins by pattern", e);
         }
         return logins;
+    }
+
+    @Override
+    public boolean delete(Long id) {
+        boolean result = false;
+        BaseDao userDao = new UserDaoImpl();
+        BaseDao attachmentDao = new AttachmentDaoImpl();
+        try (EntityTransaction transaction = new EntityTransaction(userDao, attachmentDao)) {
+            try {
+                List<Attachment> attachments = ((AttachmentDao) attachmentDao).findByUserId(id);
+                result = ((AttachmentDao)attachmentDao).deleteByQuestionAuthorId(id);
+                result = ((AttachmentDao)attachmentDao).deleteByAnswerAuthorId(id);
+                if(result) {
+                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                    result = attachmentService.deleteAttachmentsFiles(attachments);
+                    if(result) {
+                        result = userDao.delete(id);
+                        transaction.commit();
+                    }
+                }
+                //todo?? call rollback if commit is not reached?
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to delete user", e);
+        }
+        return result;
     }
 
     private String getCredentialTokenSource(User user) {

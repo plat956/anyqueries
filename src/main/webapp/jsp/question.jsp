@@ -69,7 +69,7 @@
                         </a>
                         <div class="dropdown-menu answer-dropdown" aria-labelledby="dropdownMenuButton${question.id}">
                             <a class="dropdown-item drop-lnk" onclick="location.href = '${pageContext.request.contextPath}/controller?command=edit_question_page&id=${question.id}'"><i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i> <fmt:message key="label.edit" /></a>
-                            <a class="dropdown-item drop-lnk" onclick="questions.delete(event, '${pageContext.request.contextPath}', ${question.id})"><i class="fa fa-trash" aria-hidden="true" style="color: red"></i> <fmt:message key="label.delete" /></a>
+                            <a class="dropdown-item drop-lnk" onclick="questions.delete(event, '${pageContext.request.contextPath}', ${question.id}, true)"><i class="fa fa-trash" aria-hidden="true" style="color: red"></i> <fmt:message key="label.delete" /></a>
                         </div>
                     </span>
                     <div class="dx-comment-date"><at:time-duration date="${question.creationDate}"/></div>

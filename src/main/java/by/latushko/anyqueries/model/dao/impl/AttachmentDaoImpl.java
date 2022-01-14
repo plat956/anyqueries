@@ -50,9 +50,33 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
     private static final String SQL_FIND_BY_CATEGORY_ID_QUERY = """
             SELECT a.id, a.file  
             FROM attachments a
-            INNER JOIN question_attachment qa ON a.id = attachment_id
+            INNER JOIN question_attachment qa ON a.id = qa.attachment_id
             INNER JOIN questions q ON q.id = qa.question_id
             WHERE q.category_id = ?""";
+    private static final String SQL_FIND_BY_AUTHOR_ID_QUERY = """
+            SELECT a.id, a.file
+            FROM attachments a
+            INNER JOIN question_attachment qa ON a.id = qa.attachment_id
+            INNER JOIN questions q ON q.id = qa.question_id
+            WHERE q.author_id = ?
+            UNION
+            SELECT a.id, a.file FROM attachments a
+            INNER JOIN answer_attachment aa ON a.id = aa.attachment_id
+            INNER JOIN answers an ON an.id = aa.answer_id
+            WHERE an.author_id = ?""";
+    private static final String SQL_DELETE_BY_QUESTION_AUTHOR_ID_QUERY = """
+            DELETE a 
+            FROM attachments a
+            INNER JOIN question_attachment qa ON a.id = qa.attachment_id
+            INNER JOIN questions q ON q.id = qa.question_id
+            WHERE q.author_id = ?""";
+    private static final String SQL_DELETE_BY_ANSWER_AUTHOR_ID_QUERY = """
+            DELETE a 
+            FROM attachments a
+            INNER JOIN answer_attachment aa ON a.id = aa.attachment_id
+            INNER JOIN answers an ON an.id = aa.answer_id
+            WHERE an.author_id = ?""";
+
     private RowMapper mapper = new AttachmentMapper();
 
     @Override
@@ -161,6 +185,39 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
             throw new DaoException("Failed to delete attachment by calling deleteByAnswerId(Long id) method", e);
+        }
+    }
+
+    @Override
+    public List<Attachment> findByUserId(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_AUTHOR_ID_QUERY)){
+            statement.setLong(1, id);
+            statement.setLong(2, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return mapper.mapRows(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find attachments by calling findByUserId(Long id) method", e);
+        }
+    }
+
+    @Override
+    public boolean deleteByQuestionAuthorId(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_QUESTION_AUTHOR_ID_QUERY)){
+            statement.setLong(1, id);
+            return statement.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to delete attachment by calling deleteByQuestionAuthorId(Long id) method", e);
+        }
+    }
+
+    @Override
+    public boolean deleteByAnswerAuthorId(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ANSWER_AUTHOR_ID_QUERY)){
+            statement.setLong(1, id);
+            return statement.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to delete attachment by calling deleteByAnswerAuthorId(Long id) method", e);
         }
     }
 }

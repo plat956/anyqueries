@@ -31,4 +31,5 @@ public interface UserService {
     boolean updateAvatar(User user, String avatar);
     Paginated<User> findPaginatedByLoginLikeOrderByRoleAsc(RequestPage page, String loginPattern);
     List<String> findLoginByLoginLikeOrderedAndLimited(String loginPattern, int limit);
+    boolean delete(Long id);
 }

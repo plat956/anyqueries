@@ -33,6 +33,7 @@ public class CommandProvider {
         getCommands.put(CommandType.USERS_PAGE, new UsersPageCommand());
         getCommands.put(CommandType.QUESTION_PAGE, new QuestionPageCommand());
         getCommands.put(CommandType.DOWNLOAD, new DownloadCommand());
+        getCommands.put(CommandType.EDIT_USER_PAGE, new EditUserPageCommand());
         postCommands.put(CommandType.LOGIN, new LoginCommand());
         postCommands.put(CommandType.LOGOUT, new LogoutCommand());
         postCommands.put(CommandType.REGISTRATION, new RegistrationCommand());
@@ -52,6 +53,8 @@ public class CommandProvider {
         postCommands.put(CommandType.CREATE_ANSWER, new CreateAnswerCommand());
         postCommands.put(CommandType.DELETE_ANSWER, new DeleteAnswerCommand());
         postCommands.put(CommandType.EDIT_ANSWER, new EditAnswerCommand());
+        postCommands.put(CommandType.DELETE_USER, new DeleteUserCommand());
+        postCommands.put(CommandType.EDIT_USER, new EditUserCommand());
     }
 
     public static CommandProvider getInstance() {
