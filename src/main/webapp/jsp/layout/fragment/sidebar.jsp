@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="has_category" value="param['category'].matches('[0-9]+')" />
+<c:set var="has_category" value="${param['category'].matches('[0-9]+')}" scope="request" />
 <div class="custom-sidebar col-lg-3">
     <div class="grid support">
         <div class="grid-body">
