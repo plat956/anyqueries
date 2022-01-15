@@ -29,20 +29,20 @@
         </thead>
         <tbody>
         <c:forEach var="q" items="${users}">
-        <tr style="cursor: pointer">
-            <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;">${q.login}</td>
-            <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;">${q.fio}</td>
-            <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;"><span class="badge badge-${q.status == 'ACTIVE' ? 'success' : (q.status == 'INACTIVE' ? 'secondary' : 'danger')} user-role-span"><fmt:message key="label.status.${fn:toLowerCase(q.status)}" /></span></td>
-            <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;"><span class="badge badge-${q.role.color} user-role-span"><fmt:message key="label.role.${fn:toLowerCase(q.role)}" /></span></td>
-            <td align="right">
-                <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=edit_user_page&id=${q.id}'" style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.edit" />">
-                    <i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i>
-                </a>&nbsp;
-                <a onclick="users.delete(event, '${pageContext.request.contextPath}', ${q.id})" data-toggle="tooltip" data-placement="top" style="cursor:pointer" title="<fmt:message key="label.delete" />">
-                    <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
-                </a>
-            </td>
-        </tr>
+            <tr style="cursor: pointer">
+                <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;">${q.login}</td>
+                <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;">${q.fio}</td>
+                <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;"><span class="badge badge-${q.status == 'ACTIVE' ? 'success' : (q.status == 'INACTIVE' ? 'secondary' : 'danger')} user-role-span"><fmt:message key="label.status.${fn:toLowerCase(q.status)}" /></span></td>
+                <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;"><span class="badge badge-${q.role.color} user-role-span"><fmt:message key="label.role.${fn:toLowerCase(q.role)}" /></span></td>
+                <td align="right">
+                    <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=edit_user_page&id=${q.id}'" style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.edit" />">
+                        <i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i>
+                    </a>&nbsp;
+                    <a onclick="users.delete(event, '${pageContext.request.contextPath}', ${q.id})" data-toggle="tooltip" data-placement="top" style="cursor:pointer" title="<fmt:message key="label.delete" />">
+                        <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
+                    </a>
+                </td>
+            </tr>
         </c:forEach>
         </tbody>
     </table>
@@ -54,6 +54,5 @@
 </c:if>
 </div>
 <jsp:include page="fragment/pagination.jsp" />
-
 <jsp:include page="fragment/showProfileModal.jsp" />
 <jsp:include page="layout/footer.jsp"/>

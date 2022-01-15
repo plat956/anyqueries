@@ -6,7 +6,7 @@
     <c:when test="${totalPages > 1}">
         <nav>
             <ul class="pagination justify-content-center">
-                <c:set var="page" value="${!empty param['page'] ? param['page'] : 1}" />
+                <c:set var="page" value="${param['page'].matches('[0-9]+') ? param['page'] : 1}" />
                 <c:if test="${page > 1}">
                     <li class="page-item">
                         <a class="page-link" href="${pageContext.request.contextPath}<at:query-parameter-changer key="page" value="${page - 1}"/>">

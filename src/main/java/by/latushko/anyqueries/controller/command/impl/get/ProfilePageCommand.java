@@ -26,24 +26,28 @@ import static by.latushko.anyqueries.util.http.MimeType.APPLICATION_JSON;
 import static by.latushko.anyqueries.util.i18n.MessageKey.LABEL_ROLE_PREFIX;
 
 public class ProfilePageCommand implements Command {
-
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType(APPLICATION_JSON);
-
-        String id = request.getParameter(ID);
-        if(id == null || id.isEmpty()) {
-            return new CommandResult(new JSONObject().toString(), DATA);
+        JSONObject result = new JSONObject();
+        Long id = getLongParameter(request, ID);
+        if(id == null) {
+            return new CommandResult(result.toString(), DATA);
         }
         UserService userService = UserServiceImpl.getInstance();
-        Optional<User> userOptional = userService.findById(Long.valueOf(id));
-        if(userOptional.isEmpty()) {
-            return new CommandResult(new JSONObject().toString(), DATA);
+        Optional<User> user = userService.findById(id);
+        if(user.isEmpty()) {
+            return new CommandResult(result.toString(), DATA);
         }
+        fillResultWithUserData(request, result, user.get());
+        return new CommandResult(result.toString(), DATA);
+    }
+
+    private void fillResultWithUserData(HttpServletRequest request, JSONObject result, User user) {
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
-        JSONObject result = new JSONObject();
-        User user = userOptional.get();
+        QuestionService questionService = QuestionServiceImpl.getInstance();
+        AnswerService answerService = AnswerServiceImpl.getInstance();
         result.put(FIO, user.getFio());
         result.put(AVATAR, user.getAvatar());
         result.put(ROLE_COLOR, user.getRole().getColor());
@@ -54,12 +58,7 @@ public class ProfilePageCommand implements Command {
         result.put(EMAIL, user.getEmail());
         result.put(TELEGRAM, user.getTelegram());
         result.put(TELEGRAM_LNK, APP_TELEGRAM_LINK_HOST + user.getTelegram());
-        QuestionService questionService = QuestionServiceImpl.getInstance();
-        AnswerService answerService = AnswerServiceImpl.getInstance();
-        Long totalQuestions = questionService.countByAuthorId(user.getId());
-        Long totalAnswers = answerService.countByUserId(user.getId());
-        result.put(QUESTIONS_COUNT, totalQuestions);
-        result.put(ANSWERS_COUNT, totalAnswers);
-        return new CommandResult(result.toString(), DATA);
+        result.put(QUESTIONS_COUNT, questionService.countByAuthorId(user.getId()));
+        result.put(ANSWERS_COUNT, answerService.countByUserId(user.getId()));
     }
 }

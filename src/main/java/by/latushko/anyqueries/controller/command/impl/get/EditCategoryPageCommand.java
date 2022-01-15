@@ -19,7 +19,7 @@ import static by.latushko.anyqueries.controller.command.identity.RequestParamete
 public class EditCategoryPageCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
-        Long id = Long.valueOf(request.getParameter(ID));
+        Long id = getLongParameter(request, ID);
         CategoryService categoryService = CategoryServiceImpl.getInstance();
         Optional<Category> category = categoryService.findById(id);
         if(category.isEmpty()) {

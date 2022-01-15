@@ -319,23 +319,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findById(Long id) {
-        BaseDao userDao = new UserDaoImpl();
         Optional<User> userOptional = Optional.empty();
-        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
-            try {
-                userOptional = userDao.findById(id);
-                transaction.commit();
-            } catch (DaoException e) {
-                transaction.rollback();
+        if(id != null) {
+            BaseDao userDao = new UserDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+                try {
+                    userOptional = userDao.findById(id);
+                    transaction.commit();
+                } catch (DaoException e) {
+                    transaction.rollback();
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Something went wrong during retrieving user by id", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving user by id", e);
         }
         return userOptional;
     }
 
     @Override
-    public Paginated<User> findPaginatedByLoginLikeOrderByRoleAsc(RequestPage page, String loginPattern) {
+    public Paginated<User> findPaginatedByLoginContainsOrderByRoleAsc(RequestPage page, String loginPattern) {
         BaseDao userDao = new UserDaoImpl();
         List<User> users = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {

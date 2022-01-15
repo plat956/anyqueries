@@ -16,16 +16,16 @@ import static by.latushko.anyqueries.controller.command.identity.RequestAttribut
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.TOTAL_PAGES;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.PAGE;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.QUERY;
-import static by.latushko.anyqueries.controller.command.impl.get.LiveSearchCommand.limitQueryString;
+import static by.latushko.anyqueries.controller.command.impl.get.LiveSearchCommand.limitSearchQueryString;
 
 public class CategoriesPageCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
-        String name = limitQueryString(request.getParameter(QUERY));
+        String name = limitSearchQueryString(request.getParameter(QUERY));
         String pageParameter = request.getParameter(PAGE);
         RequestPage page = new RequestPage(pageParameter);
         CategoryService categoryService = CategoryServiceImpl.getInstance();
-        Paginated<Category> categories = categoryService.findAllPaginatedByNameLikeOrderByNameAsc(page, name);
+        Paginated<Category> categories = categoryService.findPaginatedByNameContainsOrderByNameAsc(page, name);
         request.setAttribute(TOTAL_PAGES, categories.getTotalPages());
         request.setAttribute(CATEGORIES, categories.getContent());
         return new CommandResult(CATEGORIES_PAGE, FORWARD);

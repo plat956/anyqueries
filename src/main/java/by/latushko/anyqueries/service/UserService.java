@@ -30,7 +30,7 @@ public interface UserService {
     boolean changePassword(User user, String password);
     boolean checkPassword(User user, String password);
     boolean updateAvatar(User user, String avatar);
-    Paginated<User> findPaginatedByLoginLikeOrderByRoleAsc(RequestPage page, String loginPattern);
+    Paginated<User> findPaginatedByLoginContainsOrderByRoleAsc(RequestPage page, String loginPattern);
     List<String> findLoginByLoginContainsOrderByLoginAscLimitedTo(String loginPattern, int limit);
     boolean delete(Long id);
 }

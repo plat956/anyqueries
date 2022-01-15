@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface QuestionService {
     List<String> findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo(String pattern, Long categoryId, Long userId, int limit);
-    Paginated<Question> findByQueryParametersOrderByNewest(RequestPage page, boolean resolved, boolean newestFirst, Long authorId, Long categoryId, String titlePattern);
+    Paginated<Question> findPaginatedByQueryParametersOrderByNewest(RequestPage page, boolean resolved, Long authorId, Long categoryId, String titlePattern, boolean newestFirst);
     Optional<Question> findById(Long id);
     Long countByAuthorId(Long userId);
     Long countNotClosed();

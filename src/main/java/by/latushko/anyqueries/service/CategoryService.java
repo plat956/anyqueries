@@ -11,7 +11,7 @@ public interface CategoryService {
     List<Category> findTop5();
     List<Category> findAllOrderByNameAsc();
     Optional<String> findNameById(Long id);
-    Paginated<Category> findAllPaginatedByNameLikeOrderByNameAsc(RequestPage page, String namePattern);
+    Paginated<Category> findPaginatedByNameContainsOrderByNameAsc(RequestPage page, String namePattern);
     boolean checkIfExistsByName(String name);
     boolean checkIfExistsByNameAndIdNot(String name, Long id);
     Optional<Category> create(String name, String color);

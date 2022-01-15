@@ -29,7 +29,7 @@ public class LiveSearchCommand implements Command {
         response.setContentType(APPLICATION_JSON);
         HttpSession session = request.getSession();
         JSONArray resultArray = new JSONArray();
-        String queryString = limitQueryString(request.getParameter(QUERY_STRING));
+        String queryString = limitSearchQueryString(request.getParameter(QUERY_STRING));
         if(queryString == null || queryString.isEmpty()) {
             return new CommandResult(resultArray.toString(), DATA);
         }
@@ -56,7 +56,7 @@ public class LiveSearchCommand implements Command {
         return new CommandResult(resultArray.toString(), DATA);
     }
 
-    static String limitQueryString(String queryString) {
+    static String limitSearchQueryString(String queryString) {
         if(queryString != null && queryString.length() > APP_SEARCH_QUERY_MAXLENGTH) {
             queryString = queryString.substring(0, APP_SEARCH_QUERY_MAXLENGTH);
         }

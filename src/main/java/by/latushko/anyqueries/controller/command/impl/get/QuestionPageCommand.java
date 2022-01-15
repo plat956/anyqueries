@@ -3,7 +3,6 @@ package by.latushko.anyqueries.controller.command.impl.get;
 import by.latushko.anyqueries.controller.command.Command;
 import by.latushko.anyqueries.controller.command.CommandResult;
 import by.latushko.anyqueries.model.entity.Answer;
-import by.latushko.anyqueries.model.entity.Attachment;
 import by.latushko.anyqueries.model.entity.Question;
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.AnswerService;
@@ -18,7 +17,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import java.util.List;
 import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.FORWARD;
@@ -32,15 +30,14 @@ import static by.latushko.anyqueries.controller.command.identity.SessionAttribut
 public class QuestionPageCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
-        Long id = Long.valueOf(request.getParameter(ID));
+        Long id = getLongParameter(request, ID);
         QuestionService questionService = QuestionServiceImpl.getInstance();
         Optional<Question> question = questionService.findById(id);
         if(question.isEmpty()) {
             return new CommandResult(ERROR_404_PAGE, FORWARD);
         }
         AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-        List<Attachment> attachments = attachmentService.findByQuestionId(id);
-        request.setAttribute(ATTACHMENTS, attachments);
+        request.setAttribute(ATTACHMENTS, attachmentService.findByQuestionId(id));
         request.setAttribute(QUESTION, question.get());
 
         String pageParameter = request.getParameter(PAGE);

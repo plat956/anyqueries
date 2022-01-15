@@ -1,11 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="has_category" value="param['category'].matches('[0-9]+')" />
 <div class="custom-sidebar col-lg-3">
     <div class="grid support">
         <div class="grid-body">
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <c:if test="${empty param['category']}">
+                <c:if test="${!has_category}">
                     <c:if test="${param['command'] == 'questions_page' && param['mode'] != 'my'}">
                         <c:set var="questionsPage" value="true" />
                     </c:if>
@@ -31,7 +32,7 @@
                 <c:forEach var="c" items="${layoutTopCategories}">
                     <li>
                         <c:choose>
-                            <c:when test="${!empty param['category'] && param['category'] == c.id}">
+                            <c:when test="${has_category && param['category'] == c.id}">
                                 <a href="${pageContext.request.contextPath}${currentPage}">
                             </c:when>
                             <c:otherwise>

@@ -8,8 +8,14 @@ public final class RequestPage {
     private final int offset;
 
     public RequestPage(String pageParameter) {
+        int tempPage;
+        try {
+            tempPage = Integer.valueOf(pageParameter);
+        } catch (NumberFormatException ex) {
+            tempPage = 1;
+        }
+        this.page = tempPage;
         this.limit = APP_RECORDS_PER_PAGE;
-        this.page = pageParameter != null && !pageParameter.isEmpty() ? Integer.valueOf(pageParameter) : 1;
         this.offset = (this.page - 1) * this.limit;
     }
 

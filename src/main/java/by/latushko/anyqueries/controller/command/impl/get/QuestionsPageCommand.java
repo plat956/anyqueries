@@ -21,7 +21,7 @@ import static by.latushko.anyqueries.controller.command.identity.PagePath.QUESTI
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.*;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
-import static by.latushko.anyqueries.controller.command.impl.get.LiveSearchCommand.limitQueryString;
+import static by.latushko.anyqueries.controller.command.impl.get.LiveSearchCommand.limitSearchQueryString;
 
 public class QuestionsPageCommand implements Command {
     private static final String NEWEST_SORT_VALUE = "new";
@@ -31,23 +31,18 @@ public class QuestionsPageCommand implements Command {
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(PRINCIPAL);
-
         String pageParameter = request.getParameter(PAGE);
-        String resolvedParameter = request.getParameter(RESOLVED);
-        String sortParameter = request.getParameter(SORT);
-        String modeParameter = request.getParameter(MODE);
-        String categoryParameter = request.getParameter(CATEGORY);
-
-        boolean resolved = resolvedParameter != null ? Boolean.valueOf(resolvedParameter) : false;
-        boolean newestFirst = sortParameter == null || sortParameter.equalsIgnoreCase(NEWEST_SORT_VALUE);
-        Long authorId = modeParameter != null && modeParameter.equalsIgnoreCase(MODE_MY_VALUE) ? user.getId() : null;
-        Long category = categoryParameter != null ? Long.valueOf(categoryParameter) : null;
-        String title = limitQueryString(request.getParameter(QUERY));
+        boolean resolved = Boolean.valueOf(request.getParameter(RESOLVED));
+        boolean newestFirst = NEWEST_SORT_VALUE.equalsIgnoreCase(request.getParameter(SORT));
+        Long authorId = MODE_MY_VALUE.equalsIgnoreCase(request.getParameter(MODE)) ? user.getId() : null;
+        Long category = getLongParameter(request, CATEGORY);
+        String title = limitSearchQueryString(request.getParameter(QUERY));
         RequestPage page = new RequestPage(pageParameter);
         QuestionService questionService = QuestionServiceImpl.getInstance();
-        Paginated<Question> questions = questionService.findByQueryParametersOrderByNewest(page, resolved, newestFirst, authorId, category, title);
+        Paginated<Question> questions = questionService.findPaginatedByQueryParametersOrderByNewest(page, resolved, authorId, category, title, newestFirst);
         request.setAttribute(TOTAL_PAGES, questions.getTotalPages());
         request.setAttribute(QUESTIONS, questions.getContent());
+        request.setAttribute(CATEGORY, category);
         if (category != null) {
             CategoryService categoryService = CategoryServiceImpl.getInstance();
             Optional<String> name = categoryService.findNameById(category);

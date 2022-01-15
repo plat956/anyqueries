@@ -21,7 +21,7 @@ public class CreateQuestionPageCommand implements Command {
         CategoryService categoryService = CategoryServiceImpl.getInstance();
         List<Category> categories = categoryService.findAllOrderByNameAsc();
         request.setAttribute(CATEGORIES, categories);
-        String category = request.getParameter(CATEGORY);
+        Long category = getLongParameter(request, CATEGORY);
         request.setAttribute(CATEGORY, category);
         return new CommandResult(CREATE_QUESTION_PAGE, FORWARD);
     }

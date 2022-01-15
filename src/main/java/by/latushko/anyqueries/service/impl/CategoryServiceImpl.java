@@ -87,7 +87,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Paginated<Category> findAllPaginatedByNameLikeOrderByNameAsc(RequestPage page, String namePattern) {
+    public Paginated<Category> findPaginatedByNameContainsOrderByNameAsc(RequestPage page, String namePattern) {
         BaseDao categoryDao = new CategoryDaoImpl();
         List<Category> categories = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
@@ -159,17 +159,19 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Optional<Category> findById(Long id) {
-        BaseDao categoryDao = new CategoryDaoImpl();
         Optional<Category> categoryOptional = Optional.empty();
-        try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
-            try {
-                categoryOptional = categoryDao.findById(id);
-                transaction.commit();
-            } catch (DaoException e) {
-                transaction.rollback();
+        if(id != null) {
+            BaseDao categoryDao = new CategoryDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
+                try {
+                    categoryOptional = categoryDao.findById(id);
+                    transaction.commit();
+                } catch (DaoException e) {
+                    transaction.rollback();
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Something went wrong during retrieving category by id", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving category by id", e);
         }
         return categoryOptional;
     }

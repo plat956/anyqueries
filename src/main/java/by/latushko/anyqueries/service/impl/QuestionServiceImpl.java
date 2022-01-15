@@ -147,7 +147,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Paginated<Question> findByQueryParametersOrderByNewest(RequestPage page, boolean resolved, boolean newestFirst, Long authorId, Long categoryId, String titlePattern) {
+    public Paginated<Question> findPaginatedByQueryParametersOrderByNewest(RequestPage page, boolean resolved, Long authorId, Long categoryId, String titlePattern, boolean newestFirst) {
         BaseDao questionDao = new QuestionDaoImpl();
         List<Question> questions = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
@@ -207,17 +207,19 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Optional<Question> findById(Long id) {
-        BaseDao questionDao = new QuestionDaoImpl();
         Optional<Question> questionOptional = Optional.empty();
-        try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
-            try {
-                questionOptional = questionDao.findById(id);
-                transaction.commit();
-            } catch (DaoException e) {
-                transaction.rollback();
+        if(id != null) {
+            BaseDao questionDao = new QuestionDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
+                try {
+                    questionOptional = questionDao.findById(id);
+                    transaction.commit();
+                } catch (DaoException e) {
+                    transaction.rollback();
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Something went wrong during retrieving question by id", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving question by id", e);
         }
         return questionOptional;
     }

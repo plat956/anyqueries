@@ -9,7 +9,7 @@ public interface Command {
     default Long getLongParameter(HttpServletRequest request, String name) {
         try {
             return Long.valueOf(request.getParameter(name));
-        } catch (IllegalArgumentException ex) {
+        } catch (NumberFormatException ex) {
             return null;
         }
     }

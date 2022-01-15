@@ -2,8 +2,6 @@ package by.latushko.anyqueries.controller.command.impl.get;
 
 import by.latushko.anyqueries.controller.command.Command;
 import by.latushko.anyqueries.controller.command.CommandResult;
-import by.latushko.anyqueries.model.entity.Attachment;
-import by.latushko.anyqueries.model.entity.Category;
 import by.latushko.anyqueries.model.entity.Question;
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.AttachmentService;
@@ -16,7 +14,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import java.util.List;
 import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.FORWARD;
@@ -29,7 +26,7 @@ import static by.latushko.anyqueries.controller.command.identity.SessionAttribut
 public class EditQuestionPageCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
-        Long id = Long.valueOf(request.getParameter(ID));
+        Long id = getLongParameter(request, ID);
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(PRINCIPAL);
         QuestionService questionService = QuestionServiceImpl.getInstance();
@@ -42,10 +39,8 @@ public class EditQuestionPageCommand implements Command {
         }
         AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
         CategoryService categoryService = CategoryServiceImpl.getInstance();
-        List<Attachment> attachments = attachmentService.findByQuestionId(id);
-        List<Category> categories = categoryService.findAllOrderByNameAsc();
-        request.setAttribute(ATTACHMENTS, attachments);
-        request.setAttribute(CATEGORIES, categories);
+        request.setAttribute(ATTACHMENTS, attachmentService.findByQuestionId(id));
+        request.setAttribute(CATEGORIES, categoryService.findAllOrderByNameAsc());
         request.setAttribute(QUESTION, question.get());
         return new CommandResult(EDIT_QUESTION_PAGE, FORWARD);
     }
