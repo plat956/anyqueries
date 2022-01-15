@@ -138,7 +138,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findByCredentialsKeyAndToken(String key, String token) {
+    public Optional<User> findByCredentialKeyAndCredentialToken(String key, String token) {
         Optional<User> user = findByCredentialKey(key);
         if(user.isPresent()) {
             String tokenSource = getCredentialTokenSource(user.get());

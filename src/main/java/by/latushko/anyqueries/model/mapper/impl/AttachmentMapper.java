@@ -12,11 +12,11 @@ import static by.latushko.anyqueries.model.mapper.TableColumnName.ATTACHMENT_ID;
 
 public class AttachmentMapper implements RowMapper<Attachment> {
     @Override
-    public Optional<Attachment> mapRow(ResultSet resultSet, String fieldPrefix) {
+    public Optional<Attachment> mapRow(ResultSet resultSet, String prefix) {
         try {
             Attachment attachment = new Attachment();
-            attachment.setId(resultSet.getLong(fieldPrefix+ ATTACHMENT_ID));
-            attachment.setFile(resultSet.getString(fieldPrefix + ATTACHMENT_FILE));
+            attachment.setId(resultSet.getLong(prefix + ATTACHMENT_ID));
+            attachment.setFile(resultSet.getString(prefix + ATTACHMENT_FILE));
             return Optional.of(attachment);
         } catch (SQLException e) {
             return Optional.empty();

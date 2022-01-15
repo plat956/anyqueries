@@ -11,17 +11,17 @@ import static by.latushko.anyqueries.model.mapper.TableColumnName.*;
 
 public class CategoryMapper implements RowMapper<Category> {
     @Override
-    public Optional<Category> mapRow(ResultSet resultSet, String fieldPrefix) {
+    public Optional<Category> mapRow(ResultSet resultSet, String prefix) {
         try {
             Category category = new Category();
-            category.setId(resultSet.getLong(fieldPrefix+ CATEGORY_ID));
-            category.setName(resultSet.getString(fieldPrefix + CATEGORY_NAME));
-            category.setColor(resultSet.getString(fieldPrefix + CATEGORY_COLOR));
-            if(hasColumn(resultSet, fieldPrefix + CATEGORY_QUESTIONS_COUNT)) {
-                category.setQuestionsCount(resultSet.getLong(fieldPrefix + CATEGORY_QUESTIONS_COUNT));
+            category.setId(resultSet.getLong(prefix + CATEGORY_ID));
+            category.setName(resultSet.getString(prefix + CATEGORY_NAME));
+            category.setColor(resultSet.getString(prefix + CATEGORY_COLOR));
+            if(hasColumn(resultSet, prefix + CATEGORY_QUESTIONS_COUNT)) {
+                category.setQuestionsCount(resultSet.getLong(prefix + CATEGORY_QUESTIONS_COUNT));
             }
-            if(hasColumn(resultSet, fieldPrefix + TOTAL)) {
-                category.setTotal(resultSet.getLong(fieldPrefix + TOTAL));
+            if(hasColumn(resultSet, prefix + TOTAL)) {
+                category.setTotal(resultSet.getLong(prefix + TOTAL));
             }
             return Optional.of(category);
         } catch (SQLException e) {

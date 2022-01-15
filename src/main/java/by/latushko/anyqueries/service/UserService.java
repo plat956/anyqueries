@@ -14,7 +14,7 @@ public interface UserService {
     Optional<User> findByLogin(String login);
     Optional<User> findByCredentialKey(String key);
     Optional<User> findByLoginAndPassword(String login, String password);
-    Optional<User> findByCredentialsKeyAndToken(String key, String token);
+    Optional<User> findByCredentialKeyAndCredentialToken(String key, String token);
     Optional<User> findById(Long id);
     boolean existsByLogin(String login);
     boolean existsByEmail(String email);

@@ -30,7 +30,7 @@ class ConnectionFactory {
             DB_POOL_SIZE = Integer.parseInt(properties.getProperty("pool-size"));
             Class.forName(DB_DRIVER);
         } catch (IOException e) {
-            logger.error("Failed to read connection pool properties from file: " + DB_PROPERTIES_PATH, e);
+            logger.error("Failed to read connection pool properties from file: {}", DB_PROPERTIES_PATH, e);
             throw new ExceptionInInitializerError("Failed to read connection pool properties from file: " + DB_PROPERTIES_PATH);
         } catch (ClassNotFoundException e) {
             logger.error("Failed to register database driver", e);

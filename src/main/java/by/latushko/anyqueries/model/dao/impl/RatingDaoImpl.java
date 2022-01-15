@@ -10,7 +10,6 @@ import by.latushko.anyqueries.model.mapper.impl.RatingMapper;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 
 import static by.latushko.anyqueries.model.mapper.TableColumnName.RATING_GRADE_SUM;
@@ -34,11 +33,6 @@ public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
             WHERE answer_id = ?""";
 
     private RowMapper mapper = new RatingMapper();
-
-    @Override
-    public List<Rating> findAll() throws DaoException {
-        return null;
-    }
 
     @Override
     public Optional<Rating> findById(Long id) throws DaoException {
@@ -81,11 +75,6 @@ public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
             throw new DaoException("Failed to update rating by calling update(Rating rating) method", e);
         }
         return Optional.empty();
-    }
-
-    @Override
-    public boolean delete(Rating rating) throws DaoException {
-        return false;
     }
 
     @Override

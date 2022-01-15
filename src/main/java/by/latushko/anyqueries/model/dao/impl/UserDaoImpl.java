@@ -11,7 +11,6 @@ import by.latushko.anyqueries.model.mapper.impl.UserMapper;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,17 +123,6 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     }
 
     @Override
-    public List<User> findAll() throws DaoException {
-        try (Statement statement = connection.createStatement()){
-            try(ResultSet resultSet = statement.executeQuery(SQL_FIND_ALL_QUERY)) {
-                return mapper.mapRows(resultSet);
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Failed to find all users by calling findAll() method", e);
-        }
-    }
-
-    @Override
     public Optional<User> findById(Long id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID_QUERY)){
             statement.setLong(1, id);
@@ -174,16 +162,6 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             throw new DaoException("Failed to update user by calling update(User user) method", e);
         }
         return Optional.empty();
-    }
-
-    @Override
-    public boolean delete(User user) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_QUERY)){
-            statement.setLong(1, user.getId());
-            return statement.executeUpdate() >= 0;
-        } catch (SQLException e) {
-            throw new DaoException("Failed to delete user by calling delete(User user) method", e);
-        }
     }
 
     @Override

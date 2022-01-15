@@ -79,11 +79,6 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
     RowMapper mapper = new AnswerMapper();
 
     @Override
-    public List<Answer> findAll() throws DaoException {
-        return null;
-    }
-
-    @Override
     public Optional<Answer> findById(Long id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID_QUERY)){
             statement.setLong(1, id);
@@ -140,11 +135,6 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             throw new DaoException("Failed to update answer by calling update(Answer answer) method", e);
         }
         return Optional.empty();
-    }
-
-    @Override
-    public boolean delete(Answer answer) throws DaoException {
-        return false;
     }
 
     @Override

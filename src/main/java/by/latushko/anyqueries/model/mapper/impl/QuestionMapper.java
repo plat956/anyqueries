@@ -14,20 +14,20 @@ import static by.latushko.anyqueries.model.mapper.TableColumnName.*;
 
 public class QuestionMapper implements RowMapper<Question> {
     @Override
-    public Optional<Question> mapRow(ResultSet resultSet, String fieldPrefix) {
+    public Optional<Question> mapRow(ResultSet resultSet, String prefix) {
         try {
             Question question = new Question();
-            question.setId(resultSet.getLong(fieldPrefix + QUESTION_ID));
-            question.setTitle(resultSet.getString(fieldPrefix + QUESTION_TITLE));
-            question.setText(resultSet.getString(fieldPrefix + QUESTION_TEXT));
-            question.setCreationDate(resultSet.getObject(fieldPrefix + QUESTION_CREATION_DATE, LocalDateTime.class));
-            question.setEditingDate(resultSet.getObject(fieldPrefix + QUESTION_EDITING_DATE, LocalDateTime.class));
-            question.setClosed(resultSet.getBoolean(fieldPrefix + QUESTION_CLOSED));
-            if(hasColumn(resultSet, fieldPrefix + QUESTION_ANSWERS_COUNT)) {
-                question.setAnswersCount(resultSet.getLong(fieldPrefix + QUESTION_ANSWERS_COUNT));
+            question.setId(resultSet.getLong(prefix + QUESTION_ID));
+            question.setTitle(resultSet.getString(prefix + QUESTION_TITLE));
+            question.setText(resultSet.getString(prefix + QUESTION_TEXT));
+            question.setCreationDate(resultSet.getObject(prefix + QUESTION_CREATION_DATE, LocalDateTime.class));
+            question.setEditingDate(resultSet.getObject(prefix + QUESTION_EDITING_DATE, LocalDateTime.class));
+            question.setClosed(resultSet.getBoolean(prefix + QUESTION_CLOSED));
+            if(hasColumn(resultSet, prefix + QUESTION_ANSWERS_COUNT)) {
+                question.setAnswersCount(resultSet.getLong(prefix + QUESTION_ANSWERS_COUNT));
             }
-            if(hasColumn(resultSet, fieldPrefix + TOTAL)) {
-                question.setTotal(resultSet.getLong(fieldPrefix + TOTAL));
+            if(hasColumn(resultSet, prefix + TOTAL)) {
+                question.setTotal(resultSet.getLong(prefix + TOTAL));
             }
             CategoryMapper categoryMapper = new CategoryMapper();
             Optional<Category> category = categoryMapper.mapRow(resultSet, CATEGORY_PREFIX);

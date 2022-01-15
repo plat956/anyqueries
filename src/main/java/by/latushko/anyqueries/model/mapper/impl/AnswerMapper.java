@@ -13,23 +13,23 @@ import static by.latushko.anyqueries.model.mapper.TableColumnName.*;
 
 public class AnswerMapper implements RowMapper<Answer> {
     @Override
-    public Optional<Answer> mapRow(ResultSet resultSet, String fieldPrefix) {
+    public Optional<Answer> mapRow(ResultSet resultSet, String prefix) {
         try {
             Answer answer = new Answer();
-            answer.setId(resultSet.getLong(fieldPrefix + ANSWER_ID));
-            answer.setText(resultSet.getString(fieldPrefix + ANSWER_TEXT));
-            answer.setCreationDate(resultSet.getObject(fieldPrefix + ANSWER_CREATION_DATE, LocalDateTime.class));
-            answer.setEditingDate(resultSet.getObject(fieldPrefix + ANSWER_EDITING_DATE, LocalDateTime.class));
-            answer.setSolution(resultSet.getBoolean(fieldPrefix + ANSWER_SOLUTION));
-            answer.setQuestionId(resultSet.getLong(fieldPrefix + ANSWER_QUESTION_ID));
-            if(hasColumn(resultSet, fieldPrefix + ANSWER_CURRENT_USER_GRADE)) {
-                answer.setCurrentUserGrade(resultSet.getInt(fieldPrefix + ANSWER_CURRENT_USER_GRADE));
+            answer.setId(resultSet.getLong(prefix + ANSWER_ID));
+            answer.setText(resultSet.getString(prefix + ANSWER_TEXT));
+            answer.setCreationDate(resultSet.getObject(prefix + ANSWER_CREATION_DATE, LocalDateTime.class));
+            answer.setEditingDate(resultSet.getObject(prefix + ANSWER_EDITING_DATE, LocalDateTime.class));
+            answer.setSolution(resultSet.getBoolean(prefix + ANSWER_SOLUTION));
+            answer.setQuestionId(resultSet.getLong(prefix + ANSWER_QUESTION_ID));
+            if(hasColumn(resultSet, prefix + ANSWER_CURRENT_USER_GRADE)) {
+                answer.setCurrentUserGrade(resultSet.getInt(prefix + ANSWER_CURRENT_USER_GRADE));
             }
-            if(hasColumn(resultSet, fieldPrefix + ANSWER_RATING)) {
-                answer.setRating(resultSet.getInt(fieldPrefix + ANSWER_RATING));
+            if(hasColumn(resultSet, prefix + ANSWER_RATING)) {
+                answer.setRating(resultSet.getInt(prefix + ANSWER_RATING));
             }
-            if(hasColumn(resultSet, fieldPrefix + TOTAL)) {
-                answer.setTotal(resultSet.getLong(fieldPrefix + TOTAL));
+            if(hasColumn(resultSet, prefix + TOTAL)) {
+                answer.setTotal(resultSet.getLong(prefix + TOTAL));
             }
             UserMapper userMapper = new UserMapper();
             Optional<User> author = userMapper.mapRow(resultSet, USER_PREFIX);

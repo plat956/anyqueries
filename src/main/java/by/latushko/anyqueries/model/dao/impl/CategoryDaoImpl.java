@@ -68,11 +68,6 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
     private RowMapper mapper = new CategoryMapper();
 
     @Override
-    public List<Category> findAll() throws DaoException {
-        return null;
-    }
-
-    @Override
     public Optional<Category> findById(Long id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID_QUERY)){
             statement.setLong(1, id);
@@ -122,11 +117,6 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
             throw new DaoException("Failed to update category by calling update(Category category) method", e);
         }
         return Optional.empty();
-    }
-
-    @Override
-    public boolean delete(Category category) throws DaoException {
-        return false;
     }
 
     @Override

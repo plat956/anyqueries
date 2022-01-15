@@ -345,7 +345,7 @@ var questions = {
             },
             callback: function (result) {
                 if(result) {
-                    $(document.body).append('<form action="' + context + '/controller?command=delete_question" method="post" style="display: none" id="deleteForm">' +
+                    $(document.body).append('<form action="' + context + '/controller?command=delete_question" method="post" autocomplete="off" style="display: none" id="deleteForm">' +
                         '<input type="hidden" name="id" value="' + id + '">' +
                         '</form>');
                     $('#deleteForm').submit();
@@ -355,7 +355,7 @@ var questions = {
     },
     changeStatus: function (context, el, id) {
         var close = $(el).is(':checked');
-        $(document.body).append('<form action="' + context + '/controller?command=edit_question" method="post" style="display: none" id="deleteForm">' +
+        $(document.body).append('<form action="' + context + '/controller?command=edit_question" method="post" autocomplete="off" style="display: none" id="deleteForm">' +
             '<input type="hidden" name="id" value="' + id + '">' +
             '<input type="hidden" name="close" value="' + close + '">' +
             '</form>');
@@ -381,7 +381,7 @@ var categories = {
             },
             callback: function (result) {
                 if(result) {
-                    $(document.body).append('<form action="' + context + '/controller?command=delete_category" method="post" style="display: none" id="deleteForm">' +
+                    $(document.body).append('<form action="' + context + '/controller?command=delete_category" method="post" autocomplete="off" style="display: none" id="deleteForm">' +
                         '<input type="hidden" name="id" value="' + id + '">' +
                         '</form>');
                     $('#deleteForm').submit();
@@ -409,7 +409,7 @@ var users = {
             },
             callback: function (result) {
                 if(result) {
-                    $(document.body).append('<form action="' + context + '/controller?command=delete_user" method="post" style="display: none" id="deleteForm">' +
+                    $(document.body).append('<form action="' + context + '/controller?command=delete_user" method="post" autocomplete="off" style="display: none" id="deleteForm">' +
                         '<input type="hidden" name="id" value="' + id + '">' +
                         '</form>');
                     $('#deleteForm').submit();
@@ -441,7 +441,7 @@ var answers = {
             },
             callback: function (result) {
                 if(result) {
-                    $(document.body).append('<form action="' + context + '/controller?command=delete_answer" method="post" style="display: none" id="deleteForm">' +
+                    $(document.body).append('<form action="' + context + '/controller?command=delete_answer" method="post" autocomplete="off" style="display: none" id="deleteForm">' +
                         '<input type="hidden" name="id" value="' + id + '">' +
                         '</form>');
                     $('#deleteForm').submit();

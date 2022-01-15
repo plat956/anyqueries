@@ -1,7 +1,6 @@
 package by.latushko.anyqueries.controller.listener;
 
 import by.latushko.anyqueries.controller.command.identity.RequestAttribute;
-import by.latushko.anyqueries.model.entity.Category;
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.CategoryService;
 import by.latushko.anyqueries.service.QuestionService;
@@ -16,7 +15,6 @@ import jakarta.servlet.annotation.WebListener;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import java.util.List;
 import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_KEY;
@@ -29,23 +27,14 @@ import static by.latushko.anyqueries.controller.command.identity.SessionAttribut
 
 @WebListener
 public class RequestListenerImpl implements ServletRequestListener {
-    private QuestionService questionService = QuestionServiceImpl.getInstance();
-
     @Override
     public void requestInitialized(ServletRequestEvent event) {
         HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
         HttpSession session = request.getSession();
 
-        if(session.getAttribute(PRINCIPAL) == null) {
-            String credentialKey = CookieHelper.readCookie(request, CREDENTIAL_KEY);
-            String credentialToken = CookieHelper.readCookie(request, CREDENTIAL_TOKEN);
-            if (credentialKey != null && credentialToken != null) {
-                UserService userService = UserServiceImpl.getInstance();
-                Optional<User> user = userService.findByCredentialsKeyAndToken(credentialKey, credentialToken);
-                if (user.isPresent() && user.get().getStatus() == User.Status.ACTIVE) {
-                    session.setAttribute(PRINCIPAL, user.get());
-                }
-            }
+        User currentUser = (User) session.getAttribute(PRINCIPAL);
+        if(currentUser == null) {
+            currentUser = restorePrincipal(request, session);
         }
 
         Object message = session.getAttribute(MESSAGE);
@@ -64,15 +53,29 @@ public class RequestListenerImpl implements ServletRequestListener {
             session.removeAttribute(ANSWER_OBJECT);
             request.setAttribute(RequestAttribute.ANSWER_OBJECT, answerObject);
         }
-        Long totalQuestions = questionService.countNotClosed();
-        request.setAttribute(LAYOUT_TOTAL_QUESTIONS, totalQuestions);
-        User user = (User) session.getAttribute(PRINCIPAL);
-        if(user != null) {
-            Long totalUserQuestions = questionService.countNotClosedByAuthorId(user.getId());
-            request.setAttribute(LAYOUT_TOTAL_USER_QUESTIONS, totalUserQuestions);
+        QuestionService questionService = QuestionServiceImpl.getInstance();
+        request.setAttribute(LAYOUT_TOTAL_QUESTIONS, questionService.countNotClosed());
+        if(currentUser != null) {
+            request.setAttribute(LAYOUT_TOTAL_USER_QUESTIONS, questionService.countNotClosedByAuthorId(currentUser.getId()));
         }
         CategoryService categoryService = CategoryServiceImpl.getInstance();
-        List<Category> categories = categoryService.findTop5();
-        request.setAttribute(LAYOUT_TOP_CATEGORIES, categories);
+        request.setAttribute(LAYOUT_TOP_CATEGORIES, categoryService.findTop5());
+    }
+
+    private User restorePrincipal(HttpServletRequest request, HttpSession session) {
+        String credentialKey = CookieHelper.readCookie(request, CREDENTIAL_KEY);
+        String credentialToken = CookieHelper.readCookie(request, CREDENTIAL_TOKEN);
+        if (credentialKey != null && credentialToken != null) {
+            UserService userService = UserServiceImpl.getInstance();
+            Optional<User> userOptional = userService.findByCredentialKeyAndCredentialToken(credentialKey, credentialToken);
+            if (userOptional.isPresent()){
+                User user = userOptional.get();
+                if(user.getStatus() == User.Status.ACTIVE) {
+                    session.setAttribute(PRINCIPAL, user);
+                    return user;
+                }
+            }
+        }
+        return null;
     }
 }

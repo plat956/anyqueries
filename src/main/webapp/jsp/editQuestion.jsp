@@ -6,7 +6,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="page_title_label" value="label.editQuestion" scope="request" />
 <jsp:include page="layout/header.jsp" />
-<form id="create_form" class="needs-validation" method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/controller?command=edit_question" novalidate autocomplete="off">
+<form id="edit_form" class="needs-validation" method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/controller?command=edit_question" novalidate autocomplete="off">
     <input type="hidden" name="id" value="${question.id}">
     <div class="form-group">
         <select class="selectpicker" data-width="100%" name="category" required>

@@ -13,10 +13,10 @@ import java.util.Arrays;
 public class EntityTransaction implements AutoCloseable {
     private static final Logger logger = LogManager.getLogger();
     private Connection connection;
-    private BaseDao[] daoStorage;
+    private BaseDao[] dao;
 
-    public EntityTransaction(BaseDao... daos) throws EntityTransactionException {
-        if(daos == null || daos.length == 0) {
+    public EntityTransaction(BaseDao... dao) throws EntityTransactionException {
+        if(dao == null || dao.length == 0) {
             logger.error("Unable to begin transaction with no given dao");
             throw new EntityTransactionException("Unable to begin transaction with no given dao");
         }
@@ -29,8 +29,8 @@ public class EntityTransaction implements AutoCloseable {
             logger.error("Unable to begin transaction because of impossible to disable connection autocommit", e);
             throw new EntityTransactionException("Unable to begin transaction because of impossible to disable connection autocommit", e);
         }
-        Arrays.stream(daos).forEach(d -> d.setConnection(connection));
-        daoStorage = daos;
+        Arrays.stream(dao).forEach(d -> d.setConnection(connection));
+        this.dao = dao;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class EntityTransaction implements AutoCloseable {
             throw new EntityTransactionException("Unable to end transaction correctly because of impossible to release used connection", e);
         }
         connection = null;
-        Arrays.stream(daoStorage).forEach(d -> d.setConnection(null));
+        Arrays.stream(this.dao).forEach(d -> d.setConnection(null));
     }
 
     public void commit() throws EntityTransactionException {

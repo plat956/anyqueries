@@ -80,11 +80,6 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
     private RowMapper mapper = new AttachmentMapper();
 
     @Override
-    public List<Attachment> findAll() throws DaoException {
-        return null;
-    }
-
-    @Override
     public Optional<Attachment> findById(Long id) throws DaoException {
         return Optional.empty();
     }
@@ -110,11 +105,6 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
     @Override
     public Optional<Attachment> update(Attachment attachment) throws DaoException {
         return Optional.empty();
-    }
-
-    @Override
-    public boolean delete(Attachment attachment) throws DaoException {
-        return false;
     }
 
     @Override

@@ -12,24 +12,24 @@ import static by.latushko.anyqueries.model.mapper.TableColumnName.*;
 
 public class UserMapper implements RowMapper<User> {
     @Override
-    public Optional<User> mapRow(ResultSet resultSet, String fieldPrefix) {
+    public Optional<User> mapRow(ResultSet resultSet, String prefix) {
         try {
             User user = new User();
-            user.setId(resultSet.getLong(fieldPrefix + USER_ID));
-            user.setFirstName(resultSet.getString(fieldPrefix + USER_FIRST_NAME));
-            user.setLastName(resultSet.getString(fieldPrefix + USER_LAST_NAME));
-            user.setMiddleName(resultSet.getString(fieldPrefix + USER_MIDDLE_NAME));
-            user.setLogin(resultSet.getString(fieldPrefix + USER_LOGIN));
-            user.setPassword(resultSet.getString(fieldPrefix + USER_PASSWORD));
-            user.setEmail(resultSet.getString(fieldPrefix + USER_EMAIL));
-            user.setTelegram(resultSet.getString(fieldPrefix + USER_TELEGRAM));
-            user.setAvatar(resultSet.getString(fieldPrefix + USER_AVATAR));
-            user.setLastLoginDate(resultSet.getObject(fieldPrefix + USER_LAST_LOGIN_DATE, LocalDateTime.class));
-            user.setCredentialKey(resultSet.getString(fieldPrefix + USER_CREDENTIAL_KEY));
-            user.setStatus(User.Status.valueOf(resultSet.getString(fieldPrefix + USER_STATUS)));
-            user.setRole(User.Role.valueOf(resultSet.getString(fieldPrefix + USER_ROLE)));
-            if(hasColumn(resultSet, fieldPrefix + TOTAL)) {
-                user.setTotal(resultSet.getLong(fieldPrefix + TOTAL));
+            user.setId(resultSet.getLong(prefix + USER_ID));
+            user.setFirstName(resultSet.getString(prefix + USER_FIRST_NAME));
+            user.setLastName(resultSet.getString(prefix + USER_LAST_NAME));
+            user.setMiddleName(resultSet.getString(prefix + USER_MIDDLE_NAME));
+            user.setLogin(resultSet.getString(prefix + USER_LOGIN));
+            user.setPassword(resultSet.getString(prefix + USER_PASSWORD));
+            user.setEmail(resultSet.getString(prefix + USER_EMAIL));
+            user.setTelegram(resultSet.getString(prefix + USER_TELEGRAM));
+            user.setAvatar(resultSet.getString(prefix + USER_AVATAR));
+            user.setLastLoginDate(resultSet.getObject(prefix + USER_LAST_LOGIN_DATE, LocalDateTime.class));
+            user.setCredentialKey(resultSet.getString(prefix + USER_CREDENTIAL_KEY));
+            user.setStatus(User.Status.valueOf(resultSet.getString(prefix + USER_STATUS)));
+            user.setRole(User.Role.valueOf(resultSet.getString(prefix + USER_ROLE)));
+            if(hasColumn(resultSet, prefix + TOTAL)) {
+                user.setTotal(resultSet.getLong(prefix + TOTAL));
             }
             return Optional.of(user);
         } catch (SQLException e) {

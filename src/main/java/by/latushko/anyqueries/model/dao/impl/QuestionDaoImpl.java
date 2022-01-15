@@ -92,11 +92,6 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     private QuestionMapper mapper = new QuestionMapper();
 
     @Override
-    public List<Question> findAll() throws DaoException {
-        return null;
-    }
-
-    @Override
     public Optional<Question> findById(Long id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_ID_QUERY)){
             statement.setLong(1, id);
@@ -155,11 +150,6 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             throw new DaoException("Failed to update question by calling update(Question question) method", e);
         }
         return Optional.empty();
-    }
-
-    @Override
-    public boolean delete(Question question) throws DaoException {
-        return false;
     }
 
     @Override
