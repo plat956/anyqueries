@@ -9,15 +9,15 @@ import static by.latushko.anyqueries.controller.command.identity.RequestParamete
 import static by.latushko.anyqueries.util.i18n.MessageKey.LABEL_WRONG_INPUT;
 import static by.latushko.anyqueries.validator.ValidationPattern.PASSWORD_REGEXP;
 
-public class ChangePasswordValidator implements FormValidator {
+public class ChangePasswordFormValidator implements FormValidator {
     private static FormValidator instance;
 
-    private ChangePasswordValidator() {
+    private ChangePasswordFormValidator() {
     }
 
     public static FormValidator getInstance() {
         if(instance == null) {
-            instance = new ChangePasswordValidator();
+            instance = new ChangePasswordFormValidator();
         }
         return instance;
     }

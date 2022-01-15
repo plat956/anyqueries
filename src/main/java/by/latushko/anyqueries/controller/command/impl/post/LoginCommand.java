@@ -33,6 +33,8 @@ import static by.latushko.anyqueries.util.AppProperty.APP_COOKIE_ALIVE_SECONDS;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 
 public class LoginCommand implements Command {
+    private final UserService userService = UserServiceImpl.getInstance();
+
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         String redirectUrl = LOGIN_URL;
@@ -43,40 +45,43 @@ public class LoginCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return new CommandResult(redirectUrl, REDIRECT);
         }
-        UserService userService = UserServiceImpl.getInstance();
-        String userLang = CookieHelper.readCookie(request, CookieName.LANG);
-        MessageManager manager = MessageManager.getManager(userLang);
         String login = request.getParameter(LOGIN);
         String password = request.getParameter(PASSWORD);
-        String rememberMe = request.getParameter(REMEMBER_ME);
-        Optional<User> user = userService.findByLoginAndPassword(login, password);
-        if (user.isEmpty()) {
-            session.setAttribute(MESSAGE, new ResponseMessage(DANGER, manager.getMessage(MESSAGE_LOGIN_WRONG)));
+        boolean rememberMe = request.getParameter(REMEMBER_ME) != null;
+        String userLang = CookieHelper.readCookie(request, CookieName.LANG);
+        MessageManager manager = MessageManager.getManager(userLang);
+        Optional<User> userOptional = userService.findByLoginAndPassword(login, password);
+        ResponseMessage message;
+        if (userOptional.isEmpty()) {
+            message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_LOGIN_WRONG));
+            session.setAttribute(MESSAGE, message);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return new CommandResult(redirectUrl, REDIRECT);
         }
-        ResponseMessage message = switch (user.get().getStatus()) {
+        User user = userOptional.get();
+        message = buildResponseMessageAndAuthorize(session, response, manager, validationResult, user, rememberMe);
+        session.setAttribute(MESSAGE, message);
+        if(user.getStatus() != User.Status.BANNED) {
+            redirectUrl = QUESTIONS_URL;
+        }
+        return new CommandResult(redirectUrl, REDIRECT);
+    }
+
+    private ResponseMessage buildResponseMessageAndAuthorize(HttpSession session, HttpServletResponse response, MessageManager manager,
+                                                 ValidationResult validationResult, User user, boolean rememberMe) {
+        ResponseMessage message = switch (user.getStatus()) {
             case ACTIVE -> {
-                redirectUrl = QUESTIONS_URL;
-                session.setAttribute(PRINCIPAL, user.get());
-                boolean isFirstLoginTime = user.get().getLastLoginDate() == null;
-                userService.updateLastLoginDate(user.get());
-                if (rememberMe != null) {
-                    CookieHelper.addCookie(response, CREDENTIAL_KEY, user.get().getCredentialKey(), APP_COOKIE_ALIVE_SECONDS);
-                    String token = userService.generateCredentialToken(user.get());
-                    CookieHelper.addCookie(response, CREDENTIAL_TOKEN, token, APP_COOKIE_ALIVE_SECONDS);
-                }
-                if (isFirstLoginTime) {
+                authorize(session, response, user, rememberMe);
+                if (user.getLastLoginDate() == null) {
                     yield new ResponseMessage(POPUP, SUCCESS, manager.getMessage(MESSAGE_REGISTRATION_SUCCESS_TITLE),
                             manager.getMessage(MESSAGE_REGISTRATION_SUCCESS_NOTICE));
                 } else {
                     yield new ResponseMessage(TOAST, SUCCESS, manager.getMessage(MESSAGE_LOGIN_SUCCESS),
-                            manager.getMessage(MESSAGE_LOGIN_WELCOME, user.get().getFio()));
+                            manager.getMessage(MESSAGE_LOGIN_WELCOME, user.getFio()));
                 }
             }
             case INACTIVE -> {
-                redirectUrl = QUESTIONS_URL;
-                session.setAttribute(INACTIVE_PRINCIPAL, user.get());
+                session.setAttribute(INACTIVE_PRINCIPAL, user);
                 yield null;
             }
             case BANNED -> {
@@ -88,7 +93,16 @@ public class LoginCommand implements Command {
                 yield new ResponseMessage(DANGER, manager.getMessage(MESSAGE_LOGIN_FAIL));
             }
         };
-        session.setAttribute(MESSAGE, message);
-        return new CommandResult(redirectUrl, REDIRECT);
+        return message;
+    }
+
+    private void authorize(HttpSession session, HttpServletResponse response, User user, boolean rememberMe) {
+        session.setAttribute(PRINCIPAL, user);
+        userService.updateLastLoginDate(user);
+        if (rememberMe) {
+            CookieHelper.addCookie(response, CREDENTIAL_KEY, user.getCredentialKey(), APP_COOKIE_ALIVE_SECONDS);
+            String token = userService.generateCredentialToken(user);
+            CookieHelper.addCookie(response, CREDENTIAL_TOKEN, token, APP_COOKIE_ALIVE_SECONDS);
+        }
     }
 }

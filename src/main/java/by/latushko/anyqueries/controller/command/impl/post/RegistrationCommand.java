@@ -34,7 +34,6 @@ public class RegistrationCommand implements Command {
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         CommandResult commandResult = new CommandResult(REGISTRATION_URL, REDIRECT);
-        ResponseMessage message;
         FormValidator validator = RegistrationFormValidator.getInstance();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
         if(!validationResult.getStatus()) {
@@ -70,6 +69,14 @@ public class RegistrationCommand implements Command {
         MessageManager manager = MessageManager.getManager(userLang);
         RegistrationService registrationService = RegistrationServiceImpl.getInstance();
         boolean result = registrationService.registerUser(firstName, lastName, middleName, sendLink, email, telegram, login, password, manager);
+        ResponseMessage message = buildResponseMessage(result, session, manager, validationResult, sendLink, email);
+        session.setAttribute(MESSAGE, message);
+        return commandResult;
+    }
+
+    private ResponseMessage buildResponseMessage(boolean result, HttpSession session, MessageManager manager,
+                                                 ValidationResult validationResult, boolean sendLink, String email) {
+        ResponseMessage message;
         if (result) {
             String text, notice;
             String telegramBotUrl = APP_TELEGRAM_LINK_HOST + BOT_NAME;
@@ -86,7 +93,6 @@ public class RegistrationCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_REGISTRATION_FAIL));
         }
-        session.setAttribute(MESSAGE, message);
-        return commandResult;
+        return message;
     }
 }

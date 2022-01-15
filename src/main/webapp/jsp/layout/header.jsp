@@ -1,10 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"
          import="by.latushko.anyqueries.controller.command.identity.CookieName,
-         by.latushko.anyqueries.util.AppProperty" %>
+         by.latushko.anyqueries.util.AppProperty,
+         by.latushko.anyqueries.util.i18n.MessageManager" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="current_lang" value="${cookie[CookieName.LANG].value}" scope="request" />
+<c:catch var="wrongCookieLangEx">
+    <c:set var="current_lang" value="${fn:toLowerCase(MessageManager.valueOf(fn:toUpperCase(cookie[CookieName.LANG].value)))}" scope="request" />
+</c:catch>
+<c:if test="${wrongCookieLangEx != null}">
+    <c:set var="current_lang" value="ru" scope="request" />
+</c:if>
 <fmt:setLocale value="${current_lang}" scope="request"/>
 <fmt:setBundle basename="message" scope="request"/>
 <c:if test="${empty page_title}">

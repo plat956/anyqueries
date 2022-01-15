@@ -10,7 +10,7 @@ import by.latushko.anyqueries.util.http.CookieHelper;
 import by.latushko.anyqueries.util.i18n.MessageManager;
 import by.latushko.anyqueries.validator.FormValidator;
 import by.latushko.anyqueries.validator.ValidationResult;
-import by.latushko.anyqueries.validator.impl.ChangePasswordValidator;
+import by.latushko.anyqueries.validator.impl.ChangePasswordFormValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -30,7 +30,7 @@ public class ChangePasswordCommand implements Command {
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         CommandResult commandResult = new CommandResult(CHANGE_PASSWORD_URL, REDIRECT);
-        FormValidator validator = ChangePasswordValidator.getInstance();
+        FormValidator validator = ChangePasswordFormValidator.getInstance();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
         if (!validationResult.getStatus()) {
             session.setAttribute(VALIDATION_RESULT, validationResult);
