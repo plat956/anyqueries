@@ -396,6 +396,36 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
+    @Override
+    public boolean update(Long userId, String firstName, String lastName, String middleName, String email, String telegram,
+                          String login, User.Status status, User.Role role) {
+        BaseDao userDao = new UserDaoImpl();
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                Optional<User> userOptional = userDao.findById(userId);
+                if(userOptional.isPresent()) {
+                    User user = userOptional.get();
+                    user.setFirstName(firstName);
+                    user.setLastName(lastName);
+                    user.setMiddleName(middleName);
+                    user.setEmail(email);
+                    user.setTelegram(telegram);
+                    user.setLogin(login);
+                    user.setStatus(status);
+                    user.setRole(role);
+                    userDao.update(user);
+                    transaction.commit();
+                    return true;
+                }
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to update user data", e);
+        }
+        return false;
+    }
+
     private String getCredentialTokenSource(User user) {
         return CREDENTIAL_TOKEN_ADDITIONAL_SALT + user.getLogin();
     }

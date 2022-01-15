@@ -10,6 +10,8 @@ public final class RequestParameter {
     public static final String SEND_LINK = "send_link";
     public static final String TELEGRAM = "telegram";
     public static final String LOGIN = "login";
+    public static final String STATUS = "status";
+    public static final String ROLE = "role";
     public static final String TITLE = "title";
     public static final String QUERY = "query";
     public static final String CATEGORY = "category";

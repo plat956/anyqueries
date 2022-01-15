@@ -9,15 +9,15 @@ import static by.latushko.anyqueries.controller.command.identity.RequestParamete
 import static by.latushko.anyqueries.util.i18n.MessageKey.LABEL_WRONG_INPUT;
 import static by.latushko.anyqueries.validator.ValidationPattern.*;
 
-public class CategoryValidator implements FormValidator {
+public class CategoryFormValidator implements FormValidator {
     private static FormValidator instance;
 
-    private CategoryValidator() {
+    private CategoryFormValidator() {
     }
 
     public static FormValidator getInstance() {
         if(instance == null) {
-            instance = new CategoryValidator();
+            instance = new CategoryFormValidator();
         }
         return instance;
     }

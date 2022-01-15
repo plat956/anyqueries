@@ -24,6 +24,7 @@ public interface UserService {
     boolean checkIfExistsByLoginExceptUserId(String login, Long userId);
     boolean updateLastLoginDate(User user);
     boolean update(User user, String firstName, String lastName, String middleName, String email, String telegram, String login);
+    boolean update(Long userId, String firstName, String lastName, String middleName, String email, String telegram, String login, User.Status status, User.Role role);
     UserHash generateUserHash(User user);
     String generateCredentialToken(User user);
     boolean changePassword(User user, String password);

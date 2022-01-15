@@ -9,7 +9,7 @@ import by.latushko.anyqueries.util.http.CookieHelper;
 import by.latushko.anyqueries.util.i18n.MessageManager;
 import by.latushko.anyqueries.validator.FormValidator;
 import by.latushko.anyqueries.validator.ValidationResult;
-import by.latushko.anyqueries.validator.impl.CategoryValidator;
+import by.latushko.anyqueries.validator.impl.CategoryFormValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -33,7 +33,7 @@ public class EditCategoryCommand implements Command {
         CommandResult commandResult = new CommandResult(EDIT_CATEGORY_URL + id, REDIRECT);
         ResponseMessage message;
 
-        FormValidator validator = CategoryValidator.getInstance();
+        FormValidator validator = CategoryFormValidator.getInstance();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
         if(!validationResult.getStatus()) {
             session.setAttribute(VALIDATION_RESULT, validationResult);

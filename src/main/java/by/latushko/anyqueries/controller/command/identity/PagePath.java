@@ -7,6 +7,7 @@ public final class PagePath {
     public static final String CREATE_QUESTION_PAGE = "jsp/createQuestion.jsp";
     public static final String CREATE_CATEGORY_PAGE = "jsp/createCategory.jsp";
     public static final String EDIT_CATEGORY_PAGE = "jsp/editCategory.jsp";
+    public static final String EDIT_USER_PAGE = "jsp/editUser.jsp";
     public static final String EDIT_QUESTION_PAGE = "jsp/editQuestion.jsp";
     public static final String EDIT_PROFILE_PAGE = "jsp/editProfile.jsp";
     public static final String CHANGE_PASSWORD_PAGE = "jsp/changePassword.jsp";
