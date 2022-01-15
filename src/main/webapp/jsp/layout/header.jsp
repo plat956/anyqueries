@@ -43,7 +43,13 @@
             <jsp:include page="fragment/sidebar.jsp" />
         </c:if>
         <div class="col-lg-${!bad_browser_command ? '9' : '12'} custom-content">
-            <jsp:include page="fragment/globalMessage.jsp" />
+            <div id="global-messages">
+                <c:if test="${!empty inactivePrincipal}">
+                    <div id="warning-inactive" class="alert alert-warning" role="alert">
+                        <fmt:message key="message.activation.repeat.alert" /><a href="${pageContext.request.contextPath}/controller?command=repeat_activation_page"><fmt:message key="message.activation.repeat.link" /></a>
+                    </div>
+                </c:if>
+            </div>
             <div class="grid support-content">
                 <div class="grid-body">
                     <h5>${page_title_prefix}${page_title}${page_title_postfix}<span class="page_title_right"></span></h5>

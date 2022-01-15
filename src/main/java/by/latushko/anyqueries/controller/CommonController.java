@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
@@ -64,7 +65,8 @@ public class CommonController extends HttpServlet {
     }
 
     private void sendFile(HttpServletResponse response, CommandResult result) throws IOException {
-        if(!Files.exists(Paths.get(result.page()))) {
+        Path path = Paths.get(result.page());
+        if(!Files.exists(path) || !Files.isRegularFile(path)) {
             response.setContentType(null);
             response.setHeader(CONTENT_DISPOSITION_HEADER, CONTENT_DISPOSITION_DEFAULT_VALUE);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

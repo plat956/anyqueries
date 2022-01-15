@@ -95,29 +95,30 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public Optional<User> activateUserByHash(String hash) {
-        BaseDao userDao = new UserDaoImpl();
-        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
-            try {
-                LocalDateTime validDate = LocalDateTime.now();
-                Optional<User> userOptional = ((UserDao)userDao).findInactiveByHashAndHashIsNotExpired(hash, validDate);
+        if(hash != null && !hash.isEmpty()) {
+            BaseDao userDao = new UserDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+                try {
+                    LocalDateTime validDate = LocalDateTime.now();
+                    Optional<User> userOptional = ((UserDao) userDao).findInactiveByHashAndHashIsNotExpired(hash, validDate);
 
-                if (userOptional.isPresent()) { //todo: is it ok to skip committing started transaction if optional is empty?
-                    User user = userOptional.get();
-                    user.setStatus(User.Status.ACTIVE);
-                    userDao.update(user);
+                    if (userOptional.isPresent()) { //todo: is it ok to skip committing started transaction if optional is empty?
+                        User user = userOptional.get();
+                        user.setStatus(User.Status.ACTIVE);
+                        userDao.update(user);
 
-                    ((UserDao)userDao).deleteUserHashByUserId(user.getId());
-                    transaction.commit();
+                        ((UserDao) userDao).deleteUserHashByUserId(user.getId());
+                        transaction.commit();
 
-                    return userOptional;
+                        return userOptional;
+                    }
+                } catch (DaoException e) {
+                    transaction.rollback();
                 }
-            } catch (DaoException e) {
-                transaction.rollback();
+            } catch (EntityTransactionException e) {
+                logger.error("Failed to activate user by hash", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Failed to activate user by hash", e);
         }
-
         return Optional.empty();
     }
 

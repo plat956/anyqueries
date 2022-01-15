@@ -39,7 +39,6 @@ public class UploadAvatarCommand implements Command {
         HttpSession session = request.getSession();
         CommandResult commandResult = new CommandResult(EDIT_PROFILE_URL, REDIRECT);
         ResponseMessage message;
-
         List<Part> parts;
         try {
             parts = request.getParts().stream().toList();
@@ -48,7 +47,6 @@ public class UploadAvatarCommand implements Command {
             session.setAttribute(MESSAGE, message);
             return commandResult;
         }
-
         AttachmentValidator validator = UploadAvatarValidator.getInstance();
         boolean validationResult = validator.validate(parts);
         if(!validationResult) {
@@ -56,15 +54,13 @@ public class UploadAvatarCommand implements Command {
             session.setAttribute(MESSAGE, message);
             return commandResult;
         }
-
-        AttachmentService attachmentService = AttachmentServiceImpl.getInstance(); //todo вынести загрузку файла в uploadAvatar userService?
+        AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
         Optional<String> avatar = attachmentService.uploadAvatar(parts);
         if(avatar.isEmpty()) {
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_FILE_UPLOAD_ERROR));
             session.setAttribute(MESSAGE, message);
             return commandResult;
         }
-
         User user = (User) session.getAttribute(PRINCIPAL);
         UserService userService = UserServiceImpl.getInstance();
         boolean result = userService.updateAvatar(user, avatar.get());
@@ -73,7 +69,6 @@ public class UploadAvatarCommand implements Command {
         } else {
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_FILE_UPLOAD_ERROR));
         }
-
         session.setAttribute(MESSAGE, message);
         return commandResult;
     }

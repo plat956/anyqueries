@@ -36,6 +36,6 @@ public class UploadAvatarValidator implements AttachmentValidator {
             return false;
         }
         long fileSize = file.getSize() / (1024 * 1024);
-        return APP_ATTACHMENT_SIZE > fileSize;
+        return APP_ATTACHMENT_SIZE >= fileSize;
     }
 }

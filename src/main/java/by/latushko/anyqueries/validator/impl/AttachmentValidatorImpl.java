@@ -26,6 +26,6 @@ public class AttachmentValidatorImpl implements AttachmentValidator {
         if(attachments == null || attachments.size() > APP_ATTACHMENT_COUNT) {
             return false;
         }
-        return attachments.stream().noneMatch(p -> (p.getSize() / (1024 * 1024)) > APP_ATTACHMENT_SIZE);
+        return attachments.stream().noneMatch(p -> (p.getSize() / (1024 * 1024)) >= APP_ATTACHMENT_SIZE);
     }
 }

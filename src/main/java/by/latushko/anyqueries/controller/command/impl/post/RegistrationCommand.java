@@ -82,8 +82,10 @@ public class RegistrationCommand implements Command {
             String telegramBotUrl = APP_TELEGRAM_LINK_HOST + BOT_NAME;
             if (sendLink) {
                 text = manager.getMessage(MESSAGE_ACTIVATION_EMAIL_TITLE, email);
-                notice = manager.getMessage(MESSAGE_ACTIVATION_EMAIL_NOTICE, APP_ACTIVATION_LINK_ALIVE_HOURS, telegramBotUrl, BOT_NAME);
-                notice += manager.getMessage(MESSAGE_ACTIVATION_GLOBAL_NOTICE);
+                StringBuilder noticeBulder = new StringBuilder(manager.getMessage(MESSAGE_ACTIVATION_EMAIL_NOTICE,
+                        APP_ACTIVATION_LINK_ALIVE_HOURS, telegramBotUrl, BOT_NAME));
+                noticeBulder.append(manager.getMessage(MESSAGE_ACTIVATION_GLOBAL_NOTICE));
+                notice = noticeBulder.toString();
             } else {
                 text = manager.getMessage(MESSAGE_ACTIVATION_TELEGRAM, telegramBotUrl, BOT_NAME);
                 notice = manager.getMessage(MESSAGE_ACTIVATION_GLOBAL_NOTICE);

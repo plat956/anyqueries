@@ -61,14 +61,18 @@ public class RepeatActivationCommand implements Command {
 
         RegistrationService registrationService = RegistrationServiceImpl.getInstance();
         boolean result = registrationService.updateRegistrationData(currentUser, email, telegram, sendLink, manager);
+        ResponseMessage message = buildResponseMessage(session, result, sendLink, email, manager, validationResult);
+        session.setAttribute(MESSAGE, message);
+        return commandResult;
+    }
 
+    private ResponseMessage buildResponseMessage(HttpSession session, boolean result, boolean sendLink, String email, MessageManager manager, ValidationResult validationResult) {
         ResponseMessage message;
         if (result) {
             String notice;
             String telegramBotUrl = APP_TELEGRAM_LINK_HOST + BOT_NAME;
             if (sendLink) {
-                StringBuilder noticeBulder = new StringBuilder();
-                noticeBulder.append(manager.getMessage(MESSAGE_ACTIVATION_EMAIL_TITLE, email));
+                StringBuilder noticeBulder = new StringBuilder(manager.getMessage(MESSAGE_ACTIVATION_EMAIL_TITLE, email));
                 noticeBulder.append(manager.getMessage(MESSAGE_ACTIVATION_EMAIL_NOTICE, APP_ACTIVATION_LINK_ALIVE_HOURS, telegramBotUrl, BOT_NAME));
                 notice = noticeBulder.toString();
             } else {
@@ -79,8 +83,6 @@ public class RepeatActivationCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_SAVE_FAILED));
         }
-
-        session.setAttribute(MESSAGE, message);
-        return commandResult;
+        return message;
     }
 }

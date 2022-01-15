@@ -39,12 +39,13 @@ public class ActivateUserCommand implements Command {
         ResponseMessage message;
         String redirectUrl = QUESTIONS_URL;
         if(activatedUser.isPresent()) {
+            User user = activatedUser.get();
             message = new ResponseMessage(POPUP, SUCCESS, manager.getMessage(MESSAGE_REGISTRATION_SUCCESS_TITLE),
                     manager.getMessage(MESSAGE_REGISTRATION_SUCCESS_NOTICE));
             session.removeAttribute(INACTIVE_PRINCIPAL);
-            session.setAttribute(PRINCIPAL, activatedUser.get());
+            session.setAttribute(PRINCIPAL, user);
             UserService userService = UserServiceImpl.getInstance();
-            userService.updateLastLoginDate(activatedUser.get());
+            userService.updateLastLoginDate(user);
         } else {
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ACTIVATION_FAIL));
             if(session.getAttribute(INACTIVE_PRINCIPAL) == null) {
