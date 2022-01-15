@@ -38,24 +38,23 @@ public class EditProfileCommand implements Command {
         UserService userService = UserServiceImpl.getInstance();
         User currentUser = (User) session.getAttribute(PRINCIPAL);
         String email = request.getParameter(EMAIL);
-        if(email != null && !email.isEmpty() && userService.checkIfExistsByEmailExceptUserId(email, currentUser.getId())) {
+        if(email != null && !email.isEmpty() && userService.existsByEmailExceptUserId(email, currentUser.getId())) {
             validationResult.setError(EMAIL, LABEL_EMAIL_EXISTS);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
         String telegram = request.getParameter(TELEGRAM);
-        if(telegram != null && !telegram.isEmpty() && userService.checkIfExistsByTelegramExceptUserId(telegram, currentUser.getId())) {
+        if(telegram != null && !telegram.isEmpty() && userService.existsByTelegramExceptUserId(telegram, currentUser.getId())) {
             validationResult.setError(TELEGRAM, LABEL_TELEGRAM_EXISTS);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
         String login = request.getParameter(LOGIN);
-        if(login != null && !login.isEmpty() && userService.checkIfExistsByLoginExceptUserId(login, currentUser.getId())) {
+        if(login != null && !login.isEmpty() && userService.existsByLoginExceptUserId(login, currentUser.getId())) {
             validationResult.setError(LOGIN, LABEL_LOGIN_EXISTS);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
 
@@ -63,7 +62,6 @@ public class EditProfileCommand implements Command {
         String lastName = request.getParameter(LAST_NAME);
         String middleName = request.getParameter(MIDDLE_NAME);
         boolean result = userService.update(currentUser, firstName, lastName, middleName, email, telegram, login);
-
         ResponseMessage message;
         if (result) {
             message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_SAVE_SUCCESSFUL));
@@ -71,7 +69,6 @@ public class EditProfileCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_SAVE_FAILED));
         }
-
         session.setAttribute(MESSAGE, message);
         return commandResult;
     }

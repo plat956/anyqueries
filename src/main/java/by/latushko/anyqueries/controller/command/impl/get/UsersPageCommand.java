@@ -12,18 +12,16 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.FORWARD;
 import static by.latushko.anyqueries.controller.command.identity.PagePath.USERS_PAGE;
-import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.*;
+import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.TOTAL_PAGES;
+import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.USERS;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.PAGE;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.QUERY;
-import static by.latushko.anyqueries.service.QuestionService.QUESTION_SEARCH_QUERY_MAX_LENGTH;
+import static by.latushko.anyqueries.controller.command.impl.get.LiveSearchCommand.limitQueryString;
 
 public class UsersPageCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
-        String login = request.getParameter(QUERY);
-        if(login != null && login.length() > QUESTION_SEARCH_QUERY_MAX_LENGTH) {
-            login = login.substring(0, QUESTION_SEARCH_QUERY_MAX_LENGTH);
-        }
+        String login = limitQueryString(request.getParameter(QUERY));
         String pageParameter = request.getParameter(PAGE);
         RequestPage page = new RequestPage(pageParameter);
         UserService userService = UserServiceImpl.getInstance();

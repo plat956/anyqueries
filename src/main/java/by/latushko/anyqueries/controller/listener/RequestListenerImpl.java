@@ -64,11 +64,11 @@ public class RequestListenerImpl implements ServletRequestListener {
             session.removeAttribute(ANSWER_OBJECT);
             request.setAttribute(RequestAttribute.ANSWER_OBJECT, answerObject);
         }
-        Long totalQuestions = questionService.countTotalNotClosed();
+        Long totalQuestions = questionService.countNotClosed();
         request.setAttribute(LAYOUT_TOTAL_QUESTIONS, totalQuestions);
         User user = (User) session.getAttribute(PRINCIPAL);
         if(user != null) {
-            Long totalUserQuestions = questionService.countTotalNotClosedByAuthorId(user.getId());
+            Long totalUserQuestions = questionService.countNotClosedByAuthorId(user.getId());
             request.setAttribute(LAYOUT_TOTAL_USER_QUESTIONS, totalUserQuestions);
         }
         CategoryService categoryService = CategoryServiceImpl.getInstance();

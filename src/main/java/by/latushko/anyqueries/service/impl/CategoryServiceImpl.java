@@ -227,7 +227,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<String> findNameByNameLikeOrderedAndLimited(String namePattern, int limit) {
+    public List<String> findNameByNameContainsOrderByNameAscLimitedTo(String namePattern, int limit) {
         BaseDao categoryDao = new CategoryDaoImpl();
         List<String> names = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {

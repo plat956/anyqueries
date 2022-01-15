@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AnswerService {
-    Long countTotalAnswersByUserId(Long userId);
+    Long countByUserId(Long userId);
     Paginated<Answer> findPaginatedByQuestionIdOrderByCreationDateAsc(RequestPage page, Long questionId, Long userId);
     boolean changeRating(Long answerId, Boolean grade, Long userId);
     Integer calculateRatingByAnswerId(Long answerId);

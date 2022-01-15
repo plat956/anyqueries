@@ -10,7 +10,6 @@ import by.latushko.anyqueries.util.http.CookieHelper;
 import by.latushko.anyqueries.util.i18n.MessageManager;
 import by.latushko.anyqueries.validator.FormValidator;
 import by.latushko.anyqueries.validator.ValidationResult;
-import by.latushko.anyqueries.validator.impl.ProfileFormValidator;
 import by.latushko.anyqueries.validator.impl.UserFormValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,7 +19,6 @@ import static by.latushko.anyqueries.controller.command.CommandResult.RoutingTyp
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
-import static by.latushko.anyqueries.controller.command.identity.PageUrl.EDIT_PROFILE_URL;
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.EDIT_USER_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
@@ -40,19 +38,19 @@ public class EditUserCommand implements Command {
         }
         UserService userService = UserServiceImpl.getInstance();
         String email = request.getParameter(EMAIL);
-        if(email != null && !email.isEmpty() && userService.checkIfExistsByEmailExceptUserId(email, id)) {
+        if(email != null && !email.isEmpty() && userService.existsByEmailExceptUserId(email, id)) {
             validationResult.setError(EMAIL, LABEL_EMAIL_EXISTS);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
         String telegram = request.getParameter(TELEGRAM);
-        if(telegram != null && !telegram.isEmpty() && userService.checkIfExistsByTelegramExceptUserId(telegram, id)) {
+        if(telegram != null && !telegram.isEmpty() && userService.existsByTelegramExceptUserId(telegram, id)) {
             validationResult.setError(TELEGRAM, LABEL_TELEGRAM_EXISTS);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
         String login = request.getParameter(LOGIN);
-        if(login != null && !login.isEmpty() && userService.checkIfExistsByLoginExceptUserId(login, id)) {
+        if(login != null && !login.isEmpty() && userService.existsByLoginExceptUserId(login, id)) {
             validationResult.setError(LOGIN, LABEL_LOGIN_EXISTS);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;

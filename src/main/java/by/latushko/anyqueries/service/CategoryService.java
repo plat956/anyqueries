@@ -18,5 +18,5 @@ public interface CategoryService {
     Optional<Category> findById(Long id);
     boolean update(Long id, String name, String color);
     boolean delete(Long id);
-    List<String> findNameByNameLikeOrderedAndLimited(String namePattern, int limit);
+    List<String> findNameByNameContainsOrderByNameAscLimitedTo(String namePattern, int limit);
 }

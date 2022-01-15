@@ -41,7 +41,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<String> findTitleByTitleLikeAndCategoryIdAndAuthorIdOrderedAndLimited(String pattern, Long categoryId, Long userId, int limit) {
+    public List<String> findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo(String pattern, Long categoryId, Long userId, int limit) {
         BaseDao questionDao = new QuestionDaoImpl();
         List<String> titles = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
@@ -58,7 +58,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Long countTotalByAuthorId(Long authorId) {
+    public Long countByAuthorId(Long authorId) {
         BaseDao questionDao = new QuestionDaoImpl();
         Long count = 0L;
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
@@ -75,7 +75,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Long countTotalNotClosed() {
+    public Long countNotClosed() {
         BaseDao questionDao = new QuestionDaoImpl();
         Long count = 0L;
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
@@ -92,7 +92,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Long countTotalNotClosedByAuthorId(Long authorId) {
+    public Long countNotClosedByAuthorId(Long authorId) {
         BaseDao questionDao = new QuestionDaoImpl();
         Long count = 0L;
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {

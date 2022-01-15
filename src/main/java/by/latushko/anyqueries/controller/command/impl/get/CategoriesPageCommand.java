@@ -16,15 +16,12 @@ import static by.latushko.anyqueries.controller.command.identity.RequestAttribut
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.TOTAL_PAGES;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.PAGE;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.QUERY;
-import static by.latushko.anyqueries.service.QuestionService.QUESTION_SEARCH_QUERY_MAX_LENGTH;
+import static by.latushko.anyqueries.controller.command.impl.get.LiveSearchCommand.limitQueryString;
 
 public class CategoriesPageCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
-        String name = request.getParameter(QUERY);
-        if(name != null && name.length() > QUESTION_SEARCH_QUERY_MAX_LENGTH) {
-            name = name.substring(0, QUESTION_SEARCH_QUERY_MAX_LENGTH);
-        }
+        String name = limitQueryString(request.getParameter(QUERY));
         String pageParameter = request.getParameter(PAGE);
         RequestPage page = new RequestPage(pageParameter);
         CategoryService categoryService = CategoryServiceImpl.getInstance();

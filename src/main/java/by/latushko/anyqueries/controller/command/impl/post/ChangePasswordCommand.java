@@ -36,9 +36,7 @@ public class ChangePasswordCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-
         String oldPassword = request.getParameter(PASSWORD_OLD);
-
         User user = (User) session.getAttribute(PRINCIPAL);
         UserService userService = UserServiceImpl.getInstance();
         if(!userService.checkPassword(user, oldPassword)) {
@@ -46,20 +44,17 @@ public class ChangePasswordCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-
         String password = request.getParameter(PASSWORD_NEW);
-        boolean result = userService.changePassword(user, password);
-
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
         ResponseMessage message;
+        boolean result = userService.changePassword(user, password);
         if (result) {
             message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_SAVE_SUCCESSFUL));
         } else {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_SAVE_FAILED));
         }
-
         session.setAttribute(MESSAGE, message);
         return commandResult;
     }

@@ -21,7 +21,7 @@ import static by.latushko.anyqueries.controller.command.identity.PagePath.QUESTI
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.*;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
-import static by.latushko.anyqueries.service.QuestionService.QUESTION_SEARCH_QUERY_MAX_LENGTH;
+import static by.latushko.anyqueries.controller.command.impl.get.LiveSearchCommand.limitQueryString;
 
 public class QuestionsPageCommand implements Command {
     private static final String NEWEST_SORT_VALUE = "new";
@@ -42,10 +42,7 @@ public class QuestionsPageCommand implements Command {
         boolean newestFirst = sortParameter == null || sortParameter.equalsIgnoreCase(NEWEST_SORT_VALUE);
         Long authorId = modeParameter != null && modeParameter.equalsIgnoreCase(MODE_MY_VALUE) ? user.getId() : null;
         Long category = categoryParameter != null ? Long.valueOf(categoryParameter) : null;
-        String title = request.getParameter(QUERY);
-        if(title != null && title.length() > QUESTION_SEARCH_QUERY_MAX_LENGTH) {
-            title = title.substring(0, QUESTION_SEARCH_QUERY_MAX_LENGTH);
-        }
+        String title = limitQueryString(request.getParameter(QUERY));
         RequestPage page = new RequestPage(pageParameter);
         QuestionService questionService = QuestionServiceImpl.getInstance();
         Paginated<Question> questions = questionService.findByQueryParametersOrderByNewest(page, resolved, newestFirst, authorId, category, title);

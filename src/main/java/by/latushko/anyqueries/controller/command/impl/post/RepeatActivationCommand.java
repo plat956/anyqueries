@@ -43,13 +43,13 @@ public class RepeatActivationCommand implements Command {
         UserService userService = UserServiceImpl.getInstance();
         User currentUser = (User) session.getAttribute(INACTIVE_PRINCIPAL);
         String email = request.getParameter(EMAIL);
-        if(email != null && !email.isEmpty() && userService.checkIfExistsByEmailExceptUserId(email, currentUser.getId())) {
+        if(email != null && !email.isEmpty() && userService.existsByEmailExceptUserId(email, currentUser.getId())) {
             validationResult.setError(EMAIL, LABEL_EMAIL_EXISTS);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
         String telegram = request.getParameter(TELEGRAM);
-        if(telegram != null && !telegram.isEmpty() && userService.checkIfExistsByTelegramExceptUserId(telegram, currentUser.getId())) {
+        if(telegram != null && !telegram.isEmpty() && userService.existsByTelegramExceptUserId(telegram, currentUser.getId())) {
             validationResult.setError(TELEGRAM, LABEL_TELEGRAM_EXISTS);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;

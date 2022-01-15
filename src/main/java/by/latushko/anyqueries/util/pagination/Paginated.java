@@ -2,7 +2,6 @@ package by.latushko.anyqueries.util.pagination;
 
 import by.latushko.anyqueries.model.entity.BaseEntity;
 
-import java.util.Collections;
 import java.util.List;
 
 import static by.latushko.anyqueries.util.AppProperty.APP_RECORDS_PER_PAGE;
@@ -17,7 +16,7 @@ public final class Paginated<T extends BaseEntity> {
             this.content = data;
         } else {
             this.totalPages = 0L;
-            this.content = Collections.emptyList();
+            this.content = List.of();
         }
     }
 

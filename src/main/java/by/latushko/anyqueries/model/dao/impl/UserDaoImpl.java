@@ -85,7 +85,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     private static final String SQL_FIND_LOGIN_BY_LOGIN_LIKE_ORDER_ASC_QUERY = """
             SELECT login 
             FROM users 
-            WHERE login like ?
+            WHERE login like ? 
+            ORDER BY login ASC 
             LIMIT ?""";
     private static final String SQL_LOGIN_LIKE_CLAUSE = " WHERE login like ? ";
     private static final String SQL_LIMITED_QUERY_END_CLAUSE = " ORDER BY role ASC LIMIT ?,?";

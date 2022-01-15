@@ -42,19 +42,19 @@ public class RegistrationCommand implements Command {
         }
         UserService userService = UserServiceImpl.getInstance();
         String email = request.getParameter(EMAIL);
-        if(email != null && !email.isEmpty() && userService.checkIfExistsByEmail(email)) {
+        if(email != null && !email.isEmpty() && userService.existsByEmail(email)) {
             validationResult.setError(EMAIL, LABEL_EMAIL_EXISTS);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
         String telegram = request.getParameter(TELEGRAM);
-        if(telegram != null && !telegram.isEmpty() && userService.checkIfExistsByTelegram(telegram)) {
+        if(telegram != null && !telegram.isEmpty() && userService.existsByTelegram(telegram)) {
             validationResult.setError(TELEGRAM, LABEL_TELEGRAM_EXISTS);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
         String login = request.getParameter(LOGIN);
-        if(userService.checkIfExistsByLogin(login)) {
+        if(userService.existsByLogin(login)) {
             validationResult.setError(LOGIN, LABEL_LOGIN_EXISTS);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;

@@ -56,8 +56,8 @@ public class ProfilePageCommand implements Command {
         result.put(TELEGRAM_LNK, APP_TELEGRAM_LINK_HOST + user.getTelegram());
         QuestionService questionService = QuestionServiceImpl.getInstance();
         AnswerService answerService = AnswerServiceImpl.getInstance();
-        Long totalQuestions = questionService.countTotalByAuthorId(user.getId());
-        Long totalAnswers = answerService.countTotalAnswersByUserId(user.getId());
+        Long totalQuestions = questionService.countByAuthorId(user.getId());
+        Long totalAnswers = answerService.countByUserId(user.getId());
         result.put(QUESTIONS_COUNT, totalQuestions);
         result.put(ANSWERS_COUNT, totalAnswers);
         return new CommandResult(result.toString(), DATA);

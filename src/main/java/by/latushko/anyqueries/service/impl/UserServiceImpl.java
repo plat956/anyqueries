@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean checkIfExistsByLogin(String login) {
+    public boolean existsByLogin(String login) {
         BaseDao userDao = new UserDaoImpl();
         boolean result = false;
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
@@ -167,7 +167,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean checkIfExistsByEmail(String email) {
+    public boolean existsByEmail(String email) {
         BaseDao userDao = new UserDaoImpl();
         boolean result = false;
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
@@ -184,7 +184,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean checkIfExistsByTelegram(String telegram) {
+    public boolean existsByTelegram(String telegram) {
         BaseDao userDao = new UserDaoImpl();
         boolean result = false;
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
@@ -201,7 +201,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean checkIfExistsByEmailExceptUserId(String email, Long userId) {
+    public boolean existsByEmailExceptUserId(String email, Long userId) {
         BaseDao userDao = new UserDaoImpl();
         boolean result = false;
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
@@ -218,7 +218,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean checkIfExistsByTelegramExceptUserId(String telegram, Long userId) {
+    public boolean existsByTelegramExceptUserId(String telegram, Long userId) {
         BaseDao userDao = new UserDaoImpl();
         boolean result = false;
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
@@ -235,7 +235,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean checkIfExistsByLoginExceptUserId(String login, Long userId) {
+    public boolean existsByLoginExceptUserId(String login, Long userId) {
         BaseDao userDao = new UserDaoImpl();
         boolean result = false;
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
@@ -352,7 +352,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<String> findLoginByLoginLikeOrderedAndLimited(String loginPattern, int limit) {
+    public List<String> findLoginByLoginContainsOrderByLoginAscLimitedTo(String loginPattern, int limit) {
         BaseDao userDao = new UserDaoImpl();
         List<String> logins = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {

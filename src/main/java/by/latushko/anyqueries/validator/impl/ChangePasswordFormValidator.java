@@ -25,14 +25,14 @@ public class ChangePasswordFormValidator implements FormValidator {
     @Override
     public ValidationResult validate(Map<String, String[]> formData) {
         ValidationResult result = new ValidationResult(formData);
-        String passwordConfirm = result.getValue(PASSWORD_NEW_REPEAT);
+        String passwordConfirmation = result.getValue(PASSWORD_NEW_REPEAT);
         if(!result.getValue(PASSWORD_OLD).matches(PASSWORD_REGEXP)) {
             result.setError(PASSWORD_OLD, LABEL_WRONG_INPUT);
         }
         if(!result.getValue(PASSWORD_NEW).matches(PASSWORD_REGEXP)) {
             result.setError(PASSWORD_NEW, LABEL_WRONG_INPUT);
         }
-        if(!result.getValue(PASSWORD_NEW).equals(passwordConfirm)) {
+        if(!result.getValue(PASSWORD_NEW).equals(passwordConfirmation)) {
             result.setError(PASSWORD_NEW_REPEAT, LABEL_WRONG_INPUT);
         }
         return result;

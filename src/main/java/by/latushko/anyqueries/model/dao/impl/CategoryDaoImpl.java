@@ -59,7 +59,8 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
     private static final String SQL_FIND_NAME_BY_NAME_LIKE_ORDER_ASC_QUERY = """
             SELECT name 
             FROM categories 
-            WHERE name like ?
+            WHERE name like ? 
+            ORDER BY name ASC 
             LIMIT ?""";
     private static final String SQL_NAME_LIKE_CLAUSE = " WHERE name like ? ";
     private static final String SQL_LIMITED_QUERY_END_CLAUSE = " ORDER BY name ASC LIMIT ?,?";

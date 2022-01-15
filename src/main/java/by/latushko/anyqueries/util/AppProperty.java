@@ -28,6 +28,8 @@ public final class AppProperty {
     private static final String APP_QUESTION_MAXLENGTH_PARAMETER = "app.question.maxlength";
     private static final String APP_ANSWER_MAXLENGTH_PARAMETER = "app.answer.maxlength";
     private static final String APP_RECORDS_PER_PAGE_PARAMETER = "app.records.per.page";
+    private static final String APP_SEARCH_PREDICTIONS_LIMIT_PARAMETER = "app.search.predictions.limit";
+    private static final String APP_SEARCH_QUERY_MAXLENGTH_PARAMETER = "app.search.query.maxlength";
     private static final String EXTENSION_DELIMITER = ",";
     public static final String APP_NAME;
     public static final String APP_HOST;
@@ -45,6 +47,8 @@ public final class AppProperty {
     public static final Integer APP_QUESTION_MAXLENGTH;
     public static final Integer APP_ANSWER_MAXLENGTH;
     public static final Integer APP_RECORDS_PER_PAGE;
+    public static final Integer APP_SEARCH_PREDICTIONS_LIMIT;
+    public static final Integer APP_SEARCH_QUERY_MAXLENGTH;
 
     static {
         Properties properties = new Properties();
@@ -66,6 +70,8 @@ public final class AppProperty {
             APP_QUESTION_MAXLENGTH = Integer.valueOf(properties.getProperty(APP_QUESTION_MAXLENGTH_PARAMETER));
             APP_ANSWER_MAXLENGTH = Integer.valueOf(properties.getProperty(APP_ANSWER_MAXLENGTH_PARAMETER));
             APP_RECORDS_PER_PAGE = Integer.valueOf(properties.getProperty(APP_RECORDS_PER_PAGE_PARAMETER));
+            APP_SEARCH_PREDICTIONS_LIMIT = Integer.valueOf(properties.getProperty(APP_SEARCH_PREDICTIONS_LIMIT_PARAMETER));
+            APP_SEARCH_QUERY_MAXLENGTH = Integer.valueOf(properties.getProperty(APP_SEARCH_QUERY_MAXLENGTH_PARAMETER));
             String avatarExtensions = properties.getProperty(APP_UPLOAD_AVATAR_EXTENSIONS_PARAMETER);
             if(avatarExtensions != null && !avatarExtensions.isEmpty()) {
                 String[] extensions = avatarExtensions.split(EXTENSION_DELIMITER);

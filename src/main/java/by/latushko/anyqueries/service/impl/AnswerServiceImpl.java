@@ -36,7 +36,7 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public Long countTotalAnswersByUserId(Long userId) {
+    public Long countByUserId(Long userId) {
         BaseDao answerDao = new AnswerDaoImpl();
         Long count = 0L;
         try (EntityTransaction transaction = new EntityTransaction(answerDao)) {
