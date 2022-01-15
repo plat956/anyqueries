@@ -11,11 +11,11 @@ public enum MessageManager {
     EN(ResourceBundle.getBundle(MESSAGES_FILE_NAME, new Locale(LOCALE_EN))),
     BE(ResourceBundle.getBundle(MESSAGES_FILE_NAME, new Locale(LOCALE_BE)));
 
-    public static final String SPACE_CHARACTER = " ";
     private static final String MESSAGE_1_POSTFIX = "1";
     private static final String MESSAGE_2_POSTFIX = "2";
     private static final String MESSAGE_5_POSTFIX = "5";
     private ResourceBundle bundle;
+    public static final String SPACE_CHARACTER = " ";
 
     MessageManager(ResourceBundle bundle) {
         this.bundle = bundle;
@@ -42,7 +42,7 @@ public enum MessageManager {
     }
 
     public String getMessageInPlural(String key, long count) {
-        key = getPluralMessageKey(count, key);
+        key = buildPluralMessageKey(count, key);
         String result = bundle.getString(key);
         if(count == 0) {
             result = bundle.getString(LABEL_NO) + SPACE_CHARACTER + result;
@@ -52,18 +52,18 @@ public enum MessageManager {
         return result;
     }
 
-    private String getPluralMessageKey(long count, String form) {
+    private String buildPluralMessageKey(long count, String key) {
         count = abs(count) % 100;
         count = count % 10;
         if (count > 10 && count < 20) {
-            return form + MESSAGE_5_POSTFIX;
+            return key + MESSAGE_5_POSTFIX;
         }
         if (count > 1 && count < 5) {
-            return form + MESSAGE_2_POSTFIX;
+            return key + MESSAGE_2_POSTFIX;
         }
         if (count == 1) {
-            return form + MESSAGE_1_POSTFIX;
+            return key + MESSAGE_1_POSTFIX;
         }
-        return form + MESSAGE_5_POSTFIX;
+        return key + MESSAGE_5_POSTFIX;
     }
 }

@@ -1,17 +1,18 @@
 package by.latushko.anyqueries.util.tag;
 
+import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.tagext.TagSupport;
 
 import java.io.IOException;
 
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.CONTROLLER_URL;
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
-import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.CURRENT_PAGE;
 import static by.latushko.anyqueries.util.http.QueryParameterHelper.addParameter;
 
 public class QueryParameterChangerTag extends TagSupport {
+    private static final String QUERY_STRING_DELIMITER = "?";
     private String key;
     private String value;
 
@@ -26,10 +27,9 @@ public class QueryParameterChangerTag extends TagSupport {
     @Override
     public int doStartTag() throws JspException {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        HttpSession session = request.getSession();
         String page;
-        if(session.getAttribute(CURRENT_PAGE) != null) {
-            page = session.getAttribute(CURRENT_PAGE).toString();
+        if(request.getParameter(RequestParameter.COMMAND) != null) {
+            page = CONTROLLER_URL + QUERY_STRING_DELIMITER + request.getQueryString();
         } else {
             page = QUESTIONS_URL;
         }

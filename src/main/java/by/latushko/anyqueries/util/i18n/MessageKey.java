@@ -8,7 +8,6 @@ public final class MessageKey {
     public static final String LABEL_ACCOUNT_ACTIVATION = "label.account.activation";
     public static final String LABEL_ACTIVATION_BUTTON = "label.activation.button";
     public static final String LABEL_TELEGRAM_ACTIVATE = "label.telegram.activate";
-    public static final String LABEL_TELEGRAM_HELP = "label.telegram.help";
     public static final String LABEL_TELEGRAM_CONTACT = "label.telegram.contact";
     public static final String LABEL_YEAR = "label.year";
     public static final String LABEL_MONTH = "label.month";
@@ -46,7 +45,6 @@ public final class MessageKey {
     public static final String MESSAGE_ACTIVATION_NOT_REPLY = "message.activation.notReply";
     public static final String MESSAGE_PASSWORD_OLD_INCORRECT = "message.passwordOld.incorrect";
     public static final String MESSAGE_AVATAR_WRONG = "message.avatar.wrong";
-    public static final String MESSAGE_NO_FILE_CHOSEN = "message.file.not.chosen";
     public static final String MESSAGE_FILE_UPLOAD_ERROR = "message.file.upload.error";
     public static final String MESSAGE_TELEGRAM_ACTIVATION_SUCCESS = "message.telegram.activation.success";
     public static final String MESSAGE_TELEGRAM_ACTIVATION_FAIL = "message.telegram.activation.fail";
@@ -57,13 +55,11 @@ public final class MessageKey {
     public static final String MESSAGE_AVATAR_UPLOADED = "message.avatar.uploaded";
     public static final String MESSAGE_QUESTION_CREATED = "message.question.created";
     public static final String MESSAGE_ERROR_UNEXPECTED = "message.error.unexpected";
-    public static final String MESSAGE_ACCESS_FORBIDDEN = "message.access.forbidden";
     public static final String MESSAGE_QUESTION_UPDATED = "message.question.updated";
     public static final String MESSAGE_CATEGORY_CREATED = "message.category.created";
     public static final String MESSAGE_CATEGORY_WRONG = "message.category.wrong";
     public static final String MESSAGE_CATEGORY_UPDATED = "message.category.updated";
     public static final String MESSAGE_SUCCESS = "message.success";
-
     static final String MESSAGES_FILE_NAME = "message";
     static final String LOCALE_EN = "en";
     static final String LOCALE_BE = "be";

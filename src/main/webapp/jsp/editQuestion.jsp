@@ -83,7 +83,7 @@
 </form>
 <script>
     $(function () {
-        dataForms.initSummernote('text', '<fmt:message key="label.question.placeholder" />', '${!empty current_lang ? current_lang : 'ru'}', 250);
+        dataForms.initSummernote('text', '<fmt:message key="label.question.placeholder" />', '${current_lang}', 250);
         attacher.init('file-selector', 'attachments-list', ${AppProperty.APP_ATTACHMENT_COUNT}, ${AppProperty.APP_ATTACHMENT_SIZE});
     })
 </script>

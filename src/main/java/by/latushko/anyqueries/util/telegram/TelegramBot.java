@@ -19,13 +19,12 @@ public class TelegramBot extends TelegramLongPollingBot {
     private static final String BOT_NAME_PARAMETER = "telegram.bot.name";
     private static final String BOT_TOKEN_PARAMETER = "telegram.bot.token";
     private static final String BOT_ALIVE_PARAMETER = "telegram.bot.alive";
-    private static final Properties properties;
     private static final String BOT_TOKEN;
     public static final String BOT_NAME;
     public static final boolean BOT_ALIVE;
 
     static {
-        properties = new Properties();
+        Properties properties = new Properties();
         try {
             InputStream inputStream = TelegramBot.class.getClassLoader().getResourceAsStream(BOT_PROPERTIES_PATH);
             properties.load(inputStream);
@@ -33,7 +32,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             BOT_TOKEN = properties.getProperty(BOT_TOKEN_PARAMETER);
             BOT_ALIVE = Boolean.valueOf(properties.getProperty(BOT_ALIVE_PARAMETER));
         } catch (IOException e) {
-            logger.error("Failed to read telegram bot properties from file: " + BOT_PROPERTIES_PATH, e);
+            logger.error("Failed to read telegram bot properties from file: {}", BOT_PROPERTIES_PATH, e);
             throw new ExceptionInInitializerError("Failed to read telegram bot properties from file: " + BOT_PROPERTIES_PATH);
         }
     }
@@ -55,7 +54,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         try {
             execute(method);
         } catch (TelegramApiException e) {
-            logger.error("Failed to handle message from chatId: " + chatId, e);
+            logger.error("Failed to handle message from chatId: {}", chatId, e);
         }
     }
 

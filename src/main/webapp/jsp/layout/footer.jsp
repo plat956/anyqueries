@@ -16,8 +16,6 @@
 </div>
 <script type="text/javascript">
     pageEvents.init();
-    //disable back button
-    pageEvents.noBack();
 
     // Show the progress bar
     NProgress.start();

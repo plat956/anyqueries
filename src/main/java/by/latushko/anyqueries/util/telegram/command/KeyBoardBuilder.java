@@ -25,4 +25,7 @@ public final class KeyBoardBuilder {
         inlineKeyboardMarkup.setKeyboard(List.of(keyboardButtonsRow1));
         return inlineKeyboardMarkup;
     }
+
+    private KeyBoardBuilder() {
+    }
 }

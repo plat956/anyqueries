@@ -22,15 +22,15 @@ import static by.latushko.anyqueries.util.i18n.MessageManager.SPACE_CHARACTER;
 public class MailSender {
     private static final Logger logger = LogManager.getLogger();
     private static final String MAIL_PROPERTIES_PATH = "config/mail.properties";
-    public static final String USER_EMAIL_PROPERTY = "mail.user.email";
-    public static final String USER_PASSWORD_PROPERTY = "mail.user.password";
-    public static final String USER_NAME_PROPERTY = "mail.user.name";
-    public static final String CONTENT_TYPE_PROPERTY = "mail.content.level";
+    private static final String USER_NAME_PROPERTY = "mail.user.name";
+    private static final String CONTENT_TYPE_PROPERTY = "mail.content.level";
     private static final String USER_EMAIL;
     private static final String USER_NAME;
     private static final String CONTENT_TYPE;
     private static MailSender instance;
     private static final Properties properties;
+    static final String USER_EMAIL_PROPERTY = "mail.user.email";
+    static final String USER_PASSWORD_PROPERTY = "mail.user.password";
 
     static {
         properties = new Properties();
@@ -41,7 +41,7 @@ public class MailSender {
             USER_NAME = APP_NAME + SPACE_CHARACTER + properties.getProperty(USER_NAME_PROPERTY);
             CONTENT_TYPE = properties.getProperty(CONTENT_TYPE_PROPERTY);
         } catch (IOException e) {
-            logger.error("Failed to read mail properties from file: " + MAIL_PROPERTIES_PATH, e);
+            logger.error("Failed to read mail properties from file: {}", MAIL_PROPERTIES_PATH, e);
             throw new ExceptionInInitializerError("Failed to read mail properties from file: " + MAIL_PROPERTIES_PATH);
         }
     }
@@ -76,7 +76,7 @@ public class MailSender {
         try {
             senderAddress = new InternetAddress(USER_EMAIL, USER_NAME);
         } catch (UnsupportedEncodingException e) {
-            logger.error("Unsupported sender name encoding in property \"" + USER_NAME_PROPERTY + "\", check the file: " + MAIL_PROPERTIES_PATH);
+            logger.error("Unsupported sender name encoding in property {}, check the file: {}", USER_NAME_PROPERTY, MAIL_PROPERTIES_PATH);
             senderAddress = new InternetAddress(USER_EMAIL);
         }
         message.setFrom(senderAddress);

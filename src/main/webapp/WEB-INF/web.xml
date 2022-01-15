@@ -9,6 +9,10 @@
             <taglib-location>/WEB-INF/tld/appTags.tld</taglib-location>
         </taglib>
     </jsp-config>
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
     <error-page>
         <error-code>404</error-code>
         <location>/jsp/error/error404.jsp</location>
@@ -21,8 +25,4 @@
         <exception-type>java.lang.Throwable</exception-type>
         <location>/jsp/error/exception.jsp</location>
     </error-page>
-    <session-config>
-        <session-timeout>30</session-timeout>
-        <tracking-mode>COOKIE</tracking-mode>
-    </session-config>
 </web-app>

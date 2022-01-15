@@ -34,7 +34,7 @@
         </noscript>
     </c:if>
 </head>
-<body onload="pageEvents.noBack();" onpageshow="if (event.persisted) pageEvents.noBack();" onunload="">
+<body>
 <div class="container" id="container" style="${!bad_browser_command ? 'display:none' : ''}">
     <jsp:include page="fragment/navbar.jsp" />
     <section class="page-section content">

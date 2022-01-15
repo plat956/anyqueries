@@ -269,9 +269,6 @@ var pageEvents = {
     init: function () {
         document.addEventListener("click", pageEvents.handler, true);
     },
-    noBack: function() {
-        window.history.forward(1);
-    },
     scrollBottom: function (timeout) {
         if(!pageEvents.scrollMark) {
             pageEvents.scrollMark = true;
@@ -530,7 +527,6 @@ var answers = {
 
 $.fn.extend({
     placeCursorAtEnd: function() {
-        // Places the cursor at the end of a contenteditable container (should also work for textarea / input)
         if (this.length === 0) {
             throw new Error("Cannot manipulate an element if there is no element!");
         }

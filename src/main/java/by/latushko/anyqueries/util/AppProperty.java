@@ -73,13 +73,10 @@ public final class AppProperty {
             APP_SEARCH_PREDICTIONS_LIMIT = Integer.valueOf(properties.getProperty(APP_SEARCH_PREDICTIONS_LIMIT_PARAMETER));
             APP_SEARCH_QUERY_MAXLENGTH = Integer.valueOf(properties.getProperty(APP_SEARCH_QUERY_MAXLENGTH_PARAMETER));
             String avatarExtensions = properties.getProperty(APP_UPLOAD_AVATAR_EXTENSIONS_PARAMETER);
-            if(avatarExtensions != null && !avatarExtensions.isEmpty()) {
-                String[] extensions = avatarExtensions.split(EXTENSION_DELIMITER);
-                APP_UPLOAD_AVATAR_EXTENSIONS.addAll(List.of(extensions));
-            }
+            APP_UPLOAD_AVATAR_EXTENSIONS.addAll(List.of(avatarExtensions.split(EXTENSION_DELIMITER)));
             APP_UPLOAD_DIR = properties.getProperty(APP_UPLOAD_DIR_PARAMETER);
         } catch (IOException e) {
-            logger.error("Failed to read application properties from file: " + APP_PARAMETER_PATH, e);
+            logger.error("Failed to read application properties from file: {}", APP_PARAMETER_PATH, e);
             throw new ExceptionInInitializerError("Failed to read application properties from file: " + APP_PARAMETER_PATH);
         }
     }

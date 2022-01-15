@@ -1,7 +1,6 @@
 package by.latushko.anyqueries.controller.command.identity;
 
 public final class RequestParameter {
-    public static final String REFERER = "referer";
     public static final String COMMAND = "command";
     public static final String AJAX = "ajax";
     public static final String FIRST_NAME = "first_name";

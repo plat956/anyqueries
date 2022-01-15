@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import static by.latushko.anyqueries.controller.command.identity.HeaderName.*;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.COMMAND;
 
 @WebServlet(name = "commonController", value = "/controller")
@@ -24,8 +25,10 @@ import static by.latushko.anyqueries.controller.command.identity.RequestParamete
         maxFileSize = 1024 * 1024 * 15,
         maxRequestSize = 1024 * 1024 * 15 * 10)
 public class CommonController extends HttpServlet {
-    public static final String CONTENT_DISPOSITION_HEADER = "Content-disposition";
-    private static final String CONTENT_DISPOSITION_DEFAULT_VALUE = "inline";
+    private static final String CONTENT_DISPOSITION_VALUE = "inline";
+    private static final String CACHE_CONTROL_VALUE = "no-cache, no-store, must-revalidate";
+    private static final String PRAGMA_VALUE = "no-cache";
+    private static final String EXPIRES_VALUE = "0";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -38,6 +41,10 @@ public class CommonController extends HttpServlet {
     }
 
     private void doRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setHeader(CACHE_CONTROL, CACHE_CONTROL_VALUE);
+        response.setHeader(PRAGMA, PRAGMA_VALUE);
+        response.setHeader(EXPIRES, EXPIRES_VALUE);
+
         CommandProvider commandProvider = CommandProvider.getInstance();
         String commandName = request.getParameter(COMMAND);
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
@@ -68,7 +75,7 @@ public class CommonController extends HttpServlet {
         Path path = Paths.get(result.page());
         if(!Files.exists(path) || !Files.isRegularFile(path)) {
             response.setContentType(null);
-            response.setHeader(CONTENT_DISPOSITION_HEADER, CONTENT_DISPOSITION_DEFAULT_VALUE);
+            response.setHeader(CONTENT_DISPOSITION, CONTENT_DISPOSITION_VALUE);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
