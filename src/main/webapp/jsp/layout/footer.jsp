@@ -121,7 +121,12 @@
         $('[data-toggle="popover"]').popover();
 
         //init selects
-        $('select').selectpicker();
+        $('select').each(function (i, el) {
+            $(el).selectpicker();
+            if($(el).hasClass('error-invalid')) {
+                $(el).selectpicker('setStyle', 'error-invalid');
+            }
+        });
     });
 </script>
 </body>

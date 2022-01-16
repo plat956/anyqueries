@@ -8,7 +8,7 @@
 <jsp:include page="layout/header.jsp" />
 <form id="create_form" class="needs-validation" method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/controller?command=create_question" novalidate autocomplete="off">
     <div class="form-group">
-        <select class="selectpicker" data-width="100%" name="category" required>
+        <select class="selectpicker${!empty validationResult.getMessage(RequestParameter.CATEGORY) ? ' error-invalid' : ''}" data-width="100%" name="category" required>
             <option value="" selected disabled><fmt:message key="label.category.placeholder" /></option>
             <c:set var="selected_category" value="${!empty validationResult ? validationResult.getValue(RequestParameter.CATEGORY) : category}" />
             <c:forEach var="c" items="${categories}">
@@ -72,7 +72,7 @@
 </form>
 <script>
     $(function () {
-        dataForms.initSummernote('text', '<fmt:message key="label.question.placeholder" />', '${current_lang}', 250);
+        dataForms.initSummernote('text', '<fmt:message key="label.question.placeholder" />', '${current_lang}', 250, ${!empty validationResult.getMessage(RequestParameter.TEXT)});
         attacher.init('file-selector', 'attachments-list', ${AppProperty.APP_ATTACHMENT_COUNT}, ${AppProperty.APP_ATTACHMENT_SIZE});
     })
 </script>

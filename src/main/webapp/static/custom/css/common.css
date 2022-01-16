@@ -959,7 +959,7 @@ img {
     font-size: 1.5em;
     color: #28a745 !important;
 }
-.note-editor.note-frame.error-invalid {
+.note-editor.note-frame.error-invalid, .dropdown-toggle.error-invalid {
     border-color: #dc3545 !important;
 }
 .note-editor.note-frame.success-valid {

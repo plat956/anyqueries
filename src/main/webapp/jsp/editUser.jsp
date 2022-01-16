@@ -142,7 +142,7 @@
             </div>
 
             <div class="form-group">
-                <select class="selectpicker" data-width="100%" name="status" required>
+                <select class="selectpicker${!empty validationResult.getMessage(RequestParameter.STATUS) ? ' error-invalid' : ''}" data-width="100%" name="status" required>
                     <option value="" selected disabled><fmt:message key="label.status.placeholder" /></option>
                     <c:set var="selected_status" value="${!empty validationResult ? validationResult.getValue(RequestParameter.STATUS) : user.status}" />
                     <c:forEach var="c" items="${statuses}">
@@ -162,7 +162,7 @@
             </div>
 
             <div class="form-group">
-                <select class="selectpicker" data-width="100%" name="role" required>
+                <select class="selectpicker${!empty validationResult.getMessage(RequestParameter.ROLE) ? ' error-invalid' : ''}" data-width="100%" name="role" required>
                     <option value="" selected disabled><fmt:message key="label.status.placeholder" /></option>
                     <c:set var="selected_role" value="${!empty validationResult ? validationResult.getValue(RequestParameter.ROLE) : user.role}" />
                     <c:forEach var="c" items="${roles}">

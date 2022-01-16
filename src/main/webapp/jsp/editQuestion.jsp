@@ -10,7 +10,7 @@
     <input type="hidden" name="id" value="${question.id}">
     <input type="hidden" name="previousPage" value="${empty previousPage ? header.referer : previousPage}">
     <div class="form-group">
-        <select class="selectpicker" data-width="100%" name="category" required>
+        <select class="selectpicker${!empty validationResult.getMessage(RequestParameter.CATEGORY) ? ' error-invalid' : ''}" data-width="100%" name="category" required>
             <option value="" selected disabled><fmt:message key="label.category.placeholder" /></option>
             <c:set var="selected_category" value="${!empty validationResult ? validationResult.getValue(RequestParameter.CATEGORY) : question.category.id}" />
             <c:forEach var="c" items="${categories}">
@@ -84,7 +84,7 @@
 </form>
 <script>
     $(function () {
-        dataForms.initSummernote('text', '<fmt:message key="label.question.placeholder" />', '${current_lang}', 250);
+        dataForms.initSummernote('text', '<fmt:message key="label.question.placeholder" />', '${current_lang}', 250, ${!empty validationResult.getMessage(RequestParameter.TEXT)});
         attacher.init('file-selector', 'attachments-list', ${AppProperty.APP_ATTACHMENT_COUNT}, ${AppProperty.APP_ATTACHMENT_SIZE});
     })
 </script>

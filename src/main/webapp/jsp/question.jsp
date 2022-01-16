@@ -322,11 +322,11 @@
     $(function () {
         <c:choose>
             <c:when test="${empty param['edit']}">
-                dataForms.initSummernote('text', '<fmt:message key="label.reply.placeholder" />', '${current_lang}', 120);
+                dataForms.initSummernote('text', '<fmt:message key="label.reply.placeholder" />', '${current_lang}', 120, ${!empty validationResult.getMessage(RequestParameter.TEXT)});
                 attacher.init('file-selector', 'attachments-list', ${AppProperty.APP_ATTACHMENT_COUNT}, ${AppProperty.APP_ATTACHMENT_SIZE});
             </c:when>
             <c:otherwise>
-                dataForms.initSummernote('answer_text${param['edit']}', '<fmt:message key="label.reply.placeholder" />', '${current_lang}', 120);
+                dataForms.initSummernote('answer_text${param['edit']}', '<fmt:message key="label.reply.placeholder" />', '${current_lang}', 120, ${!empty validationResult.getMessage(RequestParameter.TEXT)});
                 attacher.init('file-selector${param['edit']}', 'attachments-list${param['edit']}', ${AppProperty.APP_ATTACHMENT_COUNT}, ${AppProperty.APP_ATTACHMENT_SIZE});
             </c:otherwise>
         </c:choose>

@@ -60,7 +60,7 @@ var dataForms = {
         $('#text').summernote('code', '<b><i>' + user + ',</i></b><span>&nbsp;');
         $('.note-editable').placeCursorAtEnd();
     },
-    initSummernote: function (textarea, placeholder, lang, height) {
+    initSummernote: function (textarea, placeholder, lang, height, failed) {
         var el = $('#' + textarea).summernote({
             toolbar: [
                 ['style', ['bold', 'italic', 'underline', 'clear']],
@@ -81,6 +81,9 @@ var dataForms = {
                         text.setCustomValidity("error");
                     } else {
                         text.setCustomValidity("");
+                    }
+                    if(failed) {
+                        $('#' + textarea).next('.note-editor').addClass('error-invalid');
                     }
                 },
                 onKeydown: function (e) {
@@ -128,6 +131,7 @@ var dataForms = {
                     $(el).closest(".form-group").find(".invalid-feedback").addClass("d-block");
                 }
                 else {
+                    $(el).selectpicker('setStyle', 'error-invalid', 'remove');
                     $(el).closest(".form-group").find(".invalid-feedback").removeClass("d-block");
                     $(el).closest(".form-group").find(".valid-feedback").addClass("d-block");
                 }
