@@ -81,7 +81,7 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
 
     @Override
     public Optional<Attachment> findById(Long id) throws DaoException {
-        return Optional.empty();
+        throw new UnsupportedOperationException("Method findById(Long id) is unsupported");
     }
 
     @Override
@@ -104,12 +104,12 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
 
     @Override
     public Optional<Attachment> update(Attachment attachment) throws DaoException {
-        return Optional.empty();
+        throw new UnsupportedOperationException("Method update(Attachment attachment) is unsupported");
     }
 
     @Override
     public boolean delete(Long id) throws DaoException {
-        return false;
+        throw new UnsupportedOperationException("Method delete(Long id) is unsupported");
     }
 
     @Override

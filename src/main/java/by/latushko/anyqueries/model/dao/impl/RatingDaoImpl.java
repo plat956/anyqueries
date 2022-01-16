@@ -36,7 +36,7 @@ public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
 
     @Override
     public Optional<Rating> findById(Long id) throws DaoException {
-        return Optional.empty();
+        throw new UnsupportedOperationException("Method findById(Long id) is unsupported");
     }
 
     @Override
@@ -79,7 +79,7 @@ public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
 
     @Override
     public boolean delete(Long id) throws DaoException {
-        return false;
+        throw new UnsupportedOperationException("Method delete(Long id) is unsupported");
     }
 
     @Override
