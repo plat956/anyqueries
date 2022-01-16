@@ -64,7 +64,6 @@ var dataForms = {
         var el = $('#' + textarea).summernote({
             toolbar: [
                 ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['para', ['ul']],
                 ['insert', ['link']]
             ],
             shortcuts: false,

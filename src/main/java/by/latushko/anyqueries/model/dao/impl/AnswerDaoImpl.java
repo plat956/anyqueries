@@ -179,7 +179,7 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
     }
 
     @Override
-    public boolean checkIfExistsByIdAndAuthorIdNot(Long answerId, Long authorId) throws DaoException {
+    public boolean existsByIdAndAuthorIdNot(Long answerId, Long authorId) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_ID_AND_AUTHOR_ID_NOT_QUERY)){
             statement.setLong(1, answerId);
             statement.setLong(2, authorId);

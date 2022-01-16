@@ -8,7 +8,6 @@ import by.latushko.anyqueries.service.impl.AnswerServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import netscape.javascript.JSObject;
 import org.json.JSONObject;
 
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.DATA;
@@ -22,9 +21,8 @@ public class MarkSolutionCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType(APPLICATION_JSON);
-
         HttpSession session = request.getSession();
-        Long id = Long.valueOf(request.getParameter(ID));
+        Long id = getLongParameter(request, ID);
         Boolean check = Boolean.valueOf(request.getParameter(CHECK));
         User user = (User) session.getAttribute(PRINCIPAL);
         AnswerService answerService = AnswerServiceImpl.getInstance();

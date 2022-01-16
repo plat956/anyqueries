@@ -28,7 +28,7 @@ public class CategoryFormValidator implements FormValidator {
         if(!result.getValue(NAME).matches(CATEGORY_NAME_REGEXP)) {
             result.setError(NAME, LABEL_WRONG_INPUT);
         }
-        if(!result.getValue(COLOR).matches(HEX_COLOR_REGEXP)) {
+        if(result.getValue(COLOR).isEmpty() || !result.getValue(COLOR).matches(HEX_COLOR_REGEXP)) {
             result.setError(COLOR, LABEL_WRONG_INPUT);
         }
         return result;

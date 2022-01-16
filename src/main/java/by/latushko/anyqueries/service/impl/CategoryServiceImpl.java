@@ -204,26 +204,28 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public boolean delete(Long id) {
         boolean result = false;
-        BaseDao categoryDao = new CategoryDaoImpl();
-        BaseDao attachmentDao = new AttachmentDaoImpl();
-        try (EntityTransaction transaction = new EntityTransaction(categoryDao, attachmentDao)) {
-            try {
-                List<Attachment> attachments = ((AttachmentDaoImpl) attachmentDao).findByCategoryId(id);
-                result = ((AttachmentDao)attachmentDao).deleteByCategoryId(id);
-                if(result) {
-                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                    result = attachmentService.deleteAttachmentsFiles(attachments);
-                    if(result) {
-                        result = categoryDao.delete(id);
-                        transaction.commit();
+        if(id != null) {
+            BaseDao categoryDao = new CategoryDaoImpl();
+            BaseDao attachmentDao = new AttachmentDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(categoryDao, attachmentDao)) {
+                try {
+                    List<Attachment> attachments = ((AttachmentDaoImpl) attachmentDao).findByCategoryId(id);
+                    result = ((AttachmentDao) attachmentDao).deleteByCategoryId(id);
+                    if (result) {
+                        AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                        result = attachmentService.deleteAttachmentsFiles(attachments);
+                        if (result) {
+                            result = categoryDao.delete(id);
+                            transaction.commit();
+                        }
                     }
+                    //todo?? call rollback if commit is not reached?
+                } catch (DaoException e) {
+                    transaction.rollback();
                 }
-                //todo?? call rollback if commit is not reached?
-            } catch (DaoException e) {
-                transaction.rollback();
+            } catch (EntityTransactionException e) {
+                logger.error("Failed to delete category", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Failed to delete category", e);
         }
         return result;
     }

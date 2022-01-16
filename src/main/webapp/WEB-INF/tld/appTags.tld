@@ -59,6 +59,11 @@
         <tag-class>by.latushko.anyqueries.util.tag.QueryParameterChangerTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
+            <name>url</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
             <name>key</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>

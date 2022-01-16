@@ -10,7 +10,7 @@ public interface AnswerDao{
     Long countByUserId(Long userId) throws DaoException;
     Long countByQuestionId(Long id) throws DaoException;
     List<Answer> findLimitedByQuestionIdOrderByCreationDateAsc(int offset, int limit, Long questionId, Long userId) throws DaoException;
-    boolean checkIfExistsByIdAndAuthorIdNot(Long answerId, Long authorId) throws DaoException;
+    boolean existsByIdAndAuthorIdNot(Long answerId, Long authorId) throws DaoException;
     Optional<Answer> findByIdAndQuestionAuthorId(Long answerId, Long userId) throws DaoException;
     boolean updateSolutionByQuestionIdAndSolution(Long questionId, Boolean solution) throws DaoException;
     boolean createAnswerAttachment(Long answerId, Long attachmentId) throws DaoException;

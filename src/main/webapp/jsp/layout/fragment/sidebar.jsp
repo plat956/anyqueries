@@ -14,11 +14,11 @@
                         <c:set var="myQuestionsPage" value="true" />
                     </c:if>
                 </c:if>
-                <a class="nav-link${questionsPage ? ' active bg-primary' : ''}" href="${pageContext.request.contextPath}${questionsPage ? currentPage : '/controller?command=questions_page'}" aria-selected="true">
+                <a class="nav-link${questionsPage ? ' active bg-primary' : ''}" href="<c:if test="${!questionsPage}">${pageContext.request.contextPath}/controller?command=questions_page</c:if>" aria-selected="true">
                     <fmt:message key="label.allQuestions" /> <span class="badge badge-${questionsPage ? 'light' : 'primary'}">${layoutTotalQuestions}</span>
                 </a>
                 <c:if test="${!empty principal}">
-                    <a class="nav-link${myQuestionsPage ? ' active bg-primary' : ''}" href="${pageContext.request.contextPath}${myQuestionsPage ? currentPage : '/controller?command=questions_page&mode=my'}" aria-selected="false">
+                    <a class="nav-link${myQuestionsPage ? ' active bg-primary' : ''}" href="<c:if test="${!myQuestionsPage}">${pageContext.request.contextPath}/controller?command=questions_page&mode=my</c:if>" aria-selected="false">
                         <fmt:message key="label.myQuestions" /> <span class="badge badge-${myQuestionsPage ? 'light' : 'primary'}">${layoutTotalUserQuestions}</span>
                     </a>
                 </c:if>
@@ -31,14 +31,7 @@
             <ul class="support-label">
                 <c:forEach var="c" items="${layoutTopCategories}">
                     <li>
-                        <c:choose>
-                            <c:when test="${has_category && param['category'] == c.id}">
-                                <a href="${pageContext.request.contextPath}${currentPage}">
-                            </c:when>
-                            <c:otherwise>
-                                <a href="${pageContext.request.contextPath}/controller?command=questions_page&category=${c.id}">
-                            </c:otherwise>
-                        </c:choose>
+                        <a href="<c:if test="${!has_category || (has_category && param['category'] != c.id)}">${pageContext.request.contextPath}/controller?command=questions_page&category=${c.id}</c:if>">
                             <span class="support-label-span" style="background-color: ${c.color}">&#xA0;</span>${c.name}<span class="float-right">${c.questionsCount}</span>
                         </a>
                     </li>

@@ -38,20 +38,17 @@ public class EditAnswerCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        Long id = Long.valueOf(request.getParameter(ID));
-        String referer = QueryParameterHelper.removeParameter(request.getHeader(REFERER), EDIT);
-
-        String answer = request.getParameter(ANSWER_TEXT);
+        String referer = request.getHeader(REFERER);
         CommandResult commandResult = new CommandResult(referer, REDIRECT);
         ResponseMessage message;
-
         FormValidator validator = AnswerFormValidator.getInstance();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
         if(!validationResult.getStatus()) {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-
+        Long id = getLongParameter(request, ID);
+        String text = request.getParameter(TEXT);
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
         List<Part> fileParts;
@@ -72,21 +69,12 @@ public class EditAnswerCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-
-
-        //todo checking
         AnswerService answerService = AnswerServiceImpl.getInstance();
-//        boolean exists = categoryService.checkIfExistsByNameAndIdNot(name, id);
-//        if(exists) {
-//            message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_CATEGORY_WRONG));
-//            session.setAttribute(MESSAGE, message);
-//            session.setAttribute(VALIDATION_RESULT, validationResult);
-//            return commandResult;
-//        }
-        Optional<Answer> result = answerService.update(id, answer, fileParts);
+        Optional<Answer> result = answerService.update(id, text, fileParts);
         if(result.isPresent()) {
             session.setAttribute(ANSWER_OBJECT, result.get());
-            return commandResult;
+            referer = QueryParameterHelper.removeParameter(referer, EDIT);
+            return new CommandResult(referer, REDIRECT);
         } else {
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ERROR_UNEXPECTED));
             session.setAttribute(MESSAGE, message);

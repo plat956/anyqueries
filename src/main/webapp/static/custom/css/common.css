@@ -1015,3 +1015,6 @@ img {
     display: none;
     margin-bottom: 15px;
 }
+.break-words {
+    word-break: break-word !important;
+}

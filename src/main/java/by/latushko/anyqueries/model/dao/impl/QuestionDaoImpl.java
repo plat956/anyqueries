@@ -66,7 +66,7 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             q.author_id as user_id, u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
             u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
             u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role, count(a.id) as answers_count, count(q.id) OVER() AS total, 
-            s.id as solution_id
+            count(s.id) > 0 as solved  
             FROM questions q 
             INNER JOIN users u 
             ON q.author_id = u.id 
@@ -286,8 +286,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     }
 
     private String buildQuestionsQuery(boolean resolved, boolean newestFirst, Long authorId, Long categoryId, String titlePattern) {
-        StringBuffer query = new StringBuffer(SQL_FIND_LIMITED_BY_PARAMETERS_QUERY);
-        StringBuffer whereClause = new StringBuffer();
+        StringBuilder query = new StringBuilder(SQL_FIND_LIMITED_BY_PARAMETERS_QUERY);
+        StringBuilder whereClause = new StringBuilder();
         if(resolved) {
             whereClause.append(SQL_WHERE_RESOLVED_CLAUSE);
         }
@@ -318,7 +318,7 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     }
 
     private String buildSearchQuery(Long categoryId, Long authorId) {
-        StringBuffer query = new StringBuffer(SQL_FIND_TITLE_LIKE_ORDERED_AND_LIMITED_QUERY);
+        StringBuilder query = new StringBuilder(SQL_FIND_TITLE_LIKE_ORDERED_AND_LIMITED_QUERY);
         if(categoryId != null) {
             query.append(SQL_SEARCH_WHERE_CATEGORY_CLAUSE);
         } else if(authorId != null) {

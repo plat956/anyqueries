@@ -184,10 +184,10 @@
                                 <div id="comment-edit-data-${a.id}">
                                     <form class="needs-validation" method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/controller?command=edit_answer" novalidate autocomplete="off">
                                         <input type="hidden" value="${a.id}" name="id" />
-                                        <textarea class="summernote form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.ANSWER_TEXT)}" />" name="answer_text" id="answer_text${a.id}" maxlength="${AppProperty.APP_ANSWER_MAXLENGTH}" required>${!empty validationResult ? validationResult.getValue(RequestParameter.ANSWER_TEXT) : a.text}</textarea>
-                                        <c:if test="${!empty validationResult.getMessage(RequestParameter.ANSWER_TEXT)}">
+                                        <textarea class="summernote form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.TEXT)}" />" name="text" id="answer_text${a.id}" maxlength="${AppProperty.APP_ANSWER_MAXLENGTH}" required>${!empty validationResult ? validationResult.getValue(RequestParameter.TEXT) : a.text}</textarea>
+                                        <c:if test="${!empty validationResult.getMessage(RequestParameter.TEXT)}">
                                             <div class="invalid-feedback-backend">
-                                                <fmt:message key="${validationResult.getMessage(RequestParameter.ANSWER_TEXT)}" />
+                                                <fmt:message key="${validationResult.getMessage(RequestParameter.TEXT)}" />
                                             </div>
                                         </c:if>
                                         <div class="invalid-feedback">
@@ -287,19 +287,38 @@
             </div>
         </div>
         </c:if>
-        <c:if test="${(!empty param['edit'] && totalPages <= 1) || question.closed && empty totalPages}">
+        <c:if test="${(!empty param['edit'] && totalPages <= 1)}">
             <div style="margin-top: -20px"></div>
         </c:if>
     </div>
 <c:if test="${!question.closed}">
 <script>
-    <c:if test="${!empty param['edit']}">
     $(window).load(function() {
-        setTimeout(function () {
-            dataForms.scrollToDiv('answer-box-${param['edit']}');
-        }, 1);
+        <c:choose>
+            <c:when test="${!empty param['edit']}">
+                setTimeout(function () {
+                    dataForms.scrollToDiv('answer-box-${param['edit']}');
+                }, 1);
+            </c:when>
+            <c:otherwise>
+                <c:if test="${!empty answerObject || !empty validationResult}">
+                    <c:if test="${createRecord}">
+                        pageEvents.scrollBottom(1);
+                    </c:if>
+                    <c:if test="${empty createRecord}">
+                        setTimeout(function () {
+                            dataForms.scrollToDiv('answer-box-${answerObject.id}');
+                        }, 1);
+                    </c:if>
+                    <c:if test="${!empty answerObject}">
+                        $('#answer-box-${answerObject.id}').css('background-color', 'rgb(255 230 170)');
+                        $('#answer-box-${answerObject.id}').animate({backgroundColor: "#fff"}, 1000 );
+                    </c:if>
+                </c:if>
+            </c:otherwise>
+        </c:choose>
     });
-    </c:if>
+
     $(function () {
         <c:choose>
             <c:when test="${empty param['edit']}">
@@ -312,20 +331,7 @@
             </c:otherwise>
         </c:choose>
     });
-
-    <c:if test="${!empty answerObject || !empty validationResult}">
-    $(window).load(function() {
-        <c:if test="${!empty createRecord}">
-            pageEvents.scrollBottom(1);
-        </c:if>
-        <c:if test="${!empty answerObject}">
-            $('#answer-box-${answerObject.id}').css('background-color', 'rgb(255 230 170)');
-            $('#answer-box-${answerObject.id}').animate({backgroundColor: "#fff"}, 1000 );
-        </c:if>
-    });
-    </c:if>
 </script>
 </c:if>
-
 <jsp:include page="fragment/showProfileModal.jsp" />
 <jsp:include page="layout/footer.jsp" />

@@ -24,7 +24,7 @@ import static by.latushko.anyqueries.controller.command.identity.SessionAttribut
 import static by.latushko.anyqueries.controller.command.impl.get.LiveSearchCommand.limitSearchQueryString;
 
 public class QuestionsPageCommand implements Command {
-    private static final String NEWEST_SORT_VALUE = "new";
+    private static final String DISCUSSED_SORT_VALUE = "discussed";
     private static final String MODE_MY_VALUE = "my";
 
     @Override
@@ -33,7 +33,7 @@ public class QuestionsPageCommand implements Command {
         User user = (User) session.getAttribute(PRINCIPAL);
         String pageParameter = request.getParameter(PAGE);
         boolean resolved = Boolean.valueOf(request.getParameter(RESOLVED));
-        boolean newestFirst = NEWEST_SORT_VALUE.equalsIgnoreCase(request.getParameter(SORT));
+        boolean newestFirst = !DISCUSSED_SORT_VALUE.equalsIgnoreCase(request.getParameter(SORT));
         Long authorId = MODE_MY_VALUE.equalsIgnoreCase(request.getParameter(MODE)) ? user.getId() : null;
         Long category = getLongParameter(request, CATEGORY);
         String title = limitSearchQueryString(request.getParameter(QUERY));

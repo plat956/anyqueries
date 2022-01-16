@@ -349,7 +349,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
 
     @Override
     public List<User> findLimitedByLoginLikeOrderByRoleAsc(int offset, int limit, String loginPattern) throws DaoException {
-        StringBuffer query = new StringBuffer(SQL_FIND_LIMITED_BY_LOGIN_LIKE_ORDER_BY_ROLE_ASC_QUERY);
+        StringBuilder query = new StringBuilder(SQL_FIND_LIMITED_BY_LOGIN_LIKE_ORDER_BY_ROLE_ASC_QUERY);
         if(loginPattern != null) {
             query.append(SQL_LOGIN_LIKE_CLAUSE);
         }

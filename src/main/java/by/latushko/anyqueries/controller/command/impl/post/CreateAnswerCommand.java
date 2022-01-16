@@ -43,6 +43,7 @@ public class CreateAnswerCommand implements Command {
         HttpSession session = request.getSession();
         String referer = request.getHeader(REFERER);
         CommandResult commandResult = new CommandResult(referer, REDIRECT);
+        session.setAttribute(CREATE_RECORD, true);
         ResponseMessage message;
         FormValidator validator = AnswerFormValidator.getInstance();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
@@ -50,7 +51,6 @@ public class CreateAnswerCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
         List<Part> fileParts;
@@ -71,11 +71,9 @@ public class CreateAnswerCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-
         User user = (User) session.getAttribute(PRINCIPAL);
         String text = request.getParameter(TEXT);
-        Long question = Long.valueOf(request.getParameter(RequestParameter.QUESTION));
-
+        Long question = getLongParameter(request, RequestParameter.QUESTION);
         AnswerService answerService = AnswerServiceImpl.getInstance();
         Optional<Answer> result = answerService.create(question, text, user, fileParts);
         if(result.isPresent()) {
@@ -85,7 +83,6 @@ public class CreateAnswerCommand implements Command {
                 url += URL_PAGE_PART + page;
             }
             session.setAttribute(ANSWER_OBJECT, result.get());
-            //session.setAttribute(CREATE_RECORD, true);
             return new CommandResult(url, REDIRECT);
         } else {
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ERROR_UNEXPECTED));

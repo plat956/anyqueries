@@ -28,16 +28,10 @@ public class DeleteAnswerCommand implements Command {
         HttpSession session = request.getSession();
         String referer = QueryParameterHelper.removeParameter(request.getHeader(REFERER), PAGE, EDIT);
         CommandResult commandResult = new CommandResult(referer, REDIRECT);
-        String idParameter = request.getParameter(ID);
+        Long id = getLongParameter(request, ID);
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
         ResponseMessage message;
-        if(idParameter == null || idParameter.isEmpty()) {
-            message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_DELETE_FAILED));
-            session.setAttribute(MESSAGE, message);
-            return commandResult;
-        }
-        Long id = Long.valueOf(idParameter);
         AnswerService answerService = AnswerServiceImpl.getInstance();
         boolean result = answerService.delete(id);
         if(result) {

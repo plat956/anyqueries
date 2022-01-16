@@ -3,8 +3,13 @@ package by.latushko.anyqueries.service.impl;
 import by.latushko.anyqueries.exception.DaoException;
 import by.latushko.anyqueries.exception.EntityTransactionException;
 import by.latushko.anyqueries.model.dao.*;
-import by.latushko.anyqueries.model.dao.impl.*;
-import by.latushko.anyqueries.model.entity.*;
+import by.latushko.anyqueries.model.dao.impl.AnswerDaoImpl;
+import by.latushko.anyqueries.model.dao.impl.AttachmentDaoImpl;
+import by.latushko.anyqueries.model.dao.impl.RatingDaoImpl;
+import by.latushko.anyqueries.model.entity.Answer;
+import by.latushko.anyqueries.model.entity.Attachment;
+import by.latushko.anyqueries.model.entity.Rating;
+import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.AnswerService;
 import by.latushko.anyqueries.service.AttachmentService;
 import by.latushko.anyqueries.util.pagination.Paginated;
@@ -13,7 +18,6 @@ import jakarta.servlet.http.Part;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,121 +80,129 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public boolean changeRating(Long answerId, Boolean grade, Long userId) {
-        BaseDao answerDao = new AnswerDaoImpl();
-        BaseDao ratingDao = new RatingDaoImpl();
-        try (EntityTransaction transaction = new EntityTransaction(answerDao, ratingDao)) {
-            try {
-                boolean exists = ((AnswerDao)answerDao).checkIfExistsByIdAndAuthorIdNot(answerId, userId);
-                if(exists) {
-                    Optional<Rating> ratingOptional = ((RatingDao)ratingDao).findByAnswerIdAndUserId(answerId, userId);
-                    if(ratingOptional.isPresent()) {
-                        Rating rating = ratingOptional.get();
-                        rating.setGrade(grade ? 1 : -1);
-                        rating.setAnswerId(answerId);
-                        rating.setUserId(userId);
-                        ratingDao.update(rating);
-                    } else {
-                        Rating rating = new Rating();
-                        rating.setGrade(grade ? 1 : -1);
-                        rating.setAnswerId(answerId);
-                        rating.setUserId(userId);
-                        ratingDao.create(rating);
+        if(answerId != null) {
+            BaseDao answerDao = new AnswerDaoImpl();
+            BaseDao ratingDao = new RatingDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(answerDao, ratingDao)) {
+                try {
+                    boolean exists = ((AnswerDao) answerDao).existsByIdAndAuthorIdNot(answerId, userId);
+                    if (exists) {
+                        Optional<Rating> ratingOptional = ((RatingDao) ratingDao).findByAnswerIdAndUserId(answerId, userId);
+                        if (ratingOptional.isPresent()) {
+                            Rating rating = ratingOptional.get();
+                            rating.setGrade(grade ? 1 : -1);
+                            rating.setAnswerId(answerId);
+                            rating.setUserId(userId);
+                            ratingDao.update(rating);
+                        } else {
+                            Rating rating = new Rating();
+                            rating.setGrade(grade ? 1 : -1);
+                            rating.setAnswerId(answerId);
+                            rating.setUserId(userId);
+                            ratingDao.create(rating);
+                        }
+                        transaction.commit();
+                        return true;
                     }
-                    transaction.commit();
-                    return true;
+                } catch (DaoException e) {
+                    transaction.rollback();
                 }
-            } catch (DaoException e) {
-                transaction.rollback();
+            } catch (EntityTransactionException e) {
+                logger.error("Something went wrong during changing answer rating", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during changing answer rating", e);
         }
         return false;
     }
 
     @Override
     public Integer calculateRatingByAnswerId(Long answerId) {
-        BaseDao ratingDao = new RatingDaoImpl();
         Integer result = 0;
-        try (EntityTransaction transaction = new EntityTransaction(ratingDao)) {
-            try {
-                result = ((RatingDao)ratingDao).sumGradeByAnswerId(answerId);
-                transaction.commit();
-            } catch (DaoException e) {
-                transaction.rollback();
+        if(answerId != null) {
+            BaseDao ratingDao = new RatingDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(ratingDao)) {
+                try {
+                    result = ((RatingDao) ratingDao).sumGradeByAnswerId(answerId);
+                    transaction.commit();
+                } catch (DaoException e) {
+                    transaction.rollback();
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Something went wrong during calculating rating by answer id", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during calculating rating by answer id", e);
         }
         return result;
     }
 
     @Override
     public boolean setSolution(Long answerId, boolean solution, Long userId) {
-        BaseDao answerDao = new AnswerDaoImpl();
-        try (EntityTransaction transaction = new EntityTransaction(answerDao)) {
-            try {
-                Optional<Answer> answerOptional = ((AnswerDao)answerDao).findByIdAndQuestionAuthorId(answerId, userId);
-                if(answerOptional.isPresent()) {
-                    Answer answer = answerOptional.get();
-                    boolean updateOthers;
-                    if(solution) {
-                        updateOthers = ((AnswerDao)answerDao).updateSolutionByQuestionIdAndSolution(answer.getQuestionId(), false);
-                    } else {
-                        updateOthers = true;
+        if(answerId != null) {
+            BaseDao answerDao = new AnswerDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(answerDao)) {
+                try {
+                    Optional<Answer> answerOptional = ((AnswerDao) answerDao).findByIdAndQuestionAuthorId(answerId, userId);
+                    if (answerOptional.isPresent()) {
+                        Answer answer = answerOptional.get();
+                        boolean updateOthers;
+                        if (solution) {
+                            updateOthers = ((AnswerDao) answerDao).updateSolutionByQuestionIdAndSolution(answer.getQuestionId(), false);
+                        } else {
+                            updateOthers = true;
+                        }
+                        if (updateOthers) {
+                            answer.setSolution(solution);
+                            answerDao.update(answer);
+                            transaction.commit();
+                            return true;
+                        }
                     }
-                    if(updateOthers) {
-                        answer.setSolution(solution);
-                        answerDao.update(answer);
-                        transaction.commit();
-                        return true;
-                    }
+                } catch (DaoException e) {
+                    transaction.rollback();
                 }
-            } catch (DaoException e) {
-                transaction.rollback();
+            } catch (EntityTransactionException e) {
+                logger.error("Something went wrong during setting answer solution", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during setting answer solution", e);
         }
         return false;
     }
 
     @Override
     public Optional<Answer> create(Long question, String text, User user, List<Part> attachments) {
-        BaseDao answerDao = new AnswerDaoImpl();
-        BaseDao attachmentDao = new AttachmentDaoImpl();
+        if(question != null) {
+            BaseDao answerDao = new AnswerDaoImpl();
+            BaseDao attachmentDao = new AttachmentDaoImpl();
 
-        try (EntityTransaction transaction = new EntityTransaction(answerDao, attachmentDao)) {
-            try {
-                //todo check if question exists & access?
-                Answer answer = new Answer();
-                answer.setQuestionId(question);
-                answer.setSolution(false);
-                answer.setAuthor(user);
-                answer.setText(text);
-                answer.setCreationDate(LocalDateTime.now());
+            try (EntityTransaction transaction = new EntityTransaction(answerDao, attachmentDao)) {
+                try {
+                    //todo check if question exists & access?+++
+                    Answer answer = new Answer();
+                    answer.setQuestionId(question);
+                    answer.setSolution(false);
+                    answer.setAuthor(user);
+                    answer.setText(text);
+                    answer.setCreationDate(LocalDateTime.now());
 
-                answerDao.create(answer);
+                    answerDao.create(answer);
 
-                AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                for(Part p: attachments) {
-                    Optional<String> fileName = attachmentService.uploadFile(p);
-                    if(fileName.isEmpty()) {
-                        throw new EntityTransactionException("Failed to upload file."); //todo: or return false?
+                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                    for (Part p : attachments) {
+                        Optional<String> fileName = attachmentService.uploadFile(p);
+                        if (fileName.isEmpty()) {
+                            throw new EntityTransactionException("Failed to upload file."); //todo: or return false?
+                        }
+                        Attachment attachment = new Attachment();
+                        attachment.setFile(fileName.get());
+                        attachmentDao.create(attachment);
+                        ((AnswerDao) answerDao).createAnswerAttachment(answer.getId(), attachment.getId());
                     }
-                    Attachment attachment = new Attachment();
-                    attachment.setFile(fileName.get());
-                    attachmentDao.create(attachment);
-                    ((AnswerDao) answerDao).createAnswerAttachment(answer.getId(), attachment.getId());
-                }
 
-                transaction.commit();
-                return Optional.of(answer);
-            } catch (DaoException e) {
-                transaction.rollback();
+                    transaction.commit();
+                    return Optional.of(answer);
+                } catch (DaoException e) {
+                    transaction.rollback();
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Failed to answer question", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Failed to answer question", e);
         }
         return Optional.empty();
     }
@@ -216,71 +228,76 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     public boolean delete(Long id) {
         boolean result = false;
-        BaseDao answerDao = new AnswerDaoImpl();
-        BaseDao attachmentDao = new AttachmentDaoImpl();
-        try (EntityTransaction transaction = new EntityTransaction(answerDao, attachmentDao)) {
-            try {
-                List<Attachment> attachments = ((AttachmentDaoImpl) attachmentDao).findByAnswerId(id);
-                result = ((AttachmentDao)attachmentDao).deleteByAnswerId(id);
-                if(result) {
-                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                    result = attachmentService.deleteAttachmentsFiles(attachments);
-                    if(result) {
-                        result = answerDao.delete(id);
-                        transaction.commit();
+        if(id != null) {
+            //todo check access to del as well
+            BaseDao answerDao = new AnswerDaoImpl();
+            BaseDao attachmentDao = new AttachmentDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(answerDao, attachmentDao)) {
+                try {
+                    List<Attachment> attachments = ((AttachmentDaoImpl) attachmentDao).findByAnswerId(id);
+                    result = ((AttachmentDao) attachmentDao).deleteByAnswerId(id);
+                    if (result) {
+                        AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                        result = attachmentService.deleteAttachmentsFiles(attachments);
+                        if (result) {
+                            result = answerDao.delete(id);
+                            transaction.commit();
+                        }
                     }
+                    //todo?? call rollback if commit is not reached?
+                } catch (DaoException e) {
+                    transaction.rollback();
                 }
-                //todo?? call rollback if commit is not reached?
-            } catch (DaoException e) {
-                transaction.rollback();
+            } catch (EntityTransactionException e) {
+                logger.error("Failed to delete answer", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Failed to delete answer", e);
         }
         return result;
     }
 
     @Override
     public Optional<Answer> update(Long id, String text, List<Part> attachments) {
-        BaseDao answerDao = new AnswerDaoImpl();
-        BaseDao attachmentDao = new AttachmentDaoImpl();
+        if(id != null) {
+            BaseDao answerDao = new AnswerDaoImpl();
+            BaseDao attachmentDao = new AttachmentDaoImpl();
 
-        try (EntityTransaction transaction = new EntityTransaction(answerDao, attachmentDao)) {
-            try {
-                Optional<Answer> answerOptional = answerDao.findById(id);
-                if(answerOptional.isEmpty())  {
-                    throw new EntityTransactionException("Failed to update answer. Answer with id " + id + " does not exist"); //todo: or return false?
-                }
-                Answer answer = answerOptional.get();
-                answer.setText(text);
-                answer.setEditingDate(LocalDateTime.now());
-                answerDao.update(answer);
-
-
-                if(!attachments.isEmpty()) {
-                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                    List<Attachment> oldAttachments = ((AttachmentDaoImpl) attachmentDao).findByAnswerId(id);
-                    ((AttachmentDao)attachmentDao).deleteByAnswerId(id);
-                    attachmentService.deleteAttachmentsFiles(oldAttachments);
-                    for (Part p : attachments) {
-                        Optional<String> fileName = attachmentService.uploadFile(p);
-                        if (fileName.isEmpty()) {
-                            throw new EntityTransactionException("Failed to upload file."); //todo: or return false?
-                        }
-                        Attachment attachment = new Attachment();
-                        attachment.setFile(fileName.get());
-                        attachmentDao.create(attachment);
-                        ((AnswerDao) answerDao).createAnswerAttachment(answer.getId(), attachment.getId());
+            try (EntityTransaction transaction = new EntityTransaction(answerDao, attachmentDao)) {
+                try {
+                    Optional<Answer> answerOptional = answerDao.findById(id);
+                    if (answerOptional.isEmpty()) {
+                        throw new EntityTransactionException("Failed to update answer. Answer with id " + id + " does not exist"); //todo: or return false?
                     }
-                }
+                    Answer answer = answerOptional.get();
+                    answer.setText(text);
+                    answer.setEditingDate(LocalDateTime.now());
+                    answerDao.update(answer);
 
-                transaction.commit();
-                return Optional.of(answer);
-            } catch (DaoException e) {
-                transaction.rollback();
+
+                    if (!attachments.isEmpty()) {
+                        AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                        List<Attachment> oldAttachments = ((AttachmentDaoImpl) attachmentDao).findByAnswerId(id);
+                        ((AttachmentDao) attachmentDao).deleteByAnswerId(id);
+                        attachmentService.deleteAttachmentsFiles(oldAttachments);
+                        for (Part p : attachments) {
+                            Optional<String> fileName = attachmentService.uploadFile(p);
+                            if (fileName.isEmpty()) {
+                                throw new EntityTransactionException("Failed to upload file."); //todo: or return false?
+                            }
+                            Attachment attachment = new Attachment();
+                            attachment.setFile(fileName.get());
+                            attachmentDao.create(attachment);
+                            ((AnswerDao) answerDao).createAnswerAttachment(answer.getId(), attachment.getId());
+                        }
+                    }
+
+                    transaction.commit();
+                    return Optional.of(answer);
+                } catch (DaoException e) {
+                    transaction.rollback();
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Failed to update answer", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Failed to update answer", e);
         }
         return Optional.empty();
     }

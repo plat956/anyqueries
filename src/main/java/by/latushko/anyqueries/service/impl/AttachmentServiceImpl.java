@@ -9,6 +9,7 @@ import by.latushko.anyqueries.model.dao.impl.AttachmentDaoImpl;
 import by.latushko.anyqueries.model.entity.Attachment;
 import by.latushko.anyqueries.service.AttachmentService;
 import jakarta.servlet.http.Part;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,19 +19,19 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
 public class AttachmentServiceImpl implements AttachmentService {
     private static final Logger logger = LogManager.getLogger();
-    private static final String UNDER_SCORE_CHARACTER = "_";
     private static final String FILE_EXTENSION_DELIMITER = ".";
     private static final String AVATAR_PREFIX = "avatar_";
     private static final int AVATAR_MAX_SIZE = 190;
+    private static final int FILE_EXTENSION_MAX_LENGTH = 20;
+    private static final int FILE_NAME_MAX_LENGTH = 40;
+    private static final String FILE_EMPTY_NAME = "noname";
     private static AttachmentService instance;
 
     private AttachmentServiceImpl() {
@@ -48,13 +49,15 @@ public class AttachmentServiceImpl implements AttachmentService {
         createUploadDirectoryIfNotExists(FILE_DIRECTORY_PATH);
         String fileName = part.getSubmittedFileName();
         Optional<String> extension = getFileExtension(fileName);
-        if(extension.isEmpty()) {
-            return Optional.empty();
-        }
         if(fileName.contains(FILE_EXTENSION_DELIMITER)) {
             fileName = fileName.substring(0, fileName.lastIndexOf(FILE_EXTENSION_DELIMITER));
         }
-        fileName += UNDER_SCORE_CHARACTER + Calendar.getInstance().getTimeInMillis() + extension.get();
+        if(fileName.isEmpty()) {
+            fileName = FILE_EMPTY_NAME;
+        } else if(fileName.length() > FILE_NAME_MAX_LENGTH) {
+            fileName = fileName.substring(0, FILE_NAME_MAX_LENGTH);
+        }
+        fileName = String.format("%s_%s%s", fileName, RandomStringUtils.randomAlphanumeric(8), extension.orElse(""));
         try {
             part.write(FILE_DIRECTORY_PATH + fileName);
             return Optional.of(fileName);
@@ -75,7 +78,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         if(extension.isEmpty()) {
             return Optional.empty();
         }
-        fileName = AVATAR_PREFIX + Calendar.getInstance().getTimeInMillis() + extension.get();
+        fileName = AVATAR_PREFIX + RandomStringUtils.randomAlphanumeric(25) + extension.get();
         try {
             part.write(IMAGE_DIRECTORY_PATH + fileName);
             boolean resizeResult = resizeAvatar(fileName);
@@ -102,7 +105,11 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public Optional<String> getFileExtension(String fileName) {
         if(fileName != null && !fileName.isEmpty() && fileName.contains(FILE_EXTENSION_DELIMITER)) {
-            return Optional.of(fileName.substring(fileName.lastIndexOf(FILE_EXTENSION_DELIMITER)));
+            String extension = fileName.substring(fileName.lastIndexOf(FILE_EXTENSION_DELIMITER));
+            if(extension.length() - 1 > FILE_EXTENSION_MAX_LENGTH) {
+                extension = extension.substring(0, FILE_EXTENSION_MAX_LENGTH + 1);
+            }
+            return Optional.of(extension);
         } else {
             return Optional.empty();
         }

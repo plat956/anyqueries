@@ -165,7 +165,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public boolean delete(Long id, User initiator) {
-        if(!checkManagementAccess(id, initiator)) {
+        if(id == null || !checkManagementAccess(id, initiator)) {
             return false;
         }
         boolean result = false;

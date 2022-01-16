@@ -21,6 +21,7 @@ import static by.latushko.anyqueries.controller.command.identity.CookieName.CRED
 import static by.latushko.anyqueries.controller.command.identity.CookieName.CREDENTIAL_TOKEN;
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.ANSWER_OBJECT;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.CREATE_RECORD;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PREVIOUS_PAGE;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.VALIDATION_RESULT;
@@ -42,7 +43,7 @@ public class RequestListenerImpl implements ServletRequestListener {
         Object validationResult = session.getAttribute(VALIDATION_RESULT);
         Object answerObject = session.getAttribute(ANSWER_OBJECT);
         Object previousPageObject = session.getAttribute(PREVIOUS_PAGE);
-
+        Object createRecordObject = session.getAttribute(CREATE_RECORD);
         if(message != null) {
             session.removeAttribute(MESSAGE);
             request.setAttribute(RequestAttribute.MESSAGE, message);
@@ -59,6 +60,11 @@ public class RequestListenerImpl implements ServletRequestListener {
             session.removeAttribute(PREVIOUS_PAGE);
             request.setAttribute(RequestAttribute.PREVIOUS_PAGE, previousPageObject);
         }
+        if(createRecordObject != null) {
+            session.removeAttribute(CREATE_RECORD);
+            request.setAttribute(RequestAttribute.CREATE_RECORD, createRecordObject);
+        }
+
         QuestionService questionService = QuestionServiceImpl.getInstance();
         request.setAttribute(LAYOUT_TOTAL_QUESTIONS, questionService.countNotClosed());
         if(currentUser != null) {

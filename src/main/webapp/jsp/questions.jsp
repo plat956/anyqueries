@@ -63,8 +63,12 @@
         <ul class="list-group fa-padding questions-group">
             <c:forEach var="q" items="${questions}">
                 <li class="list-group-item" style="border-radius: 0;border-left: 0;border-right: 0;" onclick="location.href = '${pageContext.request.contextPath}/controller?command=question_page&id=${q.id}'">
-                    <div class="media"><i class="fa fa-question-circle" aria-hidden="true"></i>
-                        <div class="media-body"><strong>${q.title}</strong>
+                    <div class="media">
+                        <i class="${q.solved ? 'fas fa-check' : 'far fa-question'}-circle" aria-hidden="true" style="position: absolute;top: 20px;color: ${q.solved ? '#28a745' : ''}"></i>
+                        <c:if test="${q.closed}">
+                            <i class="fas fa-lock" style="position: absolute;bottom: 20px;color:#eb870a;"></i>
+                        </c:if>
+                        <div class="media-body" style="margin-left: 30px;"><strong class="break-words">${q.title}</strong>
                             <c:if test="${!empty principal && (q.author.id == principal.id || principal.role == 'ADMIN' || principal.role == 'MODERATOR')}">
                                 <span class="number float-right" style="margin-top: 12px;">
                                     <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=edit_question_page&id=${q.id}'" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.edit" />">
@@ -91,12 +95,15 @@
     </div>
 </div>
 <jsp:include page="fragment/pagination.jsp" />
+<c:set var="current_without_page" scope="request">
+    <at:query-parameter-changer key="page" value=""/>
+</c:set>
 <script>
     function changeResolved(el) {
         if($(el).is(":checked")) {
-            location.href = '${pageContext.request.contextPath}<at:query-parameter-changer key="resolved" value="true"/>';
+            location.href = '${pageContext.request.contextPath}<at:query-parameter-changer url="${current_without_page}" key="resolved" value="true"/>';
         } else {
-            location.href = '${pageContext.request.contextPath}<at:query-parameter-changer key="resolved" value="false"/>';
+            location.href = '${pageContext.request.contextPath}<at:query-parameter-changer url="${current_without_page}" key="resolved" value="false"/>';
         }
     }
 </script>

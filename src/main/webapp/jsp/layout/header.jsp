@@ -52,6 +52,6 @@
             </div>
             <div class="grid support-content">
                 <div class="grid-body">
-                    <h5>${page_title_prefix}${page_title}${page_title_postfix}<span class="page_title_right"></span></h5>
+                    <h5 class="break-words">${page_title_prefix}${page_title}${page_title_postfix}<span class="page_title_right"></span></h5>
                     <hr class="page-title-hr">
                     <jsp:include page="fragment/message.jsp" />

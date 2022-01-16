@@ -18,6 +18,7 @@ import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DA
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
 import static by.latushko.anyqueries.controller.command.identity.HeaderName.REFERER;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.ID;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.PAGE;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
@@ -29,20 +30,17 @@ public class DeleteQuestionCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute(PRINCIPAL);
         String referer = QueryParameterHelper.removeParameter(request.getHeader(REFERER), PAGE);
+        if(!referer.contains(QUESTIONS_URL)) {
+            referer = QUESTIONS_URL;
+        }
         CommandResult commandResult = new CommandResult(referer, REDIRECT);
-        String idParameter = request.getParameter(ID);
+        Long id = getLongParameter(request, ID);
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
         ResponseMessage message;
-        if(idParameter == null || idParameter.isEmpty()) {
-            message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_DELETE_FAILED));
-            session.setAttribute(MESSAGE, message);
-            return commandResult;
-        }
-        Long id = Long.valueOf(idParameter);
         QuestionService questionService = QuestionServiceImpl.getInstance();
+        User user = (User) session.getAttribute(PRINCIPAL);
         boolean result = questionService.delete(id, user);
         if(result) {
             message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_DELETE_SUCCESSFUL));

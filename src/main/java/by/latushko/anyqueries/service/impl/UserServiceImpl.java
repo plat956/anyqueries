@@ -373,27 +373,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean delete(Long id) {
         boolean result = false;
-        BaseDao userDao = new UserDaoImpl();
-        BaseDao attachmentDao = new AttachmentDaoImpl();
-        try (EntityTransaction transaction = new EntityTransaction(userDao, attachmentDao)) {
-            try {
-                List<Attachment> attachments = ((AttachmentDao) attachmentDao).findByUserId(id);
-                result = ((AttachmentDao)attachmentDao).deleteByQuestionAuthorId(id);
-                result = ((AttachmentDao)attachmentDao).deleteByAnswerAuthorId(id);
-                if(result) {
-                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                    result = attachmentService.deleteAttachmentsFiles(attachments);
-                    if(result) {
-                        result = userDao.delete(id);
-                        transaction.commit();
+        if(id != null) {
+            BaseDao userDao = new UserDaoImpl();
+            BaseDao attachmentDao = new AttachmentDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(userDao, attachmentDao)) {
+                try {
+                    List<Attachment> attachments = ((AttachmentDao) attachmentDao).findByUserId(id);
+                    result = ((AttachmentDao) attachmentDao).deleteByQuestionAuthorId(id);
+                    result = ((AttachmentDao) attachmentDao).deleteByAnswerAuthorId(id);
+                    if (result) {
+                        AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                        result = attachmentService.deleteAttachmentsFiles(attachments);
+                        if (result) {
+                            result = userDao.delete(id);
+                            transaction.commit();
+                        }
                     }
+                    //todo?? call rollback if commit is not reached?
+                } catch (DaoException e) {
+                    transaction.rollback();
                 }
-                //todo?? call rollback if commit is not reached?
-            } catch (DaoException e) {
-                transaction.rollback();
+            } catch (EntityTransactionException e) {
+                logger.error("Failed to delete user", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Failed to delete user", e);
         }
         return result;
     }

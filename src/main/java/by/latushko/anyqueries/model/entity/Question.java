@@ -11,6 +11,7 @@ public class Question extends BaseEntity<Long> {
     private Category category;
     private User author;
     private transient long answersCount;
+    private transient Boolean solved;
 
     public Question() {
     }
@@ -77,6 +78,14 @@ public class Question extends BaseEntity<Long> {
 
     public void setAnswersCount(long answersCount) {
         this.answersCount = answersCount;
+    }
+
+    public Boolean getSolved() {
+        return solved;
+    }
+
+    public void setSolved(Boolean solved) {
+        this.solved = solved;
     }
 
     @Override

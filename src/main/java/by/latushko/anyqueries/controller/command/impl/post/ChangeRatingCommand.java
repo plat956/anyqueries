@@ -20,9 +20,8 @@ public class ChangeRatingCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType(APPLICATION_JSON);
-
         HttpSession session = request.getSession();
-        Long id = Long.valueOf(request.getParameter(ID));
+        Long id = getLongParameter(request, ID);
         Boolean grade = Boolean.valueOf(request.getParameter(GRADE));
         User currentUser = (User) session.getAttribute(PRINCIPAL);
         AnswerService answerService = AnswerServiceImpl.getInstance();

@@ -41,6 +41,10 @@ public class ValidationResult {
         if(fields.containsKey(field)) {
             Field f = fields.get(field);
             f.setMessage(message);
+        } else {
+            Field f = new Field();
+            f.setMessage(message);
+            fields.put(field, f);
         }
     }
 
@@ -61,6 +65,9 @@ public class ValidationResult {
     public class Field {
         private String value;
         private String message;
+
+        public Field() {
+        }
 
         public Field(String value) {
             this.value = value;
