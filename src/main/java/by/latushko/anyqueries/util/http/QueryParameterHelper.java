@@ -4,6 +4,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,11 +27,12 @@ public class QueryParameterHelper {
         }
     }
 
-    public static String removeParameter(String url, String key) {
+    public static String removeParameter(String url, String... keysArray) {
         try {
             URIBuilder uriBuilder = new URIBuilder(url);
             List<NameValuePair> queryParameters = uriBuilder.getQueryParams();
-            queryParameters.removeIf(param -> param.getName().equals(key));
+            List<String> keys = Arrays.stream(keysArray).toList();
+            queryParameters.removeIf(param -> keys.contains(param.getName()));
             uriBuilder.setParameters(queryParameters);
             return uriBuilder.build().toString();
         } catch (URISyntaxException e) {

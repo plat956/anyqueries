@@ -28,25 +28,21 @@ import java.util.Optional;
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.REDIRECT;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
-import static by.latushko.anyqueries.controller.command.identity.PageUrl.*;
+import static by.latushko.anyqueries.controller.command.identity.HeaderName.REFERER;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
-import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.CURRENT_PAGE;
-import static by.latushko.anyqueries.util.i18n.MessageKey.*;
+import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_ATTACHMENT_WRONG;
+import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_ERROR_UNEXPECTED;
 
 public class EditAnswerCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         Long id = Long.valueOf(request.getParameter(ID));
-        String currentPage = QUESTIONS_URL;
-        if(session.getAttribute(CURRENT_PAGE) != null) {
-            currentPage = session.getAttribute(CURRENT_PAGE).toString();
-            currentPage = QueryParameterHelper.removeParameter(currentPage, "edit");
-        }
+        String referer = QueryParameterHelper.removeParameter(request.getHeader(REFERER), EDIT);
 
         String answer = request.getParameter(ANSWER_TEXT);
-        CommandResult commandResult = new CommandResult(currentPage, REDIRECT);
+        CommandResult commandResult = new CommandResult(referer, REDIRECT);
         ResponseMessage message;
 
         FormValidator validator = AnswerFormValidator.getInstance();

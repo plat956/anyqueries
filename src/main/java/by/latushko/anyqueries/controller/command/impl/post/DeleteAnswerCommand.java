@@ -3,12 +3,8 @@ package by.latushko.anyqueries.controller.command.impl.post;
 import by.latushko.anyqueries.controller.command.Command;
 import by.latushko.anyqueries.controller.command.CommandResult;
 import by.latushko.anyqueries.controller.command.ResponseMessage;
-import by.latushko.anyqueries.model.entity.Answer;
-import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.AnswerService;
-import by.latushko.anyqueries.service.CategoryService;
 import by.latushko.anyqueries.service.impl.AnswerServiceImpl;
-import by.latushko.anyqueries.service.impl.CategoryServiceImpl;
 import by.latushko.anyqueries.util.http.CookieHelper;
 import by.latushko.anyqueries.util.http.QueryParameterHelper;
 import by.latushko.anyqueries.util.i18n.MessageManager;
@@ -20,10 +16,8 @@ import static by.latushko.anyqueries.controller.command.CommandResult.RoutingTyp
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
-import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
-import static by.latushko.anyqueries.controller.command.identity.RequestParameter.ID;
-import static by.latushko.anyqueries.controller.command.identity.RequestParameter.PAGE;
-import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
+import static by.latushko.anyqueries.controller.command.identity.HeaderName.REFERER;
+import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
 import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_DELETE_FAILED;
 import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_DELETE_SUCCESSFUL;
@@ -32,14 +26,8 @@ public class DeleteAnswerCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute(PRINCIPAL);
-        String currentPage = QUESTIONS_URL;
-        if(session.getAttribute(CURRENT_PAGE) != null) {
-            currentPage = session.getAttribute(CURRENT_PAGE).toString();
-        }
-        currentPage = QueryParameterHelper.removeParameter(currentPage, PAGE);
-
-        CommandResult commandResult = new CommandResult(currentPage, REDIRECT);
+        String referer = QueryParameterHelper.removeParameter(request.getHeader(REFERER), PAGE, EDIT);
+        CommandResult commandResult = new CommandResult(referer, REDIRECT);
         String idParameter = request.getParameter(ID);
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);

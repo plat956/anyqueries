@@ -2,7 +2,6 @@ package by.latushko.anyqueries.controller.command.identity;
 
 public final class RequestParameter {
     public static final String COMMAND = "command";
-    public static final String AJAX = "ajax";
     public static final String FIRST_NAME = "first_name";
     public static final String LAST_NAME = "last_name";
     public static final String MIDDLE_NAME = "middle_name";
@@ -41,6 +40,7 @@ public final class RequestParameter {
     public static final String CHECK = "check";
     public static final String QUESTION = "question";
     public static final String ANSWER_TEXT = "answer_text";
+    public static final String EDIT = "edit";
 
     private RequestParameter() {
     }
