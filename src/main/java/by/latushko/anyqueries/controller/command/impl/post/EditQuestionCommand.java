@@ -4,6 +4,7 @@ import by.latushko.anyqueries.controller.command.Command;
 import by.latushko.anyqueries.controller.command.CommandResult;
 import by.latushko.anyqueries.controller.command.ResponseMessage;
 import by.latushko.anyqueries.controller.command.identity.RequestParameter;
+import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
 import by.latushko.anyqueries.service.QuestionService;
 import by.latushko.anyqueries.service.impl.QuestionServiceImpl;
 import by.latushko.anyqueries.util.http.CookieHelper;
@@ -41,11 +42,16 @@ public class EditQuestionCommand implements Command {
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         Long id = getLongParameter(request, ID);
+        String previousPage = request.getParameter(RequestParameter.PREVIOUS_PAGE);
+        if(previousPage == null || previousPage.isEmpty()) {
+            previousPage = QUESTIONS_URL;
+        }
+        session.setAttribute(SessionAttribute.PREVIOUS_PAGE, previousPage);
         String closeParameter = request.getParameter(CLOSE);
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
         if(closeParameter != null) {
-            return changeCloseStatus(request, session, id, closeParameter, manager);
+            return changeClosedStatus(request, session, id, closeParameter, manager);
         }
         CommandResult commandResult = new CommandResult(EDIT_QUESTION_URL + id, REDIRECT);
         FormValidator validator = QuestionFormValidator.getInstance();
@@ -78,10 +84,6 @@ public class EditQuestionCommand implements Command {
         String text = request.getParameter(TEXT);
         boolean result = questionService.update(id, category, title, text, fileParts);
         if(result) {
-            String previousPage = request.getParameter(PREVIOUS);
-            if(previousPage == null || previousPage.isEmpty()) {
-                previousPage = QUESTIONS_URL;
-            }
             message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_QUESTION_UPDATED));
             session.setAttribute(MESSAGE, message);
             return new CommandResult(previousPage, REDIRECT);
@@ -93,8 +95,8 @@ public class EditQuestionCommand implements Command {
         }
     }
 
-    private CommandResult changeCloseStatus(HttpServletRequest request, HttpSession session, Long id,
-                                            String closeParameter, MessageManager manager) {
+    private CommandResult changeClosedStatus(HttpServletRequest request, HttpSession session, Long id,
+                                             String closeParameter, MessageManager manager) {
         String referer = request.getHeader(REFERER);
         boolean close = Boolean.valueOf(closeParameter);
         boolean result = questionService.changeStatus(id, close);

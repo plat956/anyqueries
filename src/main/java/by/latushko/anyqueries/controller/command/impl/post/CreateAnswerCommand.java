@@ -28,11 +28,11 @@ import java.util.Optional;
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.REDIRECT;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
-import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
+import static by.latushko.anyqueries.controller.command.identity.HeaderName.REFERER;
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTION_URL;
-import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
+import static by.latushko.anyqueries.controller.command.identity.RequestParameter.TEXT;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
-import static by.latushko.anyqueries.util.i18n.MessageKey.*;
+import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_ATTACHMENT_WRONG;
 import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_ERROR_UNEXPECTED;
 
 public class CreateAnswerCommand implements Command {
@@ -41,13 +41,9 @@ public class CreateAnswerCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        String currentPage = QUESTIONS_URL;
-        if(session.getAttribute(CURRENT_PAGE) != null) {
-            currentPage = session.getAttribute(CURRENT_PAGE).toString();
-        }
-        CommandResult commandResult = new CommandResult(currentPage, REDIRECT);
+        String referer = request.getHeader(REFERER);
+        CommandResult commandResult = new CommandResult(referer, REDIRECT);
         ResponseMessage message;
-
         FormValidator validator = AnswerFormValidator.getInstance();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
         if(!validationResult.getStatus()) {

@@ -23,6 +23,7 @@ public final class RequestAttribute {
     public static final String GRADE = "grade";
     public static final String ANSWER_OBJECT = "answerObject";
     public static final String ACTIVATION_MESSAGE = "activationMessage";
+    public static final String PREVIOUS_PAGE = "previousPage";
 
     private RequestAttribute() {
     }

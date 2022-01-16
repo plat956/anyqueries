@@ -401,29 +401,31 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean update(Long userId, String firstName, String lastName, String middleName, String email, String telegram,
                           String login, User.Status status, User.Role role) {
-        BaseDao userDao = new UserDaoImpl();
-        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
-            try {
-                Optional<User> userOptional = userDao.findById(userId);
-                if(userOptional.isPresent()) {
-                    User user = userOptional.get();
-                    user.setFirstName(firstName);
-                    user.setLastName(lastName);
-                    user.setMiddleName(middleName);
-                    user.setEmail(email);
-                    user.setTelegram(telegram);
-                    user.setLogin(login);
-                    user.setStatus(status);
-                    user.setRole(role);
-                    userDao.update(user);
-                    transaction.commit();
-                    return true;
+        if(userId != null) {
+            BaseDao userDao = new UserDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+                try {
+                    Optional<User> userOptional = userDao.findById(userId);
+                    if (userOptional.isPresent()) {
+                        User user = userOptional.get();
+                        user.setFirstName(firstName);
+                        user.setLastName(lastName);
+                        user.setMiddleName(middleName);
+                        user.setEmail(email);
+                        user.setTelegram(telegram);
+                        user.setLogin(login);
+                        user.setStatus(status);
+                        user.setRole(role);
+                        userDao.update(user);
+                        transaction.commit();
+                        return true;
+                    }
+                } catch (DaoException e) {
+                    transaction.rollback();
                 }
-            } catch (DaoException e) {
-                transaction.rollback();
+            } catch (EntityTransactionException e) {
+                logger.error("Failed to update user data", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Failed to update user data", e);
         }
         return false;
     }

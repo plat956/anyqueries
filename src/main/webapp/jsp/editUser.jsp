@@ -13,6 +13,7 @@
         <form id="edit_form" class="needs-validation" method="post"
               action="${pageContext.request.contextPath}/controller?command=edit_user" novalidate autocomplete="off">
             <input type="hidden" name="id" value="${user.id}" />
+            <input type="hidden" name="previousPage" value="${empty previousPage ? header.referer : previousPage}">
             <div class="form-group input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-user"></i> </span>

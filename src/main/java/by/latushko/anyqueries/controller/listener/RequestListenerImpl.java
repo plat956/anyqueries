@@ -22,6 +22,7 @@ import static by.latushko.anyqueries.controller.command.identity.CookieName.CRED
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.ANSWER_OBJECT;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PREVIOUS_PAGE;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.VALIDATION_RESULT;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
 
@@ -40,6 +41,7 @@ public class RequestListenerImpl implements ServletRequestListener {
         Object message = session.getAttribute(MESSAGE);
         Object validationResult = session.getAttribute(VALIDATION_RESULT);
         Object answerObject = session.getAttribute(ANSWER_OBJECT);
+        Object previousPageObject = session.getAttribute(PREVIOUS_PAGE);
 
         if(message != null) {
             session.removeAttribute(MESSAGE);
@@ -52,6 +54,10 @@ public class RequestListenerImpl implements ServletRequestListener {
         if(answerObject != null) {
             session.removeAttribute(ANSWER_OBJECT);
             request.setAttribute(RequestAttribute.ANSWER_OBJECT, answerObject);
+        }
+        if(previousPageObject != null) {
+            session.removeAttribute(PREVIOUS_PAGE);
+            request.setAttribute(RequestAttribute.PREVIOUS_PAGE, previousPageObject);
         }
         QuestionService questionService = QuestionServiceImpl.getInstance();
         request.setAttribute(LAYOUT_TOTAL_QUESTIONS, questionService.countNotClosed());

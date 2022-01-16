@@ -25,7 +25,7 @@ public final class RequestParameter {
     public static final String QUERY_STRING = "query_string";
     public static final String ID = "id";
     public static final String CLOSE = "close";
-    public static final String PREVIOUS = "previous";
+    public static final String PREVIOUS_PAGE = "previousPage";
     public static final String HASH = "hash";
     public static final String FILE = "file";
     public static final String REMEMBER_ME = "remember_me";

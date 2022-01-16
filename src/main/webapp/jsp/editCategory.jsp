@@ -8,6 +8,7 @@
 <jsp:include page="layout/header.jsp" />
 <form id="edit_form" class="needs-validation" method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/controller?command=edit_category" novalidate autocomplete="off">
     <input type="hidden" name="id" value="${category.id}">
+    <input type="hidden" name="previousPage" value="${empty previousPage ? header.referer : previousPage}">
     <div class="form-group input-group">
         <div class="input-group-prepend">
             <span class="input-group-text"> <i class="fa fa-folder-open" aria-hidden="true"></i> </span>

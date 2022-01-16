@@ -13,7 +13,6 @@ import static by.latushko.anyqueries.controller.command.CommandType.DOWNLOAD;
 import static by.latushko.anyqueries.controller.command.CommandType.SHOW_IMAGE;
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.CONTROLLER_URL;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.CURRENT_PAGE;
-import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PREVIOUS_PAGE;
 
 @WebFilter(filterName = "currentPageFilter", urlPatterns = "/controller")
 public class CurrentPageFilter implements Filter {
@@ -29,7 +28,6 @@ public class CurrentPageFilter implements Filter {
                 !request.getParameter(RequestParameter.COMMAND).equalsIgnoreCase(DOWNLOAD.name())) {
             String currentPage = CONTROLLER_URL + QUERY_STRING_DELIMITER + request.getQueryString();
             HttpSession session = request.getSession();
-            session.setAttribute(PREVIOUS_PAGE, session.getAttribute(CURRENT_PAGE));
             session.setAttribute(CURRENT_PAGE, currentPage);
         }
         chain.doFilter(request, servletResponse);
