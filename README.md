@@ -13,7 +13,7 @@ There are 4 roles in the system:
 Jakarta EE, MySQL, HTML/CSS/Javascript
 
 ## Database model
-[![db model](https://user-images.githubusercontent.com/62507570/149012896-a94aa649-69ea-4c56-a93d-07d03b6f98a5.png)](#)
+[![db model](https://user-images.githubusercontent.com/62507570/149677602-a609bda2-f914-4480-9272-825e3098a238.png)](#)
 
 ## Usage
 <ul>
