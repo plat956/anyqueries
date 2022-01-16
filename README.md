@@ -24,6 +24,3 @@ Jakarta EE, MySQL, HTML/CSS/Javascript
   <li>If you wanna test the application together with a telegram bot, please create this one with help of <a href="https://t.me/botfather">@BotFather</a>, then make changes in <b>telegram.properties</b>. Unfortunately, I can't provide access to my created bot and share its credentials because it can be executing on my server at the same time with your project running. If you don't want to create and use bot, please make sure the property <b>telegram.bot.alive</b> in <b>telegram.properties</b> is <b>false</b>;</li>
   <li>Build and deploy the application.</li>
 </ul>
-
-## Demo
-<a href="">link will be here</a>
