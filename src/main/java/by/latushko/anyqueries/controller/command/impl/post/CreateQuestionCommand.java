@@ -29,6 +29,7 @@ import static by.latushko.anyqueries.controller.command.CommandResult.RoutingTyp
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
+import static by.latushko.anyqueries.controller.command.identity.HeaderName.REFERER;
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.*;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
@@ -38,22 +39,17 @@ public class CreateQuestionCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        String currentPage = QUESTIONS_URL;
-        if(session.getAttribute(CURRENT_PAGE) != null) {
-            currentPage = session.getAttribute(CURRENT_PAGE).toString();
-        }
-        CommandResult commandResult = new CommandResult(currentPage, REDIRECT);
-        ResponseMessage message;
-
+        String referer = request.getHeader(REFERER);
+        CommandResult commandResult = new CommandResult(referer, REDIRECT);
         FormValidator validator = QuestionFormValidator.getInstance();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
         if(!validationResult.getStatus()) {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
+        ResponseMessage message;
         List<Part> fileParts;
         try {
             fileParts = request.getParts().stream().
@@ -64,17 +60,16 @@ public class CreateQuestionCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-        AttachmentValidator attachmentValidatorImpl = AttachmentValidatorImpl.getInstance();
-        boolean attachmentValidationResult = attachmentValidatorImpl.validate(fileParts);
+        AttachmentValidator attachmentValidator = AttachmentValidatorImpl.getInstance();
+        boolean attachmentValidationResult = attachmentValidator.validate(fileParts);
         if(!attachmentValidationResult) {
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ATTACHMENT_WRONG));
             session.setAttribute(MESSAGE, message);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-
         User user = (User) session.getAttribute(PRINCIPAL);
-        Long category = Long.valueOf(request.getParameter(CATEGORY));
+        Long category = getLongParameter(request, CATEGORY);
         String title = request.getParameter(TITLE);
         String text = request.getParameter(TEXT);
         QuestionService questionService = QuestionServiceImpl.getInstance();

@@ -14,7 +14,6 @@ const message = {
     answer_edit_error: "Невозможно изменить ответ",
     error: "Ошибка",
     success: "Успех!",
-    answer_created: "Ответ опубликован",
     wrong_mark: "Невозможно изменить рейтинг",
     wrong_solution: "Невозможно отметить решение",
     wrong_file_size: "Превышен допустимый размер файла в ",

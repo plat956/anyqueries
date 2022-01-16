@@ -29,24 +29,26 @@ public class EditCategoryCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        Long id = Long.valueOf(request.getParameter(ID));
-        CommandResult commandResult = new CommandResult(EDIT_CATEGORY_URL + id, REDIRECT);
+        Long id = getLongParameter(request, ID);
+        String userLang = CookieHelper.readCookie(request, LANG);
+        MessageManager manager = MessageManager.getManager(userLang);
         ResponseMessage message;
-
+        if(id == null) {
+            message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ERROR_UNEXPECTED));
+            session.setAttribute(MESSAGE, message);
+            return new CommandResult(CATEGORIES_URL, REDIRECT);
+        }
+        CommandResult commandResult = new CommandResult(EDIT_CATEGORY_URL + id, REDIRECT);
         FormValidator validator = CategoryFormValidator.getInstance();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
         if(!validationResult.getStatus()) {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-
-        String userLang = CookieHelper.readCookie(request, LANG);
-        MessageManager manager = MessageManager.getManager(userLang);
-
         String name = request.getParameter(NAME);
         String color = request.getParameter(COLOR);
         CategoryService categoryService = CategoryServiceImpl.getInstance();
-        boolean exists = categoryService.checkIfExistsByNameAndIdNot(name, id);
+        boolean exists = categoryService.existsByNameAndIdNot(name, id);
         if(exists) {
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_CATEGORY_WRONG));
             session.setAttribute(MESSAGE, message);

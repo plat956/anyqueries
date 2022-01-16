@@ -8,6 +8,7 @@
 <jsp:include page="layout/header.jsp" />
 <form id="edit_form" class="needs-validation" method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/controller?command=edit_question" novalidate autocomplete="off">
     <input type="hidden" name="id" value="${question.id}">
+    <input type="hidden" name="previous" value="${header.referer}">
     <div class="form-group">
         <select class="selectpicker" data-width="100%" name="category" required>
             <option value="" selected disabled><fmt:message key="label.category.placeholder" /></option>

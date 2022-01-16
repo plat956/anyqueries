@@ -14,7 +14,6 @@ const message = {
     answer_edit_error: "Немагчыма змяніць адказ",
     error: "Памылка",
     success: "Поспех!",
-    answer_created: "Адказ апублікаваны",
     wrong_mark: "Немагчыма змяніць рэйтынг",
     wrong_solution: "Немагчыма адзначыць рашэнне",
     wrong_file_size: "Перавышаны дапушчальны памер файла ў ",

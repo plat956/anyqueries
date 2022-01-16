@@ -319,7 +319,6 @@
             pageEvents.scrollBottom(1);
         </c:if>
         <c:if test="${!empty answerObject}">
-            toasts.show("success", message.success, message.answer_created);
             $('#answer-box-${answerObject.id}').css('background-color', 'rgb(255 230 170)');
             $('#answer-box-${answerObject.id}').animate({backgroundColor: "#fff"}, 1000 );
         </c:if>

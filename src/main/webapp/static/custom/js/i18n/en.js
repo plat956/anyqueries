@@ -14,7 +14,6 @@ const message = {
     answer_edit_error: "Unable to edit answer",
     error: "Error",
     success: "Success!",
-    answer_created: "Answer published",
     wrong_mark: "Unable to change rating",
     wrong_solution: "Unable to mark solution",
     wrong_file_size: "Exceeded the allowed file size in ",

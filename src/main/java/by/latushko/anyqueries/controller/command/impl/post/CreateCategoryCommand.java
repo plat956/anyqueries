@@ -34,22 +34,19 @@ public class CreateCategoryCommand implements Command {
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         CommandResult commandResult = new CommandResult(CREATE_CATEGORY_URL, REDIRECT);
-        ResponseMessage message;
-
         FormValidator validator = CategoryFormValidator.getInstance();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
         if(!validationResult.getStatus()) {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-
-        String userLang = CookieHelper.readCookie(request, LANG);
-        MessageManager manager = MessageManager.getManager(userLang);
-
         String name = request.getParameter(NAME);
         String color = request.getParameter(COLOR);
         CategoryService categoryService = CategoryServiceImpl.getInstance();
-        boolean exists = categoryService.checkIfExistsByName(name);
+        boolean exists = categoryService.existsByName(name);
+        String userLang = CookieHelper.readCookie(request, LANG);
+        MessageManager manager = MessageManager.getManager(userLang);
+        ResponseMessage message;
         if(exists) {
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_CATEGORY_WRONG));
             session.setAttribute(MESSAGE, message);

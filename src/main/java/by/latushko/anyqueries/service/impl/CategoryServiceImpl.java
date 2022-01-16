@@ -104,7 +104,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public boolean checkIfExistsByName(String name) {
+    public boolean existsByName(String name) {
         BaseDao categoryDao = new CategoryDaoImpl();
         boolean result = false;
         try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
@@ -121,7 +121,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public boolean checkIfExistsByNameAndIdNot(String name, Long id) {
+    public boolean existsByNameAndIdNot(String name, Long id) {
         BaseDao categoryDao = new CategoryDaoImpl();
         boolean result = false;
         try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {

@@ -26,44 +26,27 @@ import static by.latushko.anyqueries.controller.command.CommandResult.RoutingTyp
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
+import static by.latushko.anyqueries.controller.command.identity.HeaderName.REFERER;
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.EDIT_QUESTION_URL;
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
-import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.VALIDATION_RESULT;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 
 public class EditQuestionCommand implements Command {
+    private QuestionService questionService = QuestionServiceImpl.getInstance();
+
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        Long id = Long.valueOf(request.getParameter(ID));
+        Long id = getLongParameter(request, ID);
         String closeParameter = request.getParameter(CLOSE);
-        String previousPage = QUESTIONS_URL;
-        if(session.getAttribute(PREVIOUS_PAGE) != null) {
-            previousPage = session.getAttribute(PREVIOUS_PAGE).toString();
-        }
-        QuestionService questionService = QuestionServiceImpl.getInstance();
-
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
-        ResponseMessage message;
-
         if(closeParameter != null) {
-            String currentPage = QUESTIONS_URL;
-            if(session.getAttribute(CURRENT_PAGE) != null) {
-                currentPage = session.getAttribute(CURRENT_PAGE).toString();
-            }
-            boolean close = Boolean.valueOf(closeParameter);
-            boolean result = questionService.changeStatus(id, close);
-            if(result) {
-                message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_SUCCESS));
-            } else {
-                message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ERROR_UNEXPECTED));
-            }
-            session.setAttribute(MESSAGE, message);
-            return new CommandResult(currentPage, REDIRECT);
+            return changeCloseStatus(request, session, id, closeParameter, manager);
         }
-
         CommandResult commandResult = new CommandResult(EDIT_QUESTION_URL + id, REDIRECT);
         FormValidator validator = QuestionFormValidator.getInstance();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
@@ -71,7 +54,7 @@ public class EditQuestionCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-
+        ResponseMessage message;
         List<Part> fileParts;
         try {
             fileParts = request.getParts().stream().
@@ -82,20 +65,23 @@ public class EditQuestionCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-        AttachmentValidator attachmentValidatorImpl = AttachmentValidatorImpl.getInstance();
-        boolean attachmentValidationResult = attachmentValidatorImpl.validate(fileParts);
+        AttachmentValidator attachmentValidator = AttachmentValidatorImpl.getInstance();
+        boolean attachmentValidationResult = attachmentValidator.validate(fileParts);
         if(!attachmentValidationResult) {
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ATTACHMENT_WRONG));
             session.setAttribute(MESSAGE, message);
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-        //todo гдето тут удалять аттачменты прі валідаціі
-        Long category = Long.valueOf(request.getParameter(CATEGORY));
+        Long category = getLongParameter(request, CATEGORY);
         String title = request.getParameter(TITLE);
         String text = request.getParameter(TEXT);
         boolean result = questionService.update(id, category, title, text, fileParts);
         if(result) {
+            String previousPage = request.getParameter(PREVIOUS);
+            if(previousPage == null || previousPage.isEmpty()) {
+                previousPage = QUESTIONS_URL;
+            }
             message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_QUESTION_UPDATED));
             session.setAttribute(MESSAGE, message);
             return new CommandResult(previousPage, REDIRECT);
@@ -105,5 +91,20 @@ public class EditQuestionCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
+    }
+
+    private CommandResult changeCloseStatus(HttpServletRequest request, HttpSession session, Long id,
+                                            String closeParameter, MessageManager manager) {
+        String referer = request.getHeader(REFERER);
+        boolean close = Boolean.valueOf(closeParameter);
+        boolean result = questionService.changeStatus(id, close);
+        ResponseMessage message;
+        if(result) {
+            message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_SUCCESS));
+        } else {
+            message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ERROR_UNEXPECTED));
+        }
+        session.setAttribute(MESSAGE, message);
+        return new CommandResult(referer, REDIRECT);
     }
 }

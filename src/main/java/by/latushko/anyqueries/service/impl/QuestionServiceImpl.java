@@ -226,70 +226,74 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public boolean update(Long questionId, Long categoryId, String title, String text, List<Part> attachments) {
-        BaseDao questionDao = new QuestionDaoImpl();
-        BaseDao categoryDao = new CategoryDaoImpl();
-        BaseDao attachmentDao = new AttachmentDaoImpl();
+        if(questionId != null) {
+            BaseDao questionDao = new QuestionDaoImpl();
+            BaseDao categoryDao = new CategoryDaoImpl();
+            BaseDao attachmentDao = new AttachmentDaoImpl();
 
-        try (EntityTransaction transaction = new EntityTransaction(questionDao, categoryDao, attachmentDao)) {
-            try {
-                Optional<Category> category = categoryDao.findById(categoryId);
-                if(category.isEmpty())  {
-                    throw new EntityTransactionException("Failed to update question. Category with id " + categoryId + " does not exist"); //todo: or return false?
-                }
-                Optional<Question> questionOptional = questionDao.findById(questionId);
-                if(questionOptional.isEmpty()) {
-                    throw new EntityTransactionException("Failed to update question. Question with id " + questionId + " does not exist"); //todo: or return false?
-                }
-                Question question = updateQuestion(questionOptional.get(), category.get(), title, text);
-                questionDao.update(question);
-
-                if(!attachments.isEmpty()) {
-                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                    List<Attachment> oldAttachments = ((AttachmentDaoImpl) attachmentDao).findByQuestionId(questionId);
-                    ((AttachmentDao)attachmentDao).deleteByQuestionId(questionId);
-                    attachmentService.deleteAttachmentsFiles(oldAttachments);
-                    for (Part p : attachments) {
-                        Optional<String> fileName = attachmentService.uploadFile(p);
-                        if (fileName.isEmpty()) {
-                            throw new EntityTransactionException("Failed to upload file."); //todo: or return false?
-                        }
-                        Attachment attachment = new Attachment();
-                        attachment.setFile(fileName.get());
-                        attachmentDao.create(attachment);
-                        ((QuestionDao) questionDao).createQuestionAttachment(question.getId(), attachment.getId());
+            try (EntityTransaction transaction = new EntityTransaction(questionDao, categoryDao, attachmentDao)) {
+                try {
+                    Optional<Category> category = categoryDao.findById(categoryId);
+                    if (category.isEmpty()) {
+                        throw new EntityTransactionException("Failed to update question. Category with id " + categoryId + " does not exist"); //todo: or return false?
                     }
-                }
+                    Optional<Question> questionOptional = questionDao.findById(questionId);
+                    if (questionOptional.isEmpty()) {
+                        throw new EntityTransactionException("Failed to update question. Question with id " + questionId + " does not exist"); //todo: or return false?
+                    }
+                    Question question = updateQuestion(questionOptional.get(), category.get(), title, text);
+                    questionDao.update(question);
 
-                transaction.commit();
-                return true;
-            } catch (DaoException e) {
-                transaction.rollback();
+                    if (!attachments.isEmpty()) {
+                        AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                        List<Attachment> oldAttachments = ((AttachmentDaoImpl) attachmentDao).findByQuestionId(questionId);
+                        ((AttachmentDao) attachmentDao).deleteByQuestionId(questionId);
+                        attachmentService.deleteAttachmentsFiles(oldAttachments);
+                        for (Part p : attachments) {
+                            Optional<String> fileName = attachmentService.uploadFile(p);
+                            if (fileName.isEmpty()) {
+                                throw new EntityTransactionException("Failed to upload file."); //todo: or return false?
+                            }
+                            Attachment attachment = new Attachment();
+                            attachment.setFile(fileName.get());
+                            attachmentDao.create(attachment);
+                            ((QuestionDao) questionDao).createQuestionAttachment(question.getId(), attachment.getId());
+                        }
+                    }
+
+                    transaction.commit();
+                    return true;
+                } catch (DaoException e) {
+                    transaction.rollback();
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Failed to update question", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Failed to update question", e);
         }
         return false;
     }
 
     @Override
     public boolean changeStatus(Long id, boolean status) {
-        BaseDao questionDao = new QuestionDaoImpl();
-        try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
-            try {
-                Optional<Question> questionOptional = questionDao.findById(id);
-                if(questionOptional.isEmpty()) {
-                    throw new EntityTransactionException("Failed to change question status. Question with id " + id + " does not exist"); //todo: or return false?
+        if(id != null) {
+            BaseDao questionDao = new QuestionDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
+                try {
+                    Optional<Question> questionOptional = questionDao.findById(id);
+                    if (questionOptional.isEmpty()) {
+                        throw new EntityTransactionException("Failed to change question status. Question with id " + id + " does not exist"); //todo: or return false?
+                    }
+                    Question question = questionOptional.get();
+                    question.setClosed(status);
+                    questionDao.update(question);
+                    transaction.commit();
+                    return true;
+                } catch (DaoException e) {
+                    transaction.rollback();
                 }
-                Question question = questionOptional.get();
-                question.setClosed(status);
-                questionDao.update(question);
-                transaction.commit();
-                return true;
-            } catch (DaoException e) {
-                transaction.rollback();
+            } catch (EntityTransactionException e) {
+                logger.error("Failed to change question status", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Failed to change question status", e);
         }
         return false;
     }
