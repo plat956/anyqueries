@@ -7,8 +7,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-12 text-center">
-                <span class="display-1 d-block"><fmt:message key="label.error.title" /></span>
-                <div class="mb-4 lead"><fmt:message key="message.problem.contact" /></div>
+                <div class="mb-4 lead"><fmt:message key="message.problem.unexpected" /></div>
                 <a href="#" onclick="window.history.back();" class="btn btn-success">
                     <fmt:message key="label.back" />
                 </a>

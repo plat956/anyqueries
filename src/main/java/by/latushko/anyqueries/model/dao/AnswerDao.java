@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AnswerDao{
-    List<Answer> findByQuestionIdAndAuthorIdOrderByCreationDateAscLimitedTo(Long questionId,
-                                                        Long userId, int offset, int limit) throws DaoException;
-    Optional<Answer> findByIdAndQuestionAuthorId(Long answerId, Long userId) throws DaoException;
+    List<Answer> findAllWithUserGradeByQuestionIdOrderByCreationDateAscLimitedTo(Long questionId,
+                                                                                 Long userId, int offset, int limit) throws DaoException;
+    Optional<Answer> findByIdAndQuestionAuthorIdAndQuestionClosedIs(Long answerId, Long userId, boolean closed) throws DaoException;
     boolean existsByIdAndAuthorIdNot(Long answerId, Long authorId) throws DaoException;
     Long countByUserId(Long userId) throws DaoException;
     Long countByQuestionId(Long id) throws DaoException;

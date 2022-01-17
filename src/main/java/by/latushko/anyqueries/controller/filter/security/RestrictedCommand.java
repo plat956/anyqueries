@@ -14,6 +14,12 @@ public final class RestrictedCommand {
     private static final Map<CommandType, EnumSet<AccessRole>> COMMANDS = new EnumMap<>(CommandType.class);
 
     static {
+        COMMANDS.put(CHANGE_RATING, EnumSet.of(ADMIN, USER, MODERATOR));
+        COMMANDS.put(MARK_SOLUTION, EnumSet.of(ADMIN, USER, MODERATOR));
+        COMMANDS.put(EDIT_QUESTION, EnumSet.of(ADMIN, USER, MODERATOR));
+        COMMANDS.put(EDIT_QUESTION_PAGE, EnumSet.of(ADMIN, USER, MODERATOR));
+        COMMANDS.put(DELETE_QUESTION, EnumSet.of(ADMIN, USER, MODERATOR));
+
         COMMANDS.put(LOGIN_PAGE, EnumSet.of(GUEST));
         COMMANDS.put(REGISTRATION_PAGE, EnumSet.of(GUEST));
         COMMANDS.put(ACTIVATE_USER, EnumSet.of(GUEST, INACTIVE_USER));

@@ -17,8 +17,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.FORWARD;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.EDIT_QUESTION_PAGE;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.ERROR_404_PAGE;
+import static by.latushko.anyqueries.controller.command.identity.PagePath.*;
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.*;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.ID;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
@@ -30,8 +29,8 @@ public class EditQuestionPageCommand implements Command {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(PRINCIPAL);
         QuestionService questionService = QuestionServiceImpl.getInstance();
-        if(!questionService.checkManagementAccess(id, user)) {
-            return new CommandResult(ERROR_404_PAGE, FORWARD);
+        if(!questionService.checkEditAccess(id, user.getId(), true)) {
+            return new CommandResult(ERROR_403_PAGE, FORWARD);
         }
         Optional<Question> question = questionService.findById(id);
         if(question.isEmpty()) {

@@ -5,6 +5,7 @@ import by.latushko.anyqueries.controller.command.CommandResult;
 import by.latushko.anyqueries.controller.command.ResponseMessage;
 import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.controller.command.identity.SessionAttribute;
+import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.QuestionService;
 import by.latushko.anyqueries.service.impl.QuestionServiceImpl;
 import by.latushko.anyqueries.util.http.CookieHelper;
@@ -23,16 +24,17 @@ import jakarta.servlet.http.Part;
 import java.io.IOException;
 import java.util.List;
 
+import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.FORWARD;
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.REDIRECT;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
 import static by.latushko.anyqueries.controller.command.identity.HeaderName.REFERER;
+import static by.latushko.anyqueries.controller.command.identity.PagePath.ERROR_403_PAGE;
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.EDIT_QUESTION_URL;
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
-import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
-import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.VALIDATION_RESULT;
+import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 
 public class EditQuestionCommand implements Command {
@@ -42,12 +44,16 @@ public class EditQuestionCommand implements Command {
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         Long id = getLongParameter(request, ID);
+        User user = (User) session.getAttribute(PRINCIPAL);
+        String closeParameter = request.getParameter(CLOSE);
+        if(!questionService.checkEditAccess(id, user.getId(), closeParameter == null)) {
+            return new CommandResult(ERROR_403_PAGE, FORWARD);
+        }
         String previousPage = request.getParameter(RequestParameter.PREVIOUS_PAGE);
         if(previousPage == null || previousPage.isEmpty()) {
             previousPage = QUESTIONS_URL;
         }
         session.setAttribute(SessionAttribute.PREVIOUS_PAGE, previousPage);
-        String closeParameter = request.getParameter(CLOSE);
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
         if(closeParameter != null) {

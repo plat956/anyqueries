@@ -489,6 +489,9 @@ var answers = {
                     $('#like_' + id).attr('onclick', 'answers.like(\'' + context + '\', ' + id + ', true);').removeClass('like-done').addClass('like-none');
                     $('#like_' + id).html('<i class="far fa-thumbs-up"></i>');
                 }
+            },
+            error: function () {
+                toasts.show("error", message.error, message.wrong_mark);
             }
         });
     },
@@ -523,6 +526,9 @@ var answers = {
                     $('#solution_' + id).tooltip('update');
                     $('#solution_' + id).tooltip('show');
                 }
+             },
+             error: function () {
+                 toasts.show("error", message.error, message.wrong_solution);
              }
          });
     }

@@ -47,7 +47,7 @@ public class AnswerServiceImpl implements AnswerService {
         List<Answer> answers = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(answerDao, attachmentDao)) {
             try {
-                answers = ((AnswerDao) answerDao).findByQuestionIdAndAuthorIdOrderByCreationDateAscLimitedTo(questionId, userId, page.getOffset(), page.getLimit());
+                answers = ((AnswerDao) answerDao).findAllWithUserGradeByQuestionIdOrderByCreationDateAscLimitedTo(questionId, userId, page.getOffset(), page.getLimit());
                 for (Answer a : answers) {
                     List<Attachment> attachments = ((AttachmentDao) attachmentDao).findByAnswerId(a.getId());
                     a.setAttachments(attachments);
@@ -273,7 +273,7 @@ public class AnswerServiceImpl implements AnswerService {
             BaseDao answerDao = new AnswerDaoImpl();
             try (EntityTransaction transaction = new EntityTransaction(answerDao)) {
                 try {
-                    Optional<Answer> answerOptional = ((AnswerDao) answerDao).findByIdAndQuestionAuthorId(answerId, userId);
+                    Optional<Answer> answerOptional = ((AnswerDao) answerDao).findByIdAndQuestionAuthorIdAndQuestionClosedIs(answerId, userId, false);
                     if (answerOptional.isPresent()) {
                         Answer answer = answerOptional.get();
                         boolean updateOthers = true;

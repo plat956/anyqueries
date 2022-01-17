@@ -947,7 +947,7 @@ img {
     cursor: pointer !important;
 }
 .solution-link {
-    cursor: pointer;
+    cursor: default;
     top: 20px;
     right: 20px;
     position: absolute;

@@ -45,7 +45,8 @@ public class QuestionPageCommand implements Command {
         AnswerService answerService = AnswerServiceImpl.getInstance();
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(PRINCIPAL);
-        Paginated<Answer> answers = answerService.findPaginatedByQuestionIdOrderByCreationDateAsc(page, id, user.getId());
+        Long userId = user != null ? user.getId() : null;
+        Paginated<Answer> answers = answerService.findPaginatedByQuestionIdOrderByCreationDateAsc(page, id, userId);
         request.setAttribute(TOTAL_PAGES, answers.getTotalPages());
         request.setAttribute(ANSWERS, answers.getContent());
         return new CommandResult(QUESTION_PAGE, FORWARD);

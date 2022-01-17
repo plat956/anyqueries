@@ -188,7 +188,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public boolean delete(Long id, User initiator) {
         boolean result = false;
-        if(id != null && checkManagementAccess(id, initiator)) {
+        if(id != null) {
             BaseDao questionDao = new QuestionDaoImpl();
             BaseDao attachmentDao = new AttachmentDaoImpl();
             try (EntityTransaction transaction = new EntityTransaction(questionDao, attachmentDao)) {
@@ -267,18 +267,6 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public boolean checkManagementAccess(Long questionId, User user) {
-        if (questionId == null || user == null) {
-            return false;
-        }
-        if(user.getRole() == User.Role.ADMIN || user.getRole() == User.Role.MODERATOR) {
-            return true;
-        }
-        Optional<Long> authorId = findAuthorIdById(questionId);
-        return authorId.isPresent() && authorId.get().equals(user.getId()); //todo сделать все на sql
-    }
-
-    @Override
     public boolean changeStatus(Long id, boolean status) {
         if(id != null) {
             BaseDao questionDao = new QuestionDaoImpl();
@@ -305,20 +293,39 @@ public class QuestionServiceImpl implements QuestionService {
         return false;
     }
 
-    private Optional<Long> findAuthorIdById(Long id) {
-        BaseDao questionDao = new QuestionDaoImpl();
-        Optional<Long> authorId = Optional.empty();
-        try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
-            try {
-                authorId = ((QuestionDao)questionDao).findAuthorIdById(id);
-                transaction.commit();
-            } catch (DaoException e) {
-                transaction.rollback();
+    @Override
+    public boolean checkEditAccess(Long id, Long userId, boolean notClosed) {
+        boolean result = false;
+        if(id != null) {
+            BaseDao questionDao = new QuestionDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
+                try {
+                    if(notClosed) {
+                        result = ((QuestionDao) questionDao).existsByIdAndAuthorIdAndClosedIs(id, userId, false);
+                    } else {
+                        result = ((QuestionDao) questionDao).existsByIdAndAuthorId(id, userId);
+                    }
+                    transaction.commit();
+                } catch (DaoException e) {
+                    transaction.rollback();
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Failed to check if user has edit access", e);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving authorId by id", e);
         }
-        return authorId;
+        return result;
+    }
+
+    @Override
+    public boolean checkDeleteAccess(Long id, User user) {
+        if (id != null) {
+            if (user.getRole() == User.Role.ADMIN || user.getRole() == User.Role.MODERATOR) {
+                return true;
+            } else {
+                return checkEditAccess(id, user.getId(), false);
+            }
+        }
+        return false;
     }
 
     private Question createQuestionObject(Category category, String title, String text, User author) {

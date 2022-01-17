@@ -29,13 +29,15 @@
             <ul class="dx-blog-post-info dx-blog-post-info-style-2 mb-0 mt-0">
                 <li><span><span class="dx-blog-post-info-title"><fmt:message key="label.category" /></span>${question.category.name}</span></li>
                 <li><span><span class="dx-blog-post-info-title"><fmt:message key="label.status" /></span>
-                    <label class="form-check-label" for="status">
-                        <fmt:message key="label.status.${question.closed ? 'closed' : 'open'}" />
-                    </label>
-                <label class="switch" style="margin-top: -5px;">
-                    <input type="checkbox" class="form-check-input" data-toggle="switchbutton" name="status" id="status" onchange="questions.changeStatus('${pageContext.request.contextPath}', this, ${question.id});"${question.closed ? ' checked' : ''}>
-                    <span class="slider slider-light round"></span>
+                <label class="form-check-label" for="status">
+                    <span class="badge badge-${question.closed ? 'secondary' : 'success'} user-role-span" style="font-size: 0.9em"><fmt:message key="label.status.${question.closed ? 'closed' : 'open'}" /></span>
                 </label>
+                <c:if test="${!empty principal && principal.id == question.author.id}">
+                    <label class="switch" style="margin-top: -5px;">
+                        <input type="checkbox" class="form-check-input" data-toggle="switchbutton" name="status" id="status" onchange="questions.changeStatus('${pageContext.request.contextPath}', this, ${question.id});"${question.closed ? ' checked' : ''}>
+                        <span class="slider slider-light round"></span>
+                    </label>
+                </c:if>
                 </span></li>
                 <li><span><span class="dx-blog-post-info-title"><fmt:message key="label.modified" /></span>
                     <at:time-duration date="${!empty question.editingDate ? question.editingDate : question.creationDate}"/>
@@ -63,16 +65,27 @@
                 </div>
                 <div class="dx-comment-cont">
                     <a href="#" onclick="questions.showProfile('${pageContext.request.contextPath}', ${question.author.id}, event); return false;" class="dx-comment-name">${question.author.fio}</a>
+
                     <span id="dropdownMenuButton${a.id}" data-toggle="dropdown">
-                        <a  class="edit-answer-btn" data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.question.management" />">
-                            <i class="fas fa-cog"></i>
-                        </a>
-                        <div class="dropdown-menu answer-dropdown" aria-labelledby="dropdownMenuButton${question.id}">
-                            <a class="dropdown-item drop-lnk" onclick="location.href = '${pageContext.request.contextPath}/controller?command=edit_question_page&id=${question.id}'"><i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i> <fmt:message key="label.edit" /></a>
-                            <a class="dropdown-item drop-lnk" onclick="questions.delete(event, '${pageContext.request.contextPath}', ${question.id}, true)"><i class="fa fa-trash" aria-hidden="true" style="color: red"></i> <fmt:message key="label.delete" /></a>
-                        </div>
+                        <c:if test="${!empty principal.id}">
+                            <c:set var="edit_access" value="${!question.closed && principal.id == question.author.id}" />
+                            <c:set var="delete_access" value="${principal.role == 'ADMIN' || principal.role == 'MODERATOR' || principal.id == question.author.id}" />
+                            <c:if test="${edit_access || delete_access}">
+                                <a  class="edit-answer-btn" data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.question.management" />">
+                                    <i class="fas fa-cog"></i>
+                                </a>
+                                <div class="dropdown-menu answer-dropdown" aria-labelledby="dropdownMenuButton${question.id}">
+                                    <c:if test="${edit_access}">
+                                        <a class="dropdown-item drop-lnk" onclick="location.href = '${pageContext.request.contextPath}/controller?command=edit_question_page&id=${question.id}'"><i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i> <fmt:message key="label.edit" /></a>
+                                    </c:if>
+                                    <c:if test="${delete_access}">
+                                        <a class="dropdown-item drop-lnk" onclick="questions.delete(event, '${pageContext.request.contextPath}', ${question.id}, true)"><i class="fa fa-trash" aria-hidden="true" style="color: red"></i> <fmt:message key="label.delete" /></a>
+                                    </c:if>
+                                </div>
+                            </c:if>
+                        </c:if>
                     </span>
-                    <div class="dx-comment-date"><at:time-duration date="${question.creationDate}"/></div>
+
                     <div class="dx-comment-text">
                         <p class="mb-0">
                             ${question.text}
@@ -87,11 +100,9 @@
                             </li>
                         </c:forEach>
                     </ul>
-                    <c:if test="${!question.closed}">
+                    <c:if test="${!question.closed && !empty principal && question.author.id != principal.id && empty param['edit']}">
                         <p></p>
-                        <c:if test="${empty param['edit']}">
                         <a class="reply-link" onclick="dataForms.reply('${question.author.fio}');"><i class="fa fa-reply" aria-hidden="true"></i> <fmt:message key="label.reply.button" /></a>
-                        </c:if>
                     </c:if>
                 </div>
             </div>
@@ -165,7 +176,9 @@
                                                 <a class="like-done" id="unlike_${a.id}"><i class="fas fa-thumbs-down"></i></a>
                                             </c:when>
                                             <c:otherwise>
-                                                <a id="unlike_${a.id}" onclick="answers.like('${pageContext.request.contextPath}', ${a.id}, false);" class="like-none"><i class="far fa-thumbs-down"></i></a>
+                                                <c:if test="${!empty principal && principal.id != a.author.id}">
+                                                    <a id="unlike_${a.id}" onclick="answers.like('${pageContext.request.contextPath}', ${a.id}, false);" class="like-none"><i class="far fa-thumbs-down"></i></a>
+                                                </c:if>
                                             </c:otherwise>
                                         </c:choose>
                                         <span class="badge badge-${rating_color}" style="cursor: default" id="rating_${a.id}">${a.rating}</span>
@@ -174,7 +187,9 @@
                                                 <a id="like_${a.id}" class="like-done"><i class="fas fa-thumbs-up"></i></a>
                                             </c:when>
                                             <c:otherwise>
-                                                <a id="like_${a.id}" onclick="answers.like('${pageContext.request.contextPath}', ${a.id}, true);" class="like-none"><i class="far fa-thumbs-up"></i></a>
+                                                <c:if test="${!empty principal && principal.id != a.author.id}">
+                                                    <a id="like_${a.id}" onclick="answers.like('${pageContext.request.contextPath}', ${a.id}, true);" class="like-none"><i class="far fa-thumbs-up"></i></a>
+                                                </c:if>
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
@@ -223,21 +238,27 @@
                             </c:if>
                         </div>
                         <c:if test="${!question.closed}">
-                            <c:if test="${empty param['edit']}">
+                            <c:if test="${!empty principal && a.author.id != principal.id && empty param['edit']}">
                                 <a class="reply-link" id="reply-link${a.id}" onclick="dataForms.reply('${a.author.fio}');"><i class="fa fa-reply" aria-hidden="true"></i> <fmt:message key="label.reply.button" /></a>
                             </c:if>
-                            <a class="solution-link<c:if test="${a.solution}"> solution-mark</c:if>" id="solution_${a.id}" onclick="answers.markAsSolution('${pageContext.request.contextPath}', '${a.id}');" data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.solution${a.solution ? '.remove' : ''}" />" data-def-title="<fmt:message key="label.solution" />" data-rm-title="<fmt:message key="label.solution.remove" />">
-                                <i class="fa${a.solution ? 's' : 'r'} fa-check-square"></i>
-                            </a>
                         </c:if>
-
+                        <a class="solution-link<c:if test="${a.solution}"> solution-mark</c:if>" id="solution_${a.id}"
+                           <c:if test="${!question.closed && !empty principal && principal.id == question.author.id}">
+                               onclick="answers.markAsSolution('${pageContext.request.contextPath}', '${a.id}');"
+                               data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.solution${a.solution ? '.remove' : ''}" />"
+                               data-def-title="<fmt:message key="label.solution" />" data-rm-title="<fmt:message key="label.solution.remove" />"
+                               style="cursor: pointer"
+                           </c:if>
+                        >
+                            <i class="fa${a.solution ? 's' : 'r'} fa-check-square"></i>
+                        </a>
                 </div>
             </div>
         </c:forEach>
         <c:if test="${question.closed || totalPages > 1}">
             <jsp:include page="fragment/pagination.jsp" />
         </c:if>
-        <c:if test="${!question.closed && empty param['edit']}">
+        <c:if test="${!empty principal && !question.closed && empty param['edit']}">
             <div class="dx-comment dx-ticket-comment dx-comment-replied dx-comment-new" style="margin-bottom: -20px;" id="replyForm">
             <div>
                 <div class="dx-comment-img">
@@ -287,7 +308,7 @@
             </div>
         </div>
         </c:if>
-        <c:if test="${(!empty param['edit'] && totalPages <= 1)}">
+        <c:if test="${(empty principal || !empty param['edit']) && totalPages <= 1}">
             <div style="margin-top: -20px"></div>
         </c:if>
     </div>

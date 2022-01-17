@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static by.latushko.anyqueries.model.mapper.TableColumnName.QUESTION_AUTHOR_ID;
 import static by.latushko.anyqueries.model.mapper.TableColumnName.QUESTION_TITLE;
 
 public class QuestionDaoImpl extends BaseDao<Long, Question> implements QuestionDao {
@@ -48,6 +47,12 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     private static final String SQL_EXISTS_BY_ID_QUERY = """
             SELECT 1 FROM questions
             WHERE id = ?""";
+    private static final String SQL_EXISTS_BY_ID_AND_AUTHOR_ID_AND_CLOSED_IS_QUERY = """
+            SELECT 1 FROM questions
+            WHERE id = ? AND author_id = ? AND closed = ?""";
+    private static final String SQL_EXISTS_BY_ID_AND_AUTHOR_ID_QUERY = """
+            SELECT 1 FROM questions
+            WHERE id = ? AND author_id = ?""";
     private static final String SQL_COUNT_BY_AUTHOR_ID_QUERY = """
             SELECT count(id) 
             FROM questions 
@@ -208,21 +213,6 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     }
 
     @Override
-    public Optional<Long> findAuthorIdById(Long id) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_AUTHOR_ID_BY_ID_QUERY)){
-            statement.setLong(1, id);
-            try(ResultSet resultSet = statement.executeQuery()) {
-                if(resultSet.next()) {
-                    return Optional.of(resultSet.getLong(QUESTION_AUTHOR_ID));
-                }
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Failed to find question authorId by calling findAuthorIdById(Long id) method", e);
-        }
-        return Optional.empty();
-    }
-
-    @Override
     public boolean existsById(Long id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_ID_QUERY)){
             statement.setLong(1, id);
@@ -231,6 +221,33 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             }
         } catch (SQLException e) {
             throw new DaoException("Failed check if question exists by calling existsById(Long id) method", e);
+        }
+    }
+
+    @Override
+    public boolean existsByIdAndAuthorIdAndClosedIs(Long id, Long authorId, boolean closed) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_ID_AND_AUTHOR_ID_AND_CLOSED_IS_QUERY)){
+            statement.setLong(1, id);
+            statement.setLong(2, authorId);
+            statement.setBoolean(3, closed);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed check if question exists by calling existsByIdAndAuthorIdAndClosedIs(Long id, Long authorId, boolean closed) method", e);
+        }
+    }
+
+    @Override
+    public boolean existsByIdAndAuthorId(Long id, Long authorId) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_ID_AND_AUTHOR_ID_QUERY)){
+            statement.setLong(1, id);
+            statement.setLong(2, authorId);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed check if question exists by existsByIdAndAuthorId(Long id, Long authorId) method", e);
         }
     }
 
