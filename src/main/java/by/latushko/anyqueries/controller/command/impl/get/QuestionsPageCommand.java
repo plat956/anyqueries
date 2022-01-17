@@ -39,7 +39,8 @@ public class QuestionsPageCommand implements Command {
         String title = limitSearchQueryString(request.getParameter(QUERY));
         RequestPage page = new RequestPage(pageParameter);
         QuestionService questionService = QuestionServiceImpl.getInstance();
-        Paginated<Question> questions = questionService.findPaginatedByQueryParametersOrderByNewest(page, resolved, authorId, category, title, newestFirst);
+        Paginated<Question> questions = questionService.findPaginatedByResolvedAndAuthorIdAndCategoryIdAndTitleContainsOrderByNewest(page,
+                resolved, authorId, category, title, newestFirst);
         request.setAttribute(TOTAL_PAGES, questions.getTotalPages());
         request.setAttribute(QUESTIONS, questions.getContent());
         request.setAttribute(CATEGORY, category);

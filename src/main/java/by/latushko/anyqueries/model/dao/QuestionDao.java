@@ -7,13 +7,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface QuestionDao {
-    List<String> findTitleByTitleLikeAndCategoryIdAndAuthorIdLikeOrderedAndLimited(String likePattern, Long categoryId, Long userId, int limit) throws DaoException;
-    Long countTotalByAuthorId(Long userId) throws DaoException;
-    Long countTotalNotClosed() throws DaoException;
-    Long countTotalNotClosedByAuthorId(Long userId) throws DaoException;
+    List<String> findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo(String likePattern, Long categoryId, Long userId, int limit) throws DaoException;
+    Long countByAuthorId(Long userId) throws DaoException;
+    Long countNotClosed() throws DaoException;
+    Long countNotClosedByAuthorId(Long userId) throws DaoException;
     boolean createQuestionAttachment(Long questionId, Long attachmentId) throws DaoException;
-    List<Question> findLimitedByResolvedAndAuthorIdAndCategoryIdAndTitleLikeOrderByNewest(int offset, int limit, boolean resolved,
-                                                                                          boolean newestFirst, Long authorId, Long categoryId,
-                                                                                          String titlePattern) throws DaoException;
+    List<Question> findByResolvedAndAuthorIdAndCategoryIdAndTitleContainsOrderByNewestLimitetTo(boolean resolved, boolean newestFirst, Long authorId, Long categoryId,
+                                                                                                String titlePattern, int offset, int limit) throws DaoException;
     Optional<Long> findAuthorIdById(Long id) throws DaoException;
 }

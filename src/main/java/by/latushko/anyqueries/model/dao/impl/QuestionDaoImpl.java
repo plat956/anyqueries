@@ -163,7 +163,7 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     }
 
     @Override
-    public List<String> findTitleByTitleLikeAndCategoryIdAndAuthorIdLikeOrderedAndLimited(String likePattern, Long categoryId, Long authorId, int limit) throws DaoException {
+    public List<String> findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo(String likePattern, Long categoryId, Long authorId, int limit) throws DaoException {
         List<String> result = new ArrayList<>();
         String query = buildSearchQuery(categoryId, authorId);
         try (PreparedStatement statement = connection.prepareStatement(query)){
@@ -188,7 +188,7 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     }
 
     @Override
-    public Long countTotalByAuthorId(Long authorId) throws DaoException {
+    public Long countByAuthorId(Long authorId) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_AUTHOR_ID_QUERY)){
             statement.setLong(1, authorId);
             try(ResultSet resultSet = statement.executeQuery()) {
@@ -203,7 +203,7 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     }
 
     @Override
-    public Long countTotalNotClosed() throws DaoException {
+    public Long countNotClosed() throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_CLOSED_QUERY)){
             statement.setLong(1, 0);
             try(ResultSet resultSet = statement.executeQuery()) {
@@ -218,7 +218,7 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     }
 
     @Override
-    public Long countTotalNotClosedByAuthorId(Long authorId) throws DaoException {
+    public Long countNotClosedByAuthorId(Long authorId) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_CLOSED_BY_AUTHOR_ID_QUERY)){
             statement.setLong(1, authorId);
             statement.setLong(2, 0);
@@ -245,8 +245,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     }
 
     @Override
-    public List<Question> findLimitedByResolvedAndAuthorIdAndCategoryIdAndTitleLikeOrderByNewest(int offset, int limit, boolean resolved, boolean newestFirst,
-                                                                                                 Long authorId, Long categoryId, String titlePattern) throws DaoException {
+    public List<Question> findByResolvedAndAuthorIdAndCategoryIdAndTitleContainsOrderByNewestLimitetTo(boolean resolved, boolean newestFirst, Long authorId, Long categoryId,
+                                                                                                       String titlePattern, int offset, int limit) throws DaoException {
         String query = buildQuestionsQuery(resolved, newestFirst, authorId, categoryId, titlePattern);
         try (PreparedStatement statement = connection.prepareStatement(query)){
             int index = 0;

@@ -41,20 +41,59 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<String> findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo(String pattern, Long categoryId, Long userId, int limit) {
+    public List<String> findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo(String pattern, Long categoryId,
+                                                                                                 Long userId, int limit) {
         BaseDao questionDao = new QuestionDaoImpl();
         List<String> titles = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
             try {
-                titles = ((QuestionDao)questionDao).findTitleByTitleLikeAndCategoryIdAndAuthorIdLikeOrderedAndLimited(pattern, categoryId, userId, limit);
+                titles = ((QuestionDao)questionDao).findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo(pattern, categoryId, userId, limit);
                 transaction.commit();
             } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving questions titles by pattern and parameters", e);
+            logger.error("Something went wrong during retrieving questions titles by title containing, categoryId and userId with limit", e);
         }
         return titles;
+    }
+
+    @Override
+    public Paginated<Question> findPaginatedByResolvedAndAuthorIdAndCategoryIdAndTitleContainsOrderByNewest(RequestPage page,
+                                                  boolean resolved, Long authorId, Long categoryId, String titlePattern, boolean newestFirst) {
+        BaseDao questionDao = new QuestionDaoImpl();
+        List<Question> questions = new ArrayList<>();
+        try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
+            try {
+                questions = ((QuestionDao)questionDao).findByResolvedAndAuthorIdAndCategoryIdAndTitleContainsOrderByNewestLimitetTo(resolved, newestFirst,
+                        authorId, categoryId, titlePattern, page.getOffset(), page.getLimit());
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving questions by title containing and resolved, categoryId with limit", e);
+        }
+        return new Paginated<>(questions);
+    }
+
+    @Override
+    public Optional<Question> findById(Long id) {
+        Optional<Question> question = Optional.empty();
+        if(id != null) {
+            BaseDao questionDao = new QuestionDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
+                try {
+                    question = questionDao.findById(id);
+                    transaction.commit();
+                } catch (DaoException e) {
+                    transaction.rollback();
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Something went wrong during retrieving question by id", e);
+            }
+        }
+        return question;
     }
 
     @Override
@@ -63,7 +102,7 @@ public class QuestionServiceImpl implements QuestionService {
         Long count = 0L;
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
             try {
-                count = ((QuestionDao)questionDao).countTotalByAuthorId(authorId);
+                count = ((QuestionDao)questionDao).countByAuthorId(authorId);
                 transaction.commit();
             } catch (DaoException e) {
                 transaction.rollback();
@@ -80,7 +119,7 @@ public class QuestionServiceImpl implements QuestionService {
         Long count = 0L;
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
             try {
-                count = ((QuestionDao)questionDao).countTotalNotClosed();
+                count = ((QuestionDao)questionDao).countNotClosed();
                 transaction.commit();
             } catch (DaoException e) {
                 transaction.rollback();
@@ -97,7 +136,7 @@ public class QuestionServiceImpl implements QuestionService {
         Long count = 0L;
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
             try {
-                count = ((QuestionDao)questionDao).countTotalNotClosedByAuthorId(authorId);
+                count = ((QuestionDao)questionDao).countNotClosedByAuthorId(authorId);
                 transaction.commit();
             } catch (DaoException e) {
                 transaction.rollback();
@@ -113,30 +152,30 @@ public class QuestionServiceImpl implements QuestionService {
         BaseDao questionDao = new QuestionDaoImpl();
         BaseDao categoryDao = new CategoryDaoImpl();
         BaseDao attachmentDao = new AttachmentDaoImpl();
-
         try (EntityTransaction transaction = new EntityTransaction(questionDao, categoryDao, attachmentDao)) {
             try {
                 Optional<Category> category = categoryDao.findById(categoryId);
                 if(category.isEmpty())  {
-                    throw new EntityTransactionException("Failed to create question. Category with id " + categoryId + " does not exist"); //todo: or return false?
+                    return Optional.empty();
                 }
-                Question question = createNewQuestion(category.get(), title, text, author);
-                questionDao.create(question);
-
-                AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                for(Part p: attachments) {
-                    Optional<String> fileName = attachmentService.uploadFile(p);
-                    if(fileName.isEmpty()) {
-                        throw new EntityTransactionException("Failed to upload file."); //todo: or return false?
+                Question question = createQuestionObject(category.get(), title, text, author);
+                boolean result = questionDao.create(question);
+                if(result) {
+                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                    for (Part p : attachments) {
+                        Optional<String> fileName = attachmentService.uploadFile(p);
+                        if(fileName.isPresent()) {
+                            Attachment attachment = new Attachment();
+                            attachment.setFile(fileName.get());
+                            boolean attachmentCreated = attachmentDao.create(attachment);
+                            if (attachmentCreated) {
+                                ((QuestionDao) questionDao).createQuestionAttachment(question.getId(), attachment.getId());
+                            }
+                        }
                     }
-                    Attachment attachment = new Attachment();
-                    attachment.setFile(fileName.get());
-                    attachmentDao.create(attachment);
-                    ((QuestionDao) questionDao).createQuestionAttachment(question.getId(), attachment.getId());
+                    transaction.commit();
+                    return Optional.of(question);
                 }
-
-                transaction.commit();
-                return Optional.of(question);
             } catch (DaoException e) {
                 transaction.rollback();
             }
@@ -147,81 +186,32 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Paginated<Question> findPaginatedByQueryParametersOrderByNewest(RequestPage page, boolean resolved, Long authorId, Long categoryId, String titlePattern, boolean newestFirst) {
-        BaseDao questionDao = new QuestionDaoImpl();
-        List<Question> questions = new ArrayList<>();
-        try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
-            try {
-                questions = ((QuestionDao)questionDao).findLimitedByResolvedAndAuthorIdAndCategoryIdAndTitleLikeOrderByNewest(page.getOffset(), page.getLimit(), resolved, newestFirst, authorId, categoryId, titlePattern);
-                transaction.commit();
-            } catch (DaoException e) {
-                transaction.rollback();
-            }
-        } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving questions with requested limit and parameters", e);
-        }
-        return new Paginated<>(questions);
-    }
-
-    @Override
     public boolean delete(Long id, User initiator) {
-        if(id == null || !checkManagementAccess(id, initiator)) {
-            return false;
-        }
         boolean result = false;
-        BaseDao questionDao = new QuestionDaoImpl();
-        BaseDao attachmentDao = new AttachmentDaoImpl();
-        try (EntityTransaction transaction = new EntityTransaction(questionDao, attachmentDao)) {
-            try {
-                List<Attachment> attachments = ((AttachmentDaoImpl) attachmentDao).findByQuestionId(id);
-                result = ((AttachmentDao)attachmentDao).deleteByQuestionId(id);
-                if(result) {
-                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                    result = attachmentService.deleteAttachmentsFiles(attachments);
-                    if(result) {
-                        result = questionDao.delete(id);
-                        transaction.commit();
-                    }
-                }
-                //todo?? call rollback if commit is not reached?
-            } catch (DaoException e) {
-                transaction.rollback();
-            }
-        } catch (EntityTransactionException e) {
-            logger.error("Failed to delete question", e);
-        }
-        return result;
-    }
-
-    @Override
-    public boolean checkManagementAccess(Long questionId, User user) {
-        if (user == null) {
-            return false;
-        }
-        if(user.getRole() == User.Role.ADMIN || user.getRole() == User.Role.MODERATOR) {
-            return true;
-        }
-        Optional<Long> authorId = findAuthorIdById(questionId);
-        return authorId.isPresent() && authorId.get().equals(user.getId());
-    }
-
-    @Override
-    public Optional<Question> findById(Long id) {
-        Optional<Question> questionOptional = Optional.empty();
-        if(id != null) {
+        if(id != null && checkManagementAccess(id, initiator)) {
             BaseDao questionDao = new QuestionDaoImpl();
-            try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
+            BaseDao attachmentDao = new AttachmentDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(questionDao, attachmentDao)) {
                 try {
-                    questionOptional = questionDao.findById(id);
-                    transaction.commit();
+                    List<Attachment> attachments = ((AttachmentDaoImpl) attachmentDao).findByQuestionId(id);
+                    boolean deleteByQuestion = ((AttachmentDao) attachmentDao).deleteByQuestionId(id);
+                    if (deleteByQuestion) {
+                        boolean deleteQuestion = questionDao.delete(id);
+                        if(deleteQuestion) {
+                            AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                            attachmentService.deleteAttachmentsFiles(attachments);
+                            transaction.commit();
+                            result = true;
+                        }
+                    }
                 } catch (DaoException e) {
                     transaction.rollback();
                 }
             } catch (EntityTransactionException e) {
-                logger.error("Something went wrong during retrieving question by id", e);
+                logger.error("Failed to delete question", e);
             }
         }
-        return questionOptional;
+        return result;
     }
 
     @Override
@@ -230,39 +220,41 @@ public class QuestionServiceImpl implements QuestionService {
             BaseDao questionDao = new QuestionDaoImpl();
             BaseDao categoryDao = new CategoryDaoImpl();
             BaseDao attachmentDao = new AttachmentDaoImpl();
-
             try (EntityTransaction transaction = new EntityTransaction(questionDao, categoryDao, attachmentDao)) {
                 try {
                     Optional<Category> category = categoryDao.findById(categoryId);
                     if (category.isEmpty()) {
-                        throw new EntityTransactionException("Failed to update question. Category with id " + categoryId + " does not exist"); //todo: or return false?
+                        return false;
                     }
                     Optional<Question> questionOptional = questionDao.findById(questionId);
                     if (questionOptional.isEmpty()) {
-                        throw new EntityTransactionException("Failed to update question. Question with id " + questionId + " does not exist"); //todo: or return false?
+                        return false;
                     }
-                    Question question = updateQuestion(questionOptional.get(), category.get(), title, text);
-                    questionDao.update(question);
-
-                    if (!attachments.isEmpty()) {
-                        AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                        List<Attachment> oldAttachments = ((AttachmentDaoImpl) attachmentDao).findByQuestionId(questionId);
-                        ((AttachmentDao) attachmentDao).deleteByQuestionId(questionId);
-                        attachmentService.deleteAttachmentsFiles(oldAttachments);
-                        for (Part p : attachments) {
-                            Optional<String> fileName = attachmentService.uploadFile(p);
-                            if (fileName.isEmpty()) {
-                                throw new EntityTransactionException("Failed to upload file."); //todo: or return false?
+                    Question question = updateQuestionObject(questionOptional.get(), category.get(), title, text);
+                    questionOptional = questionDao.update(question);
+                    if(questionOptional.isPresent()) {
+                        if (!attachments.isEmpty()) {
+                            AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                            List<Attachment> oldAttachments = ((AttachmentDaoImpl) attachmentDao).findByQuestionId(questionId);
+                            boolean deleteOldAttachments = ((AttachmentDao) attachmentDao).deleteByQuestionId(questionId);
+                            if(deleteOldAttachments) {
+                                attachmentService.deleteAttachmentsFiles(oldAttachments);
+                                for (Part p : attachments) {
+                                    Optional<String> fileName = attachmentService.uploadFile(p);
+                                    if (fileName.isPresent()) {
+                                        Attachment attachment = new Attachment();
+                                        attachment.setFile(fileName.get());
+                                        boolean attachmentCreated = attachmentDao.create(attachment);
+                                        if(attachmentCreated) {
+                                            ((QuestionDao) questionDao).createQuestionAttachment(question.getId(), attachment.getId());
+                                        }
+                                    }
+                                }
                             }
-                            Attachment attachment = new Attachment();
-                            attachment.setFile(fileName.get());
-                            attachmentDao.create(attachment);
-                            ((QuestionDao) questionDao).createQuestionAttachment(question.getId(), attachment.getId());
                         }
+                        transaction.commit();
+                        return true;
                     }
-
-                    transaction.commit();
-                    return true;
                 } catch (DaoException e) {
                     transaction.rollback();
                 }
@@ -274,6 +266,18 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    public boolean checkManagementAccess(Long questionId, User user) {
+        if (questionId == null || user == null) {
+            return false;
+        }
+        if(user.getRole() == User.Role.ADMIN || user.getRole() == User.Role.MODERATOR) {
+            return true;
+        }
+        Optional<Long> authorId = findAuthorIdById(questionId);
+        return authorId.isPresent() && authorId.get().equals(user.getId()); //todo сделать все на sql
+    }
+
+    @Override
     public boolean changeStatus(Long id, boolean status) {
         if(id != null) {
             BaseDao questionDao = new QuestionDaoImpl();
@@ -281,13 +285,15 @@ public class QuestionServiceImpl implements QuestionService {
                 try {
                     Optional<Question> questionOptional = questionDao.findById(id);
                     if (questionOptional.isEmpty()) {
-                        throw new EntityTransactionException("Failed to change question status. Question with id " + id + " does not exist"); //todo: or return false?
+                        return false;
                     }
                     Question question = questionOptional.get();
                     question.setClosed(status);
-                    questionDao.update(question);
-                    transaction.commit();
-                    return true;
+                    questionOptional = questionDao.update(question);
+                    if(questionOptional.isPresent()) {
+                        transaction.commit();
+                        return true;
+                    }
                 } catch (DaoException e) {
                     transaction.rollback();
                 }
@@ -297,6 +303,36 @@ public class QuestionServiceImpl implements QuestionService {
         }
         return false;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private Optional<Long> findAuthorIdById(Long id) {
         BaseDao questionDao = new QuestionDaoImpl();
@@ -314,7 +350,7 @@ public class QuestionServiceImpl implements QuestionService {
         return authorId;
     }
 
-    private Question createNewQuestion(Category category, String title, String text, User author) {
+    private Question createQuestionObject(Category category, String title, String text, User author) {
         Question question = new Question();
         question.setCategory(category);
         question.setTitle(title);
@@ -325,7 +361,7 @@ public class QuestionServiceImpl implements QuestionService {
         return question;
     }
 
-    private Question updateQuestion(Question question, Category category, String title, String text) {
+    private Question updateQuestionObject(Question question, Category category, String title, String text) {
         question.setCategory(category);
         question.setTitle(title);
         question.setText(text);

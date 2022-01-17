@@ -27,11 +27,11 @@ import java.util.Optional;
 public class AttachmentServiceImpl implements AttachmentService {
     private static final Logger logger = LogManager.getLogger();
     private static final String FILE_EXTENSION_DELIMITER = ".";
-    private static final String AVATAR_PREFIX = "avatar_";
-    private static final int AVATAR_MAX_SIZE = 190;
+    private static final String FILE_EMPTY_NAME = "noname";
     private static final int FILE_EXTENSION_MAX_LENGTH = 20;
     private static final int FILE_NAME_MAX_LENGTH = 40;
-    private static final String FILE_EMPTY_NAME = "noname";
+    private static final String AVATAR_PREFIX = "avatar_";
+    private static final int AVATAR_MAX_SIZE = 190;
     private static AttachmentService instance;
 
     private AttachmentServiceImpl() {
@@ -45,8 +45,28 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
+    public List<Attachment> findByQuestionId(Long id) {
+        BaseDao attachmentDao = new AttachmentDaoImpl();
+        List<Attachment> attachments = new ArrayList<>();
+        try (EntityTransaction transaction = new EntityTransaction(attachmentDao)) {
+            try {
+                attachments = ((AttachmentDao)attachmentDao).findByQuestionId(id);
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving attachments by question id", e);
+        }
+        return attachments;
+    }
+
+    @Override
     public Optional<String> uploadFile(Part part) {
-        createUploadDirectoryIfNotExists(FILE_DIRECTORY_PATH);
+        boolean directoryExists = createUploadDirectoryIfNotExists(FILE_DIRECTORY_PATH);
+        if(!directoryExists) {
+            return Optional.empty();
+        }
         String fileName = part.getSubmittedFileName();
         Optional<String> extension = getFileExtension(fileName);
         if(fileName.contains(FILE_EXTENSION_DELIMITER)) {
@@ -103,19 +123,6 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public Optional<String> getFileExtension(String fileName) {
-        if(fileName != null && !fileName.isEmpty() && fileName.contains(FILE_EXTENSION_DELIMITER)) {
-            String extension = fileName.substring(fileName.lastIndexOf(FILE_EXTENSION_DELIMITER));
-            if(extension.length() - 1 > FILE_EXTENSION_MAX_LENGTH) {
-                extension = extension.substring(0, FILE_EXTENSION_MAX_LENGTH + 1);
-            }
-            return Optional.of(extension);
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    @Override
     public boolean deleteFile(String file) {
         try {
             return Files.deleteIfExists(Paths.get(FILE_DIRECTORY_PATH + file));
@@ -136,20 +143,16 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public List<Attachment> findByQuestionId(Long id) {
-        BaseDao attachmentDao = new AttachmentDaoImpl();
-        List<Attachment> attachments = new ArrayList<>();
-        try (EntityTransaction transaction = new EntityTransaction(attachmentDao)) {
-            try {
-                attachments = ((AttachmentDao)attachmentDao).findByQuestionId(id);
-                transaction.commit();
-            } catch (DaoException e) {
-                transaction.rollback();
+    public Optional<String> getFileExtension(String fileName) {
+        if(fileName != null && !fileName.isEmpty() && fileName.contains(FILE_EXTENSION_DELIMITER)) {
+            String extension = fileName.substring(fileName.lastIndexOf(FILE_EXTENSION_DELIMITER));
+            if(extension.length() - 1 > FILE_EXTENSION_MAX_LENGTH) {
+                extension = extension.substring(0, FILE_EXTENSION_MAX_LENGTH + 1);
             }
-        } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving attachment by question id", e);
+            return Optional.of(extension);
+        } else {
+            return Optional.empty();
         }
-        return attachments;
     }
 
     private boolean resizeAvatar(String avatar) {
@@ -169,10 +172,11 @@ public class AttachmentServiceImpl implements AttachmentService {
         }
     }
 
-    private void createUploadDirectoryIfNotExists(String directory) {
+    private boolean createUploadDirectoryIfNotExists(String directory) {
         File uploadDir = new File(directory);
         if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
+            return uploadDir.mkdirs();
         }
+        return true;
     }
 }

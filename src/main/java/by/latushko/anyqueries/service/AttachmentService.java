@@ -13,11 +13,11 @@ public interface AttachmentService {
     String IMAGE_DIRECTORY_PATH = APP_UPLOAD_DIR + File.separator + "images" + File.separator;
     String FILE_DIRECTORY_PATH = APP_UPLOAD_DIR + File.separator + "files" + File.separator;
 
+    List<Attachment> findByQuestionId(Long id);
     Optional<String> uploadFile(Part part);
     Optional<String> uploadAvatar(List<Part> parts);
     boolean deleteAvatar(String avatar);
     boolean deleteFile(String file);
     boolean deleteAttachmentsFiles(List<Attachment> attachments);
     Optional<String> getFileExtension(String fileName);
-    List<Attachment> findByQuestionId(Long id);
 }
