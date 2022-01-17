@@ -76,7 +76,7 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             ON a.author_id = u.id 
             WHERE a.id = ?""";
 
-    RowMapper mapper = new AnswerMapper();
+    private final RowMapper mapper = new AnswerMapper();
 
     @Override
     public Optional<Answer> findById(Long id) throws DaoException {

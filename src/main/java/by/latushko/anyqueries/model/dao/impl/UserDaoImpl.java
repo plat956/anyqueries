@@ -19,9 +19,6 @@ import java.util.Optional;
 import static by.latushko.anyqueries.model.mapper.TableColumnName.USER_LOGIN;
 
 public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
-    private static final String SQL_FIND_ALL_QUERY = """
-            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 
-            FROM users""";
     private static final String SQL_FIND_BY_ID_QUERY = """
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 
             FROM users 
@@ -44,22 +41,15 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 
             FROM users 
             WHERE credential_key = ?""";
-    private static final String SQL_CREATE_QUERY = """
-            INSERT INTO users(first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
-    private static final String SQL_CREATE_USER_HASH_QUERY = """
-            INSERT INTO user_hash(hash, expires, user_id) 
-            VALUES (?, ?, ?)""";
-    private static final String SQL_UPDATE_QUERY = """
-            UPDATE users 
-            SET first_name = ?, last_name = ?, middle_name = ?, login = ?, password = ?, email = ?, telegram = ?, avatar = ?, credential_key = ?, last_login_date = ?, status = ?, role = ?  
-            WHERE id = ?""";
-    private static final String SQL_DELETE_QUERY = """
-            DELETE FROM users 
-            WHERE id = ?""";
-    private static final String SQL_DELETE_USER_HASH_QUERY = """
-            DELETE FROM user_hash 
-            WHERE user_id = ?""";
+    private static final String SQL_FIND_BY_LOGIN_CONTAINS_ORDER_BY_ROLE_ASC_LIMITED_TO_QUERY = """
+            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role, count(id) OVER() AS total 
+            FROM users""";
+    private static final String SQL_FIND_LOGIN_BY_LOGIN_CONTAINS_ORDER_BY_LOGIN_ASC_LIMITED_TO_QUERY = """
+            SELECT login 
+            FROM users 
+            WHERE login like ? 
+            ORDER BY login ASC 
+            LIMIT ?""";
     private static final String SQL_EXISTS_BY_LOGIN_QUERY = """
             SELECT 1 FROM users
             WHERE login = ?""";
@@ -78,49 +68,25 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     private static final String SQL_EXISTS_BY_LOGIN_EXCEPT_USER_ID_QUERY = """
             SELECT 1 FROM users
             WHERE login = ? and id <> ?""";
-    private static final String SQL_FIND_LIMITED_BY_LOGIN_LIKE_ORDER_BY_ROLE_ASC_QUERY = """
-            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role, count(id) OVER() AS total 
-            FROM users""";
-    private static final String SQL_FIND_LOGIN_BY_LOGIN_LIKE_ORDER_ASC_QUERY = """
-            SELECT login 
-            FROM users 
-            WHERE login like ? 
-            ORDER BY login ASC 
-            LIMIT ?""";
+    private static final String SQL_CREATE_QUERY = """
+            INSERT INTO users(first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""";
+    private static final String SQL_CREATE_USER_HASH_QUERY = """
+            INSERT INTO user_hash(hash, expires, user_id) 
+            VALUES (?, ?, ?)""";
+    private static final String SQL_UPDATE_QUERY = """
+            UPDATE users 
+            SET first_name = ?, last_name = ?, middle_name = ?, login = ?, password = ?, email = ?, telegram = ?, avatar = ?, credential_key = ?, last_login_date = ?, status = ?, role = ?  
+            WHERE id = ?""";
+    private static final String SQL_DELETE_QUERY = """
+            DELETE FROM users 
+            WHERE id = ?""";
+    private static final String SQL_DELETE_USER_HASH_BY_ID_QUERY = """
+            DELETE FROM user_hash 
+            WHERE user_id = ?""";
     private static final String SQL_LOGIN_LIKE_CLAUSE = " WHERE login like ? ";
     private static final String SQL_LIMITED_QUERY_END_CLAUSE = " ORDER BY role ASC LIMIT ?,?";
-
     private final RowMapper<User> mapper = new UserMapper();
-
-    @Override
-    public boolean create(User user) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
-            statement.setString(1, user.getFirstName());
-            statement.setString(2, user.getLastName());
-            statement.setString(3, user.getMiddleName());
-            statement.setString(4, user.getLogin());
-            statement.setString(5, user.getPassword());
-            statement.setString(6, user.getEmail());
-            statement.setString(7, user.getTelegram());
-            statement.setString(8, user.getAvatar());
-            statement.setString(9, user.getCredentialKey());
-            statement.setObject(10, user.getLastLoginDate());
-            statement.setString(11, user.getStatus().name());
-            statement.setString(12, user.getRole().name());
-
-            if(statement.executeUpdate() >= 0) {
-                ResultSet resultSet = statement.getGeneratedKeys();
-                if(resultSet.next()) {
-                    Long generatedId = resultSet.getLong(1);
-                    user.setId(generatedId);
-                    return true;
-                }
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Failed to create user by calling create(User user) method", e);
-        }
-        return false;
-    }
 
     @Override
     public Optional<User> findById(Long id) throws DaoException {
@@ -139,6 +105,35 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     }
 
     @Override
+    public boolean create(User user) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_QUERY, PreparedStatement.RETURN_GENERATED_KEYS)){
+            statement.setString(1, user.getFirstName());
+            statement.setString(2, user.getLastName());
+            statement.setString(3, user.getMiddleName());
+            statement.setString(4, user.getLogin());
+            statement.setString(5, user.getPassword());
+            statement.setString(6, user.getEmail());
+            statement.setString(7, user.getTelegram());
+            statement.setString(8, user.getAvatar());
+            statement.setString(9, user.getCredentialKey());
+            statement.setObject(10, user.getLastLoginDate());
+            statement.setString(11, user.getStatus().name());
+            statement.setString(12, user.getRole().name());
+            if(statement.executeUpdate() >= 0) {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if(resultSet.next()) {
+                    Long generatedId = resultSet.getLong(1);
+                    user.setId(generatedId);
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to create user by calling create(User user) method", e);
+        }
+        return false;
+    }
+
+    @Override
     public Optional<User> update(User user) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_QUERY)){
             statement.setString(1, user.getFirstName());
@@ -154,7 +149,6 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             statement.setString(11, user.getStatus().name());
             statement.setString(12, user.getRole().name());
             statement.setLong(13, user.getId());
-
             if(statement.executeUpdate() >= 0) {
                 return Optional.of(user);
             }
@@ -180,7 +174,6 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             statement.setString(1, hash.getHash());
             statement.setObject(2, hash.getExpires());
             statement.setLong(3, hash.getUser().getId());
-
             if(statement.executeUpdate() >= 0) {
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if(resultSet.next()) {
@@ -193,16 +186,6 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             throw new DaoException("Failed to create user hash by calling createUserHash(UserHash hash) method", e);
         }
         return false;
-    }
-
-    @Override
-    public boolean deleteUserHashByUserId(Long id) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_USER_HASH_QUERY)){
-            statement.setLong(1, id);
-            return statement.executeUpdate() >= 0;
-        } catch (SQLException e) {
-            throw new DaoException("Failed to delete user hash by calling deleteHashByUserId(Long id) method", e);
-        }
     }
 
     @Override
@@ -219,7 +202,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find user by calling findInactiveUserByHashAndHashIsNotExpired(String hash, LocalDateTime validDate) method", e);
+            throw new DaoException("Failed to find user by calling findInactiveByHashAndHashIsNotExpired(String hash, LocalDateTime validDate) method", e);
         }
     }
 
@@ -236,7 +219,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find user by calling findInactiveUserByTelegram(String account) method", e);
+            throw new DaoException("Failed to find user by calling findInactiveByTelegram(String account) method", e);
         }
     }
 
@@ -252,7 +235,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find user by calling findUserByLogin(String login) method", e);
+            throw new DaoException("Failed to find user by calling findByLogin(String login) method", e);
         }
     }
 
@@ -268,7 +251,46 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find user by calling findUserByCredentialKey(String key) method", e);
+            throw new DaoException("Failed to find user by calling findByCredentialKey(String key) method", e);
+        }
+    }
+
+    @Override
+    public List<String> findLoginByLoginContainsOrderByLoginAscLimitedTo(String loginPatter, int limit) throws DaoException {
+        List<String> result = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_LOGIN_BY_LOGIN_CONTAINS_ORDER_BY_LOGIN_ASC_LIMITED_TO_QUERY)){
+            statement.setString(1, LIKE_MARKER + loginPatter + LIKE_MARKER);
+            statement.setInt(2, limit);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                while(resultSet.next()) {
+                    result.add(resultSet.getString(USER_LOGIN));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find users logins by calling findLoginByLoginContainsOrderByLoginAscLimitedTo method", e);
+        }
+        return result;
+    }
+
+    @Override
+    public List<User> findByLoginContainsOrderByRoleAscLimitedTo(String loginPattern, int offset, int limit) throws DaoException {
+        StringBuilder query = new StringBuilder(SQL_FIND_BY_LOGIN_CONTAINS_ORDER_BY_ROLE_ASC_LIMITED_TO_QUERY);
+        if(loginPattern != null) {
+            query.append(SQL_LOGIN_LIKE_CLAUSE);
+        }
+        query.append(SQL_LIMITED_QUERY_END_CLAUSE);
+        try (PreparedStatement statement = connection.prepareStatement(query.toString())){
+            int index = 0;
+            if(loginPattern != null) {
+                statement.setString(++index, LIKE_MARKER + loginPattern + LIKE_MARKER);
+            }
+            statement.setInt(++index, offset);
+            statement.setInt(++index, limit);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return mapper.mapRows(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find users by calling findByLoginContainsOrderByRoleAscLimitedTo method", e);
         }
     }
 
@@ -348,42 +370,12 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     }
 
     @Override
-    public List<User> findByLoginContainsOrderByRoleAscLimitedTo(String loginPattern, int offset, int limit) throws DaoException {
-        StringBuilder query = new StringBuilder(SQL_FIND_LIMITED_BY_LOGIN_LIKE_ORDER_BY_ROLE_ASC_QUERY);
-        if(loginPattern != null) {
-            query.append(SQL_LOGIN_LIKE_CLAUSE);
-        }
-        query.append(SQL_LIMITED_QUERY_END_CLAUSE);
-
-        try (PreparedStatement statement = connection.prepareStatement(query.toString())){
-            int index = 0;
-            if(loginPattern != null) {
-                statement.setString(++index, LIKE_MARKER + loginPattern + LIKE_MARKER);
-            }
-            statement.setInt(++index, offset);
-            statement.setInt(++index, limit);
-            try(ResultSet resultSet = statement.executeQuery()) {
-                return mapper.mapRows(resultSet);
-            }
+    public boolean deleteUserHashByUserId(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_USER_HASH_BY_ID_QUERY)){
+            statement.setLong(1, id);
+            return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
-            throw new DaoException("Failed to find users by calling findLimitedOrderByLoginAsc(int offset, int limit) method", e);
+            throw new DaoException("Failed to delete user hash by calling deleteUserHashByUserId(Long id) method", e);
         }
-    }
-
-    @Override
-    public List<String> findLoginByLoginContainsOrderByLoginAscLimitedTo(String loginPatter, int limit) throws DaoException {
-        List<String> result = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_LOGIN_BY_LOGIN_LIKE_ORDER_ASC_QUERY)){
-            statement.setString(1, LIKE_MARKER + loginPatter + LIKE_MARKER);
-            statement.setInt(2, limit);
-            try(ResultSet resultSet = statement.executeQuery()) {
-                while(resultSet.next()) {
-                    result.add(resultSet.getString(USER_LOGIN));
-                }
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Failed to find users logins by calling findLoginByLoginLikeOrderedAndLimited method", e);
-        }
-        return result;
     }
 }

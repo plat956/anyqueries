@@ -92,7 +92,7 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     private static final String SQL_CREATION_DATE_FIELD = "q.creation_date";
     private static final String SQL_ANSWERS_COUNT_FIELD = "answers_count";
 
-    private QuestionMapper mapper = new QuestionMapper();
+    private final QuestionMapper mapper = new QuestionMapper();
 
     @Override
     public Optional<Question> findById(Long id) throws DaoException {

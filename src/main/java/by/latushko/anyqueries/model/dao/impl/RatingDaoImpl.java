@@ -15,6 +15,11 @@ import java.util.Optional;
 import static by.latushko.anyqueries.model.mapper.TableColumnName.RATING_GRADE_SUM;
 
 public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
+    private static final String SQL_FIND_BY_ANSWER_ID_AND_USER_ID_QUERY = """
+            SELECT id, grade, answer_id, user_id 
+            FROM rating 
+            WHERE answer_id = ?
+            AND user_id = ?""";
     private static final String SQL_CREATE_QUERY = """
             INSERT INTO rating(grade, answer_id, user_id) 
             VALUES (?, ?, ?)""";
@@ -22,17 +27,11 @@ public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
             UPDATE rating 
             SET grade = ?, answer_id = ?, user_id = ? 
             WHERE id = ?""";
-    private static final String SQL_FIND_BY_ANSWER_ID_AND_USER_ID_QUERY = """
-            SELECT id, grade, answer_id, user_id 
-            FROM rating 
-            WHERE answer_id = ?
-            AND user_id = ?""";
     private static final String SQL_SUM_GRADE_BY_ANSWER_ID_QUERY = """
             SELECT sum(grade) as grade_sum 
             FROM rating 
             WHERE answer_id = ?""";
-
-    private RowMapper mapper = new RatingMapper();
+    private final RowMapper mapper = new RatingMapper();
 
     @Override
     public Optional<Rating> findById(Long id) throws DaoException {
@@ -45,7 +44,6 @@ public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
             statement.setInt(1, rating.getGrade());
             statement.setLong(2, rating.getAnswerId());
             statement.setLong(3, rating.getUserId());
-
             if(statement.executeUpdate() >= 0) {
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if(resultSet.next()) {
@@ -67,7 +65,6 @@ public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
             statement.setLong(2, rating.getAnswerId());
             statement.setLong(3, rating.getUserId());
             statement.setLong(4, rating.getId());
-
             if(statement.executeUpdate() >= 0) {
                 return Optional.of(rating);
             }
