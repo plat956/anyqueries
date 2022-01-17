@@ -247,12 +247,7 @@ public class UserServiceImpl implements UserService {
         BaseDao userDao = new UserDaoImpl();
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
-                user.setFirstName(firstName);
-                user.setLastName(lastName);
-                user.setMiddleName(middleName);
-                user.setEmail(email);
-                user.setTelegram(telegram);
-                user.setLogin(login);
+                updateUserObject(user, firstName, lastName, middleName, email, telegram, login);
                 Optional<User> userOptional = userDao.update(user);
                 if(userOptional.isPresent()) {
                     transaction.commit();
@@ -277,14 +272,7 @@ public class UserServiceImpl implements UserService {
                     Optional<User> userOptional = userDao.findById(userId);
                     if (userOptional.isPresent()) {
                         User user = userOptional.get();
-                        user.setFirstName(firstName);
-                        user.setLastName(lastName);
-                        user.setMiddleName(middleName);
-                        user.setEmail(email);
-                        user.setTelegram(telegram);
-                        user.setLogin(login);
-                        user.setStatus(status);
-                        user.setRole(role);
+                        updateUserObject(user, firstName, lastName, middleName, email, telegram, login, status, role);
                         userOptional = userDao.update(user);
                         if(userOptional.isPresent()) {
                             transaction.commit();
@@ -446,5 +434,27 @@ public class UserServiceImpl implements UserService {
 
     private String getCredentialTokenSource(User user) {
         return CREDENTIAL_TOKEN_ADDITIONAL_SALT + user.getLogin();
+    }
+
+    private void updateUserObject(User user, String firstName, String lastName, String middleName,
+                                  String email, String telegram, String login) {
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setMiddleName(middleName);
+        user.setEmail(email);
+        user.setTelegram(telegram);
+        user.setLogin(login);
+    }
+
+    private void updateUserObject(User user, String firstName, String lastName, String middleName,
+                                  String email, String telegram, String login, User.Status status, User.Role role) {
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setMiddleName(middleName);
+        user.setEmail(email);
+        user.setTelegram(telegram);
+        user.setLogin(login);
+        user.setStatus(status);
+        user.setRole(role);
     }
 }

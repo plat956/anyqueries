@@ -24,7 +24,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             FROM users 
             WHERE id = ?""";
     private static final String SQL_FIND_INACTIVE_BY_HASH_AND_DATE_QUERY = """
-            SELECT u.id, u.first_name, u.last_name, u.middle_name, u.login, u.password, u.email, u.telegram, u.avatar, u.credential_key, u.last_login_date, u.status, u.role 
+            SELECT u.id, u.first_name, u.last_name, u.middle_name, u.login, u.password, u.email, u.telegram, u.avatar, u.credential_key, 
+            u.last_login_date, u.status, u.role 
             FROM users u 
             INNER JOIN user_hash uh 
             ON u.id = uh.user_id 
@@ -42,7 +43,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             FROM users 
             WHERE credential_key = ?""";
     private static final String SQL_FIND_BY_LOGIN_CONTAINS_ORDER_BY_ROLE_ASC_LIMITED_TO_QUERY = """
-            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role, count(id) OVER() AS total 
+            SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role, 
+            count(id) OVER() AS total 
             FROM users""";
     private static final String SQL_FIND_LOGIN_BY_LOGIN_CONTAINS_ORDER_BY_LOGIN_ASC_LIMITED_TO_QUERY = """
             SELECT login 
@@ -76,7 +78,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             VALUES (?, ?, ?)""";
     private static final String SQL_UPDATE_QUERY = """
             UPDATE users 
-            SET first_name = ?, last_name = ?, middle_name = ?, login = ?, password = ?, email = ?, telegram = ?, avatar = ?, credential_key = ?, last_login_date = ?, status = ?, role = ?  
+            SET first_name = ?, last_name = ?, middle_name = ?, login = ?, password = ?, email = ?, telegram = ?, avatar = ?, credential_key = ?, 
+            last_login_date = ?, status = ?, role = ?  
             WHERE id = ?""";
     private static final String SQL_DELETE_QUERY = """
             DELETE FROM users 

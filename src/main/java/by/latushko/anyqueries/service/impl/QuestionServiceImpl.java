@@ -230,7 +230,8 @@ public class QuestionServiceImpl implements QuestionService {
                     if (questionOptional.isEmpty()) {
                         return false;
                     }
-                    Question question = updateQuestionObject(questionOptional.get(), category.get(), title, text);
+                    Question question = questionOptional.get();
+                    updateQuestionObject(question, category.get(), title, text);
                     questionOptional = questionDao.update(question);
                     if(questionOptional.isPresent()) {
                         if (!attachments.isEmpty()) {
@@ -331,11 +332,10 @@ public class QuestionServiceImpl implements QuestionService {
         return question;
     }
 
-    private Question updateQuestionObject(Question question, Category category, String title, String text) {
+    private void updateQuestionObject(Question question, Category category, String title, String text) {
         question.setCategory(category);
         question.setTitle(title);
         question.setText(text);
         question.setEditingDate(LocalDateTime.now());
-        return question;
     }
 }

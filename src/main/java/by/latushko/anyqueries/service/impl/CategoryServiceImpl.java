@@ -178,9 +178,7 @@ public class CategoryServiceImpl implements CategoryService {
         BaseDao categoryDao = new CategoryDaoImpl();
         try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
             try {
-                Category category = new Category();
-                category.setName(name);
-                category.setColor(color);
+                Category category = createCategoryObject(name, color);
                 boolean result = categoryDao.create(category);
                 if(result) {
                     transaction.commit();
@@ -205,8 +203,7 @@ public class CategoryServiceImpl implements CategoryService {
                     return false;
                 }
                 Category category = categoryOptional.get();
-                category.setName(name);
-                category.setColor(color);
+                updateCategoryObject(category, name, color);
                 categoryOptional = categoryDao.update(category);
                 if(categoryOptional.isPresent()) {
                     transaction.commit();
@@ -248,5 +245,17 @@ public class CategoryServiceImpl implements CategoryService {
             }
         }
         return result;
+    }
+
+    private Category createCategoryObject(String name, String color) {
+        Category category = new Category();
+        category.setName(name);
+        category.setColor(color);
+        return category;
+    }
+
+    private void updateCategoryObject(Category category, String name, String color) {
+        category.setName(name);
+        category.setColor(color);
     }
 }

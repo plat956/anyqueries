@@ -155,7 +155,7 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
             statement.setLong(1, id);
             try(ResultSet resultSet = statement.executeQuery()) {
                 if(resultSet.next()) {
-                    return Optional.ofNullable(resultSet.getString(CATEGORY_NAME));
+                    return Optional.of(resultSet.getString(CATEGORY_NAME));
                 }
             }
         } catch (SQLException e) {

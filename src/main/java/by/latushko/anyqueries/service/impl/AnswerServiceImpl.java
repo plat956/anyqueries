@@ -74,12 +74,7 @@ public class AnswerServiceImpl implements AnswerService {
                     if (!questionExists) {
                         return Optional.empty();
                     }
-                    Answer answer = new Answer();
-                    answer.setQuestionId(question);
-                    answer.setSolution(false);
-                    answer.setAuthor(user);
-                    answer.setText(text);
-                    answer.setCreationDate(LocalDateTime.now());
+                    Answer answer = createAnswerObject(question, user, text);
                     boolean result = answerDao.create(answer);
                     if (result) {
                         AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
@@ -119,8 +114,7 @@ public class AnswerServiceImpl implements AnswerService {
                         return Optional.empty();
                     }
                     Answer answer = answerOptional.get();
-                    answer.setText(text);
-                    answer.setEditingDate(LocalDateTime.now());
+                    updateAnswerObject(answer, text);
                     answerOptional = answerDao.update(answer);
                     if(answerOptional.isPresent()) {
                         if (!attachments.isEmpty()) {
@@ -214,16 +208,11 @@ public class AnswerServiceImpl implements AnswerService {
                         Optional<Rating> ratingOptional = ((RatingDao) ratingDao).findByAnswerIdAndUserId(answerId, userId);
                         if (ratingOptional.isPresent()) {
                             Rating rating = ratingOptional.get();
-                            rating.setGrade(grade ? 1 : -1);
-                            rating.setAnswerId(answerId);
-                            rating.setUserId(userId);
+                            updateRatingObject(rating, grade, answerId, userId);
                             ratingOptional = ratingDao.update(rating);
                             changeRatingResult = ratingOptional.isPresent();
                         } else {
-                            Rating rating = new Rating();
-                            rating.setGrade(grade ? 1 : -1);
-                            rating.setAnswerId(answerId);
-                            rating.setUserId(userId);
+                            Rating rating = createRatingObject(grade, answerId, userId);
                             changeRatingResult = ratingDao.create(rating);
                         }
                         if(changeRatingResult) {
@@ -308,5 +297,34 @@ public class AnswerServiceImpl implements AnswerService {
             }
         }
         return false;
+    }
+
+    private Answer createAnswerObject(Long questionId, User user, String text) {
+        Answer answer = new Answer();
+        answer.setQuestionId(questionId);
+        answer.setSolution(false);
+        answer.setAuthor(user);
+        answer.setText(text);
+        answer.setCreationDate(LocalDateTime.now());
+        return answer;
+    }
+
+    private Rating createRatingObject(boolean grade, Long answerId, Long userId) {
+        Rating rating = new Rating();
+        rating.setGrade(grade ? 1 : -1);
+        rating.setAnswerId(answerId);
+        rating.setUserId(userId);
+        return rating;
+    }
+
+    private void updateAnswerObject(Answer answer, String text) {
+        answer.setText(text);
+        answer.setEditingDate(LocalDateTime.now());
+    }
+
+    private void updateRatingObject(Rating rating, boolean grade, Long answerId, Long userId) {
+        rating.setGrade(grade ? 1 : -1);
+        rating.setAnswerId(answerId);
+        rating.setUserId(userId);
     }
 }

@@ -14,12 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
-    private static final String SQL_COUNT_BY_USER_ID_QUERY = """
-            SELECT count(id) 
-            FROM answers 
-            WHERE author_id = ?""";
     private static final String SQL_FIND_BY_ID_AND_QUESTION_AUTHOR_ID_QUERY = """
-            SELECT a.id, a.text, a.creation_date, a.editing_date, a.solution, a.question_id, count(a.id) OVER() AS total, a.author_id as user_id, u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
+            SELECT a.id, a.text, a.creation_date, a.editing_date, a.solution, a.question_id, count(a.id) OVER() AS total, a.author_id as user_id, 
+            u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
             u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
             u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role 
             FROM answers a 
@@ -28,8 +25,9 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             INNER JOIN questions q 
             ON a.question_id = q.id 
             WHERE a.id = ? AND q.author_id = ?""";
-    private static final String SQL_FIND_LIMITED_BY_QUESTION_ID_ORDER_BY_CREATION_DATE_ASC_QUERY = """
-            SELECT a.id, a.text, a.creation_date, a.editing_date, a.solution, a.question_id, count(a.id) OVER() AS total, a.author_id as user_id, u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
+    private static final String SQL_FIND_BY_QUESTION_ID_AND_AUTHOR_ID_ORDER_BY_CREATION_DATE_ASC_LIMITED_TO_QUERY = """
+            SELECT a.id, a.text, a.creation_date, a.editing_date, a.solution, a.question_id, count(a.id) OVER() AS total, a.author_id as user_id, 
+            u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
             u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
             u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role, sum(r.grade) as rating, ur.grade 
             FROM answers a
@@ -41,6 +39,34 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             GROUP BY a.id 
             ORDER BY a.creation_date ASC 
             LIMIT ?, ?""";
+    private static final String SQL_FIND_BY_ID_QUERY = """
+            SELECT a.id, a.text, a.creation_date, a.editing_date, a.solution, a.question_id, count(a.id) OVER() AS total, a.author_id as user_id, 
+            u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
+            u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
+            u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role 
+            FROM answers a 
+            INNER JOIN users u 
+            ON a.author_id = u.id 
+            WHERE a.id = ?""";
+    private static final String SQL_EXISTS_BY_ID_AND_AUTHOR_ID_NOT_QUERY = """
+            SELECT 1
+            FROM answers a
+            WHERE id = ? 
+            AND author_id <> ?""";
+    private static final String SQL_COUNT_BY_USER_ID_QUERY = """
+            SELECT count(id) 
+            FROM answers 
+            WHERE author_id = ?""";
+    private static final String SQL_COUNT_BY_QUESTION_ID_QUERY = """
+            SELECT count(id) 
+            FROM answers 
+            WHERE question_id = ?""";
+    private static final String SQL_CREATE_QUERY = """
+            INSERT INTO answers(text, creation_date, editing_date, solution, question_id, author_id) 
+            VALUES (?, ?, ?, ?, ?, ?)""";
+    private static final String SQL_CREATE_ANSWER_ATTACHMENT_QUERY = """
+            INSERT INTO answer_attachment(answer_id, attachment_id) 
+            VALUES (?, ?)""";
     private static final String SQL_UPDATE_SOLUTION_BY_QUESTION_ID_AND_SOLUTION_QUERY = """
             UPDATE answers 
             SET solution = ? 
@@ -49,33 +75,9 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             UPDATE answers 
             SET text = ?, creation_date = ?, editing_date = ?, solution = ?, question_id = ?, author_id = ? 
             WHERE id = ?""";
-    private static final String SQL_EXISTS_BY_ID_AND_AUTHOR_ID_NOT_QUERY = """
-            SELECT 1
-            FROM answers a
-            WHERE id = ? 
-            AND author_id <> ?""";
-    private static final String SQL_CREATE_QUERY = """
-            INSERT INTO answers(text, creation_date, editing_date, solution, question_id, author_id) 
-            VALUES (?, ?, ?, ?, ?, ?)""";
-    private static final String SQL_CREATE_ANSWER_ATTACHMENT_QUERY = """
-            INSERT INTO answer_attachment(answer_id, attachment_id) 
-            VALUES (?, ?)""";
-    private static final String SQL_COUNT_BY_QUESTION_ID_QUERY = """
-            SELECT count(id) 
-            FROM answers 
-            WHERE question_id = ?""";
     private static final String SQL_DELETE_QUERY = """
             DELETE FROM answers 
             WHERE id = ?""";
-    private static final String SQL_FIND_BY_ID_QUERY = """
-            SELECT a.id, a.text, a.creation_date, a.editing_date, a.solution, a.question_id, count(a.id) OVER() AS total, a.author_id as user_id, u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
-            u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
-            u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role 
-            FROM answers a 
-            INNER JOIN users u 
-            ON a.author_id = u.id 
-            WHERE a.id = ?""";
-
     private final RowMapper mapper = new AnswerMapper();
 
     @Override
@@ -103,7 +105,6 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             statement.setBoolean(4, answer.getSolution());
             statement.setObject(5, answer.getQuestionId());
             statement.setObject(6, answer.getAuthor().getId());
-
             if(statement.executeUpdate() >= 0) {
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if(resultSet.next()) {
@@ -148,46 +149,17 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
     }
 
     @Override
-    public Long countByUserId(Long userId) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_USER_ID_QUERY)){
-            statement.setLong(1, userId);
-            try(ResultSet resultSet = statement.executeQuery()) {
-                if(resultSet.next()) {
-                    return resultSet.getLong(1);
-                }
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Failed to count answers by calling countTotalAnswersByUserId(Long userId) method", e);
-        }
-        return 0L;
-    }
-
-    @Override
     public List<Answer> findByQuestionIdAndAuthorIdOrderByCreationDateAscLimitedTo(Long questionId, Long userId, int offset, int limit) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_LIMITED_BY_QUESTION_ID_ORDER_BY_CREATION_DATE_ASC_QUERY)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_QUESTION_ID_AND_AUTHOR_ID_ORDER_BY_CREATION_DATE_ASC_LIMITED_TO_QUERY)){
             statement.setLong(1, userId);
             statement.setLong(2, questionId);
             statement.setInt(3, offset);
             statement.setInt(4, limit);
-
             try(ResultSet resultSet = statement.executeQuery()) {
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find answers by calling findLimitedByQuestionIdOrderByCreationDateAsc method", e);
-        }
-    }
-
-    @Override
-    public boolean existsByIdAndAuthorIdNot(Long answerId, Long authorId) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_ID_AND_AUTHOR_ID_NOT_QUERY)){
-            statement.setLong(1, answerId);
-            statement.setLong(2, authorId);
-            try(ResultSet resultSet = statement.executeQuery()) {
-                return resultSet.next();
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Failed to find answer by calling checkIfExistByIdAndAuthorIdNot(Long answerId, Long authorId) method", e);
+            throw new DaoException("Failed to find answers by calling findByQuestionIdAndAuthorIdOrderByCreationDateAscLimitedTo method", e);
         }
     }
 
@@ -209,26 +181,31 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
     }
 
     @Override
-    public boolean updateSolutionByQuestionIdAndSolution(Long questionId, Boolean solution) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_SOLUTION_BY_QUESTION_ID_AND_SOLUTION_QUERY)){
-            statement.setBoolean(1, solution);
-            statement.setLong(2, questionId);
-            statement.setBoolean(3, solution);
-            return statement.executeUpdate() >= 0;
+    public boolean existsByIdAndAuthorIdNot(Long answerId, Long authorId) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_ID_AND_AUTHOR_ID_NOT_QUERY)){
+            statement.setLong(1, answerId);
+            statement.setLong(2, authorId);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
         } catch (SQLException e) {
-            throw new DaoException("Failed to answer solution category by calling updateSolutionByQuestionIdAndSolution method", e);
+            throw new DaoException("Failed to find answer by calling existsByIdAndAuthorIdNot(Long answerId, Long authorId) method", e);
         }
     }
 
     @Override
-    public boolean createAnswerAttachment(Long answerId, Long attachmentId) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_ANSWER_ATTACHMENT_QUERY)){
-            statement.setLong(1, answerId);
-            statement.setLong(2, attachmentId);
-            return statement.executeUpdate() >= 0;
+    public Long countByUserId(Long userId) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_USER_ID_QUERY)){
+            statement.setLong(1, userId);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return resultSet.getLong(1);
+                }
+            }
         } catch (SQLException e) {
-            throw new DaoException("Failed to create answer-attachment relationship by calling createAnswerAttachment(Long answerId, Long attachmentId) method", e);
+            throw new DaoException("Failed to count answers by calling countByUserId(Long userId) method", e);
         }
+        return 0L;
     }
 
     @Override
@@ -241,10 +218,31 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to count answers by calling countTotalByQuestionId(Long id) method", e);
+            throw new DaoException("Failed to count answers by calling countByQuestionId(Long id) method", e);
         }
         return 0L;
     }
 
+    @Override
+    public boolean createAnswerAttachment(Long answerId, Long attachmentId) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_ANSWER_ATTACHMENT_QUERY)){
+            statement.setLong(1, answerId);
+            statement.setLong(2, attachmentId);
+            return statement.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to create answer-attachment relationship by calling createAnswerAttachment method", e);
+        }
+    }
 
+    @Override
+    public boolean updateSolutionByQuestionIdAndSolution(Long questionId, Boolean solution) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_SOLUTION_BY_QUESTION_ID_AND_SOLUTION_QUERY)){
+            statement.setBoolean(1, solution);
+            statement.setLong(2, questionId);
+            statement.setBoolean(3, solution);
+            return statement.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to answer solution category by calling updateSolutionByQuestionIdAndSolution method", e);
+        }
+    }
 }
