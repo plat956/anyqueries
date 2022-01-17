@@ -46,7 +46,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createNewUser(String firstName, String lastName, String middleName, String email, String telegram, String login, String password) {
+    public User createUserObject(String firstName, String lastName, String middleName, String email,
+                                 String telegram, String login, String password) {
         User user = new User();
         user.setFirstName(firstName);
         user.setLastName(lastName);
@@ -62,46 +63,69 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findByLoginAndPassword(String login, String password) {
+        Optional<User> user = findByLogin(login);
+        if(user.isPresent() && passwordEncoder.check(password, user.get().getPassword())) {
+            return user;
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<User> findByCredentialKeyAndCredentialToken(String key, String token) {
+        Optional<User> user = findByCredentialKey(key);
+        if(user.isPresent()) {
+            String tokenSource = getCredentialTokenSource(user.get());
+            if (passwordEncoder.check(tokenSource, token)) {
+                return user;
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        Optional<User> user = Optional.empty();
+        if(id != null) {
+            BaseDao userDao = new UserDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+                try {
+                    user = userDao.findById(id);
+                    transaction.commit();
+                } catch (DaoException e) {
+                    transaction.rollback();
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Something went wrong during retrieving user by id", e);
+            }
+        }
+        return user;
+    }
+
+    @Override
+    public Paginated<User> findPaginatedByLoginContainsOrderByRoleAsc(RequestPage page, String loginPattern) {
+        BaseDao userDao = new UserDaoImpl();
+        List<User> users = new ArrayList<>();
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                users = ((UserDao)userDao).findByLoginContainsOrderByRoleAscLimitedTo(loginPattern, page.getOffset(), page.getLimit());
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving users by login containing with limit", e);
+        }
+        return new Paginated<>(users);
+    }
+
+    @Override
     public UserHash generateUserHash(User user) {
         UserHash userHash = new UserHash();
         userHash.setUser(user);
         userHash.setHash(passwordEncoder.encode(USER_HASH_ADDITIONAL_SALT + user.getLogin()));
         userHash.setExpires(LocalDateTime.now().plusHours(APP_ACTIVATION_LINK_ALIVE_HOURS));
         return userHash;
-    }
-
-    @Override
-    public Optional<User> findByLogin(String login) {
-        BaseDao userDao = new UserDaoImpl();
-        Optional<User> userOptional = Optional.empty();
-        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
-            try {
-                userOptional = ((UserDao)userDao).findByLogin(login);
-                transaction.commit();
-            } catch (DaoException e) {
-                transaction.rollback();
-            }
-        } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving user by login", e);
-        }
-        return userOptional;
-    }
-
-    @Override
-    public Optional<User> findByCredentialKey(String key) {
-        BaseDao userDao = new UserDaoImpl();
-        Optional<User> userOptional = Optional.empty();
-        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
-            try {
-                userOptional = ((UserDao)userDao).findByCredentialKey(key);
-                transaction.commit();
-            } catch (DaoException e) {
-                transaction.rollback();
-            }
-        } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving user by credential key", e);
-        }
-        return userOptional;
     }
 
     @Override
@@ -122,31 +146,11 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    @Override
-    public Optional<User> findByLoginAndPassword(String login, String password) {
-        Optional<User> user = findByLogin(login);
-        if(user.isPresent() && passwordEncoder.check(password, user.get().getPassword())) {
-            return user;
-        }
-        return Optional.empty();
-    }
 
     @Override
     public String generateCredentialToken(User user) {
         String tokenSource = getCredentialTokenSource(user);
         return passwordEncoder.encode(tokenSource);
-    }
-
-    @Override
-    public Optional<User> findByCredentialKeyAndCredentialToken(String key, String token) {
-        Optional<User> user = findByCredentialKey(key);
-        if(user.isPresent()) {
-            String tokenSource = getCredentialTokenSource(user.get());
-            if (passwordEncoder.check(tokenSource, token)) {
-                return user;
-            }
-        }
-        return Optional.empty();
     }
 
     @Override
@@ -252,7 +256,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean update(User user, String firstName, String lastName, String middleName, String email, String telegram, String login) {
+    public boolean update(User user, String firstName, String lastName, String middleName,
+                          String email, String telegram, String login) {
         BaseDao userDao = new UserDaoImpl();
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
@@ -317,41 +322,9 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    @Override
-    public Optional<User> findById(Long id) {
-        Optional<User> userOptional = Optional.empty();
-        if(id != null) {
-            BaseDao userDao = new UserDaoImpl();
-            try (EntityTransaction transaction = new EntityTransaction(userDao)) {
-                try {
-                    userOptional = userDao.findById(id);
-                    transaction.commit();
-                } catch (DaoException e) {
-                    transaction.rollback();
-                }
-            } catch (EntityTransactionException e) {
-                logger.error("Something went wrong during retrieving user by id", e);
-            }
-        }
-        return userOptional;
-    }
 
-    @Override
-    public Paginated<User> findPaginatedByLoginContainsOrderByRoleAsc(RequestPage page, String loginPattern) {
-        BaseDao userDao = new UserDaoImpl();
-        List<User> users = new ArrayList<>();
-        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
-            try {
-                users = ((UserDao)userDao).findLimitedByLoginLikeOrderByRoleAsc(page.getOffset(), page.getLimit(), loginPattern);
-                transaction.commit();
-            } catch (DaoException e) {
-                transaction.rollback();
-            }
-        } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving users with requested limit", e);
-        }
-        return new Paginated<>(users);
-    }
+
+
 
     @Override
     public List<String> findLoginByLoginContainsOrderByLoginAscLimitedTo(String loginPattern, int limit) {
@@ -359,13 +332,13 @@ public class UserServiceImpl implements UserService {
         List<String> logins = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
-                logins = ((UserDao)userDao).findLoginByLoginLikeOrderedAndLimited(loginPattern, limit);
+                logins = ((UserDao)userDao).findLoginByLoginContainsOrderByLoginAscLimitedTo(loginPattern, limit);
                 transaction.commit();
             } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving users logins by pattern", e);
+            logger.error("Something went wrong during retrieving users logins by login containing with limit", e);
         }
         return logins;
     }
@@ -379,17 +352,19 @@ public class UserServiceImpl implements UserService {
             try (EntityTransaction transaction = new EntityTransaction(userDao, attachmentDao)) {
                 try {
                     List<Attachment> attachments = ((AttachmentDao) attachmentDao).findByUserId(id);
-                    result = ((AttachmentDao) attachmentDao).deleteByQuestionAuthorId(id);
-                    result = ((AttachmentDao) attachmentDao).deleteByAnswerAuthorId(id);
-                    if (result) {
-                        AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                        result = attachmentService.deleteAttachmentsFiles(attachments);
-                        if (result) {
-                            result = userDao.delete(id);
-                            transaction.commit();
+                    boolean deleteByQuestionAuthor = ((AttachmentDao) attachmentDao).deleteByQuestionAuthorId(id);
+                    if(deleteByQuestionAuthor) {
+                        boolean deleteByAnswerAuthor = ((AttachmentDao) attachmentDao).deleteByAnswerAuthorId(id);
+                        if(deleteByAnswerAuthor) {
+                            boolean deleteUser = userDao.delete(id);
+                            if(deleteUser) {
+                                AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                                attachmentService.deleteAttachmentsFiles(attachments);
+                                result = true;
+                                transaction.commit();
+                            }
                         }
                     }
-                    //todo?? call rollback if commit is not reached?
                 } catch (DaoException e) {
                     transaction.rollback();
                 }
@@ -401,8 +376,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean update(Long userId, String firstName, String lastName, String middleName, String email, String telegram,
-                          String login, User.Status status, User.Role role) {
+    public boolean update(Long userId, String firstName, String lastName, String middleName, String email,
+                          String telegram, String login, User.Status status, User.Role role) {
         if(userId != null) {
             BaseDao userDao = new UserDaoImpl();
             try (EntityTransaction transaction = new EntityTransaction(userDao)) {
@@ -430,6 +405,38 @@ public class UserServiceImpl implements UserService {
             }
         }
         return false;
+    }
+
+    private Optional<User> findByLogin(String login) {
+        BaseDao userDao = new UserDaoImpl();
+        Optional<User> userOptional = Optional.empty();
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                userOptional = ((UserDao)userDao).findByLogin(login);
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving user by login", e);
+        }
+        return userOptional;
+    }
+
+    private Optional<User> findByCredentialKey(String key) {
+        BaseDao userDao = new UserDaoImpl();
+        Optional<User> userOptional = Optional.empty();
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                userOptional = ((UserDao)userDao).findByCredentialKey(key);
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving user by credential key", e);
+        }
+        return userOptional;
     }
 
     private String getCredentialTokenSource(User user) {

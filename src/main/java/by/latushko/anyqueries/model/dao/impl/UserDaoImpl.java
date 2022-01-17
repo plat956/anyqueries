@@ -348,7 +348,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     }
 
     @Override
-    public List<User> findLimitedByLoginLikeOrderByRoleAsc(int offset, int limit, String loginPattern) throws DaoException {
+    public List<User> findByLoginContainsOrderByRoleAscLimitedTo(String loginPattern, int offset, int limit) throws DaoException {
         StringBuilder query = new StringBuilder(SQL_FIND_LIMITED_BY_LOGIN_LIKE_ORDER_BY_ROLE_ASC_QUERY);
         if(loginPattern != null) {
             query.append(SQL_LOGIN_LIKE_CLAUSE);
@@ -371,7 +371,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     }
 
     @Override
-    public List<String> findLoginByLoginLikeOrderedAndLimited(String loginPatter, int limit) throws DaoException {
+    public List<String> findLoginByLoginContainsOrderByLoginAscLimitedTo(String loginPatter, int limit) throws DaoException {
         List<String> result = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_LOGIN_BY_LOGIN_LIKE_ORDER_ASC_QUERY)){
             statement.setString(1, LIKE_MARKER + loginPatter + LIKE_MARKER);

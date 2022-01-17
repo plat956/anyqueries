@@ -37,23 +37,21 @@ public class RegistrationServiceImpl implements RegistrationService {
     public boolean registerUser(String firstName, String lastName, String middleName, boolean sendLink,
                                 String email, String telegram, String login, String password, MessageManager manager) {
         BaseDao userDao = new UserDaoImpl();
-
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
                 UserService userService = UserServiceImpl.getInstance();
-                User user = userService.createNewUser(firstName, lastName, middleName, email, telegram, login, password);
-                userDao.create(user);
-
-                if (sendLink) {
-                    UserHash userHash = userService.generateUserHash(user);
-                    ((UserDao) userDao).createUserHash(userHash);
-
-                    EmailService emailService = new EmailServiceImpl(manager);
-                    emailService.sendActivationEmail(user, userHash);
+                User user = userService.createUserObject(firstName, lastName, middleName, email, telegram, login, password);
+                boolean createResult = userDao.create(user);
+                if(createResult) {
+                    if (sendLink) {
+                        UserHash userHash = userService.generateUserHash(user);
+                        ((UserDao) userDao).createUserHash(userHash);
+                        EmailService emailService = new EmailServiceImpl(manager);
+                        emailService.sendActivationEmail(user, userHash);
+                    }
+                    transaction.commit();
+                    return true;
                 }
-
-                transaction.commit();
-                return true;
             } catch (DaoException | MailSenderException e) {
                 transaction.rollback();
             }
@@ -70,20 +68,19 @@ public class RegistrationServiceImpl implements RegistrationService {
             try {
                 user.setEmail(email);
                 user.setTelegram(telegram);
-                userDao.update(user);
-
-                if (sendLink) {
-                    ((UserDao) userDao).deleteUserHashByUserId(user.getId());
-                    UserService userService = UserServiceImpl.getInstance();
-                    UserHash userHash = userService.generateUserHash(user);
-                    ((UserDao) userDao).createUserHash(userHash);
-
-                    EmailService emailService = new EmailServiceImpl(manager);
-                    emailService.sendActivationEmail(user, userHash);
+                Optional<User> userOptional = userDao.update(user);
+                if(userOptional.isPresent()) {
+                    if (sendLink) {
+                        ((UserDao) userDao).deleteUserHashByUserId(user.getId());
+                        UserService userService = UserServiceImpl.getInstance();
+                        UserHash userHash = userService.generateUserHash(user);
+                        ((UserDao) userDao).createUserHash(userHash);
+                        EmailService emailService = new EmailServiceImpl(manager);
+                        emailService.sendActivationEmail(user, userHash);
+                    }
+                    transaction.commit();
+                    return true;
                 }
-
-                transaction.commit();
-                return true;
             } catch (DaoException | MailSenderException e) {
                 transaction.rollback();
             }
@@ -101,16 +98,15 @@ public class RegistrationServiceImpl implements RegistrationService {
                 try {
                     LocalDateTime validDate = LocalDateTime.now();
                     Optional<User> userOptional = ((UserDao) userDao).findInactiveByHashAndHashIsNotExpired(hash, validDate);
-
-                    if (userOptional.isPresent()) { //todo: is it ok to skip committing started transaction if optional is empty?
+                    if (userOptional.isPresent()) {
                         User user = userOptional.get();
                         user.setStatus(User.Status.ACTIVE);
-                        userDao.update(user);
-
-                        ((UserDao) userDao).deleteUserHashByUserId(user.getId());
-                        transaction.commit();
-
-                        return userOptional;
+                        userOptional = userDao.update(user);
+                        if (userOptional.isPresent()) {
+                            ((UserDao) userDao).deleteUserHashByUserId(user.getId());
+                            transaction.commit();
+                            return userOptional;
+                        }
                     }
                 } catch (DaoException e) {
                     transaction.rollback();
@@ -125,27 +121,25 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public boolean activateUserByTelegramAccount(String account) {
         BaseDao userDao = new UserDaoImpl();
-
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
                 Optional<User> userOptional = ((UserDao)userDao).findInactiveByTelegram(account);
-
                 if (userOptional.isPresent()) {
                     User user = userOptional.get();
                     user.setStatus(User.Status.ACTIVE);
-                    userDao.update(user);
-                    ((UserDao)userDao).deleteUserHashByUserId(user.getId());
-                    transaction.commit();
-                    return true;
+                    userOptional = userDao.update(user);
+                    if(userOptional.isPresent()) {
+                        ((UserDao) userDao).deleteUserHashByUserId(user.getId());
+                        transaction.commit();
+                        return true;
+                    }
                 }
-
             } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
             logger.error("Failed to activate user by telegram account", e);
         }
-
         return false;
     }
 }
