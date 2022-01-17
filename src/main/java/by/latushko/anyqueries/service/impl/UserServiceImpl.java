@@ -46,23 +46,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUserObject(String firstName, String lastName, String middleName, String email,
-                                 String telegram, String login, String password) {
-        User user = new User();
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setMiddleName(middleName);
-        user.setEmail(email);
-        user.setTelegram(telegram);
-        user.setLogin(login);
-        user.setCredentialKey(passwordEncoder.encode(CREDENTIAL_KEY_ADDITIONAL_SALT + login));
-        user.setPassword(passwordEncoder.encode(password));
-        user.setRole(User.Role.USER);
-        user.setStatus(User.Status.INACTIVE);
-        return user;
-    }
-
-    @Override
     public Optional<User> findByLoginAndPassword(String login, String password) {
         Optional<User> user = findByLogin(login);
         if(user.isPresent() && passwordEncoder.check(password, user.get().getPassword())) {
@@ -120,37 +103,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserHash generateUserHash(User user) {
-        UserHash userHash = new UserHash();
-        userHash.setUser(user);
-        userHash.setHash(passwordEncoder.encode(USER_HASH_ADDITIONAL_SALT + user.getLogin()));
-        userHash.setExpires(LocalDateTime.now().plusHours(APP_ACTIVATION_LINK_ALIVE_HOURS));
-        return userHash;
-    }
-
-    @Override
-    public boolean updateLastLoginDate(User user) {
+    public List<String> findLoginByLoginContainsOrderByLoginAscLimitedTo(String loginPattern, int limit) {
         BaseDao userDao = new UserDaoImpl();
+        List<String> logins = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
-                user.setLastLoginDate(LocalDateTime.now());
-                userDao.update(user);
+                logins = ((UserDao)userDao).findLoginByLoginContainsOrderByLoginAscLimitedTo(loginPattern, limit);
                 transaction.commit();
-                return true;
             } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during update user last login date", e);
+            logger.error("Something went wrong during retrieving users logins by login containing with limit", e);
         }
-        return false;
-    }
-
-
-    @Override
-    public String generateCredentialToken(User user) {
-        String tokenSource = getCredentialTokenSource(user);
-        return passwordEncoder.encode(tokenSource);
+        return logins;
     }
 
     @Override
@@ -256,6 +222,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean updateLastLoginDate(User user) {
+        BaseDao userDao = new UserDaoImpl();
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                user.setLastLoginDate(LocalDateTime.now());
+                Optional<User> userOptional = userDao.update(user);
+                if(userOptional.isPresent()) {
+                    transaction.commit();
+                    return true;
+                }
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during update user last login date", e);
+        }
+        return false;
+    }
+
+    @Override
     public boolean update(User user, String firstName, String lastName, String middleName,
                           String email, String telegram, String login) {
         BaseDao userDao = new UserDaoImpl();
@@ -267,9 +253,11 @@ public class UserServiceImpl implements UserService {
                 user.setEmail(email);
                 user.setTelegram(telegram);
                 user.setLogin(login);
-                userDao.update(user);
-                transaction.commit();
-                return true;
+                Optional<User> userOptional = userDao.update(user);
+                if(userOptional.isPresent()) {
+                    transaction.commit();
+                    return true;
+                }
             } catch (DaoException e) {
                 transaction.rollback();
             }
@@ -277,102 +265,6 @@ public class UserServiceImpl implements UserService {
             logger.error("Failed to update user data", e);
         }
         return false;
-    }
-
-    @Override
-    public boolean changePassword(User user, String password) {
-        BaseDao userDao = new UserDaoImpl();
-        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
-            try {
-                user.setPassword(passwordEncoder.encode(password));
-                userDao.update(user);
-                transaction.commit();
-                return true;
-            } catch (DaoException e) {
-                transaction.rollback();
-            }
-        } catch (EntityTransactionException e) {
-            logger.error("Failed to update user password", e);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean checkPassword(User user, String password) {
-        return passwordEncoder.check(password, user.getPassword());
-    }
-
-    @Override
-    public boolean updateAvatar(User user, String avatar) {
-        BaseDao userDao = new UserDaoImpl();
-        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
-            try {
-                AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                attachmentService.deleteAvatar(user.getAvatar());
-                user.setAvatar(avatar);
-                userDao.update(user);
-                transaction.commit();
-                return true;
-            } catch (DaoException e) {
-                transaction.rollback();
-            }
-        } catch (EntityTransactionException e) {
-            logger.error("Failed to update user avatar", e);
-        }
-        return false;
-    }
-
-
-
-
-
-    @Override
-    public List<String> findLoginByLoginContainsOrderByLoginAscLimitedTo(String loginPattern, int limit) {
-        BaseDao userDao = new UserDaoImpl();
-        List<String> logins = new ArrayList<>();
-        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
-            try {
-                logins = ((UserDao)userDao).findLoginByLoginContainsOrderByLoginAscLimitedTo(loginPattern, limit);
-                transaction.commit();
-            } catch (DaoException e) {
-                transaction.rollback();
-            }
-        } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving users logins by login containing with limit", e);
-        }
-        return logins;
-    }
-
-    @Override
-    public boolean delete(Long id) {
-        boolean result = false;
-        if(id != null) {
-            BaseDao userDao = new UserDaoImpl();
-            BaseDao attachmentDao = new AttachmentDaoImpl();
-            try (EntityTransaction transaction = new EntityTransaction(userDao, attachmentDao)) {
-                try {
-                    List<Attachment> attachments = ((AttachmentDao) attachmentDao).findByUserId(id);
-                    boolean deleteByQuestionAuthor = ((AttachmentDao) attachmentDao).deleteByQuestionAuthorId(id);
-                    if(deleteByQuestionAuthor) {
-                        boolean deleteByAnswerAuthor = ((AttachmentDao) attachmentDao).deleteByAnswerAuthorId(id);
-                        if(deleteByAnswerAuthor) {
-                            boolean deleteUser = userDao.delete(id);
-                            if(deleteUser) {
-                                AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                                attachmentService.deleteAttachmentsFiles(attachments);
-                                result = true;
-                                transaction.commit();
-                            }
-                        }
-                    }
-                } catch (DaoException e) {
-                    transaction.rollback();
-                }
-            } catch (EntityTransactionException e) {
-                logger.error("Failed to delete user", e);
-            }
-        }
-        return result;
     }
 
     @Override
@@ -393,9 +285,11 @@ public class UserServiceImpl implements UserService {
                         user.setLogin(login);
                         user.setStatus(status);
                         user.setRole(role);
-                        userDao.update(user);
-                        transaction.commit();
-                        return true;
+                        userOptional = userDao.update(user);
+                        if(userOptional.isPresent()) {
+                            transaction.commit();
+                            return true;
+                        }
                     }
                 } catch (DaoException e) {
                     transaction.rollback();
@@ -405,6 +299,117 @@ public class UserServiceImpl implements UserService {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean updateAvatar(User user, String avatar) {
+        BaseDao userDao = new UserDaoImpl();
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                attachmentService.deleteAvatar(user.getAvatar());
+                user.setAvatar(avatar);
+                Optional<User> userOptional = userDao.update(user);
+                if(userOptional.isPresent()) {
+                    transaction.commit();
+                    return true;
+                }
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to update user avatar", e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean delete(Long id) {
+        boolean result = false;
+        if(id != null) {
+            BaseDao userDao = new UserDaoImpl();
+            BaseDao attachmentDao = new AttachmentDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(userDao, attachmentDao)) {
+                try {
+                    List<Attachment> attachments = ((AttachmentDao) attachmentDao).findByUserId(id);
+                    boolean deleteByQuestionAuthor = ((AttachmentDao) attachmentDao).deleteByQuestionAuthorId(id);
+                    if(deleteByQuestionAuthor) {
+                        boolean deleteByAnswerAuthor = ((AttachmentDao) attachmentDao).deleteByAnswerAuthorId(id);
+                        if(deleteByAnswerAuthor) {
+                            boolean deleteUser = userDao.delete(id);
+                            if(deleteUser) {
+                                AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                                attachmentService.deleteAttachmentsFiles(attachments);
+                                transaction.commit();
+                                result = true;
+                            }
+                        }
+                    }
+                } catch (DaoException e) {
+                    transaction.rollback();
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Failed to delete user", e);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public User createUserObject(String firstName, String lastName, String middleName, String email,
+                                 String telegram, String login, String password) {
+        User user = new User();
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setMiddleName(middleName);
+        user.setEmail(email);
+        user.setTelegram(telegram);
+        user.setLogin(login);
+        user.setCredentialKey(passwordEncoder.encode(CREDENTIAL_KEY_ADDITIONAL_SALT + login));
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRole(User.Role.USER);
+        user.setStatus(User.Status.INACTIVE);
+        return user;
+    }
+
+    @Override
+    public UserHash generateUserHash(User user) {
+        UserHash userHash = new UserHash();
+        userHash.setUser(user);
+        userHash.setHash(passwordEncoder.encode(USER_HASH_ADDITIONAL_SALT + user.getLogin()));
+        userHash.setExpires(LocalDateTime.now().plusHours(APP_ACTIVATION_LINK_ALIVE_HOURS));
+        return userHash;
+    }
+
+    @Override
+    public String generateCredentialToken(User user) {
+        String tokenSource = getCredentialTokenSource(user);
+        return passwordEncoder.encode(tokenSource);
+    }
+
+    @Override
+    public boolean changePassword(User user, String password) {
+        BaseDao userDao = new UserDaoImpl();
+        try (EntityTransaction transaction = new EntityTransaction(userDao)) {
+            try {
+                user.setPassword(passwordEncoder.encode(password));
+                Optional<User> userOptional = userDao.update(user);
+                if(userOptional.isPresent()) {
+                    transaction.commit();
+                    return true;
+                }
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Failed to update user password", e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean checkPassword(User user, String password) {
+        return passwordEncoder.check(password, user.getPassword());
     }
 
     private Optional<User> findByLogin(String login) {

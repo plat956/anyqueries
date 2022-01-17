@@ -31,7 +31,7 @@ public class EmailServiceImpl implements EmailService {
     private static final String TEMPLATE_NOT_REPLY_NOTICE = "notReply";
     private static final String QUERY_PARAMETERS_DELIMITER = "&";
     private static final String QUERY_PARAMETER_EQUAL_SIGN = "=";
-    private MessageManager manager;
+    private final MessageManager manager;
 
     public EmailServiceImpl(MessageManager manager) {
         this.manager = manager;

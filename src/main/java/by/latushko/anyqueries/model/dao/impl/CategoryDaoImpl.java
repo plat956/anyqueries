@@ -168,7 +168,7 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
     }
 
     @Override
-    public List<Category> findLimitedByNameLikeOrderByNameAsc(int offset, int limit, String namePattern) throws DaoException {
+    public List<Category> findByNameContainsOrderByNameAscLimitedTo(String namePattern, int offset, int limit) throws DaoException {
         StringBuilder query = new StringBuilder(SQL_FIND_LIMITED_BY_NAME_LIKE_ORDER_BY_NAME_ASC_QUERY);
         if(namePattern != null) {
             query.append(SQL_NAME_LIKE_CLAUSE);
@@ -217,7 +217,7 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
     }
 
     @Override
-    public List<String> findNameByNameLikeOrderedAndLimited(String namePatter, int limit) throws DaoException {
+    public List<String> findNameByNameContainsOrderByNameAscLimitedTo(String namePatter, int limit) throws DaoException {
         List<String> result = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_NAME_BY_NAME_LIKE_ORDER_ASC_QUERY)){
             statement.setString(1, LIKE_MARKER + namePatter + LIKE_MARKER);

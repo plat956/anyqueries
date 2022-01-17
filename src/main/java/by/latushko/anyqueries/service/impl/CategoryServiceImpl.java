@@ -92,15 +92,51 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categories = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
             try {
-                categories = ((CategoryDao)categoryDao).findLimitedByNameLikeOrderByNameAsc(page.getOffset(), page.getLimit(), namePattern);
+                categories = ((CategoryDao)categoryDao).findByNameContainsOrderByNameAscLimitedTo(namePattern, page.getOffset(), page.getLimit());
                 transaction.commit();
             } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving categories with requested limit", e);
+            logger.error("Something went wrong during retrieving categories by name containing with limit", e);
         }
         return new Paginated<>(categories);
+    }
+
+    @Override
+    public List<String> findNameByNameContainsOrderByNameAscLimitedTo(String namePattern, int limit) {
+        BaseDao categoryDao = new CategoryDaoImpl();
+        List<String> names = new ArrayList<>();
+        try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
+            try {
+                names = ((CategoryDao)categoryDao).findNameByNameContainsOrderByNameAscLimitedTo(namePattern, limit);
+                transaction.commit();
+            } catch (DaoException e) {
+                transaction.rollback();
+            }
+        } catch (EntityTransactionException e) {
+            logger.error("Something went wrong during retrieving categories names by name containing with limit", e);
+        }
+        return names;
+    }
+
+    @Override
+    public Optional<Category> findById(Long id) {
+        Optional<Category> categoryOptional = Optional.empty();
+        if(id != null) {
+            BaseDao categoryDao = new CategoryDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
+                try {
+                    categoryOptional = categoryDao.findById(id);
+                    transaction.commit();
+                } catch (DaoException e) {
+                    transaction.rollback();
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Something went wrong during retrieving category by id", e);
+            }
+        }
+        return categoryOptional;
     }
 
     @Override
@@ -145,9 +181,11 @@ public class CategoryServiceImpl implements CategoryService {
                 Category category = new Category();
                 category.setName(name);
                 category.setColor(color);
-                categoryDao.create(category);
-                transaction.commit();
-                return Optional.of(category);
+                boolean result = categoryDao.create(category);
+                if(result) {
+                    transaction.commit();
+                    return Optional.of(category);
+                }
             } catch (DaoException e) {
                 transaction.rollback();
             }
@@ -158,40 +196,22 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Optional<Category> findById(Long id) {
-        Optional<Category> categoryOptional = Optional.empty();
-        if(id != null) {
-            BaseDao categoryDao = new CategoryDaoImpl();
-            try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
-                try {
-                    categoryOptional = categoryDao.findById(id);
-                    transaction.commit();
-                } catch (DaoException e) {
-                    transaction.rollback();
-                }
-            } catch (EntityTransactionException e) {
-                logger.error("Something went wrong during retrieving category by id", e);
-            }
-        }
-        return categoryOptional;
-    }
-
-    @Override
     public boolean update(Long id, String name, String color) {
         BaseDao categoryDao = new CategoryDaoImpl();
-
         try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
             try {
                 Optional<Category> categoryOptional = categoryDao.findById(id);
                 if(categoryOptional.isEmpty())  {
-                    throw new EntityTransactionException("Failed to update category. Category with id " + id + " does not exist"); //todo: or return false?
+                    return false;
                 }
                 Category category = categoryOptional.get();
                 category.setName(name);
                 category.setColor(color);
-                categoryDao.update(category);
-                transaction.commit();
-                return true;
+                categoryOptional = categoryDao.update(category);
+                if(categoryOptional.isPresent()) {
+                    transaction.commit();
+                    return true;
+                }
             } catch (DaoException e) {
                 transaction.rollback();
             }
@@ -210,16 +230,16 @@ public class CategoryServiceImpl implements CategoryService {
             try (EntityTransaction transaction = new EntityTransaction(categoryDao, attachmentDao)) {
                 try {
                     List<Attachment> attachments = ((AttachmentDaoImpl) attachmentDao).findByCategoryId(id);
-                    result = ((AttachmentDao) attachmentDao).deleteByCategoryId(id);
-                    if (result) {
-                        AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                        result = attachmentService.deleteAttachmentsFiles(attachments);
-                        if (result) {
-                            result = categoryDao.delete(id);
+                    boolean deleteByCategory = ((AttachmentDao) attachmentDao).deleteByCategoryId(id);
+                    if (deleteByCategory) {
+                        boolean deleteCategory = categoryDao.delete(id);
+                        if(deleteCategory) {
+                            AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                            attachmentService.deleteAttachmentsFiles(attachments);
                             transaction.commit();
+                            result = true;
                         }
                     }
-                    //todo?? call rollback if commit is not reached?
                 } catch (DaoException e) {
                     transaction.rollback();
                 }
@@ -228,22 +248,5 @@ public class CategoryServiceImpl implements CategoryService {
             }
         }
         return result;
-    }
-
-    @Override
-    public List<String> findNameByNameContainsOrderByNameAscLimitedTo(String namePattern, int limit) {
-        BaseDao categoryDao = new CategoryDaoImpl();
-        List<String> names = new ArrayList<>();
-        try (EntityTransaction transaction = new EntityTransaction(categoryDao)) {
-            try {
-                names = ((CategoryDao)categoryDao).findNameByNameLikeOrderedAndLimited(namePattern, limit);
-                transaction.commit();
-            } catch (DaoException e) {
-                transaction.rollback();
-            }
-        } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving categories names by pattern", e);
-        }
-        return names;
     }
 }

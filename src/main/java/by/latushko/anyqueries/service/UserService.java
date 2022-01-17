@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    User createUserObject(String firstName, String lastName, String middleName, String email,
-                          String telegram, String login, String password);
     Optional<User> findByLoginAndPassword(String login, String password);
     Optional<User> findByCredentialKeyAndCredentialToken(String key, String token);
     Optional<User> findById(Long id);
@@ -27,13 +25,14 @@ public interface UserService {
                    String email, String telegram, String login);
     boolean update(Long userId, String firstName, String lastName, String middleName, String email,
                    String telegram, String login, User.Status status, User.Role role);
+    boolean updateAvatar(User user, String avatar);
     boolean delete(Long id);
+    User createUserObject(String firstName, String lastName, String middleName, String email,
+                          String telegram, String login, String password);
     UserHash generateUserHash(User user);
-
     String generateCredentialToken(User user);
     boolean changePassword(User user, String password);
     boolean checkPassword(User user, String password);
-    boolean updateAvatar(User user, String avatar);
 
 
 }
