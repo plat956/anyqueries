@@ -61,6 +61,9 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             UPDATE questions 
             SET title = ?, text = ?, creation_date = ?, editing_date = ?, closed = ?, category_id = ?, author_id = ?   
             WHERE id = ?""";
+    private static final String SQL_EXISTS_BY_ID_QUERY = """
+            SELECT 1 FROM questions
+            WHERE id = ?""";
     private static final String SQL_FIND_LIMITED_BY_PARAMETERS_QUERY = """
             SELECT q.id, q.title, q.text, q.creation_date, q.editing_date, q.closed, q.category_id, c.name as category_name, c.color as category_color, 
             q.author_id as user_id, u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
@@ -315,6 +318,18 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
         query.append(String.format(SQL_FIND_ALL_GROUP_ORDER_LIMIT_CLAUSE, newestFirst ? SQL_CREATION_DATE_FIELD : SQL_ANSWERS_COUNT_FIELD));
 
         return query.toString();
+    }
+
+    @Override
+    public boolean existsById(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_ID_QUERY)){
+            statement.setLong(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed check if question exists by calling existsById(Long id) method", e);
+        }
     }
 
     private String buildSearchQuery(Long categoryId, Long authorId) {

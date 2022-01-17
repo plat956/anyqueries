@@ -163,7 +163,7 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
     }
 
     @Override
-    public List<Answer> findLimitedByQuestionIdOrderByCreationDateAsc(int offset, int limit, Long questionId, Long userId) throws DaoException {
+    public List<Answer> findByQuestionIdAndAuthorIdOrderByCreationDateAscLimitedTo(Long questionId, Long userId, int offset, int limit) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_LIMITED_BY_QUESTION_ID_ORDER_BY_CREATION_DATE_ASC_QUERY)){
             statement.setLong(1, userId);
             statement.setLong(2, questionId);

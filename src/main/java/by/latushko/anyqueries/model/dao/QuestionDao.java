@@ -15,4 +15,5 @@ public interface QuestionDao {
     List<Question> findByResolvedAndAuthorIdAndCategoryIdAndTitleContainsOrderByNewestLimitetTo(boolean resolved, boolean newestFirst, Long authorId, Long categoryId,
                                                                                                 String titlePattern, int offset, int limit) throws DaoException;
     Optional<Long> findAuthorIdById(Long id) throws DaoException;
+    boolean existsById(Long id) throws DaoException;
 }

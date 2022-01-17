@@ -304,36 +304,6 @@ public class QuestionServiceImpl implements QuestionService {
         return false;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     private Optional<Long> findAuthorIdById(Long id) {
         BaseDao questionDao = new QuestionDaoImpl();
         Optional<Long> authorId = Optional.empty();
