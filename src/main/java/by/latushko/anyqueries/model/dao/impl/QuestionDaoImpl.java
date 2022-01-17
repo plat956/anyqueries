@@ -17,11 +17,11 @@ import static by.latushko.anyqueries.model.mapper.TableColumnName.QUESTION_AUTHO
 import static by.latushko.anyqueries.model.mapper.TableColumnName.QUESTION_TITLE;
 
 public class QuestionDaoImpl extends BaseDao<Long, Question> implements QuestionDao {
-    private static final String SQL_FIND_TITLE_LIKE_ORDERED_AND_LIMITED_QUERY = """
+    private static final String SQL_FIND_TITLE_BY_TITLE_CONTAINS_QUERY = """
             SELECT title 
             FROM questions 
             WHERE title like ?""";
-    private static final String SQL_FIND_AUHTOR_ID_BY_ID_QUERY = """
+    private static final String SQL_FIND_AUTHOR_ID_BY_ID_QUERY = """
             SELECT author_id 
             FROM questions 
             WHERE id = ?""";
@@ -36,35 +36,7 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             INNER JOIN categories c 
             ON q.category_id = c.id
             WHERE q.id = ?""";
-    private static final String SQL_CREATE_QUERY = """
-            INSERT INTO questions(category_id, title, text, creation_date, closed, author_id) 
-            VALUES (?, ?, ?, ?, ?, ?)""";
-    private static final String SQL_CREATE_QUESTION_ATTACHMENT_QUERY = """
-            INSERT INTO question_attachment(question_id, attachment_id) 
-            VALUES (?, ?)""";
-    private static final String SQL_COUNT_BY_AUTHOR_ID_QUERY = """
-            SELECT count(id) 
-            FROM questions 
-            WHERE author_id = ?""";
-    private static final String SQL_COUNT_CLOSED_QUERY = """
-            SELECT count(id) 
-            FROM questions 
-            WHERE closed = ?""";
-    private static final String SQL_COUNT_CLOSED_BY_AUTHOR_ID_QUERY = """
-            SELECT count(id) 
-            FROM questions 
-            WHERE author_id = ? and closed = ?""";
-    private static final String SQL_DELETE_QUERY = """
-            DELETE FROM questions 
-            WHERE id = ?""";
-    private static final String SQL_UPDATE_QUERY = """
-            UPDATE questions 
-            SET title = ?, text = ?, creation_date = ?, editing_date = ?, closed = ?, category_id = ?, author_id = ?   
-            WHERE id = ?""";
-    private static final String SQL_EXISTS_BY_ID_QUERY = """
-            SELECT 1 FROM questions
-            WHERE id = ?""";
-    private static final String SQL_FIND_LIMITED_BY_PARAMETERS_QUERY = """
+    private static final String SQL_FIND_ALL_PART_QUERY = """
             SELECT q.id, q.title, q.text, q.creation_date, q.editing_date, q.closed, q.category_id, c.name as category_name, c.color as category_color, 
             q.author_id as user_id, u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
             u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
@@ -79,6 +51,34 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             ON q.id = a.question_id
             LEFT JOIN answers s 
             ON q.id = s.question_id AND s.solution = true""";
+    private static final String SQL_EXISTS_BY_ID_QUERY = """
+            SELECT 1 FROM questions
+            WHERE id = ?""";
+    private static final String SQL_COUNT_BY_AUTHOR_ID_QUERY = """
+            SELECT count(id) 
+            FROM questions 
+            WHERE author_id = ?""";
+    private static final String SQL_COUNT_NOT_CLOSED_QUERY = """
+            SELECT count(id) 
+            FROM questions 
+            WHERE closed = ?""";
+    private static final String SQL_COUNT_NOT_CLOSED_BY_AUTHOR_ID_QUERY = """
+            SELECT count(id) 
+            FROM questions 
+            WHERE author_id = ? and closed = ?""";
+    private static final String SQL_CREATE_QUERY = """
+            INSERT INTO questions(category_id, title, text, creation_date, closed, author_id) 
+            VALUES (?, ?, ?, ?, ?, ?)""";
+    private static final String SQL_CREATE_QUESTION_ATTACHMENT_QUERY = """
+            INSERT INTO question_attachment(question_id, attachment_id) 
+            VALUES (?, ?)""";
+    private static final String SQL_UPDATE_QUERY = """
+            UPDATE questions 
+            SET title = ?, text = ?, creation_date = ?, editing_date = ?, closed = ?, category_id = ?, author_id = ?   
+            WHERE id = ?""";
+    private static final String SQL_DELETE_QUERY = """
+            DELETE FROM questions 
+            WHERE id = ?""";
     private static final String SQL_WHERE_EXPRESSION = " WHERE ";
     private static final String SQL_AND_EXPRESSION = " AND ";
     private static final String SQL_WHERE_RESOLVED_CLAUSE = "s.id is not null ";
@@ -91,7 +91,6 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     private static final String SQL_SEARCH_WHERE_AUTHOR_CLAUSE = " AND author_id = ? ";
     private static final String SQL_CREATION_DATE_FIELD = "q.creation_date";
     private static final String SQL_ANSWERS_COUNT_FIELD = "answers_count";
-
     private final QuestionMapper mapper = new QuestionMapper();
 
     @Override
@@ -119,7 +118,6 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             statement.setObject(4, question.getCreationDate());
             statement.setBoolean(5, question.getClosed());
             statement.setLong(6, question.getAuthor().getId());
-
             if(statement.executeUpdate() >= 0) {
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if(resultSet.next()) {
@@ -145,7 +143,6 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             statement.setLong(6, question.getCategory().getId());
             statement.setLong(7, question.getAuthor().getId());
             statement.setLong(8, question.getId());
-
             if(statement.executeUpdate() >= 0) {
                 return Optional.of(question);
             }
@@ -166,7 +163,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
     }
 
     @Override
-    public List<String> findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo(String likePattern, Long categoryId, Long authorId, int limit) throws DaoException {
+    public List<String> findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo(String likePattern,
+                                                      Long categoryId, Long authorId, int limit) throws DaoException {
         List<String> result = new ArrayList<>();
         String query = buildSearchQuery(categoryId, authorId);
         try (PreparedStatement statement = connection.prepareStatement(query)){
@@ -177,7 +175,6 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             } else if(authorId != null) {
                 statement.setLong(++index, authorId);
             }
-
             statement.setInt(++index, limit);
             try(ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()) {
@@ -185,71 +182,14 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find question titles by calling findTitleByTitleLikeAndCategoryIdAndAuthorIdLikeOrderedAndLimited method", e);
+            throw new DaoException("Failed to find question titles by calling findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo method", e);
         }
         return result;
     }
 
     @Override
-    public Long countByAuthorId(Long authorId) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_AUTHOR_ID_QUERY)){
-            statement.setLong(1, authorId);
-            try(ResultSet resultSet = statement.executeQuery()) {
-                if(resultSet.next()) {
-                    return resultSet.getLong(1);
-                }
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Failed to count questions by calling countTotalQuestionsByAuthorId(Long authorId) method", e);
-        }
-        return 0L;
-    }
-
-    @Override
-    public Long countNotClosed() throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_CLOSED_QUERY)){
-            statement.setLong(1, 0);
-            try(ResultSet resultSet = statement.executeQuery()) {
-                if(resultSet.next()) {
-                    return resultSet.getLong(1);
-                }
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Failed to count questions by calling countTotalNotClosedQuestions() method", e);
-        }
-        return 0L;
-    }
-
-    @Override
-    public Long countNotClosedByAuthorId(Long authorId) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_CLOSED_BY_AUTHOR_ID_QUERY)){
-            statement.setLong(1, authorId);
-            statement.setLong(2, 0);
-            try(ResultSet resultSet = statement.executeQuery()) {
-                if(resultSet.next()) {
-                    return resultSet.getLong(1);
-                }
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Failed to count questions by calling countTotalNotClosedQuestionsByAuthorId(Long authorId) method", e);
-        }
-        return 0L;
-    }
-
-    @Override
-    public boolean createQuestionAttachment(Long questionId, Long attachmentId) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_QUESTION_ATTACHMENT_QUERY)){
-            statement.setLong(1, questionId);
-            statement.setLong(2, attachmentId);
-            return statement.executeUpdate() >= 0;
-        } catch (SQLException e) {
-            throw new DaoException("Failed to create question-attachment relationship by calling createQuestionAttachment(Long questionId, Long attachmentId) method", e);
-        }
-    }
-
-    @Override
-    public List<Question> findByResolvedAndAuthorIdAndCategoryIdAndTitleContainsOrderByNewestLimitetTo(boolean resolved, boolean newestFirst, Long authorId, Long categoryId,
-                                                                                                       String titlePattern, int offset, int limit) throws DaoException {
+    public List<Question> findByResolvedAndAuthorIdAndCategoryIdAndTitleContainsOrderByNewestLimitedTo(boolean resolved,
+                      boolean newestFirst, Long authorId, Long categoryId, String titlePattern, int offset, int limit) throws DaoException {
         String query = buildQuestionsQuery(resolved, newestFirst, authorId, categoryId, titlePattern);
         try (PreparedStatement statement = connection.prepareStatement(query)){
             int index = 0;
@@ -269,17 +209,17 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find questions by calling findLimitedByResolvedAndAuthorIdAndCategoryIdAndTitleLikeOrderByNewest method", e);
+            throw new DaoException("Failed to find questions by calling findByResolvedAndAuthorIdAndCategoryIdAndTitleContainsOrderByNewestLimitedTo method", e);
         }
     }
 
     @Override
     public Optional<Long> findAuthorIdById(Long id) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_AUHTOR_ID_BY_ID_QUERY)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_AUTHOR_ID_BY_ID_QUERY)){
             statement.setLong(1, id);
             try(ResultSet resultSet = statement.executeQuery()) {
                 if(resultSet.next()) {
-                    return Optional.ofNullable(resultSet.getLong(QUESTION_AUTHOR_ID));
+                    return Optional.of(resultSet.getLong(QUESTION_AUTHOR_ID));
                 }
             }
         } catch (SQLException e) {
@@ -288,8 +228,77 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
         return Optional.empty();
     }
 
+    @Override
+    public boolean existsById(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_ID_QUERY)){
+            statement.setLong(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed check if question exists by calling existsById(Long id) method", e);
+        }
+    }
+
+    @Override
+    public Long countByAuthorId(Long authorId) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_AUTHOR_ID_QUERY)){
+            statement.setLong(1, authorId);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return resultSet.getLong(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to count questions by calling countByAuthorId(Long authorId) method", e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public Long countNotClosed() throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_NOT_CLOSED_QUERY)){
+            statement.setLong(1, 0);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return resultSet.getLong(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to count questions by calling countNotClosed() method", e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public Long countNotClosedByAuthorId(Long authorId) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_COUNT_NOT_CLOSED_BY_AUTHOR_ID_QUERY)){
+            statement.setLong(1, authorId);
+            statement.setLong(2, 0);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    return resultSet.getLong(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to count questions by calling countNotClosedByAuthorId(Long authorId) method", e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public boolean createQuestionAttachment(Long questionId, Long attachmentId) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_CREATE_QUESTION_ATTACHMENT_QUERY)){
+            statement.setLong(1, questionId);
+            statement.setLong(2, attachmentId);
+            return statement.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to create question-attachment relationship by calling createQuestionAttachment method", e);
+        }
+    }
+
     private String buildQuestionsQuery(boolean resolved, boolean newestFirst, Long authorId, Long categoryId, String titlePattern) {
-        StringBuilder query = new StringBuilder(SQL_FIND_LIMITED_BY_PARAMETERS_QUERY);
+        StringBuilder query = new StringBuilder(SQL_FIND_ALL_PART_QUERY);
         StringBuilder whereClause = new StringBuilder();
         if(resolved) {
             whereClause.append(SQL_WHERE_RESOLVED_CLAUSE);
@@ -320,20 +329,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
         return query.toString();
     }
 
-    @Override
-    public boolean existsById(Long id) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_ID_QUERY)){
-            statement.setLong(1, id);
-            try(ResultSet resultSet = statement.executeQuery()) {
-                return resultSet.next();
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Failed check if question exists by calling existsById(Long id) method", e);
-        }
-    }
-
     private String buildSearchQuery(Long categoryId, Long authorId) {
-        StringBuilder query = new StringBuilder(SQL_FIND_TITLE_LIKE_ORDERED_AND_LIMITED_QUERY);
+        StringBuilder query = new StringBuilder(SQL_FIND_TITLE_BY_TITLE_CONTAINS_QUERY);
         if(categoryId != null) {
             query.append(SQL_SEARCH_WHERE_CATEGORY_CLAUSE);
         } else if(authorId != null) {

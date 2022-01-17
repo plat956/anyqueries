@@ -65,7 +65,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<Question> questions = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
             try {
-                questions = ((QuestionDao)questionDao).findByResolvedAndAuthorIdAndCategoryIdAndTitleContainsOrderByNewestLimitetTo(resolved, newestFirst,
+                questions = ((QuestionDao)questionDao).findByResolvedAndAuthorIdAndCategoryIdAndTitleContainsOrderByNewestLimitedTo(resolved, newestFirst,
                         authorId, categoryId, titlePattern, page.getOffset(), page.getLimit());
                 transaction.commit();
             } catch (DaoException e) {
