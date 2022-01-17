@@ -55,6 +55,7 @@ public class CommandProvider {
         postCommands.put(CommandType.EDIT_ANSWER, new EditAnswerCommand());
         postCommands.put(CommandType.DELETE_USER, new DeleteUserCommand());
         postCommands.put(CommandType.EDIT_USER, new EditUserCommand());
+        postCommands.put(CommandType.CHANGE_QUESTION_STATUS, new ChangeQuestionStatusCommand());
     }
 
     public static CommandProvider getInstance() {

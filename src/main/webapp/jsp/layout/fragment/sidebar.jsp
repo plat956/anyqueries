@@ -7,10 +7,10 @@
         <div class="grid-body">
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                 <c:if test="${!has_category}">
-                    <c:if test="${param['command'] == 'questions_page' && param['mode'] != 'my'}">
+                    <c:if test="${param['command'] == 'questions_page' && (param['mode'] != 'my' || empty principal)}">
                         <c:set var="questionsPage" value="true" />
                     </c:if>
-                    <c:if test="${param['command'] == 'questions_page' && param['mode'] == 'my'}">
+                    <c:if test="${param['command'] == 'questions_page' && param['mode'] == 'my' && !empty principal}">
                         <c:set var="myQuestionsPage" value="true" />
                     </c:if>
                 </c:if>

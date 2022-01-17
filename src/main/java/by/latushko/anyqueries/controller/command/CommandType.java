@@ -43,7 +43,8 @@ public enum CommandType {
     EDIT_ANSWER,
     DELETE_USER,
     EDIT_USER_PAGE,
-    EDIT_USER;
+    EDIT_USER,
+    CHANGE_QUESTION_STATUS;
 
     public static Optional<CommandType> getByName(String commandName) {
         if (commandName == null) {

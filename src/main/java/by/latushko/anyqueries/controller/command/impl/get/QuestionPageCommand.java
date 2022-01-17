@@ -20,17 +20,24 @@ import jakarta.servlet.http.HttpSession;
 import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.FORWARD;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.ERROR_404_PAGE;
-import static by.latushko.anyqueries.controller.command.identity.PagePath.QUESTION_PAGE;
+import static by.latushko.anyqueries.controller.command.identity.PagePath.*;
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.*;
-import static by.latushko.anyqueries.controller.command.identity.RequestParameter.ID;
-import static by.latushko.anyqueries.controller.command.identity.RequestParameter.PAGE;
+import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.QUESTION;
+import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
 
 public class QuestionPageCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         Long id = getLongParameter(request, ID);
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute(PRINCIPAL);
+        Long userId = user != null ? user.getId() : null;
+        Long edit = getLongParameter(request, EDIT);
+        AnswerService answerService = AnswerServiceImpl.getInstance();
+        if(edit != null && !answerService.checkEditAccess(edit, userId)) {
+            return new CommandResult(ERROR_403_PAGE, FORWARD);
+        }
         QuestionService questionService = QuestionServiceImpl.getInstance();
         Optional<Question> question = questionService.findById(id);
         if(question.isEmpty()) {
@@ -39,13 +46,8 @@ public class QuestionPageCommand implements Command {
         AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
         request.setAttribute(ATTACHMENTS, attachmentService.findByQuestionId(id));
         request.setAttribute(QUESTION, question.get());
-
         String pageParameter = request.getParameter(PAGE);
         RequestPage page = new RequestPage(pageParameter);
-        AnswerService answerService = AnswerServiceImpl.getInstance();
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute(PRINCIPAL);
-        Long userId = user != null ? user.getId() : null;
         Paginated<Answer> answers = answerService.findPaginatedByQuestionIdOrderByCreationDateAsc(page, id, userId);
         request.setAttribute(TOTAL_PAGES, answers.getTotalPages());
         request.setAttribute(ANSWERS, answers.getContent());

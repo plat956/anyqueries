@@ -29,7 +29,7 @@ public class EditQuestionPageCommand implements Command {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(PRINCIPAL);
         QuestionService questionService = QuestionServiceImpl.getInstance();
-        if(!questionService.checkEditAccess(id, user.getId(), true)) {
+        if(!questionService.checkEditAccess(id, user.getId())) {
             return new CommandResult(ERROR_403_PAGE, FORWARD);
         }
         Optional<Question> question = questionService.findById(id);

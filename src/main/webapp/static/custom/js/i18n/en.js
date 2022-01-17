@@ -23,5 +23,6 @@ const message = {
     delete_answer: "Are you sure you want to delete this answer?",
     warn: "Attention!",
     cancel: "Cancel",
-    confirm: "Yes"
+    confirm: "Yes",
+    unexpected_error: "Unexpected error"
 };

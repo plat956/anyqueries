@@ -5,6 +5,7 @@ import by.latushko.anyqueries.controller.command.CommandResult;
 import by.latushko.anyqueries.controller.command.ResponseMessage;
 import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import by.latushko.anyqueries.model.entity.Answer;
+import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.service.AnswerService;
 import by.latushko.anyqueries.service.impl.AnswerServiceImpl;
 import by.latushko.anyqueries.util.http.CookieHelper;
@@ -25,10 +26,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.FORWARD;
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.REDIRECT;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
 import static by.latushko.anyqueries.controller.command.identity.HeaderName.REFERER;
+import static by.latushko.anyqueries.controller.command.identity.PagePath.ERROR_403_PAGE;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
 import static by.latushko.anyqueries.util.i18n.MessageKey.MESSAGE_ATTACHMENT_WRONG;
@@ -38,6 +41,12 @@ public class EditAnswerCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
+        Long id = getLongParameter(request, ID);
+        User user = (User) session.getAttribute(PRINCIPAL);
+        AnswerService answerService = AnswerServiceImpl.getInstance();
+        if(!answerService.checkEditAccess(id, user.getId())) {
+            return new CommandResult(ERROR_403_PAGE, FORWARD);
+        }
         String referer = request.getHeader(REFERER);
         CommandResult commandResult = new CommandResult(referer, REDIRECT);
         ResponseMessage message;
@@ -47,7 +56,7 @@ public class EditAnswerCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-        Long id = getLongParameter(request, ID);
+
         String text = request.getParameter(TEXT);
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
@@ -69,7 +78,6 @@ public class EditAnswerCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-        AnswerService answerService = AnswerServiceImpl.getInstance();
         Optional<Answer> result = answerService.update(id, text, fileParts);
         if(result.isPresent()) {
             session.setAttribute(ANSWER_OBJECT, result.get());

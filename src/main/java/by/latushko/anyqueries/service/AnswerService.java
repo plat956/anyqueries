@@ -19,4 +19,6 @@ public interface AnswerService {
     Integer calculateRatingByAnswerId(Long answerId);
     Integer calculateLastPageByQuestionId(Long id);
     boolean setSolution(Long answerId, boolean solution, Long userId);
+    boolean checkEditAccess(Long id, Long userId);
+    boolean checkDeleteAccess(Long id, User user);
 }

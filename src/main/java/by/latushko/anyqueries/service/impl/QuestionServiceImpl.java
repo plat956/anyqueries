@@ -294,23 +294,38 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public boolean checkEditAccess(Long id, Long userId, boolean notClosed) {
+    public boolean checkEditAccess(Long id, Long userId) {
         boolean result = false;
         if(id != null) {
             BaseDao questionDao = new QuestionDaoImpl();
             try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
                 try {
-                    if(notClosed) {
-                        result = ((QuestionDao) questionDao).existsByIdAndAuthorIdAndClosedIs(id, userId, false);
-                    } else {
-                        result = ((QuestionDao) questionDao).existsByIdAndAuthorId(id, userId);
-                    }
+                    result = ((QuestionDao) questionDao).existsByIdAndAuthorIdAndClosedIs(id, userId, false);
                     transaction.commit();
                 } catch (DaoException e) {
                     transaction.rollback();
                 }
             } catch (EntityTransactionException e) {
-                logger.error("Failed to check if user has edit access", e);
+                logger.error("Failed to check if user has question edit access", e);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public boolean checkChangeStatusAccess(Long id, Long userId) {
+        boolean result = false;
+        if(id != null) {
+            BaseDao questionDao = new QuestionDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
+                try {
+                    result = ((QuestionDao) questionDao).existsByIdAndAuthorId(id, userId);
+                    transaction.commit();
+                } catch (DaoException e) {
+                    transaction.rollback();
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Failed to check if user has change question status access", e);
             }
         }
         return result;
@@ -322,7 +337,7 @@ public class QuestionServiceImpl implements QuestionService {
             if (user.getRole() == User.Role.ADMIN || user.getRole() == User.Role.MODERATOR) {
                 return true;
             } else {
-                return checkEditAccess(id, user.getId(), false);
+                return checkChangeStatusAccess(id, user.getId());
             }
         }
         return false;

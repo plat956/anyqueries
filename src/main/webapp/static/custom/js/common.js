@@ -326,6 +326,9 @@ var questions = {
                     $('#showProfileModal #a_count').text(res.a_count);
                     $('#showProfileModal').modal('show');
                 }
+            },
+            error: function () {
+                toasts.show("error", message.error, message.unexpected_error);
             }
         });
     },
@@ -358,7 +361,7 @@ var questions = {
     },
     changeStatus: function (context, el, id) {
         var close = $(el).is(':checked');
-        $(document.body).append('<form action="' + context + '/controller?command=edit_question" method="post" autocomplete="off" style="display: none" id="deleteForm">' +
+        $(document.body).append('<form action="' + context + '/controller?command=change_question_status" method="post" autocomplete="off" style="display: none" id="deleteForm">' +
             '<input type="hidden" name="id" value="' + id + '">' +
             '<input type="hidden" name="close" value="' + close + '">' +
             '</form>');

@@ -85,7 +85,7 @@
                             </c:if>
                         </c:if>
                     </span>
-
+                    <div class="dx-comment-date"><at:time-duration date="${question.creationDate}"/><c:if test="${!empty question.editingDate}"> (<fmt:message key="label.edit.short" />. <at:time-duration date="${question.editingDate}"/>)</c:if></div>
                     <div class="dx-comment-text">
                         <p class="mb-0">
                             ${question.text}
@@ -131,15 +131,23 @@
                         <div class="dx-comment-cont">
                             <a href="#" onclick="questions.showProfile('${pageContext.request.contextPath}', ${a.author.id}, event); return false;" class="dx-comment-name">${a.author.fio}</a>
                             <span id="dropdownMenuButton${a.id}" data-toggle="dropdown">
-                                <a class="edit-answer-btn" data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.answer.management" />">
-                                    <i class="fas fa-cog"></i>
-                                </a>
-                                <div class="dropdown-menu answer-dropdown" aria-labelledby="dropdownMenuButton${a.id}">
-                                    <c:if test="${param['edit'] != a.id}">
-                                    <a class="dropdown-item drop-lnk" onclick="location.href = '<at:query-parameter-changer key="edit" value="${a.id}"/>'"><i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i> <fmt:message key="label.edit" /></a>
+                                <c:if test="${!empty principal.id}">
+                                    <c:set var="edit_access" value="${!question.closed && principal.id == a.author.id}" />
+                                    <c:set var="delete_access" value="${principal.role == 'ADMIN' || principal.role == 'MODERATOR' || principal.id == a.author.id}" />
+                                    <c:if test="${edit_access || delete_access}">
+                                        <a class="edit-answer-btn" data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.answer.management" />">
+                                            <i class="fas fa-cog"></i>
+                                        </a>
+                                        <div class="dropdown-menu answer-dropdown" aria-labelledby="dropdownMenuButton${a.id}">
+                                            <c:if test="${edit_access && param['edit'] != a.id}">
+                                                <a class="dropdown-item drop-lnk" onclick="location.href = '<at:query-parameter-changer key="edit" value="${a.id}"/>'"><i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i> <fmt:message key="label.edit" /></a>
+                                            </c:if>
+                                            <c:if test="${delete_access}">
+                                                <a class="dropdown-item drop-lnk" onclick="answers.delete(event, '${pageContext.request.contextPath}', ${a.id})"><i class="fa fa-trash" aria-hidden="true" style="color: red"></i> <fmt:message key="label.delete" /></a>
+                                            </c:if>
+                                        </div>
                                     </c:if>
-                                    <a class="dropdown-item drop-lnk" onclick="answers.delete(event, '${pageContext.request.contextPath}', ${a.id})"><i class="fa fa-trash" aria-hidden="true" style="color: red"></i> <fmt:message key="label.delete" /></a>
-                                </div>
+                                </c:if>
                             </span>
                             <div class="dx-comment-date"><at:time-duration date="${a.creationDate}"/><c:if test="${!empty a.editingDate}"> (<fmt:message key="label.edit.short" />. <at:time-duration date="${a.editingDate}"/>)</c:if></div>
                             <c:if test="${param['edit'] != a.id || question.closed}">
@@ -242,16 +250,18 @@
                                 <a class="reply-link" id="reply-link${a.id}" onclick="dataForms.reply('${a.author.fio}');"><i class="fa fa-reply" aria-hidden="true"></i> <fmt:message key="label.reply.button" /></a>
                             </c:if>
                         </c:if>
-                        <a class="solution-link<c:if test="${a.solution}"> solution-mark</c:if>" id="solution_${a.id}"
-                           <c:if test="${!question.closed && !empty principal && principal.id == question.author.id}">
-                               onclick="answers.markAsSolution('${pageContext.request.contextPath}', '${a.id}');"
-                               data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.solution${a.solution ? '.remove' : ''}" />"
-                               data-def-title="<fmt:message key="label.solution" />" data-rm-title="<fmt:message key="label.solution.remove" />"
-                               style="cursor: pointer"
-                           </c:if>
-                        >
-                            <i class="fa${a.solution ? 's' : 'r'} fa-check-square"></i>
-                        </a>
+                        <c:if test="${a.solution || (!empty principal && principal.id == question.author.id && !question.closed)}">
+                            <a class="solution-link<c:if test="${a.solution}"> solution-mark</c:if>" id="solution_${a.id}"
+                               <c:if test="${!question.closed && !empty principal && principal.id == question.author.id}">
+                                   onclick="answers.markAsSolution('${pageContext.request.contextPath}', '${a.id}');"
+                                   data-toggle="tooltip" data-placement="right" title="<fmt:message key="label.solution${a.solution ? '.remove' : ''}" />"
+                                   data-def-title="<fmt:message key="label.solution" />" data-rm-title="<fmt:message key="label.solution.remove" />"
+                                   style="cursor: pointer"
+                               </c:if>
+                            >
+                                <i class="fa${a.solution ? 's' : 'r'} fa-check-square"></i>
+                            </a>
+                        </c:if>
                 </div>
             </div>
         </c:forEach>
@@ -312,7 +322,7 @@
             <div style="margin-top: -20px"></div>
         </c:if>
     </div>
-<c:if test="${!question.closed}">
+<c:if test="${!empty principal && !question.closed}">
 <script>
     $(window).load(function() {
         <c:choose>

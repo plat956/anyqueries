@@ -29,7 +29,6 @@ import static by.latushko.anyqueries.controller.command.CommandResult.RoutingTyp
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
-import static by.latushko.anyqueries.controller.command.identity.HeaderName.REFERER;
 import static by.latushko.anyqueries.controller.command.identity.PagePath.ERROR_403_PAGE;
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.EDIT_QUESTION_URL;
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIONS_URL;
@@ -45,8 +44,7 @@ public class EditQuestionCommand implements Command {
         HttpSession session = request.getSession();
         Long id = getLongParameter(request, ID);
         User user = (User) session.getAttribute(PRINCIPAL);
-        String closeParameter = request.getParameter(CLOSE);
-        if(!questionService.checkEditAccess(id, user.getId(), closeParameter == null)) {
+        if(!questionService.checkEditAccess(id, user.getId())) {
             return new CommandResult(ERROR_403_PAGE, FORWARD);
         }
         String previousPage = request.getParameter(RequestParameter.PREVIOUS_PAGE);
@@ -56,9 +54,6 @@ public class EditQuestionCommand implements Command {
         session.setAttribute(SessionAttribute.PREVIOUS_PAGE, previousPage);
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
-        if(closeParameter != null) {
-            return changeClosedStatus(request, session, id, closeParameter, manager);
-        }
         CommandResult commandResult = new CommandResult(EDIT_QUESTION_URL + id, REDIRECT);
         FormValidator validator = QuestionFormValidator.getInstance();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
@@ -99,20 +94,5 @@ public class EditQuestionCommand implements Command {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
-    }
-
-    private CommandResult changeClosedStatus(HttpServletRequest request, HttpSession session, Long id,
-                                             String closeParameter, MessageManager manager) {
-        String referer = request.getHeader(REFERER);
-        boolean close = Boolean.valueOf(closeParameter);
-        boolean result = questionService.changeStatus(id, close);
-        ResponseMessage message;
-        if(result) {
-            message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_SUCCESS));
-        } else {
-            message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ERROR_UNEXPECTED));
-        }
-        session.setAttribute(MESSAGE, message);
-        return new CommandResult(referer, REDIRECT);
     }
 }

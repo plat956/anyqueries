@@ -7,7 +7,7 @@
     <c:when test="${!empty category}">
         <c:set var="page_title" value="${category_name}" scope="request"/>
     </c:when>
-    <c:when test="${param['mode'] == 'my'}">
+    <c:when test="${param['mode'] == 'my' && !empty principal}">
         <c:set var="page_title_label" value="label.myQuestions" scope="request"/>
     </c:when>
     <c:otherwise>

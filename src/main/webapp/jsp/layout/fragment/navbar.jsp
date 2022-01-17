@@ -21,19 +21,18 @@
                                 <input type="hidden" name="command" value="categories_page" />
                                 <fmt:message key="label.search.categories.placeholder" var="search_placeholder" />
                             </c:when>
-                            <c:when test="${param['command'] == 'users_page'}">
+                            <c:when test="${!empty principal && principal.role == 'ADMIN' && param['command'] == 'users_page'}">
                                 <input type="hidden" name="command" value="users_page" />
                                 <fmt:message key="label.search.users.placeholder" var="search_placeholder" />
                             </c:when>
                             <c:otherwise>
                                 <input type="hidden" name="command" value="questions_page" />
-
                                 <c:choose>
                                     <c:when test="${!empty param['category']}">
                                         <fmt:message key="label.search.category.placeholder" var="search_placeholder" />
                                         <c:set var="search_placeholder" value="${search_placeholder} «${category_name}»" />
                                     </c:when>
-                                    <c:when test="${param['mode'] == 'my'}">
+                                    <c:when test="${!empty principal && param['mode'] == 'my'}">
                                         <fmt:message key="label.search.my.placeholder" var="search_placeholder" />
                                     </c:when>
                                     <c:otherwise>
@@ -44,7 +43,7 @@
                             </c:otherwise>
                         </c:choose>
                         <c:if test="${param['command'] == 'questions_page'}">
-                            <c:if test="${!empty param['mode']}"><input type="hidden" name="mode" value="${param['mode']}" /></c:if>
+                            <c:if test="${!empty principal && !empty param['mode']}"><input type="hidden" name="mode" value="${param['mode']}" /></c:if>
                             <c:if test="${!empty param['sort']}"><input type="hidden" name="sort" value="${param['sort']}" /></c:if>
                             <c:if test="${!empty param['resolved']}"><input type="hidden" name="resolved" value="${param['resolved']}" /></c:if>
                             <c:if test="${!empty param['category']}"><input type="hidden" name="category" value="${param['category']}" /></c:if>

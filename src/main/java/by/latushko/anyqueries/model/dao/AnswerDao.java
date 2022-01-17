@@ -11,6 +11,7 @@ public interface AnswerDao{
                                                                                  Long userId, int offset, int limit) throws DaoException;
     Optional<Answer> findByIdAndQuestionAuthorIdAndQuestionClosedIs(Long answerId, Long userId, boolean closed) throws DaoException;
     boolean existsByIdAndAuthorIdNot(Long answerId, Long authorId) throws DaoException;
+    boolean existsByIdAndAuthorIdAndQuestionClosedIs(Long id, Long authorId, boolean closed) throws DaoException;
     Long countByUserId(Long userId) throws DaoException;
     Long countByQuestionId(Long id) throws DaoException;
     boolean createAnswerAttachment(Long answerId, Long attachmentId) throws DaoException;

@@ -22,6 +22,7 @@ public interface QuestionService {
     boolean delete(Long id, User initiator);
     boolean update(Long questionId, Long categoryId, String title, String text, List<Part> attachments);
     boolean changeStatus(Long id, boolean status);
-    boolean checkEditAccess(Long id, Long userId, boolean notClosed);
+    boolean checkEditAccess(Long id, Long userId);
+    boolean checkChangeStatusAccess(Long id, Long userId);
     boolean checkDeleteAccess(Long id, User user);
 }

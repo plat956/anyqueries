@@ -34,7 +34,7 @@ public class QuestionsPageCommand implements Command {
         String pageParameter = request.getParameter(PAGE);
         boolean resolved = Boolean.valueOf(request.getParameter(RESOLVED));
         boolean newestFirst = !DISCUSSED_SORT_VALUE.equalsIgnoreCase(request.getParameter(SORT));
-        Long authorId = MODE_MY_VALUE.equalsIgnoreCase(request.getParameter(MODE)) ? user.getId() : null;
+        Long authorId = user != null && MODE_MY_VALUE.equalsIgnoreCase(request.getParameter(MODE)) ? user.getId() : null;
         Long category = getLongParameter(request, CATEGORY);
         String title = limitSearchQueryString(request.getParameter(QUERY));
         RequestPage page = new RequestPage(pageParameter);

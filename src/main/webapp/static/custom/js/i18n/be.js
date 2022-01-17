@@ -23,5 +23,6 @@ const message = {
     delete_answer: "Вы сапраўды хочаце выдаліць гэты адказ?",
     warn: "Увага!",
     cancel: "Адмена",
-    confirm: "Да"
+    confirm: "Да",
+    unexpected_error: "Непрадбачаная памылка"
 };

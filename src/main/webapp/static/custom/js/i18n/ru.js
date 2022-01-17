@@ -23,5 +23,6 @@ const message = {
     delete_answer: "Вы действительно хотите удалить этот ответ?",
     warn: "Внимание!",
     cancel: "Отмена",
-    confirm: "Да"
+    confirm: "Да",
+    unexpected_error: "Непредвиденная ошибка"
 };

@@ -299,6 +299,37 @@ public class AnswerServiceImpl implements AnswerService {
         return false;
     }
 
+    @Override
+    public boolean checkEditAccess(Long id, Long userId) {
+        boolean result = false;
+        if(id != null && userId != null) {
+            BaseDao answerDao = new AnswerDaoImpl();
+            try (EntityTransaction transaction = new EntityTransaction(answerDao)) {
+                try {
+                    result = ((AnswerDao) answerDao).existsByIdAndAuthorIdAndQuestionClosedIs(id, userId, false);
+                    transaction.commit();
+                } catch (DaoException e) {
+                    transaction.rollback();
+                }
+            } catch (EntityTransactionException e) {
+                logger.error("Failed to check if user has answer edit access", e);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public boolean checkDeleteAccess(Long id, User user) {
+        if (id != null) {
+            if (user.getRole() == User.Role.ADMIN || user.getRole() == User.Role.MODERATOR) {
+                return true;
+            } else {
+                return checkEditAccess(id, user.getId());
+            }
+        }
+        return false;
+    }
+
     private Answer createAnswerObject(Long questionId, User user, String text) {
         Answer answer = new Answer();
         answer.setQuestionId(questionId);
