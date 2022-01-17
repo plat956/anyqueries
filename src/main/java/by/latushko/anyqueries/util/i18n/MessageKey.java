@@ -60,7 +60,11 @@ public final class MessageKey {
     public static final String MESSAGE_CATEGORY_WRONG = "message.category.wrong";
     public static final String MESSAGE_CATEGORY_UPDATED = "message.category.updated";
     public static final String MESSAGE_SUCCESS = "message.success";
-    static final String MESSAGES_FILE_NAME = "message";
+    public static final String PLURAL_MESSAGE_1_POSTFIX = "1";
+    public static final String PLURAL_MESSAGE_2_POSTFIX = "2";
+    public static final String PLURAL_MESSAGE_5_POSTFIX = "5";
+    static final String MESSAGES_FILE_NAME_PREFIX = "message_";
+    static final String LOCALE_RU = "ru";
     static final String LOCALE_EN = "en";
     static final String LOCALE_BE = "be";
 

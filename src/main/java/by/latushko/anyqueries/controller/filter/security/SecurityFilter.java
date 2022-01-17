@@ -34,11 +34,6 @@ public class SecurityFilter implements Filter {
             User principal = null;
             if (session.getAttribute(PRINCIPAL) != null) {
                 principal = (User) session.getAttribute(PRINCIPAL);
-                if(principal.getStatus() != User.Status.ACTIVE) {
-                    CookieHelper.eraseCookie(request, response, CREDENTIAL_KEY, CREDENTIAL_TOKEN);
-                    session.invalidate();
-                    principal = null;
-                }
             } else {
                 CookieHelper.eraseCookie(request, response, CREDENTIAL_KEY, CREDENTIAL_TOKEN);
             }

@@ -107,9 +107,9 @@
             var value = $(this).val();
             if(value.length == 0) {
                 $('#noResults').remove();
-                $('#clearSearch').css('opacity', 0);
+                $('#clearSearch').css('visibility', 'hidden');
             } else {
-                $('#clearSearch').css('opacity', 1);
+                $('#clearSearch').css('visibility', 'visible');
             }
         });
 

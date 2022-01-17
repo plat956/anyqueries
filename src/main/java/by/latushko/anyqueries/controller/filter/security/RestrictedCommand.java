@@ -25,18 +25,29 @@ public final class RestrictedCommand {
         COMMANDS.put(CREATE_ANSWER, EnumSet.of(ADMIN, USER, MODERATOR));
         COMMANDS.put(EDIT_ANSWER, EnumSet.of(ADMIN, USER, MODERATOR));
         COMMANDS.put(DELETE_ANSWER, EnumSet.of(ADMIN, USER, MODERATOR));
-
-        COMMANDS.put(LOGIN_PAGE, EnumSet.of(GUEST));
-        COMMANDS.put(REGISTRATION_PAGE, EnumSet.of(GUEST));
-        COMMANDS.put(ACTIVATE_USER, EnumSet.of(GUEST, INACTIVE_USER));
-        COMMANDS.put(LOGIN, EnumSet.of(GUEST));
-        COMMANDS.put(REGISTRATION, EnumSet.of(GUEST));
-        COMMANDS.put(LOGOUT, EnumSet.of(ADMIN, USER, INACTIVE_USER, MODERATOR));
-        COMMANDS.put(REPEAT_ACTIVATION, EnumSet.of(INACTIVE_USER));
-        COMMANDS.put(REPEAT_ACTIVATION_PAGE, EnumSet.of(INACTIVE_USER));
         COMMANDS.put(EDIT_PROFILE_PAGE, EnumSet.of(ADMIN, USER, MODERATOR));
         COMMANDS.put(EDIT_PROFILE, EnumSet.of(ADMIN, USER, MODERATOR));
+        COMMANDS.put(CHANGE_PASSWORD_PAGE, EnumSet.of(ADMIN, USER, MODERATOR));
+        COMMANDS.put(CHANGE_PASSWORD, EnumSet.of(ADMIN, USER, MODERATOR));
         COMMANDS.put(UPLOAD_AVATAR, EnumSet.of(ADMIN, USER, MODERATOR));
+        COMMANDS.put(LOGOUT, EnumSet.of(ADMIN, USER, MODERATOR, INACTIVE_USER));
+        COMMANDS.put(CREATE_CATEGORY_PAGE, EnumSet.of(ADMIN));
+        COMMANDS.put(CREATE_CATEGORY, EnumSet.of(ADMIN));
+        COMMANDS.put(EDIT_CATEGORY_PAGE, EnumSet.of(ADMIN));
+        COMMANDS.put(EDIT_CATEGORY, EnumSet.of(ADMIN));
+        COMMANDS.put(DELETE_CATEGORY, EnumSet.of(ADMIN));
+        COMMANDS.put(USERS_PAGE, EnumSet.of(ADMIN));
+        COMMANDS.put(EDIT_USER_PAGE, EnumSet.of(ADMIN));
+        COMMANDS.put(EDIT_USER, EnumSet.of(ADMIN));
+        COMMANDS.put(DELETE_USER, EnumSet.of(ADMIN));
+        COMMANDS.put(LOGIN_PAGE, EnumSet.of(GUEST));
+        COMMANDS.put(LOGIN, EnumSet.of(GUEST));
+        COMMANDS.put(REGISTRATION_PAGE, EnumSet.of(GUEST));
+        COMMANDS.put(REGISTRATION, EnumSet.of(GUEST));
+        COMMANDS.put(ACTIVATE_USER, EnumSet.of(GUEST, INACTIVE_USER));
+
+        COMMANDS.put(REPEAT_ACTIVATION, EnumSet.of(INACTIVE_USER));
+        COMMANDS.put(REPEAT_ACTIVATION_PAGE, EnumSet.of(INACTIVE_USER));
     }
 
     private RestrictedCommand() {

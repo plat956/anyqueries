@@ -69,14 +69,18 @@
                             <i class="fas fa-lock" style="position: absolute;bottom: 20px;color:#eb870a;"></i>
                         </c:if>
                         <div class="media-body" style="margin-left: 30px;"><strong class="break-words">${q.title}</strong>
-                            <c:if test="${!empty principal && (q.author.id == principal.id || principal.role == 'ADMIN' || principal.role == 'MODERATOR')}">
+                            <c:if test="${!empty principal}">
                                 <span class="number float-right" style="margin-top: 12px;">
-                                    <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=edit_question_page&id=${q.id}'" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.edit" />">
-                                        <i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i>
-                                    </a>
-                                    <a onclick="questions.delete(event, '${pageContext.request.contextPath}', ${q.id}, false)" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.delete" />">
-                                        <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
-                                    </a>
+                                    <c:if test="${!q.closed && q.author.id == principal.id}">
+                                        <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=edit_question_page&id=${q.id}'" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.edit" />">
+                                            <i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i>
+                                        </a>
+                                    </c:if>
+                                    <c:if test="${q.author.id == principal.id || principal.role == 'ADMIN' || principal.role == 'MODERATOR'}">
+                                        <a onclick="questions.delete(event, '${pageContext.request.contextPath}', ${q.id}, false)" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.delete" />">
+                                            <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
+                                        </a>
+                                    </c:if>
                                 </span>
                             </c:if>
                             <p class="info"><fmt:message key="label.author" />: <a class="author-lnk" onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.author.id}, event); return false;">${q.author.fio}</a> <at:time-duration date="${q.creationDate}"/> <i class="fa fa-comments"></i>

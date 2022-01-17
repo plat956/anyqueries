@@ -22,7 +22,7 @@
                         <fmt:message key="label.myQuestions" /> <span class="badge badge-${myQuestionsPage ? 'light' : 'primary'}">${layoutTotalUserQuestions}</span>
                     </a>
                 </c:if>
-                <c:if test="${principal.role == 'ADMIN'}">
+                <c:if test="${!empty principal && principal.role == 'ADMIN'}">
                     <a class="nav-link${param['command'] == 'users_page' ? ' active bg-primary' : ''}" href="${pageContext.request.contextPath}/controller?command=users_page" aria-selected="false"><fmt:message key="label.users" /></a>
                 </c:if>
             </div>

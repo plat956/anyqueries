@@ -51,7 +51,7 @@
                         <div class="navbar-search input-group">
                             <input class="form-control py-2 border-left-0 border search-input" type="text" value="${fn:substring(param['query'], 0, 40)}"
                                    placeholder="${search_placeholder}" id="search-input" name="query" maxlength="40"/>
-                            <div id="clearSearch" onclick="dataForms.clearSearch();" style="opacity: ${!empty param['query'] ? '1' : '0'}">
+                            <div id="clearSearch" onclick="dataForms.clearSearch();" style="visibility: ${!empty param['query'] ? 'visible' : 'hidden'}">
                                 &times;
                             </div>
                             <span class="input-group-append" style="margin-left: -15px;">

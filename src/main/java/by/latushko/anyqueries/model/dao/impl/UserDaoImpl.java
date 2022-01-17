@@ -23,7 +23,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 
             FROM users 
             WHERE id = ?""";
-    private static final String SQL_FIND_INACTIVE_BY_HASH_AND_DATE_QUERY = """
+    private static final String SQL_FIND_BY_STATUS_AND_HASH_AND_HASH_EXPIRES_GREATER_THAN_QUERY = """
             SELECT u.id, u.first_name, u.last_name, u.middle_name, u.login, u.password, u.email, u.telegram, u.avatar, u.credential_key, 
             u.last_login_date, u.status, u.role 
             FROM users u 
@@ -37,10 +37,10 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 
             FROM users 
             WHERE login = ?""";
-    private static final String SQL_FIND_BY_CREDENTIAL_KEY_QUERY = """
+    private static final String SQL_FIND_BY_STATUS_AND_CREDENTIAL_KEY_QUERY = """
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 
             FROM users 
-            WHERE credential_key = ?""";
+            WHERE status = ? AND credential_key = ?""";
     private static final String SQL_FIND_BY_LOGIN_CONTAINS_ORDER_BY_ROLE_ASC_LIMITED_TO_QUERY = """
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role, 
             count(id) OVER() AS total 
@@ -192,7 +192,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
 
     @Override
     public Optional<User> findInactiveByHashAndHashIsNotExpired(String hash, LocalDateTime validDate) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_INACTIVE_BY_HASH_AND_DATE_QUERY)){
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_STATUS_AND_HASH_AND_HASH_EXPIRES_GREATER_THAN_QUERY)){
             statement.setString(1, User.Status.INACTIVE.name());
             statement.setString(2, hash);
             statement.setObject(3, validDate);
@@ -242,9 +242,10 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     }
 
     @Override
-    public Optional<User> findByCredentialKey(String key) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_CREDENTIAL_KEY_QUERY)){
-            statement.setString(1, key);
+    public Optional<User> findByStatusAndCredentialKey(User.Status status, String key) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_STATUS_AND_CREDENTIAL_KEY_QUERY)){
+            statement.setString(1, status.name());
+            statement.setString(2, key);
             try(ResultSet resultSet = statement.executeQuery()) {
                 if(resultSet.next()) {
                     return mapper.mapRow(resultSet);
@@ -253,7 +254,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find user by calling findByCredentialKey(String key) method", e);
+            throw new DaoException("Failed to find user by calling findByStatusAndCredentialKey(User.Status status, String key) method", e);
         }
     }
 

@@ -79,13 +79,11 @@ public class RequestListenerImpl implements ServletRequestListener {
         String credentialToken = CookieHelper.readCookie(request, CREDENTIAL_TOKEN);
         if (credentialKey != null && credentialToken != null) {
             UserService userService = UserServiceImpl.getInstance();
-            Optional<User> userOptional = userService.findByCredentialKeyAndCredentialToken(credentialKey, credentialToken);
+            Optional<User> userOptional = userService.findActiveByCredentialKeyAndCredentialToken(credentialKey, credentialToken);
             if (userOptional.isPresent()){
                 User user = userOptional.get();
-                if(user.getStatus() == User.Status.ACTIVE) {
-                    session.setAttribute(PRINCIPAL, user);
-                    return user;
-                }
+                session.setAttribute(PRINCIPAL, user);
+                return user;
             }
         }
         return null;

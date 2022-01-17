@@ -13,7 +13,7 @@ public interface UserDao {
     Optional<User> findInactiveByHashAndHashIsNotExpired(String hash, LocalDateTime validDate) throws DaoException;
     Optional<User> findInactiveByTelegram(String account) throws DaoException;
     Optional<User> findByLogin(String login) throws DaoException;
-    Optional<User> findByCredentialKey(String key) throws DaoException;
+    Optional<User> findByStatusAndCredentialKey(User.Status status, String key) throws DaoException;
     List<String> findLoginByLoginContainsOrderByLoginAscLimitedTo(String loginPatter, int limit) throws DaoException;
     List<User> findByLoginContainsOrderByRoleAscLimitedTo(String loginPattern, int offset, int limit) throws DaoException;
     boolean existsByLogin(String login) throws DaoException;

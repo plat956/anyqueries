@@ -1,19 +1,14 @@
 package by.latushko.anyqueries.util.i18n;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
-import static java.lang.Math.abs;
 
 public enum MessageManager {
-    RU(ResourceBundle.getBundle(MESSAGES_FILE_NAME)),
-    EN(ResourceBundle.getBundle(MESSAGES_FILE_NAME, new Locale(LOCALE_EN))),
-    BE(ResourceBundle.getBundle(MESSAGES_FILE_NAME, new Locale(LOCALE_BE)));
+    RU(ResourceBundle.getBundle(MESSAGES_FILE_NAME_PREFIX + LOCALE_RU)),
+    EN(ResourceBundle.getBundle(MESSAGES_FILE_NAME_PREFIX + LOCALE_EN)),
+    BE(ResourceBundle.getBundle(MESSAGES_FILE_NAME_PREFIX + LOCALE_BE));
 
-    private static final String MESSAGE_1_POSTFIX = "1";
-    private static final String MESSAGE_2_POSTFIX = "2";
-    private static final String MESSAGE_5_POSTFIX = "5";
     private ResourceBundle bundle;
     public static final String SPACE_CHARACTER = " ";
 
@@ -53,17 +48,28 @@ public enum MessageManager {
     }
 
     private String buildPluralMessageKey(long count, String key) {
-        count = abs(count) % 100;
-        count = count % 10;
-        if (count > 10 && count < 20) {
-            return key + MESSAGE_5_POSTFIX;
+        if(this == EN) {
+            if(count == 1) {
+                return key + PLURAL_MESSAGE_1_POSTFIX;
+            } else {
+                return key + PLURAL_MESSAGE_2_POSTFIX;
+            }
+        } else {
+            count = Math.abs(count) % 100;
+            if (count == 11) {
+                return key + PLURAL_MESSAGE_1_POSTFIX;
+            }
+            if (count > 11 && count < 20) {
+                return key + PLURAL_MESSAGE_5_POSTFIX;
+            }
+            count %= 10;
+            if (count > 1 && count < 5) {
+                return key + PLURAL_MESSAGE_2_POSTFIX;
+            }
+            if (count == 1) {
+                return key + PLURAL_MESSAGE_1_POSTFIX;
+            }
+            return key + PLURAL_MESSAGE_5_POSTFIX;
         }
-        if (count > 1 && count < 5) {
-            return key + MESSAGE_2_POSTFIX;
-        }
-        if (count == 1) {
-            return key + MESSAGE_1_POSTFIX;
-        }
-        return key + MESSAGE_5_POSTFIX;
     }
 }

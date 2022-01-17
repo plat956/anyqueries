@@ -14,6 +14,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import static by.latushko.anyqueries.util.AppProperty.APP_NAME;
@@ -23,7 +24,7 @@ public class MailSender {
     private static final Logger logger = LogManager.getLogger();
     private static final String MAIL_PROPERTIES_PATH = "config/mail.properties";
     private static final String USER_NAME_PROPERTY = "mail.user.name";
-    private static final String CONTENT_TYPE_PROPERTY = "mail.content.level";
+    private static final String CONTENT_TYPE_PROPERTY = "mail.content.type";
     private static final String USER_EMAIL;
     private static final String USER_NAME;
     private static final String CONTENT_TYPE;
@@ -70,9 +71,9 @@ public class MailSender {
     private MimeMessage initMessage(String sendTo, String subject, String text) throws MessagingException {
         Session mailSession = SessionFactory.createSession(properties);
         MimeMessage message = new MimeMessage(mailSession);
-        message.setSubject(subject);
+        message.setSubject(subject, StandardCharsets.UTF_8.name());
         message.setContent(text, CONTENT_TYPE);
-        InternetAddress senderAddress = null;
+        InternetAddress senderAddress;
         try {
             senderAddress = new InternetAddress(USER_EMAIL, USER_NAME);
         } catch (UnsupportedEncodingException e) {

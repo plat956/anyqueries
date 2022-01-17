@@ -416,6 +416,7 @@ i.flag-ru:before, i.flag-russia:before {
 }
 .search-input {
     font-size: 0.9em;
+    padding-right: 30px;
 }
 .sidebar-row {
     margin-right: 0;
@@ -425,6 +426,12 @@ i.flag-ru:before, i.flag-russia:before {
 @media (max-width: 1200px) {
     #navbar-role {
         display: none;
+    }
+}
+
+@media (min-width: 1200px) {
+    .navbar-search {
+        width: 450px !important;
     }
 }
 
@@ -450,7 +457,7 @@ i.flag-ru:before, i.flag-russia:before {
 }
 @media (min-width: 992px) {
     .navbar-search {
-        width: 450px;
+        width: 340px;
     }
 }
 .form-check {

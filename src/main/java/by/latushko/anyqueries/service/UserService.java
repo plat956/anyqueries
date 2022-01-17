@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface UserService {
     Optional<User> findByLoginAndPassword(String login, String password);
-    Optional<User> findByCredentialKeyAndCredentialToken(String key, String token);
+    Optional<User> findActiveByCredentialKeyAndCredentialToken(String key, String token);
     Optional<User> findById(Long id);
     Paginated<User> findPaginatedByLoginContainsOrderByRoleAsc(RequestPage page, String loginPattern);
     List<String> findLoginByLoginContainsOrderByLoginAscLimitedTo(String loginPattern, int limit);

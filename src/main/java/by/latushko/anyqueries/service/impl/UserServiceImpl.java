@@ -55,8 +55,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findByCredentialKeyAndCredentialToken(String key, String token) {
-        Optional<User> user = findByCredentialKey(key);
+    public Optional<User> findActiveByCredentialKeyAndCredentialToken(String key, String token) {
+        Optional<User> user = findActiveByCredentialKey(key);
         if(user.isPresent()) {
             String tokenSource = getCredentialTokenSource(user.get());
             if (passwordEncoder.check(tokenSource, token)) {
@@ -413,18 +413,18 @@ public class UserServiceImpl implements UserService {
         return userOptional;
     }
 
-    private Optional<User> findByCredentialKey(String key) {
+    private Optional<User> findActiveByCredentialKey(String key) {
         BaseDao userDao = new UserDaoImpl();
         Optional<User> userOptional = Optional.empty();
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
-                userOptional = ((UserDao)userDao).findByCredentialKey(key);
+                userOptional = ((UserDao)userDao).findByStatusAndCredentialKey(User.Status.ACTIVE, key);
                 transaction.commit();
             } catch (DaoException e) {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during retrieving user by credential key", e);
+            logger.error("Something went wrong during retrieving active user by credential key", e);
         }
         return userOptional;
     }
