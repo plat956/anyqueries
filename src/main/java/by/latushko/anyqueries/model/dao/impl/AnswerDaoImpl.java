@@ -65,6 +65,10 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             FROM answers a 
             INNER JOIN questions q ON a.question_id = q.id 
             WHERE a.id = ? AND a.author_id = ? AND q.closed = ?""";
+    private static final String SQL_EXISTS_BY_ID_AND_AUTHOR_ID_QUERY = """
+            SELECT 1
+            FROM answers
+            WHERE id = ? AND author_id = ?""";
     private static final String SQL_COUNT_BY_USER_ID_QUERY = """
             SELECT count(id) 
             FROM answers 
@@ -226,6 +230,19 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find answer by calling existsByIdAndAuthorIdAndQuestionClosedIs method", e);
+        }
+    }
+
+    @Override
+    public boolean existsByIdAndAuthorIdAndQuestion(Long id, Long authorId) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_EXISTS_BY_ID_AND_AUTHOR_ID_QUERY)){
+            statement.setLong(1, id);
+            statement.setLong(2, authorId);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find answer by calling existsByIdAndAuthorIdAndQuestion method", e);
         }
     }
 

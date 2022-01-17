@@ -15,7 +15,7 @@
     </c:otherwise>
 </c:choose>
 <c:if test="${!empty param['query']}">
-    <c:set var="page_title_postfix" value=": «${fn:substring(param['query'], 0, 40)}»" scope="request" />
+    <c:set var="page_title_postfix" value=": «${fn:escapeXml(fn:substring(param['query'], 0, 40))}»" scope="request" />
 </c:if>
 <jsp:include page="layout/header.jsp"/>
 <div class="btn-group">

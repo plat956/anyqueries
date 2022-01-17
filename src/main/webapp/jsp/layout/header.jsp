@@ -35,7 +35,7 @@
     </c:if>
 </head>
 <body>
-<div class="container" id="container">
+<div class="container" id="container" style="${!bad_browser_command ? 'visibility:hidden' : ''}">
     <jsp:include page="fragment/navbar.jsp" />
     <section class="page-section content">
         <div class="row sidebar-row">

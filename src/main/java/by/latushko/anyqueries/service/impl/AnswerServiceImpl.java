@@ -320,14 +320,26 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public boolean checkDeleteAccess(Long id, User user) {
+        boolean result = false;
         if (id != null) {
             if (user.getRole() == User.Role.ADMIN || user.getRole() == User.Role.MODERATOR) {
-                return true;
+                result = true;
             } else {
-                return checkEditAccess(id, user.getId());
+                BaseDao answerDao = new AnswerDaoImpl();
+                try (EntityTransaction transaction = new EntityTransaction(answerDao)) {
+                    try {
+                        result = ((AnswerDao) answerDao).existsByIdAndAuthorIdAndQuestion(id, user.getId());
+                        transaction.commit();
+                        result = true;
+                    } catch (DaoException e) {
+                        transaction.rollback();
+                    }
+                } catch (EntityTransactionException e) {
+                    logger.error("Failed to check if user has answer delete access", e);
+                }
             }
         }
-        return false;
+        return result;
     }
 
     private Answer createAnswerObject(Long questionId, User user, String text) {

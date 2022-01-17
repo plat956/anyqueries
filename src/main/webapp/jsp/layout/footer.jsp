@@ -29,6 +29,9 @@
         clearInterval(interval);
         NProgress.done();
         pageEvents.freezeClicks(false);
+        setTimeout(function () {
+            $('#container').css('visibility', 'visible');
+        }, 100)
     });
 
     // Trigger bar when exiting the page
