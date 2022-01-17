@@ -320,18 +320,15 @@ public class UserServiceImpl implements UserService {
             try (EntityTransaction transaction = new EntityTransaction(userDao, attachmentDao)) {
                 try {
                     List<Attachment> attachments = ((AttachmentDao) attachmentDao).findByUserId(id);
-                    boolean deleteByQuestionAuthor = ((AttachmentDao) attachmentDao).deleteByQuestionAuthorId(id);
-                    if(deleteByQuestionAuthor) {
-                        boolean deleteByAnswerAuthor = ((AttachmentDao) attachmentDao).deleteByAnswerAuthorId(id);
-                        if(deleteByAnswerAuthor) {
-                            boolean deleteUser = userDao.delete(id);
-                            if(deleteUser) {
-                                AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                                attachmentService.deleteAttachmentsFiles(attachments);
-                                transaction.commit();
-                                result = true;
-                            }
+                    boolean deleteUser = userDao.delete(id);
+                    if(deleteUser) {
+                        AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                        for(Attachment a: attachments) {
+                            attachmentDao.delete(a.getId());
+                            attachmentService.deleteFile(a.getFile());
                         }
+                        transaction.commit();
+                        result = true;
                     }
                 } catch (DaoException e) {
                     transaction.rollback();

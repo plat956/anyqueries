@@ -25,8 +25,7 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
     private static final String SQL_FIND_TOP_QUERY = """
             SELECT c.id, c.name, c.color, count(q.id) as questions_count 
             FROM categories c
-            INNER JOIN questions q
-            ON c.id = q.category_id
+            INNER JOIN questions q ON c.id = q.category_id
             GROUP BY c.id 
             ORDER BY questions_count DESC LIMIT ?""";
     private static final String SQL_FIND_ALL_ORDER_BY_NAME_ASC_QUERY = """

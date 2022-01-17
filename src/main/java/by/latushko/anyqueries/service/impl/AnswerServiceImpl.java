@@ -119,19 +119,19 @@ public class AnswerServiceImpl implements AnswerService {
                     if(answerOptional.isPresent()) {
                         if (!attachments.isEmpty()) {
                             AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                            List<Attachment> oldAttachments = ((AttachmentDaoImpl) attachmentDao).findByAnswerId(id);
-                            boolean deleteResult = ((AttachmentDao) attachmentDao).deleteByAnswerId(id);
-                            if(deleteResult) {
-                                attachmentService.deleteAttachmentsFiles(oldAttachments);
-                                for (Part p : attachments) {
-                                    Optional<String> fileName = attachmentService.uploadFile(p);
-                                    if (fileName.isPresent()) {
-                                        Attachment attachment = new Attachment();
-                                        attachment.setFile(fileName.get());
-                                        boolean attachmentCreated = attachmentDao.create(attachment);
-                                        if(attachmentCreated) {
-                                            ((AnswerDao) answerDao).createAnswerAttachment(answer.getId(), attachment.getId());
-                                        }
+                            List<Attachment> oldAttachments = ((AttachmentDao) attachmentDao).findByAnswerId(id);
+                            for(Attachment a: oldAttachments) {
+                                attachmentDao.delete(a.getId());
+                                attachmentService.deleteFile(a.getFile());
+                            }
+                            for (Part p : attachments) {
+                                Optional<String> fileName = attachmentService.uploadFile(p);
+                                if (fileName.isPresent()) {
+                                    Attachment attachment = new Attachment();
+                                    attachment.setFile(fileName.get());
+                                    boolean attachmentCreated = attachmentDao.create(attachment);
+                                    if(attachmentCreated) {
+                                        ((AnswerDao) answerDao).createAnswerAttachment(answer.getId(), attachment.getId());
                                     }
                                 }
                             }
@@ -157,16 +157,16 @@ public class AnswerServiceImpl implements AnswerService {
             BaseDao attachmentDao = new AttachmentDaoImpl();
             try (EntityTransaction transaction = new EntityTransaction(answerDao, attachmentDao)) {
                 try {
-                    List<Attachment> attachments = ((AttachmentDaoImpl) attachmentDao).findByAnswerId(id);
-                    boolean deleteByAnswer = ((AttachmentDao) attachmentDao).deleteByAnswerId(id);
-                    if (deleteByAnswer) {
-                        boolean deleteAnswer = answerDao.delete(id);
-                        if(deleteAnswer) {
-                            AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                            attachmentService.deleteAttachmentsFiles(attachments);
-                            transaction.commit();
-                            result = true;
+                    List<Attachment> attachments = ((AttachmentDao) attachmentDao).findByAnswerId(id);
+                    boolean deleteAnswer = answerDao.delete(id);
+                    if(deleteAnswer) {
+                        AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                        for(Attachment a: attachments) {
+                            attachmentDao.delete(a.getId());
+                            attachmentService.deleteFile(a.getFile());
                         }
+                        transaction.commit();
+                        result = true;
                     }
                 } catch (DaoException e) {
                     transaction.rollback();

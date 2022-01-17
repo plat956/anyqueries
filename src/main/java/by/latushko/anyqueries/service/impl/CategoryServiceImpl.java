@@ -226,16 +226,16 @@ public class CategoryServiceImpl implements CategoryService {
             BaseDao attachmentDao = new AttachmentDaoImpl();
             try (EntityTransaction transaction = new EntityTransaction(categoryDao, attachmentDao)) {
                 try {
-                    List<Attachment> attachments = ((AttachmentDaoImpl) attachmentDao).findByCategoryId(id);
-                    boolean deleteByCategory = ((AttachmentDao) attachmentDao).deleteByCategoryId(id);
-                    if (deleteByCategory) {
-                        boolean deleteCategory = categoryDao.delete(id);
-                        if(deleteCategory) {
-                            AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                            attachmentService.deleteAttachmentsFiles(attachments);
-                            transaction.commit();
-                            result = true;
+                    List<Attachment> attachments = ((AttachmentDao) attachmentDao).findByCategoryId(id);
+                    boolean deleteCategory = categoryDao.delete(id);
+                    if(deleteCategory) {
+                        AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                        for(Attachment a: attachments) {
+                            attachmentDao.delete(a.getId());
+                            attachmentService.deleteFile(a.getFile());
                         }
+                        transaction.commit();
+                        result = true;
                     }
                 } catch (DaoException e) {
                     transaction.rollback();

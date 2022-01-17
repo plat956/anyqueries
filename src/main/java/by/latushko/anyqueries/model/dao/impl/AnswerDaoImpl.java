@@ -20,10 +20,8 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
             u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role 
             FROM answers a 
-            INNER JOIN users u 
-            ON a.author_id = u.id 
-            INNER JOIN questions q 
-            ON a.question_id = q.id 
+            INNER JOIN users u ON a.author_id = u.id 
+            INNER JOIN questions q ON a.question_id = q.id 
             WHERE a.id = ? AND q.author_id = ?""";
     private static final String SQL_FIND_BY_QUESTION_ID_AND_AUTHOR_ID_ORDER_BY_CREATION_DATE_ASC_LIMITED_TO_QUERY = """
             SELECT a.id, a.text, a.creation_date, a.editing_date, a.solution, a.question_id, count(a.id) OVER() AS total, a.author_id as user_id, 
@@ -31,8 +29,7 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
             u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role, sum(r.grade) as rating, ur.grade 
             FROM answers a
-            INNER JOIN users u
-            ON a.author_id = u.id 
+            INNER JOIN users u ON a.author_id = u.id 
             LEFT JOIN rating r ON a.id = r.answer_id 
             LEFT JOIN rating ur ON a.id = ur.answer_id AND ur.user_id = ? 
             WHERE a.question_id = ? 
@@ -45,14 +42,12 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
             u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role 
             FROM answers a 
-            INNER JOIN users u 
-            ON a.author_id = u.id 
+            INNER JOIN users u ON a.author_id = u.id 
             WHERE a.id = ?""";
     private static final String SQL_EXISTS_BY_ID_AND_AUTHOR_ID_NOT_QUERY = """
             SELECT 1
             FROM answers a
-            WHERE id = ? 
-            AND author_id <> ?""";
+            WHERE id = ? AND author_id <> ?""";
     private static final String SQL_COUNT_BY_USER_ID_QUERY = """
             SELECT count(id) 
             FROM answers 

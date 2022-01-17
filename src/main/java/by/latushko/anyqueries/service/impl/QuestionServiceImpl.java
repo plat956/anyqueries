@@ -193,16 +193,16 @@ public class QuestionServiceImpl implements QuestionService {
             BaseDao attachmentDao = new AttachmentDaoImpl();
             try (EntityTransaction transaction = new EntityTransaction(questionDao, attachmentDao)) {
                 try {
-                    List<Attachment> attachments = ((AttachmentDaoImpl) attachmentDao).findByQuestionId(id);
-                    boolean deleteByQuestion = ((AttachmentDao) attachmentDao).deleteByQuestionId(id);
-                    if (deleteByQuestion) {
-                        boolean deleteQuestion = questionDao.delete(id);
-                        if(deleteQuestion) {
-                            AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                            attachmentService.deleteAttachmentsFiles(attachments);
-                            transaction.commit();
-                            result = true;
+                    AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+                    List<Attachment> attachments = ((AttachmentDao) attachmentDao).findAllAndAnswersAttachmentsByQuestionId(id);
+                    boolean deleteQuestion = questionDao.delete(id);
+                    if (deleteQuestion) {
+                        for(Attachment a: attachments) {
+                            attachmentDao.delete(a.getId());
+                            attachmentService.deleteFile(a.getFile());
                         }
+                        transaction.commit();
+                        result = true;
                     }
                 } catch (DaoException e) {
                     transaction.rollback();
@@ -236,19 +236,19 @@ public class QuestionServiceImpl implements QuestionService {
                     if(questionOptional.isPresent()) {
                         if (!attachments.isEmpty()) {
                             AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
-                            List<Attachment> oldAttachments = ((AttachmentDaoImpl) attachmentDao).findByQuestionId(questionId);
-                            boolean deleteOldAttachments = ((AttachmentDao) attachmentDao).deleteByQuestionId(questionId);
-                            if(deleteOldAttachments) {
-                                attachmentService.deleteAttachmentsFiles(oldAttachments);
-                                for (Part p : attachments) {
-                                    Optional<String> fileName = attachmentService.uploadFile(p);
-                                    if (fileName.isPresent()) {
-                                        Attachment attachment = new Attachment();
-                                        attachment.setFile(fileName.get());
-                                        boolean attachmentCreated = attachmentDao.create(attachment);
-                                        if(attachmentCreated) {
-                                            ((QuestionDao) questionDao).createQuestionAttachment(question.getId(), attachment.getId());
-                                        }
+                            List<Attachment> oldAttachments = ((AttachmentDao) attachmentDao).findByQuestionId(questionId);
+                            for(Attachment a: oldAttachments) {
+                                attachmentDao.delete(a.getId());
+                                attachmentService.deleteFile(a.getFile());
+                            }
+                            for (Part p : attachments) {
+                                Optional<String> fileName = attachmentService.uploadFile(p);
+                                if (fileName.isPresent()) {
+                                    Attachment attachment = new Attachment();
+                                    attachment.setFile(fileName.get());
+                                    boolean attachmentCreated = attachmentDao.create(attachment);
+                                    if(attachmentCreated) {
+                                        ((QuestionDao) questionDao).createQuestionAttachment(question.getId(), attachment.getId());
                                     }
                                 }
                             }

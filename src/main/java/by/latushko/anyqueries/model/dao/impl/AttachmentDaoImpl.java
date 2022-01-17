@@ -17,65 +17,53 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
     private static final String SQL_FIND_BY_ANSWER_ID_QUERY = """
             SELECT a.id, a.file  
             FROM attachments a 
-            INNER JOIN answer_attachment aa 
-            ON a.id = aa.attachment_id 
-            AND aa.answer_id = ?""";
+            INNER JOIN answer_attachment aa ON a.id = aa.attachment_id 
+            WHERE aa.answer_id = ?""";
     private static final String SQL_FIND_BY_QUESTION_ID_QUERY = """
             SELECT a.id, a.file  
             FROM attachments a 
-            INNER JOIN question_attachment qa 
-            ON a.id = qa.attachment_id 
-            AND qa.question_id = ?""";
+            INNER JOIN question_attachment qa ON a.id = qa.attachment_id 
+            WHERE qa.question_id = ?""";
     private static final String SQL_FIND_BY_CATEGORY_ID_QUERY = """
-            SELECT a.id, a.file  
-            FROM attachments a
-            INNER JOIN question_attachment qa ON a.id = qa.attachment_id
-            INNER JOIN questions q ON q.id = qa.question_id
+            SELECT a.id, a.file 
+            FROM attachments a 
+            INNER JOIN question_attachment qa ON a.id = qa.attachment_id 
+            INNER JOIN questions q ON q.id = qa.question_id 
+            WHERE q.category_id = ? 
+            UNION 
+            SELECT a.id, a.file FROM attachments a 
+            INNER JOIN answer_attachment aa ON a.id = aa.attachment_id 
+            INNER JOIN answers an ON an.id = aa.answer_id 
+            INNER JOIN questions q ON an.question_id = q.id 
             WHERE q.category_id = ?""";
     private static final String SQL_FIND_BY_USER_ID_QUERY = """
-            SELECT a.id, a.file
-            FROM attachments a
-            INNER JOIN question_attachment qa ON a.id = qa.attachment_id
-            INNER JOIN questions q ON q.id = qa.question_id
-            WHERE q.author_id = ?
-            UNION
-            SELECT a.id, a.file FROM attachments a
-            INNER JOIN answer_attachment aa ON a.id = aa.attachment_id
-            INNER JOIN answers an ON an.id = aa.answer_id
+            SELECT a.id, a.file 
+            FROM attachments a 
+            INNER JOIN question_attachment qa ON a.id = qa.attachment_id 
+            INNER JOIN questions q ON q.id = qa.question_id 
+            WHERE q.author_id = ? 
+            UNION 
+            SELECT a.id, a.file FROM attachments a 
+            INNER JOIN answer_attachment aa ON a.id = aa.attachment_id 
+            INNER JOIN answers an ON an.id = aa.answer_id 
             WHERE an.author_id = ?""";
+    private static final String SQL_FIND_ALL_AND_ANSWERS_ATTACHMENTS_BY_QUESTION_ID_QUERY = """
+            SELECT a.id, a.file 
+            FROM attachments a 
+            INNER JOIN answer_attachment aa ON a.id = aa.attachment_id 
+            INNER JOIN answers an ON aa.answer_id = an.id
+            WHERE an.question_id = ? 
+            UNION 
+            SELECT a.id, a.file 
+            FROM attachments a 
+            INNER JOIN question_attachment qa ON a.id = qa.attachment_id 
+            WHERE qa.question_id = ?""";
     private static final String SQL_CREATE_QUERY = """
             INSERT INTO attachments(file) 
             VALUES (?)""";
-    private static final String SQL_DELETE_BY_QUESTION_ID_QUERY = """
-            DELETE a 
-            FROM attachments a 
-            INNER JOIN question_attachment qa 
-            ON a.id = qa.attachment_id 
-            AND qa.question_id = ?""";
-    private static final String SQL_DELETE_BY_ANSWER_ID_QUERY = """
-            DELETE a 
-            FROM attachments a
-            INNER JOIN answer_attachment aa ON a.id = aa.attachment_id
-            WHERE aa.answer_id = ?""";
-
-    private static final String SQL_DELETE_BY_CATEGORY_ID_QUERY = """
-            DELETE a 
-            FROM attachments a
-            INNER JOIN question_attachment qa ON a.id = qa.attachment_id
-            INNER JOIN questions q ON q.id = qa.question_id
-            WHERE q.category_id = ?""";
-    private static final String SQL_DELETE_BY_QUESTION_AUTHOR_ID_QUERY = """
-            DELETE a 
-            FROM attachments a
-            INNER JOIN question_attachment qa ON a.id = qa.attachment_id
-            INNER JOIN questions q ON q.id = qa.question_id
-            WHERE q.author_id = ?""";
-    private static final String SQL_DELETE_BY_ANSWER_AUTHOR_ID_QUERY = """
-            DELETE a 
-            FROM attachments a
-            INNER JOIN answer_attachment aa ON a.id = aa.attachment_id
-            INNER JOIN answers an ON an.id = aa.answer_id
-            WHERE an.author_id = ?""";
+    private static final String SQL_DELETE_QUERY = """
+            DELETE FROM attachments 
+            WHERE id = ?""";
     private final RowMapper mapper = new AttachmentMapper();
 
     @Override
@@ -108,7 +96,12 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
 
     @Override
     public boolean delete(Long id) throws DaoException {
-        throw new UnsupportedOperationException("Method delete(Long id) is unsupported");
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_QUERY)){
+            statement.setLong(1, id);
+            return statement.executeUpdate() >= 0;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to delete attachment by calling delete(Long id) method", e);
+        }
     }
 
     @Override
@@ -127,6 +120,7 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
     public List<Attachment> findByCategoryId(Long id) throws DaoException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_BY_CATEGORY_ID_QUERY)){
             statement.setLong(1, id);
+            statement.setLong(2, id);
             try(ResultSet resultSet = statement.executeQuery()) {
                 return mapper.mapRows(resultSet);
             }
@@ -161,52 +155,15 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
     }
 
     @Override
-    public boolean deleteByQuestionId(Long id) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_QUESTION_ID_QUERY)){
+    public List<Attachment> findAllAndAnswersAttachmentsByQuestionId(Long id) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_ALL_AND_ANSWERS_ATTACHMENTS_BY_QUESTION_ID_QUERY)){
             statement.setLong(1, id);
-            return statement.executeUpdate() >= 0;
+            statement.setLong(2, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return mapper.mapRows(resultSet);
+            }
         } catch (SQLException e) {
-            throw new DaoException("Failed to delete attachments by calling deleteByQuestionId(Long id) method", e);
-        }
-    }
-
-    @Override
-    public boolean deleteByCategoryId(Long id) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_CATEGORY_ID_QUERY)){
-            statement.setLong(1, id);
-            return statement.executeUpdate() >= 0;
-        } catch (SQLException e) {
-            throw new DaoException("Failed to delete attachments by calling deleteByCategoryId(Long id) method", e);
-        }
-    }
-
-    @Override
-    public boolean deleteByAnswerId(Long id) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ANSWER_ID_QUERY)){
-            statement.setLong(1, id);
-            return statement.executeUpdate() >= 0;
-        } catch (SQLException e) {
-            throw new DaoException("Failed to delete attachments by calling deleteByAnswerId(Long id) method", e);
-        }
-    }
-
-    @Override
-    public boolean deleteByQuestionAuthorId(Long id) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_QUESTION_AUTHOR_ID_QUERY)){
-            statement.setLong(1, id);
-            return statement.executeUpdate() >= 0;
-        } catch (SQLException e) {
-            throw new DaoException("Failed to delete attachments by calling deleteByQuestionAuthorId(Long id) method", e);
-        }
-    }
-
-    @Override
-    public boolean deleteByAnswerAuthorId(Long id) throws DaoException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE_BY_ANSWER_AUTHOR_ID_QUERY)){
-            statement.setLong(1, id);
-            return statement.executeUpdate() >= 0;
-        } catch (SQLException e) {
-            throw new DaoException("Failed to delete attachments by calling deleteByAnswerAuthorId(Long id) method", e);
+            throw new DaoException("Failed to find attachments by calling findAllAndAnswersAttachmentsByQuestionId method", e);
         }
     }
 }

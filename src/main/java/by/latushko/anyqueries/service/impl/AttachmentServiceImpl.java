@@ -132,17 +132,6 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public boolean deleteAttachmentsFiles(List<Attachment> attachments) {
-        for(Attachment a: attachments) {
-            boolean result = deleteFile(a.getFile());
-            if(!result) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
     public Optional<String> getFileExtension(String fileName) {
         if(fileName != null && !fileName.isEmpty() && fileName.contains(FILE_EXTENSION_DELIMITER)) {
             String extension = fileName.substring(fileName.lastIndexOf(FILE_EXTENSION_DELIMITER));

@@ -18,8 +18,7 @@ public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
     private static final String SQL_FIND_BY_ANSWER_ID_AND_USER_ID_QUERY = """
             SELECT id, grade, answer_id, user_id 
             FROM rating 
-            WHERE answer_id = ?
-            AND user_id = ?""";
+            WHERE answer_id = ? AND user_id = ?""";
     private static final String SQL_CREATE_QUERY = """
             INSERT INTO rating(grade, answer_id, user_id) 
             VALUES (?, ?, ?)""";

@@ -27,8 +27,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             SELECT u.id, u.first_name, u.last_name, u.middle_name, u.login, u.password, u.email, u.telegram, u.avatar, u.credential_key, 
             u.last_login_date, u.status, u.role 
             FROM users u 
-            INNER JOIN user_hash uh 
-            ON u.id = uh.user_id 
+            INNER JOIN user_hash uh ON u.id = uh.user_id 
             WHERE u.status = ? and uh.hash = ? and uh.expires >= ?""";
     private static final String SQL_FIND_INACTIVE_BY_TELEGRAM_QUERY = """
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 

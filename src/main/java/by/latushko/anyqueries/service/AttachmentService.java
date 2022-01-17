@@ -18,6 +18,5 @@ public interface AttachmentService {
     Optional<String> uploadAvatar(List<Part> parts);
     boolean deleteAvatar(String avatar);
     boolean deleteFile(String file);
-    boolean deleteAttachmentsFiles(List<Attachment> attachments);
     Optional<String> getFileExtension(String fileName);
 }

@@ -31,10 +31,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             u.password as user_password, u.email as user_email, u.telegram as user_telegram, u.avatar as user_avatar, u.credential_key as user_credential_key, 
             u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role 
             FROM questions q 
-            INNER JOIN users u 
-            ON q.author_id = u.id 
-            INNER JOIN categories c 
-            ON q.category_id = c.id
+            INNER JOIN users u ON q.author_id = u.id 
+            INNER JOIN categories c ON q.category_id = c.id
             WHERE q.id = ?""";
     private static final String SQL_FIND_ALL_PART_QUERY = """
             SELECT q.id, q.title, q.text, q.creation_date, q.editing_date, q.closed, q.category_id, c.name as category_name, c.color as category_color, 
@@ -43,14 +41,10 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             u.last_login_date as user_last_login_date, u.status as user_status, u.role as user_role, count(a.id) as answers_count, count(q.id) OVER() AS total, 
             count(s.id) > 0 as solved  
             FROM questions q 
-            INNER JOIN users u 
-            ON q.author_id = u.id 
-            INNER JOIN categories c 
-            ON q.category_id = c.id
-            LEFT JOIN answers a 
-            ON q.id = a.question_id
-            LEFT JOIN answers s 
-            ON q.id = s.question_id AND s.solution = true""";
+            INNER JOIN users u ON q.author_id = u.id 
+            INNER JOIN categories c ON q.category_id = c.id
+            LEFT JOIN answers a ON q.id = a.question_id
+            LEFT JOIN answers s ON q.id = s.question_id AND s.solution = true""";
     private static final String SQL_EXISTS_BY_ID_QUERY = """
             SELECT 1 FROM questions
             WHERE id = ?""";
