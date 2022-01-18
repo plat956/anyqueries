@@ -6,12 +6,12 @@
         <c:when test="${message.type == 'ALERT'}">
             <div class="alert alert-${message.level.mode} alert-dismissible" role="alert">
                 <div class="center-v">
-                        ${fn:escapeXml(message.text)}
+                        ${message.text}
                 </div>
                 <c:if test="${!empty message.notice}">
                     <hr>
                     <p class="mb-0 small opacity-70">
-                            ${fn:escapeXml(message.notice)}
+                            ${message.notice}
                     </p>
                 </c:if>
             </div>
@@ -20,8 +20,8 @@
             <script type="text/javascript">
                 $(function () {
                     swal({
-                        title: "${fn:escapeXml(message.text)}",
-                        text: "${fn:escapeXml(message.notice)}",
+                        title: "${message.text}",
+                        text: "${message.notice}",
                         type: "${message.level.mode}",
                         confirmButtonClass: "btn-${message.level.mode}",
                         closeOnConfirm: false
@@ -32,7 +32,7 @@
         <c:when test="${message.type == 'TOAST'}">
             <script type="text/javascript">
                 $(function () {
-                    toasts.show("${message.level.mode}", "${fn:escapeXml(message.text)}", "${fn:escapeXml(message.notice)}");
+                    toasts.show("${message.level.mode}", "${message.text}", "${message.notice}");
                 });
             </script>
         </c:when>

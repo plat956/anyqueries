@@ -1,0 +1,13 @@
+# Credentials to application accounts from dump.sql database
+--------------------------
+1) Administrator
+admin:A@dmin123321
+--------------------------
+2) Moderator
+moderator:M@derator123321
+--------------------------
+3) Users
+alina:Alin@123321
+wiwoh24794:cxc9#000A
+viktor1975:Hh*1ccPoQxzz
+--------------------------

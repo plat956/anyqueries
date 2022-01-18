@@ -60,6 +60,7 @@ public class LoginCommand implements Command {
         }
         User user = userOptional.get();
         message = buildResponseMessageAndAuthorize(session, response, manager, validationResult, user, rememberMe);
+        userService.updateLastLoginDate(user);
         session.setAttribute(MESSAGE, message);
         if(user.getStatus() != User.Status.BANNED) {
             redirectUrl = QUESTIONS_URL;
@@ -94,7 +95,6 @@ public class LoginCommand implements Command {
 
     private void authorize(HttpSession session, HttpServletResponse response, User user, boolean rememberMe) {
         session.setAttribute(PRINCIPAL, user);
-        userService.updateLastLoginDate(user);
         if (rememberMe) {
             CookieHelper.addCookie(response, CREDENTIAL_KEY, user.getCredentialKey(), APP_COOKIE_ALIVE_SECONDS);
             String token = userService.generateCredentialToken(user);

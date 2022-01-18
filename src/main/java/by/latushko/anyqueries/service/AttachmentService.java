@@ -19,4 +19,6 @@ public interface AttachmentService {
     boolean deleteAvatar(String avatar);
     boolean deleteFile(String file);
     Optional<String> getFileExtension(String fileName);
+    String detectMimeType(String file);
+    String encodeFileName(String fileName);
 }

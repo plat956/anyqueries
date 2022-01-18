@@ -1025,3 +1025,6 @@ img {
 .break-words {
     word-break: break-word !important;
 }
+.dx-comment-text a {
+    color: #007bff !important;
+}

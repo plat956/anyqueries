@@ -2,26 +2,26 @@ package by.latushko.anyqueries.controller.command.impl.get;
 
 import by.latushko.anyqueries.controller.command.Command;
 import by.latushko.anyqueries.controller.command.CommandResult;
+import by.latushko.anyqueries.service.AttachmentService;
+import by.latushko.anyqueries.service.impl.AttachmentServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.net.FileNameMap;
-import java.net.URLConnection;
 
 import static by.latushko.anyqueries.controller.command.identity.HeaderName.CONTENT_DISPOSITION;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.FILE;
 import static by.latushko.anyqueries.service.AttachmentService.FILE_DIRECTORY_PATH;
 
 public class DownloadCommand implements Command {
-    private static final String CONTENT_DISPOSITION_ATTACHMENT_VALUE = "attachment; filename=";
+    private static final String CONTENT_DISPOSITION_ATTACHMENT_VALUE_TEMPLATE = "attachment; filename=\"%s\"";
 
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         String file = request.getParameter(FILE);
-        FileNameMap fileNameMap = URLConnection.getFileNameMap();
-        String mimeType = fileNameMap.getContentTypeFor(file);
+        AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+        String mimeType = attachmentService.detectMimeType(file);
         response.setContentType(mimeType);
-        response.setHeader(CONTENT_DISPOSITION, CONTENT_DISPOSITION_ATTACHMENT_VALUE + file);
+        String encodedFileName = attachmentService.encodeFileName(file);
+        response.setHeader(CONTENT_DISPOSITION, String.format(CONTENT_DISPOSITION_ATTACHMENT_VALUE_TEMPLATE, encodedFileName));
         return new CommandResult(FILE_DIRECTORY_PATH + file, CommandResult.RoutingType.FILE);
     }
 }

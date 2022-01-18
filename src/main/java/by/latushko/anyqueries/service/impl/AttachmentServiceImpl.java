@@ -18,11 +18,16 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static by.latushko.anyqueries.util.http.MimeType.APPLICATION_OCTET_STREAM;
 
 public class AttachmentServiceImpl implements AttachmentService {
     private static final Logger logger = LogManager.getLogger();
@@ -32,6 +37,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     private static final int FILE_NAME_MAX_LENGTH = 40;
     private static final int AVATAR_MAX_SIZE = 190;
     private static final String AVATAR_PREFIX = "avatar_";
+    private static final String ATTACHMENT_NAME_ENCODING = "UTF-8";
     private static AttachmentService instance;
 
     private AttachmentServiceImpl() {
@@ -141,6 +147,27 @@ public class AttachmentServiceImpl implements AttachmentService {
             return Optional.of(extension);
         } else {
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public String detectMimeType(String file) {
+        Path path = new File(file).toPath();
+        String mimeType;
+        try {
+            mimeType = Files.probeContentType(path);
+        } catch (IOException e) {
+            mimeType = APPLICATION_OCTET_STREAM;
+        }
+        return mimeType;
+    }
+
+    @Override
+    public String encodeFileName(String fileName) {
+        try {
+            return URLEncoder.encode(fileName, ATTACHMENT_NAME_ENCODING);
+        } catch (UnsupportedEncodingException e) {
+            return fileName;
         }
     }
 
