@@ -1,12 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="has_category" value="${param['category'].matches('[0-9]+')}" scope="request" />
+<c:catch var="wrongCategoryParam">
+    <fmt:parseNumber var="categoryParam" type="number" integerOnly="true" value="${param['category']}" />
+</c:catch>
 <div class="custom-sidebar col-lg-3">
     <div class="grid support">
         <div class="grid-body">
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <c:if test="${!has_category}">
+                <c:if test="${empty categoryParam}">
                     <c:if test="${param['command'] == 'questions_page' && (param['mode'] != 'my' || empty principal)}">
                         <c:set var="questionsPage" value="true" />
                     </c:if>
@@ -31,7 +33,7 @@
             <ul class="support-label">
                 <c:forEach var="c" items="${layoutTopCategories}">
                     <li>
-                        <a href="<c:if test="${!has_category || (has_category && param['category'] != c.id)}">${pageContext.request.contextPath}/controller?command=questions_page&category=${c.id}</c:if>">
+                        <a href="<c:if test="${!empty categoryParam && categoryParam != c.id}">${pageContext.request.contextPath}/controller?command=questions_page&category=${c.id}</c:if>">
                             <span class="support-label-span" style="background-color: ${c.color}">&#xA0;</span>${c.name}<span class="float-right">${c.questionsCount}</span>
                         </a>
                     </li>

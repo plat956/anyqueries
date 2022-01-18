@@ -47,7 +47,7 @@
                 </li>
             </c:forEach>
             <c:if test="${empty categories}">
-                <div class="alert alert-secondary" role="alert" style="margin: 0px 15px 15px 15px;">
+                <div class="alert alert-warning" role="alert" style="margin: 0px 15px 15px 15px;">
                     <fmt:message key="message.no.results" />
                 </div>
             </c:if>

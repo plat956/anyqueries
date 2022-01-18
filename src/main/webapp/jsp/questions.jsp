@@ -5,7 +5,12 @@
 <%@ taglib prefix="at" uri="apptags" %>
 <c:choose>
     <c:when test="${!empty category}">
-        <c:set var="page_title" value="${category_name}" scope="request"/>
+        <c:if test="${!empty category_name}">
+            <c:set var="page_title" value="${category_name}" scope="request"/>
+        </c:if>
+        <c:if test="${empty category_name}">
+            <c:set var="page_title_label" value="label.unknown.category" scope="request"/>
+        </c:if>
     </c:when>
     <c:when test="${param['mode'] == 'my' && !empty principal}">
         <c:set var="page_title_label" value="label.myQuestions" scope="request"/>
@@ -91,7 +96,7 @@
                 </li>
             </c:forEach>
             <c:if test="${empty questions}">
-                <div class="alert alert-secondary" role="alert" style="margin: 0px 15px 15px 15px;">
+                <div class="alert alert-warning" role="alert" style="margin: 0px 15px 15px 15px;">
                     <fmt:message key="message.no.results" />
                 </div>
             </c:if>

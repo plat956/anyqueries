@@ -28,7 +28,7 @@
                             <c:otherwise>
                                 <input type="hidden" name="command" value="questions_page" />
                                 <c:choose>
-                                    <c:when test="${!empty param['category']}">
+                                    <c:when test="${!empty param['category'] && param['category'].matches('[0-9]+') && !empty category_name}">
                                         <fmt:message key="label.search.category.placeholder" var="search_placeholder" />
                                         <c:set var="search_placeholder" value="${search_placeholder} «${category_name}»" />
                                     </c:when>
@@ -46,7 +46,7 @@
                             <c:if test="${!empty principal && !empty param['mode']}"><input type="hidden" name="mode" value="${param['mode']}" /></c:if>
                             <c:if test="${!empty param['sort']}"><input type="hidden" name="sort" value="${param['sort']}" /></c:if>
                             <c:if test="${!empty param['resolved']}"><input type="hidden" name="resolved" value="${param['resolved']}" /></c:if>
-                            <c:if test="${!empty param['category']}"><input type="hidden" name="category" value="${param['category']}" /></c:if>
+                            <c:if test="${!empty param['category'] && param['category'].matches('[0-9]+')}"><input type="hidden" name="category" value="${param['category']}" /></c:if>
                         </c:if>
                         <div class="navbar-search input-group">
                             <input class="form-control py-2 border-left-0 border search-input" type="text" value="${fn:substring(param['query'], 0, 40)}"

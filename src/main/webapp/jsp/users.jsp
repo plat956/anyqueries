@@ -48,7 +48,7 @@
     </table>
 </c:if>
 <c:if test="${empty users}">
-    <div class="alert alert-secondary" role="alert" style="margin: -10px 15px 15px 15px;width:100%">
+    <div class="alert alert-warning" role="alert" style="margin: -10px 15px 15px 15px;width:100%">
         <fmt:message key="message.no.results" />
     </div>
 </c:if>

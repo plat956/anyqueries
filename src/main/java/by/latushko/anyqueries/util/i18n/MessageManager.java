@@ -56,10 +56,7 @@ public enum MessageManager {
             }
         } else {
             count = Math.abs(count) % 100;
-            if (count == 11) {
-                return key + PLURAL_MESSAGE_1_POSTFIX;
-            }
-            if (count > 11 && count < 20) {
+            if (count > 10 && count < 20) {
                 return key + PLURAL_MESSAGE_5_POSTFIX;
             }
             count %= 10;

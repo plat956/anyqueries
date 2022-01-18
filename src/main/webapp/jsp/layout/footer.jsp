@@ -93,7 +93,7 @@
                         <c:if test="${!empty principal && param['mode'] == 'my'}">current: true,</c:if>
                         <c:if test="${!empty principal && principal.role == 'ADMIN' && param['command'] == 'users_page'}">users: true,</c:if>
                         <c:if test="${param['command'] == 'categories_page'}">categories: true,</c:if>
-                        <c:if test="${!empty param['category']}">category: '${param['category']}',</c:if>
+                        <c:if test="${!empty param['category'] && param['category'].matches('[0-9]+') && !empty category_name}">category: '${param['category']}',</c:if>
                     },
                     function (data) {
                         $('#noResults').remove();

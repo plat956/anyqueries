@@ -4,12 +4,17 @@
 <%@ taglib prefix="at" uri="apptags" %>
 <c:choose>
     <c:when test="${totalPages > 1}">
+        <c:catch var="wrongPageParam">
+            <fmt:parseNumber var="pageParam" type="number" integerOnly="true" value="${param['page']}" scope="request" />
+        </c:catch>
+        <c:if test="${wrongPageParam != null || empty param['page']}">
+            <c:set var="pageParam" value="1" scope="request" />
+        </c:if>
         <nav>
             <ul class="pagination justify-content-center">
-                <c:set var="page" value="${param['page'].matches('[0-9]+') ? param['page'] : 1}" />
-                <c:if test="${page > 1}">
+                <c:if test="${pageParam > 1}">
                     <li class="page-item">
-                        <a class="page-link" href="${pageContext.request.contextPath}<at:query-parameter-changer key="page" value="${page - 1}"/>">
+                        <a class="page-link" href="${pageContext.request.contextPath}<at:query-parameter-changer key="page" value="${pageParam - 1}"/>">
                             <span aria-hidden="true">«</span>
                         </a>
                     </li>
@@ -17,14 +22,14 @@
 
                 <c:forEach begin="1" end="${totalPages}" varStatus="i">
                     <c:choose>
-                        <c:when test="${i.index == page}">
+                        <c:when test="${i.index == pageParam}">
                             <li class="page-item active">
                                 <a class="page-link" href="${pageContext.request.contextPath}<at:query-parameter-changer key="page" value="${i.index}"/>">
                                         ${i.index}
                                 </a>
                             </li>
                         </c:when>
-                        <c:when test="${i.index > page + 2 && i.index != totalPages}">
+                        <c:when test="${i.index > pageParam + 2 && i.index != totalPages}">
                             <c:if test="${empty leftSkip}">
                                 <c:set var="leftSkip" value="true" />
                                 <li class="page-item">
@@ -34,7 +39,7 @@
                                 </li>
                             </c:if>
                         </c:when>
-                        <c:when test="${i.index < page - 2 && i.index != 1}">
+                        <c:when test="${i.index < pageParam - 2 && i.index != 1}">
                             <c:if test="${empty rightSkip}">
                                 <c:set var="rightSkip" value="true" />
                                 <li class="page-item">
@@ -54,9 +59,9 @@
                     </c:choose>
                 </c:forEach>
 
-                <c:if test="${page < totalPages}">
+                <c:if test="${pageParam < totalPages}">
                     <li class="page-item">
-                        <a class="page-link" href="${pageContext.request.contextPath}<at:query-parameter-changer key="page" value="${page + 1}"/>">
+                        <a class="page-link" href="${pageContext.request.contextPath}<at:query-parameter-changer key="page" value="${pageParam + 1}"/>">
                             <span aria-hidden="true">»</span>
                         </a>
                     </li>

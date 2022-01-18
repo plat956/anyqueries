@@ -5,8 +5,11 @@
 <%@ taglib prefix="at" uri="apptags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<c:catch var="wrongEditParam">
+    <fmt:parseNumber var="editParam" type="number" integerOnly="true" value="${param['edit']}" />
+</c:catch>
 <c:choose>
-    <c:when test="${empty param['edit']}">
+    <c:when test="${empty editParam}">
         <c:set var="page_title" value="${question.title}" scope="request" />
     </c:when>
     <c:otherwise>
@@ -100,7 +103,7 @@
                             </li>
                         </c:forEach>
                     </ul>
-                    <c:if test="${!question.closed && !empty principal && question.author.id != principal.id && empty param['edit']}">
+                    <c:if test="${!question.closed && !empty principal && question.author.id != principal.id && empty editParam}">
                         <p></p>
                         <a class="reply-link" onclick="dataForms.reply('${question.author.fio}');"><i class="fa fa-reply" aria-hidden="true"></i> <fmt:message key="label.reply.button" /></a>
                     </c:if>
@@ -139,7 +142,7 @@
                                             <i class="fas fa-cog"></i>
                                         </a>
                                         <div class="dropdown-menu answer-dropdown" aria-labelledby="dropdownMenuButton${a.id}">
-                                            <c:if test="${edit_access && param['edit'] != a.id}">
+                                            <c:if test="${edit_access && editParam != a.id}">
                                                 <a class="dropdown-item drop-lnk" onclick="location.href = '<at:query-parameter-changer key="edit" value="${a.id}"/>'"><i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i> <fmt:message key="label.edit" /></a>
                                             </c:if>
                                             <c:if test="${delete_access}">
@@ -150,7 +153,7 @@
                                 </c:if>
                             </span>
                             <div class="dx-comment-date"><at:time-duration date="${a.creationDate}"/><c:if test="${!empty a.editingDate}"> (<fmt:message key="label.edit.short" />. <at:time-duration date="${a.editingDate}"/>)</c:if></div>
-                            <c:if test="${param['edit'] != a.id || question.closed}">
+                            <c:if test="${editParam != a.id || question.closed}">
                                 <div id="comment-data-${a.id}">
                                     <div class="dx-comment-text">
                                         <p class="mb-0">
@@ -203,7 +206,7 @@
                                     </div>
                                 </div>
                             </c:if>
-                            <c:if test="${param['edit'] == a.id && !question.closed}">
+                            <c:if test="${editParam == a.id && !question.closed}">
                                 <div id="comment-edit-data-${a.id}">
                                     <form class="needs-validation" method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/controller?command=edit_answer" novalidate autocomplete="off">
                                         <input type="hidden" value="${a.id}" name="id" />
@@ -246,7 +249,7 @@
                             </c:if>
                         </div>
                         <c:if test="${!question.closed}">
-                            <c:if test="${!empty principal && a.author.id != principal.id && empty param['edit']}">
+                            <c:if test="${!empty principal && a.author.id != principal.id && empty editParam}">
                                 <a class="reply-link" id="reply-link${a.id}" onclick="dataForms.reply('${a.author.fio}');"><i class="fa fa-reply" aria-hidden="true"></i> <fmt:message key="label.reply.button" /></a>
                             </c:if>
                         </c:if>
@@ -268,7 +271,7 @@
         <c:if test="${question.closed || totalPages > 1}">
             <jsp:include page="fragment/pagination.jsp" />
         </c:if>
-        <c:if test="${!empty principal && !question.closed && empty param['edit']}">
+        <c:if test="${!empty principal && !question.closed && empty editParam}">
             <div class="dx-comment dx-ticket-comment dx-comment-replied dx-comment-new" style="margin-bottom: -20px;" id="replyForm">
             <div>
                 <div class="dx-comment-img">
@@ -318,7 +321,7 @@
             </div>
         </div>
         </c:if>
-        <c:if test="${(empty principal || !empty param['edit']) && totalPages <= 1}">
+        <c:if test="${(empty principal || !empty editParam) && totalPages <= 1}">
             <div style="margin-top: -20px"></div>
         </c:if>
     </div>
@@ -326,9 +329,9 @@
 <script>
     $(window).load(function() {
         <c:choose>
-            <c:when test="${!empty param['edit']}">
+            <c:when test="${!empty editParam}">
                 setTimeout(function () {
-                    dataForms.scrollToDiv('answer-box-${param['edit']}');
+                    dataForms.scrollToDiv('answer-box-${editParam}');
                 }, 1);
             </c:when>
             <c:otherwise>
@@ -352,13 +355,13 @@
 
     $(function () {
         <c:choose>
-            <c:when test="${empty param['edit']}">
+            <c:when test="${empty editParam}">
                 dataForms.initSummernote('text', '<fmt:message key="label.reply.placeholder" />', '${current_lang}', 120, ${!empty validationResult.getMessage(RequestParameter.TEXT)});
                 attacher.init('file-selector', 'attachments-list', ${AppProperty.APP_ATTACHMENT_COUNT}, ${AppProperty.APP_ATTACHMENT_SIZE});
             </c:when>
             <c:otherwise>
-                dataForms.initSummernote('answer_text${param['edit']}', '<fmt:message key="label.reply.placeholder" />', '${current_lang}', 120, ${!empty validationResult.getMessage(RequestParameter.TEXT)});
-                attacher.init('file-selector${param['edit']}', 'attachments-list${param['edit']}', ${AppProperty.APP_ATTACHMENT_COUNT}, ${AppProperty.APP_ATTACHMENT_SIZE});
+                dataForms.initSummernote('answer_text${editParam}', '<fmt:message key="label.reply.placeholder" />', '${current_lang}', 120, ${!empty validationResult.getMessage(RequestParameter.TEXT)});
+                attacher.init('file-selector${editParam}', 'attachments-list${editParam}', ${AppProperty.APP_ATTACHMENT_COUNT}, ${AppProperty.APP_ATTACHMENT_SIZE});
             </c:otherwise>
         </c:choose>
     });

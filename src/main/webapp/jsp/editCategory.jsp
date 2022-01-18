@@ -31,6 +31,14 @@
     <div class="form-group input-group">
         <input type="color" id="color" name="color" value="${!empty validationResult.getValue(RequestParameter.COLOR) ? validationResult.getValue(RequestParameter.COLOR) : category.color}">&nbsp;&nbsp;
         <label for="color"> <fmt:message key="label.category.color" /></label>
+        <c:if test="${!empty validationResult.getMessage(RequestParameter.COLOR)}">
+            <div class="invalid-feedback-backend">
+                <fmt:message key="${validationResult.getMessage(RequestParameter.COLOR)}" />
+            </div>
+        </c:if>
+        <div class="invalid-feedback">
+            <fmt:message key="label.wrong-input" />
+        </div>
     </div>
     <div class="form-group">
         <button type="submit" class="btn btn-primary btn-block">
