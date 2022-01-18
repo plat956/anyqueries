@@ -18,9 +18,10 @@ Jakarta EE, MySQL, HTML/CSS/Javascript
 ## Usage
 <ul>
   <li>Download sources from this repository;</li>
-  <li>Restore database backup from the <b>dump.sql</b> file located in root;</li>
-  <li>Unpack <b>uploads.zip</b> insides located in root to uploads folder on your server and change <b>app.upload.dir</b> value in <b>application.properties</b> file;</li>
+  <li>Restore database backup from the <b>dump.sql</b> file located in data;</li>
+  <li>Unpack <b>uploads.zip</b> insides located in data to uploads folder on your server and change <b>app.upload.dir</b> value in <b>application.properties</b> file;</li>
   <li>Set your values in <b>database.properties</b>;</li>
   <li>If you wanna test the application together with a telegram bot, please create this one with help of <a href="https://t.me/botfather">@BotFather</a>, then make changes in <b>telegram.properties</b>. Unfortunately, I can't provide access to my created bot and share its credentials because it can be executing on my server at the same time with your project running. If you don't want to create and use bot, please make sure the property <b>telegram.bot.alive</b> in <b>telegram.properties</b> is <b>false</b>;</li>
-  <li>Build and deploy the application.</li>
+  <li>Build and deploy the application;</li>
+  <li>To get logged in use accounts credentials from <b>accounts.txt</b> file located in data.</li>
 </ul>
