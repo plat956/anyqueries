@@ -6,7 +6,6 @@ import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.model.mapper.RowMapper;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -30,26 +29,15 @@ public class QuestionMapper implements RowMapper<Question> {
             if(hasColumn(resultSet, prefix + TOTAL)) {
                 question.setTotal(resultSet.getLong(prefix + TOTAL));
             }
-            String q = "";
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columns = metaData.getColumnCount();
-            for (int i = 1; i <= columns; i++) {
-                q += metaData.getColumnName(i) + ", ";
-            }
-
             if(hasColumn(resultSet, prefix + QUESTION_SOLVED)) {
                 question.setSolved(resultSet.getBoolean(prefix + QUESTION_SOLVED));
             }
             CategoryMapper categoryMapper = new CategoryMapper();
             Optional<Category> category = categoryMapper.mapRow(resultSet, CATEGORY_PREFIX);
-            if(category.isPresent()) {
-                question.setCategory(category.get());
-            }
+            category.ifPresent(question::setCategory);
             UserMapper userMapper = new UserMapper();
             Optional<User> author = userMapper.mapRow(resultSet, USER_PREFIX);
-            if(author.isPresent()) {
-                question.setAuthor(author.get());
-            }
+            author.ifPresent(question::setAuthor);
             return Optional.of(question);
         } catch (SQLException e) {
             return Optional.empty();

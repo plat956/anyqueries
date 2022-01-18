@@ -12,8 +12,8 @@ import static by.latushko.anyqueries.util.http.MimeType.IMAGE_JPEG;
 public class ShowImageCommand implements Command {
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
-        String file = request.getParameter(FILE);
         response.setContentType(IMAGE_JPEG);
+        String file = request.getParameter(FILE);
         return new CommandResult(IMAGE_DIRECTORY_PATH + file, CommandResult.RoutingType.FILE);
     }
 }

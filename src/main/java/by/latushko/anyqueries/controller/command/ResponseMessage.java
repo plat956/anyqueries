@@ -10,7 +10,7 @@ public class ResponseMessage {
         INFO("info"),
         WARNING("warning");
 
-        private String mode;
+        private final String mode;
 
         Level(String mode) {
             this.mode = mode;
@@ -18,10 +18,6 @@ public class ResponseMessage {
 
         public String getMode() {
             return mode;
-        }
-
-        public void setMode(String mode) {
-            this.mode = mode;
         }
     }
 

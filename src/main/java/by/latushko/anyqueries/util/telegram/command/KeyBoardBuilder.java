@@ -7,8 +7,10 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
-import static by.latushko.anyqueries.util.i18n.MessageKey.*;
-import static by.latushko.anyqueries.util.telegram.command.BotCommandType.*;
+import static by.latushko.anyqueries.util.i18n.MessageKey.LABEL_TELEGRAM_ACTIVATE;
+import static by.latushko.anyqueries.util.i18n.MessageKey.LABEL_TELEGRAM_CONTACT;
+import static by.latushko.anyqueries.util.telegram.command.BotCommandType.ACTIVATE_ACCOUNT;
+import static by.latushko.anyqueries.util.telegram.command.BotCommandType.CONTACT_TO_DEVELOPER;
 
 public final class KeyBoardBuilder {
     public static InlineKeyboardMarkup build(MessageManager manager) {

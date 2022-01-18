@@ -44,13 +44,13 @@ public class CreateAnswerCommand implements Command {
         String referer = request.getHeader(REFERER);
         CommandResult commandResult = new CommandResult(referer, REDIRECT);
         session.setAttribute(CREATE_RECORD, true);
-        ResponseMessage message;
         FormValidator validator = AnswerFormValidator.getInstance();
         ValidationResult validationResult = validator.validate(request.getParameterMap());
         if(!validationResult.getStatus()) {
             session.setAttribute(VALIDATION_RESULT, validationResult);
             return commandResult;
         }
+        ResponseMessage message;
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
         List<Part> fileParts;

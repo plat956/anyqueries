@@ -57,14 +57,16 @@
     </div>
 
     <div class="form-group">
-        <label class="" for="file-selector" data-toggle="popover" data-trigger="hover" data-placement="bottom" style="cursor:pointer;height: 40px;margin-bottom: 0px;margin-top: -10px;"
-               data-content="<fmt:message key="message.attachment.info.part1" /> ${AppProperty.APP_ATTACHMENT_COUNT}. <fmt:message key="message.attachment.info.part2" /> ${AppProperty.APP_ATTACHMENT_SIZE} <fmt:message key="message.mb" />">
+        <label class="" for="file-selector" data-toggle="popover" data-trigger="hover" data-placement="bottom"
+               style="cursor:pointer;height: 40px;margin-bottom: 0px;margin-top: -10px;"
+               data-content="<fmt:message key="message.attachment.info.part1" /> ${AppProperty.APP_ATTACHMENT_COUNT}. <fmt:message key="message.attachment.info.part2" /> ${AppProperty.APP_ATTACHMENT_SIZE} <fmt:message key="message.mb" />"
+        >
             <input id="file-selector" type="file" multiple name="file" style="display:none">
             <div style="margin: 10px 10px -10px 0px;">
                 <i class="fa fa-paperclip" aria-hidden="true"></i> <fmt:message key="label.uploadAttachments" />
-            </div
+            </div>
         </label>
-        <ul class="attachments" id="attachments-list" style="margin-top: 20px">
+        <ul class="attachments" id="attachments-list" style="margin-top: 10px">
             <c:forEach var="c" items="${attachments}">
                 <li>
                     <span>

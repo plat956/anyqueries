@@ -52,7 +52,7 @@ public class LiveSearchCommand implements Command {
             result = questionService.findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo(queryString, categoryId,
                     authorId, APP_SEARCH_PREDICTIONS_LIMIT);
         }
-        result.forEach(i -> resultArray.put(i));
+        result.forEach(resultArray::put);
         return new CommandResult(resultArray.toString(), DATA);
     }
 

@@ -3,6 +3,7 @@ package by.latushko.anyqueries.model.pool;
 import by.latushko.anyqueries.exception.ConnectionPoolException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -15,11 +16,11 @@ import static by.latushko.anyqueries.model.pool.ConnectionFactory.DB_POOL_SIZE;
 
 public class ConnectionPool {
     private static final Logger logger = LogManager.getLogger();
+    private static final AtomicBoolean CREATOR = new AtomicBoolean(false);
+    private static final ReentrantLock LOCKER = new ReentrantLock();
     private static ConnectionPool instance;
-    private static AtomicBoolean creator = new AtomicBoolean(false);
-    private static ReentrantLock locker = new ReentrantLock();
-    private BlockingQueue<ProxyConnection> freeConnections;
-    private BlockingQueue<ProxyConnection> givenAwayConnections;
+    private final BlockingQueue<ProxyConnection> freeConnections;
+    private final BlockingQueue<ProxyConnection> givenAwayConnections;
 
     private ConnectionPool() {
         freeConnections = new LinkedBlockingDeque<>(DB_POOL_SIZE);
@@ -40,15 +41,15 @@ public class ConnectionPool {
     }
 
     public static ConnectionPool getInstance(){
-        if(!creator.get()){
+        if(!CREATOR.get()){
             try{
-                locker.lock();
+                LOCKER.lock();
                 if(instance == null){
                     instance = new ConnectionPool();
-                    creator.set(true);
+                    CREATOR.set(true);
                 }
             } finally {
-                locker.unlock();
+                LOCKER.unlock();
             }
         }
         return instance;

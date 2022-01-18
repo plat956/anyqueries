@@ -1,6 +1,9 @@
 package by.latushko.anyqueries.util.telegram.command;
 
-import by.latushko.anyqueries.util.telegram.command.impl.*;
+import by.latushko.anyqueries.util.telegram.command.impl.ActivateAccountCommand;
+import by.latushko.anyqueries.util.telegram.command.impl.ContactToDeveloperCommand;
+import by.latushko.anyqueries.util.telegram.command.impl.JoinCommand;
+import by.latushko.anyqueries.util.telegram.command.impl.UnknownCommand;
 
 import java.util.HashMap;
 import java.util.Map;

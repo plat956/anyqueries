@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface RegistrationService {
     boolean registerUser(String firstName, String lastName, String middleName, boolean sendLink, String email,
-                         String telegram, String login, String password, MessageManager manager, StringBuffer url);
+                    String telegram, String login, String password, MessageManager manager, StringBuffer url);
     boolean updateRegistrationData(User user, String email, String telegram, boolean sendLink,
-                                   MessageManager manager, StringBuffer url);
+                    MessageManager manager, StringBuffer url);
     Optional<User> activateUserByHash(String hash);
     boolean activateUserByTelegramAccount(String account);
 }

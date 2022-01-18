@@ -4,14 +4,14 @@ import java.time.LocalDateTime;
 
 public class User extends BaseEntity<Long> {
     public enum Status {
-        ACTIVE, INACTIVE, BANNED;
+        ACTIVE, INACTIVE, BANNED
     }
     public enum Role {
         ADMIN("danger"),
         USER("warning"),
         MODERATOR("success");
 
-        private String color;
+        private final String color;
 
         Role(String color) {
             this.color = color;

@@ -33,9 +33,7 @@ public class AnswerMapper implements RowMapper<Answer> {
             }
             UserMapper userMapper = new UserMapper();
             Optional<User> author = userMapper.mapRow(resultSet, USER_PREFIX);
-            if(author.isPresent()) {
-                answer.setAuthor(author.get());
-            }
+            author.ifPresent(answer::setAuthor);
             return Optional.of(answer);
         } catch (SQLException e) {
             return Optional.empty();

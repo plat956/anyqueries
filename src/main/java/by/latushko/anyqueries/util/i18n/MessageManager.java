@@ -9,7 +9,7 @@ public enum MessageManager {
     EN(ResourceBundle.getBundle(MESSAGES_FILE_NAME_PREFIX + LOCALE_EN)),
     BE(ResourceBundle.getBundle(MESSAGES_FILE_NAME_PREFIX + LOCALE_BE));
 
-    private ResourceBundle bundle;
+    private final ResourceBundle bundle;
     public static final String SPACE_CHARACTER = " ";
 
     MessageManager(ResourceBundle bundle) {

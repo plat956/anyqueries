@@ -27,24 +27,20 @@ public class SecurityFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String command = request.getParameter(COMMAND);
         Optional<CommandType> commandType = CommandType.getByName(command);
-
         if (commandType.isPresent()) {
             HttpSession session = request.getSession();
-
             User principal = null;
             if (session.getAttribute(PRINCIPAL) != null) {
                 principal = (User) session.getAttribute(PRINCIPAL);
             } else {
                 CookieHelper.eraseCookie(request, response, CREDENTIAL_KEY, CREDENTIAL_TOKEN);
             }
-
             AccessRole currentRole = AccessRole.GUEST;
             if (principal != null) {
                 currentRole = AccessRole.valueOf(principal.getRole().name());
             } else if(session.getAttribute(INACTIVE_PRINCIPAL) != null) {
                 currentRole = AccessRole.INACTIVE_USER;
             }
-
             if (!RestrictedCommand.hasAccess(commandType.get(), currentRole)) {
                 response.sendRedirect(request.getContextPath() + QUESTIONS_URL);
                 return;

@@ -8,7 +8,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class QueryParameterHelper {
+public final class QueryParameterHelper {
+    private QueryParameterHelper() {
+    }
+
     public static String addParameter(String url, String key, String value) {
         try {
             URIBuilder uriBuilder = new URIBuilder(url);

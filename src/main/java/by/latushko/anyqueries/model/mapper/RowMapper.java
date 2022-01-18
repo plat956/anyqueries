@@ -19,9 +19,7 @@ public interface RowMapper<E> {
         List<E> entities = new ArrayList<>();
         while(resultSet.next()) {
             Optional<E> entity = mapRow(resultSet);
-            if(entity.isPresent()) {
-                entities.add(entity.get());
-            }
+            entity.ifPresent(entities::add);
         }
         return entities;
     }

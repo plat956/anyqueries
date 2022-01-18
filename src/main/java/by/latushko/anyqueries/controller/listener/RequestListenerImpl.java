@@ -33,12 +33,10 @@ public class RequestListenerImpl implements ServletRequestListener {
     public void requestInitialized(ServletRequestEvent event) {
         HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
         HttpSession session = request.getSession();
-
         User currentUser = (User) session.getAttribute(PRINCIPAL);
         if(currentUser == null) {
             currentUser = restorePrincipal(request, session);
         }
-
         Object message = session.getAttribute(MESSAGE);
         Object validationResult = session.getAttribute(VALIDATION_RESULT);
         Object answerObject = session.getAttribute(ANSWER_OBJECT);
@@ -64,7 +62,6 @@ public class RequestListenerImpl implements ServletRequestListener {
             session.removeAttribute(CREATE_RECORD);
             request.setAttribute(RequestAttribute.CREATE_RECORD, createRecordObject);
         }
-
         QuestionService questionService = QuestionServiceImpl.getInstance();
         request.setAttribute(LAYOUT_TOTAL_QUESTIONS, questionService.countNotClosed());
         if(currentUser != null) {

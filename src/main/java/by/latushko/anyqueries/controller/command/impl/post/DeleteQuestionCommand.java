@@ -42,17 +42,16 @@ public class DeleteQuestionCommand implements Command {
         if(!referer.contains(QUESTIONS_URL)) {
             referer = QUESTIONS_URL;
         }
-        CommandResult commandResult = new CommandResult(referer, REDIRECT);
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
         ResponseMessage message;
-        boolean result = questionService.delete(id, user);
+        boolean result = questionService.delete(id);
         if(result) {
             message = new ResponseMessage(SUCCESS, manager.getMessage(MESSAGE_DELETE_SUCCESSFUL));
         } else {
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_DELETE_FAILED));
         }
         session.setAttribute(MESSAGE, message);
-        return commandResult;
+        return new CommandResult(referer, REDIRECT);
     }
 }

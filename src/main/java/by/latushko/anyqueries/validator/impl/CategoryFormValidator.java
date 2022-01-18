@@ -5,9 +5,11 @@ import by.latushko.anyqueries.validator.ValidationResult;
 
 import java.util.Map;
 
-import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
+import static by.latushko.anyqueries.controller.command.identity.RequestParameter.COLOR;
+import static by.latushko.anyqueries.controller.command.identity.RequestParameter.NAME;
 import static by.latushko.anyqueries.util.i18n.MessageKey.LABEL_WRONG_INPUT;
-import static by.latushko.anyqueries.validator.ValidationPattern.*;
+import static by.latushko.anyqueries.validator.ValidationPattern.CATEGORY_NAME_REGEXP;
+import static by.latushko.anyqueries.validator.ValidationPattern.HEX_COLOR_REGEXP;
 
 public class CategoryFormValidator implements FormValidator {
     private static FormValidator instance;

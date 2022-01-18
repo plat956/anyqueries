@@ -7,8 +7,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 
-public class CookieHelper {
+public final class CookieHelper {
     private static final int COOKIE_AGE_TO_ERASE = 0;
+
+    private CookieHelper() {
+    }
 
     public static String readCookie(HttpServletRequest request, String key) {
         if(request != null && request.getCookies() != null) {

@@ -79,7 +79,8 @@ public class RegistrationCommand implements Command {
                                                  ValidationResult validationResult, boolean sendLink, String email) {
         ResponseMessage message;
         if (result) {
-            String text, notice;
+            String text;
+            String notice;
             String telegramBotUrl = APP_TELEGRAM_LINK_HOST + BOT_NAME;
             if (sendLink) {
                 text = manager.getMessage(MESSAGE_ACTIVATION_EMAIL_TITLE, email);

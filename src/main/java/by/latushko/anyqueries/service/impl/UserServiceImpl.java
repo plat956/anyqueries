@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     private static final String CREDENTIAL_KEY_ADDITIONAL_SALT = "A3>rE(wY%.LA)4V!";
     private static final String CREDENTIAL_TOKEN_ADDITIONAL_SALT = ";{(NP3yE4aG4fkZT";
     private static UserService instance;
-    private PasswordEncoder passwordEncoder = BCryptPasswordEncoder.getInstance();
+    private final PasswordEncoder passwordEncoder = BCryptPasswordEncoder.getInstance();
 
     private UserServiceImpl() {
     }

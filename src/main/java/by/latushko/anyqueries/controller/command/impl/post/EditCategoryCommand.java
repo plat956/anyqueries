@@ -19,7 +19,8 @@ import static by.latushko.anyqueries.controller.command.CommandResult.RoutingTyp
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DANGER;
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
-import static by.latushko.anyqueries.controller.command.identity.PageUrl.*;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.CATEGORIES_URL;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.EDIT_CATEGORY_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.MESSAGE;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.VALIDATION_RESULT;

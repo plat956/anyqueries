@@ -6,7 +6,10 @@ import java.time.temporal.ChronoUnit;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 import static by.latushko.anyqueries.util.i18n.MessageManager.SPACE_CHARACTER;
 
-public class TimeDuration {
+public final class TimeDuration {
+    private TimeDuration() {
+    }
+
     public static String format(LocalDateTime fromDate, MessageManager manager) {
         LocalDateTime toDate = LocalDateTime.now();
         long seconds = ChronoUnit.SECONDS.between(fromDate, toDate);

@@ -21,8 +21,8 @@ import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.CommandResult.RoutingType.FORWARD;
 import static by.latushko.anyqueries.controller.command.identity.PagePath.*;
-import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.*;
 import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.QUESTION;
+import static by.latushko.anyqueries.controller.command.identity.RequestAttribute.*;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.PRINCIPAL;
 

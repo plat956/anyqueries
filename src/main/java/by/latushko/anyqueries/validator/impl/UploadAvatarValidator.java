@@ -32,7 +32,7 @@ public class UploadAvatarValidator implements AttachmentValidator {
         String fileName = file.getSubmittedFileName();
         AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
         Optional<String> extension = attachmentService.getFileExtension(fileName);
-        if(extension.isEmpty() || (extension.isPresent() && !APP_UPLOAD_AVATAR_EXTENSIONS.contains(extension.get()))) {
+        if(extension.isEmpty() || !APP_UPLOAD_AVATAR_EXTENSIONS.contains(extension.get())) {
             return false;
         }
         long fileSize = file.getSize() / (1024 * 1024);

@@ -12,8 +12,8 @@ import java.util.Arrays;
 
 public class EntityTransaction implements AutoCloseable {
     private static final Logger logger = LogManager.getLogger();
+    private final BaseDao[] dao;
     private Connection connection;
-    private BaseDao[] dao;
 
     public EntityTransaction(BaseDao... dao) throws EntityTransactionException {
         if(dao == null || dao.length == 0) {

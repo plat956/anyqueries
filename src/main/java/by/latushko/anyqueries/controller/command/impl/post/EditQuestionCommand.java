@@ -37,7 +37,7 @@ import static by.latushko.anyqueries.controller.command.identity.SessionAttribut
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 
 public class EditQuestionCommand implements Command {
-    private QuestionService questionService = QuestionServiceImpl.getInstance();
+    private final QuestionService questionService = QuestionServiceImpl.getInstance();
 
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {

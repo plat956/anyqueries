@@ -20,10 +20,6 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             SELECT title 
             FROM questions 
             WHERE title like ?""";
-    private static final String SQL_FIND_AUTHOR_ID_BY_ID_QUERY = """
-            SELECT author_id 
-            FROM questions 
-            WHERE id = ?""";
     private static final String SQL_FIND_BY_ID_QUERY = """
             SELECT q.id, q.title, q.text, q.creation_date, q.editing_date, q.closed, q.category_id, c.name as category_name, c.color as category_color, 
             q.author_id as user_id, u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 

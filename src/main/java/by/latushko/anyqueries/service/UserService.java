@@ -33,6 +33,4 @@ public interface UserService {
     String generateCredentialToken(User user);
     boolean changePassword(User user, String password);
     boolean checkPassword(User user, String password);
-
-
 }

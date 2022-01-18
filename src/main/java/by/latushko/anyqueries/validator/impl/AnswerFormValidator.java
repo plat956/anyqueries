@@ -2,14 +2,12 @@ package by.latushko.anyqueries.validator.impl;
 
 import by.latushko.anyqueries.validator.FormValidator;
 import by.latushko.anyqueries.validator.ValidationResult;
-import org.apache.commons.lang.StringEscapeUtils;
 
 import java.util.Map;
 
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.TEXT;
 import static by.latushko.anyqueries.util.AppProperty.APP_ANSWER_MAXLENGTH;
 import static by.latushko.anyqueries.util.i18n.MessageKey.LABEL_WRONG_INPUT;
-import static by.latushko.anyqueries.validator.ValidationPattern.HTML_TAGS_REGEXP;
 
 public class AnswerFormValidator implements FormValidator {
     private static FormValidator instance;

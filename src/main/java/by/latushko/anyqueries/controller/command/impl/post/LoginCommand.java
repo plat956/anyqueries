@@ -88,10 +88,6 @@ public class LoginCommand implements Command {
                 session.setAttribute(VALIDATION_RESULT, validationResult);
                 yield new ResponseMessage(DANGER, manager.getMessage(MESSAGE_LOGIN_BANNED));
             }
-            default -> {
-                session.setAttribute(VALIDATION_RESULT, validationResult);
-                yield new ResponseMessage(DANGER, manager.getMessage(MESSAGE_LOGIN_FAIL));
-            }
         };
         return message;
     }

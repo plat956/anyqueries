@@ -186,7 +186,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public boolean delete(Long id, User initiator) {
+    public boolean delete(Long id) {
         boolean result = false;
         if(id != null) {
             BaseDao questionDao = new QuestionDaoImpl();

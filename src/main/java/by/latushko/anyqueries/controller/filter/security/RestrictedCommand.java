@@ -45,7 +45,6 @@ public final class RestrictedCommand {
         COMMANDS.put(REGISTRATION_PAGE, EnumSet.of(GUEST));
         COMMANDS.put(REGISTRATION, EnumSet.of(GUEST));
         COMMANDS.put(ACTIVATE_USER, EnumSet.of(GUEST, INACTIVE_USER));
-
         COMMANDS.put(REPEAT_ACTIVATION, EnumSet.of(INACTIVE_USER));
         COMMANDS.put(REPEAT_ACTIVATION_PAGE, EnumSet.of(INACTIVE_USER));
     }

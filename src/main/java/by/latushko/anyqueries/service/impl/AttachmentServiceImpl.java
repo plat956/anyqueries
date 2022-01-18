@@ -30,8 +30,8 @@ public class AttachmentServiceImpl implements AttachmentService {
     private static final String FILE_EMPTY_NAME = "noname";
     private static final int FILE_EXTENSION_MAX_LENGTH = 20;
     private static final int FILE_NAME_MAX_LENGTH = 40;
-    private static final String AVATAR_PREFIX = "avatar_";
     private static final int AVATAR_MAX_SIZE = 190;
+    private static final String AVATAR_PREFIX = "avatar_";
     private static AttachmentService instance;
 
     private AttachmentServiceImpl() {

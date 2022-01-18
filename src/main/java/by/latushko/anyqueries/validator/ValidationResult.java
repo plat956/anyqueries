@@ -3,8 +3,8 @@ package by.latushko.anyqueries.validator;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ValidationResult {
-    private Map<String, Field> fields = new HashMap<>();
+public final class ValidationResult {
+    private final Map<String, Field> fields = new HashMap<>();
 
     public ValidationResult(Map<String, String[]> formData) {
         for(Map.Entry<String, String[]> field: formData.entrySet()) {
@@ -52,7 +52,7 @@ public class ValidationResult {
         return fields.values().stream().noneMatch(f -> f.getMessage() != null && !f.getMessage().isEmpty());
     }
 
-    private String getFormattedValue(String values[]) {
+    private String getFormattedValue(String[] values) {
         if(values != null && values.length > 0) {
             String value = values[0];
             if(!value.isEmpty()) {

@@ -3,6 +3,7 @@ package by.latushko.anyqueries.validator;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import java.util.Map;
+
 import static by.latushko.anyqueries.validator.ValidationPattern.HTML_TAGS_REGEXP;
 
 public interface FormValidator {

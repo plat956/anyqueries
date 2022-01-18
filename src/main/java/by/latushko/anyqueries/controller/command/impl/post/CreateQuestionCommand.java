@@ -30,7 +30,7 @@ import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.DA
 import static by.latushko.anyqueries.controller.command.ResponseMessage.Level.SUCCESS;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
 import static by.latushko.anyqueries.controller.command.identity.HeaderName.REFERER;
-import static by.latushko.anyqueries.controller.command.identity.PageUrl.*;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTION_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
 import static by.latushko.anyqueries.controller.command.identity.SessionAttribute.*;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;

@@ -47,9 +47,7 @@ public class QuestionsPageCommand implements Command {
         if (category != null) {
             CategoryService categoryService = CategoryServiceImpl.getInstance();
             Optional<String> name = categoryService.findNameById(category);
-            if(name.isPresent()) {
-                request.setAttribute(CATEGORY_NAME, name.get());
-            }
+            name.ifPresent(s -> request.setAttribute(CATEGORY_NAME, s));
         }
         return new CommandResult(QUESTIONS_PAGE, FORWARD);
     }

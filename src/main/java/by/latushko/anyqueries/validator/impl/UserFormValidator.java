@@ -7,10 +7,8 @@ import by.latushko.anyqueries.validator.ValidationResult;
 import java.util.Map;
 
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
-import static by.latushko.anyqueries.controller.command.identity.RequestParameter.LOGIN;
 import static by.latushko.anyqueries.util.i18n.MessageKey.LABEL_WRONG_INPUT;
 import static by.latushko.anyqueries.validator.ValidationPattern.*;
-import static by.latushko.anyqueries.validator.ValidationPattern.LOGIN_REGEXP;
 
 public class UserFormValidator implements FormValidator {
     private static FormValidator instance;
