@@ -4,6 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="at" uri="apptags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="page_title_label" value="label.editQuestion" scope="request" />
 <jsp:include page="layout/header.jsp" />
 <form id="edit_form" class="needs-validation" method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/controller?command=edit_question" novalidate autocomplete="off">
@@ -43,9 +44,7 @@
     </div>
     <div class="form-group">
         <textarea id="text" name="text" class="summernote form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.TEXT)}" />"
-                   required maxlength="${AppProperty.APP_QUESTION_MAXLENGTH}">
-            ${!empty validationResult ? validationResult.getValue(RequestParameter.TEXT) : question.text}
-        </textarea>
+                   required maxlength="${AppProperty.APP_QUESTION_MAXLENGTH}"><c:out value="${!empty validationResult ? validationResult.getValue(RequestParameter.TEXT) : question.text}" /></textarea>
         <c:if test="${!empty validationResult.getMessage(RequestParameter.TEXT)}">
             <div class="invalid-feedback-backend">
                 <fmt:message key="${validationResult.getMessage(RequestParameter.TEXT)}" />
@@ -69,7 +68,7 @@
             <c:forEach var="c" items="${attachments}">
                 <li>
                     <span>
-                        <i class="fa fa-file file-attachment file-i" aria-hidden="true"></i>${c.file}
+                        <i class="fa fa-file file-attachment file-i" aria-hidden="true"></i>${fn:escapeXml(c.file)}
                     </span>
                 </li>
             </c:forEach>

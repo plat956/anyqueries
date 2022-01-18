@@ -6,7 +6,6 @@
 <%@ taglib prefix="at" uri="apptags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="page_title_label" value="label.profile.edit" scope="request"/>
-<c:set var="page_title_postfix" value=": ${user.fio}" scope="request"/>
 <jsp:include page="layout/header.jsp"/>
 <div class="row">
     <div class="col-sm-12">

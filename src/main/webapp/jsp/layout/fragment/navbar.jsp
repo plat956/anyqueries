@@ -43,14 +43,14 @@
                             </c:otherwise>
                         </c:choose>
                         <c:if test="${param['command'] == 'questions_page'}">
-                            <c:if test="${!empty principal && !empty param['mode']}"><input type="hidden" name="mode" value="${param['mode']}" /></c:if>
-                            <c:if test="${!empty param['sort']}"><input type="hidden" name="sort" value="${param['sort']}" /></c:if>
-                            <c:if test="${!empty param['resolved']}"><input type="hidden" name="resolved" value="${param['resolved']}" /></c:if>
-                            <c:if test="${!empty param['category'] && param['category'].matches('[0-9]+')}"><input type="hidden" name="category" value="${param['category']}" /></c:if>
+                            <c:if test="${!empty principal && !empty param['mode']}"><input type="hidden" name="mode" value="${fn:escapeXml(param['mode'])}" /></c:if>
+                            <c:if test="${!empty param['sort']}"><input type="hidden" name="sort" value="${fn:escapeXml(param['sort'])}" /></c:if>
+                            <c:if test="${!empty param['resolved']}"><input type="hidden" name="resolved" value="${fn:escapeXml(param['resolved'])}" /></c:if>
+                            <c:if test="${!empty param['category'] && param['category'].matches('[0-9]+')}"><input type="hidden" name="category" value="${fn:escapeXml(param['category'])}" /></c:if>
                         </c:if>
                         <div class="navbar-search input-group">
                             <input class="form-control py-2 border-left-0 border search-input" type="text" value="${fn:substring(param['query'], 0, 40)}"
-                                   placeholder="${search_placeholder}" id="search-input" name="query" maxlength="40"/>
+                                   placeholder="${fn:escapeXml(search_placeholder)}" id="search-input" name="query" maxlength="40"/>
                             <div id="clearSearch" onclick="dataForms.clearSearch();" style="visibility: ${!empty param['query'] ? 'visible' : 'hidden'}">
                                 &times;
                             </div>
@@ -78,7 +78,7 @@
                                         <img src="${pageContext.request.contextPath}/static/custom/images/noavatar.png" width="35" height="35" class="rounded-circle">
                                     </c:otherwise>
                                 </c:choose>
-                                    ${principal.fio}
+                                    ${fn:escapeXml(principal.fio)}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="${pageContext.request.contextPath}/controller?command=edit_profile_page"><fmt:message key="label.profile" /></a>

@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:catch var="wrongCategoryParam">
     <fmt:parseNumber var="categoryParam" type="number" integerOnly="true" value="${param['category']}" />
 </c:catch>
@@ -33,8 +34,8 @@
             <ul class="support-label">
                 <c:forEach var="c" items="${layoutTopCategories}">
                     <li>
-                        <a href="<c:if test="${!empty categoryParam && categoryParam != c.id}">${pageContext.request.contextPath}/controller?command=questions_page&category=${c.id}</c:if>">
-                            <span class="support-label-span" style="background-color: ${c.color}">&#xA0;</span>${c.name}<span class="float-right">${c.questionsCount}</span>
+                        <a href="<c:if test="${categoryParam != c.id}">${pageContext.request.contextPath}/controller?command=questions_page&category=${c.id}</c:if>">
+                            <span class="support-label-span" style="background-color: ${c.color}">&#xA0;</span>${fn:escapeXml(c.name)}<span class="float-right">${c.questionsCount}</span>
                         </a>
                     </li>
                 </c:forEach>

@@ -26,7 +26,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>${AppProperty.APP_NAME} | ${page_title}</title>
+    <title>${AppProperty.APP_NAME} | ${fn:escapeXml(page_title)}</title>
     <jsp:include page="fragment/resources.jsp" />
     <c:if test="${!bad_browser_command}">
         <noscript>
@@ -52,6 +52,6 @@
             </div>
             <div class="grid support-content">
                 <div class="grid-body">
-                    <h5 class="break-words">${page_title_prefix}${page_title}${page_title_postfix}<span class="page_title_right"></span></h5>
+                    <h5 class="break-words"><c:out value="${page_title}${page_title_postfix}" /><span class="page_title_right"></span></h5>
                     <hr class="page-title-hr">
                     <jsp:include page="fragment/message.jsp" />

@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" import="by.latushko.anyqueries.util.AppProperty" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <jsp:useBean id="date" class="java.util.Date" />
 <fmt:formatDate value="${date}" pattern="yyyy" var="currentYear" />
 </div>
@@ -93,7 +94,7 @@
                         <c:if test="${!empty principal && param['mode'] == 'my'}">current: true,</c:if>
                         <c:if test="${!empty principal && principal.role == 'ADMIN' && param['command'] == 'users_page'}">users: true,</c:if>
                         <c:if test="${param['command'] == 'categories_page'}">categories: true,</c:if>
-                        <c:if test="${!empty param['category'] && param['category'].matches('[0-9]+') && !empty category_name}">category: '${param['category']}',</c:if>
+                        <c:if test="${!empty param['category'] && param['category'].matches('[0-9]+') && !empty category_name}">category: '${fn:escapeXml(param['category'])}',</c:if>
                     },
                     function (data) {
                         $('#noResults').remove();

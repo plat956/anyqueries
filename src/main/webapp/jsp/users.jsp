@@ -30,8 +30,8 @@
         <tbody>
         <c:forEach var="q" items="${users}">
             <tr style="cursor: pointer">
-                <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;">${q.login}</td>
-                <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;">${q.fio}</td>
+                <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;"><c:out value="${q.login}" /></td>
+                <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;"><c:out value="${q.fio}" /></td>
                 <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;"><span class="badge badge-${q.status == 'ACTIVE' ? 'success' : (q.status == 'INACTIVE' ? 'secondary' : 'danger')} user-role-span"><fmt:message key="label.status.${fn:toLowerCase(q.status)}" /></span></td>
                 <td onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.id}, event); return false;"><span class="badge badge-${q.role.color} user-role-span"><fmt:message key="label.role.${fn:toLowerCase(q.role)}" /></span></td>
                 <td align="right">

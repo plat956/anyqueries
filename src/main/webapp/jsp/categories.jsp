@@ -31,7 +31,7 @@
             <c:forEach var="q" items="${categories}">
                 <li class="list-group-item" style="border-radius: 0;border-left: 0;border-right: 0;" onclick="location.href = '${pageContext.request.contextPath}/controller?command=questions_page&category=${q.id}'">
                     <div class="media" style="font-size: 15px;"><i class="fa fa-folder-open" aria-hidden="true" style="color: ${q.color}"></i>
-                        <div class="media-body"><strong>${q.name}</strong>
+                        <div class="media-body"><strong>${fn:escapeXml(q.name)}</strong>
                             <c:if test="${!empty principal && principal.role == 'ADMIN'}">
                                 <span class="number float-right">
                                         <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=edit_category_page&id=${q.id}'" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.edit" />">

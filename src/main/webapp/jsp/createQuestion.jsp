@@ -41,7 +41,7 @@
     </div>
     <div class="form-group">
         <textarea id="text" name="text" class="summernote form-control<at:field-class-detector field="${validationResult.getField(RequestParameter.TEXT)}" />"
-                  required maxlength="${AppProperty.APP_QUESTION_MAXLENGTH}">${validationResult.getValue(RequestParameter.TEXT)}</textarea>
+                  required maxlength="${AppProperty.APP_QUESTION_MAXLENGTH}"><c:out value="${validationResult.getValue(RequestParameter.TEXT)}" /></textarea>
         <c:if test="${!empty validationResult.getMessage(RequestParameter.TEXT)}">
             <div class="invalid-feedback-backend">
                 <fmt:message key="${validationResult.getMessage(RequestParameter.TEXT)}" />

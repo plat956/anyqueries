@@ -20,7 +20,7 @@
     </c:otherwise>
 </c:choose>
 <c:if test="${!empty param['query']}">
-    <c:set var="page_title_postfix" value=": «${fn:escapeXml(fn:substring(param['query'], 0, 40))}»" scope="request" />
+    <c:set var="page_title_postfix" value=": «${fn:substring(param['query'], 0, 40)}»" scope="request" />
 </c:if>
 <jsp:include page="layout/header.jsp"/>
 <div class="btn-group">
@@ -73,7 +73,7 @@
                         <c:if test="${q.closed}">
                             <i class="fas fa-lock" style="position: absolute;bottom: 20px;color:#eb870a;"></i>
                         </c:if>
-                        <div class="media-body" style="margin-left: 30px;"><strong class="break-words">${q.title}</strong>
+                        <div class="media-body" style="margin-left: 30px;"><strong class="break-words">${fn:escapeXml(q.title)}</strong>
                             <c:if test="${!empty principal}">
                                 <span class="number float-right" style="margin-top: 12px;">
                                     <c:if test="${!q.closed && q.author.id == principal.id}">
@@ -88,7 +88,7 @@
                                     </c:if>
                                 </span>
                             </c:if>
-                            <p class="info"><fmt:message key="label.author" />: <a class="author-lnk" onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.author.id}, event); return false;">${q.author.fio}</a> <at:time-duration date="${q.creationDate}"/> <i class="fa fa-comments"></i>
+                            <p class="info"><fmt:message key="label.author" />: <a class="author-lnk" onclick="questions.showProfile('${pageContext.request.contextPath}', ${q.author.id}, event); return false;">${fn:escapeXml(q.author.fio)}</a> <at:time-duration date="${q.creationDate}"/> <i class="fa fa-comments"></i>
                                 <at:plural-formatter count="${q.answersCount}" key="label.answer"/>
                             </p>
                         </div>

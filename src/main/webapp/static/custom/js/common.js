@@ -71,6 +71,8 @@ var dataForms = {
             minHeight: height,
             placeholder: placeholder,
             disableDragAndDrop:true,
+            codeviewFilter: false,
+            codeviewIframeFilter: true,
             lang: lang,
             callbacks: {
                 onInit: function (){
@@ -313,12 +315,12 @@ var questions = {
                     $('#showProfileModal #mname').text(res.middle_name);
                     $('#showProfileModal #email').text(res.email);
                     if (res.telegram != undefined && res.telegram.length > 0) {
-                        $('#showProfileModal #telegram').html('<a href="' + res.telegram_lnk + '" target="_blank">@' + res.telegram + '</a>');
+                        $('#showProfileModal #telegram').html('<a href="' + dataForms.stripHtml(res.telegram_lnk) + '" target="_blank">@' + dataForms.stripHtml(res.telegram) + '</a>');
                     } else {
                         $('#showProfileModal #telegram').empty();
                     }
                     if (res.email != undefined && res.email.length > 0) {
-                        $('#showProfileModal #email').html('<a href="mailto:' + res.email + '" target="_blank">' + res.email + '</a>');
+                        $('#showProfileModal #email').html('<a href="mailto:' + dataForms.stripHtml(res.email) + '" target="_blank">' + dataForms.stripHtml(res.email) + '</a>');
                     } else {
                         $('#showProfileModal #email').empty();
                     }
