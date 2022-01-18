@@ -5,8 +5,15 @@ There are 4 roles in the system:
 <ul>
   <li><b>Guest</b> - visitors with this access level have only viewing permissions, they can view questions and answers, use search. To become a user, they have opportunities to sign-up or sign-in;</li>
   <li><b>User</b> - visitors with this access level can ask questions, manage them, answer to other people's questions, change account information and so on;</li>
-  <li><b>Administrator</b> - visitors with this access level can do everything that <b>User</b> allowed, but the main feature is that they have full access to system data management, such as manage categories and other users;</li>
+  <li><b>Administrator</b> - visitors with this access level can do everything that <b>User</b> allowed, but the main feature is that they have full access to system data management, such as manage categories, other users, all questions and answers;</li>
   <li><b>Moderator</b> - visitors with this access level in addition to <b>User</b> privileges can manage all questions and answers to help administrators keep clean.</li>
+</ul>
+
+It's worth noting that each account in the system can have 3 statuses:
+<ul>
+  <li><b>Banned</b> - these users have been banned by administrators;</li>
+  <li><b>Inactive</b> - this status is assigned to user account after the 1st registration step completed, to become an Active account must be activated by following email activation link or using telegram bot;</li>
+  <li><b>Active</b> - this status provide user account access to use all system functions.</li>
 </ul>
 
 ## Project stack
