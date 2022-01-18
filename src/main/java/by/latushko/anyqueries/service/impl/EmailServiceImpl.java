@@ -16,7 +16,6 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import java.io.StringWriter;
 
 import static by.latushko.anyqueries.controller.command.identity.PageUrl.ACTIVATE_URL;
-import static by.latushko.anyqueries.util.AppProperty.APP_HOST;
 import static by.latushko.anyqueries.util.AppProperty.APP_NAME;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 
@@ -32,19 +31,21 @@ public class EmailServiceImpl implements EmailService {
     private static final String QUERY_PARAMETERS_DELIMITER = "&";
     private static final String QUERY_PARAMETER_EQUAL_SIGN = "=";
     private final MessageManager manager;
+    private final String host;
 
-    public EmailServiceImpl(MessageManager manager) {
+    public EmailServiceImpl(MessageManager manager, String host) {
         this.manager = manager;
+        this.host = host;
     }
 
     @Override
     public void sendActivationEmail(User user, UserHash hash) throws MailSenderException {
-        String body = compileActivationLetter(user, hash, manager);
+        String body = compileActivationLetter(user, hash);
         MailSender sender = MailSender.getInstance();
         sender.send(user.getEmail(), manager.getMessage(LABEL_ACCOUNT_ACTIVATION), body);
     }
 
-    private String compileActivationLetter(User user, UserHash userHash, MessageManager manager) {
+    private String compileActivationLetter(User user, UserHash userHash) {
         VelocityEngine ve = new VelocityEngine();
         ve.setProperty(RuntimeConstants.RESOURCE_LOADER, VELOCITY_RESOURCES_PATH);
         ve.setProperty(VELOCITY_PROPERTIES_LOADER_CLASS, ClasspathResourceLoader.class.getName());
@@ -54,7 +55,7 @@ public class EmailServiceImpl implements EmailService {
         context.put(TEMPLATE_TITLE_PARAMETER, manager.getMessage(MESSAGE_ACTIVATION_EMAIL_GREETING, APP_NAME));
         context.put(TEMPLATE_TEXT_PARAMETER, manager.getMessage(MESSAGE_ACTIVATION_EMAIL_TEXT, user.getFio()));
         context.put(TEMPLATE_BUTTON_TEXT_PARAMETER, manager.getMessage(LABEL_ACTIVATION_BUTTON));
-        context.put(TEMPLATE_BUTTON_LINK_PARAMETER, APP_HOST + ACTIVATE_URL + QUERY_PARAMETERS_DELIMITER +
+        context.put(TEMPLATE_BUTTON_LINK_PARAMETER, host + ACTIVATE_URL + QUERY_PARAMETERS_DELIMITER +
                 RequestParameter.HASH + QUERY_PARAMETER_EQUAL_SIGN + userHash.getHash());
         context.put(TEMPLATE_NOT_REPLY_NOTICE, manager.getMessage(MESSAGE_ACTIVATION_NOT_REPLY));
         StringWriter writer = new StringWriter();

@@ -41,8 +41,8 @@
 
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="bottom-start"
              style="position: absolute; transform: translate3d(0px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
-            <a class="dropdown-item" href="${pageContext.request.contextPath}<at:query-parameter-changer key="sort" value="new"/>"><fmt:message key="label.questions.new" /> <i class="fa fa-sort-alpha-desc" aria-hidden="true"></i></a>
-            <a class="dropdown-item" href="${pageContext.request.contextPath}<at:query-parameter-changer key="sort" value="discussed"/>"><fmt:message key="label.questions.discussed" /> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></a>
+            <a class="dropdown-item" href="<at:query-parameter-changer key="sort" value="new"/>"><fmt:message key="label.questions.new" /> <i class="fa fa-sort-alpha-desc" aria-hidden="true"></i></a>
+            <a class="dropdown-item" href="<at:query-parameter-changer key="sort" value="discussed"/>"><fmt:message key="label.questions.discussed" /> <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></a>
         </div>
     </div>
     <div class="has-solution">
@@ -110,9 +110,9 @@
 <script>
     function changeResolved(el) {
         if($(el).is(":checked")) {
-            location.href = '${pageContext.request.contextPath}<at:query-parameter-changer url="${current_without_page}" key="resolved" value="true"/>';
+            location.href = '<at:query-parameter-changer url="${current_without_page}" key="resolved" value="true"/>';
         } else {
-            location.href = '${pageContext.request.contextPath}<at:query-parameter-changer url="${current_without_page}" key="resolved" value="false"/>';
+            location.href = '<at:query-parameter-changer url="${current_without_page}" key="resolved" value="false"/>';
         }
     }
 </script>

@@ -37,9 +37,9 @@ public class QueryParameterChangerTag extends TagSupport {
         if(url != null) {
             page = url;
         } else if(request.getParameter(RequestParameter.COMMAND) != null) {
-            page = CONTROLLER_URL + QUERY_STRING_DELIMITER + request.getQueryString();
+            page = request.getContextPath() + CONTROLLER_URL + QUERY_STRING_DELIMITER + request.getQueryString();
         } else {
-            page = QUESTIONS_URL;
+            page = request.getContextPath() + QUESTIONS_URL;
         }
         try {
             if(value != null && !value.isEmpty()) {

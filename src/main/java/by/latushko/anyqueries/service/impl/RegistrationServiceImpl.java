@@ -19,6 +19,8 @@ import org.apache.logging.log4j.Logger;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.CONTROLLER_URL;
+
 public class RegistrationServiceImpl implements RegistrationService {
     private static final Logger logger = LogManager.getLogger();
     private static RegistrationService instance;
@@ -34,8 +36,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public boolean registerUser(String firstName, String lastName, String middleName, boolean sendLink,
-                                String email, String telegram, String login, String password, MessageManager manager) {
+    public boolean registerUser(String firstName, String lastName, String middleName, boolean sendLink, String email,
+                                String telegram, String login, String password, MessageManager manager, StringBuffer url) {
         BaseDao userDao = new UserDaoImpl();
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
@@ -46,7 +48,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                     if (sendLink) {
                         UserHash userHash = userService.generateUserHash(user);
                         ((UserDao) userDao).createUserHash(userHash);
-                        EmailService emailService = new EmailServiceImpl(manager);
+                        String host = getHostFromUrl(url);
+                        EmailService emailService = new EmailServiceImpl(manager, host);
                         emailService.sendActivationEmail(user, userHash);
                     }
                     transaction.commit();
@@ -62,7 +65,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public boolean updateRegistrationData(User user, String email, String telegram, boolean sendLink, MessageManager manager) {
+    public boolean updateRegistrationData(User user, String email, String telegram, boolean sendLink, MessageManager manager, StringBuffer url) {
         BaseDao userDao = new UserDaoImpl();
         try (EntityTransaction transaction = new EntityTransaction(userDao)) {
             try {
@@ -75,7 +78,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                         UserService userService = UserServiceImpl.getInstance();
                         UserHash userHash = userService.generateUserHash(user);
                         ((UserDao) userDao).createUserHash(userHash);
-                        EmailService emailService = new EmailServiceImpl(manager);
+                        String host = getHostFromUrl(url);
+                        EmailService emailService = new EmailServiceImpl(manager, host);
                         emailService.sendActivationEmail(user, userHash);
                     }
                     transaction.commit();
@@ -141,5 +145,9 @@ public class RegistrationServiceImpl implements RegistrationService {
             logger.error("Failed to activate user by telegram account", e);
         }
         return false;
+    }
+
+    private String getHostFromUrl(StringBuffer url) {
+        return url.substring(0, url.indexOf(CONTROLLER_URL));
     }
 }

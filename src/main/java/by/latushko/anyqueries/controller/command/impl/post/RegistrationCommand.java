@@ -68,7 +68,8 @@ public class RegistrationCommand implements Command {
         String userLang = CookieHelper.readCookie(request, CookieName.LANG);
         MessageManager manager = MessageManager.getManager(userLang);
         RegistrationService registrationService = RegistrationServiceImpl.getInstance();
-        boolean result = registrationService.registerUser(firstName, lastName, middleName, sendLink, email, telegram, login, password, manager);
+        boolean result = registrationService.registerUser(firstName, lastName, middleName, sendLink, email, telegram,
+                login, password, manager, request.getRequestURL());
         ResponseMessage message = buildResponseMessage(result, session, manager, validationResult, sendLink, email);
         session.setAttribute(MESSAGE, message);
         return commandResult;

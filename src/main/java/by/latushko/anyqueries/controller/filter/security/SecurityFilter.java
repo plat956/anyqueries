@@ -46,7 +46,7 @@ public class SecurityFilter implements Filter {
             }
 
             if (!RestrictedCommand.hasAccess(commandType.get(), currentRole)) {
-                response.sendRedirect(QUESTIONS_URL);
+                response.sendRedirect(request.getContextPath() + QUESTIONS_URL);
                 return;
             }
         }

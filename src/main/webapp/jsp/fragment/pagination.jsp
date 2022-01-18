@@ -14,7 +14,7 @@
             <ul class="pagination justify-content-center">
                 <c:if test="${pageParam > 1}">
                     <li class="page-item">
-                        <a class="page-link" href="${pageContext.request.contextPath}<at:query-parameter-changer key="page" value="${pageParam - 1}"/>">
+                        <a class="page-link" href="<at:query-parameter-changer key="page" value="${pageParam - 1}"/>">
                             <span aria-hidden="true">«</span>
                         </a>
                     </li>
@@ -24,7 +24,7 @@
                     <c:choose>
                         <c:when test="${i.index == pageParam}">
                             <li class="page-item active">
-                                <a class="page-link" href="${pageContext.request.contextPath}<at:query-parameter-changer key="page" value="${i.index}"/>">
+                                <a class="page-link" href="<at:query-parameter-changer key="page" value="${i.index}"/>">
                                         ${i.index}
                                 </a>
                             </li>
@@ -51,7 +51,7 @@
                         </c:when>
                         <c:otherwise>
                             <li class="page-item">
-                                <a class="page-link" href="${pageContext.request.contextPath}<at:query-parameter-changer key="page" value="${i.index}"/>">
+                                <a class="page-link" href="<at:query-parameter-changer key="page" value="${i.index}"/>">
                                         ${i.index}
                                 </a>
                             </li>
@@ -61,7 +61,7 @@
 
                 <c:if test="${pageParam < totalPages}">
                     <li class="page-item">
-                        <a class="page-link" href="${pageContext.request.contextPath}<at:query-parameter-changer key="page" value="${pageParam + 1}"/>">
+                        <a class="page-link" href="<at:query-parameter-changer key="page" value="${pageParam + 1}"/>">
                             <span aria-hidden="true">»</span>
                         </a>
                     </li>

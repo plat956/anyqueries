@@ -15,7 +15,7 @@ public class PageProtectionFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        response.sendRedirect(QUESTIONS_URL);
+        response.sendRedirect(request.getContextPath() + QUESTIONS_URL);
         chain.doFilter(request, response);
     }
 }

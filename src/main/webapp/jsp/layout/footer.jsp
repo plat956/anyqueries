@@ -86,7 +86,7 @@
                 $('#searchForm').submit();
             },
             source:  function (query, process) {
-                return $.get('/controller?command=live_search',
+                return $.get('${pageContext.request.contextPath}/controller?command=live_search',
                     {
                         query_string: query,
                         ajax: true,

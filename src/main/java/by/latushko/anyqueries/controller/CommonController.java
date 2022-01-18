@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 import static by.latushko.anyqueries.controller.command.identity.HeaderName.*;
+import static by.latushko.anyqueries.controller.command.identity.PageUrl.CONTROLLER_URL;
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.COMMAND;
 
 @WebServlet(name = "commonController", value = "/controller")
@@ -59,7 +60,7 @@ public class CommonController extends HttpServlet {
 
         switch (result.routingType()) {
             case FORWARD -> request.getRequestDispatcher(result.page()).forward(request, response);
-            case REDIRECT -> response.sendRedirect(result.page());
+            case REDIRECT -> response.sendRedirect(addContextPath(request, result.page()));
             case DATA -> renderData(response, result);
             case FILE -> sendFile(response, result);
             default -> response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -86,5 +87,10 @@ public class CommonController extends HttpServlet {
                 bout.write(ch);
             }
         }
+    }
+
+    private String addContextPath(HttpServletRequest request, String url) {
+        String context = request.getContextPath();
+        return context + url.substring(url.indexOf(CONTROLLER_URL));
     }
 }

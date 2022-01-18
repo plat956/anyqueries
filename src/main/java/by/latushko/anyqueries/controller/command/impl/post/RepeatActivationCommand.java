@@ -58,15 +58,15 @@ public class RepeatActivationCommand implements Command {
 
         String userLang = CookieHelper.readCookie(request, LANG);
         MessageManager manager = MessageManager.getManager(userLang);
-
         RegistrationService registrationService = RegistrationServiceImpl.getInstance();
-        boolean result = registrationService.updateRegistrationData(currentUser, email, telegram, sendLink, manager);
+        boolean result = registrationService.updateRegistrationData(currentUser, email, telegram, sendLink, manager, request.getRequestURL());
         ResponseMessage message = buildResponseMessage(session, result, sendLink, email, manager, validationResult);
         session.setAttribute(MESSAGE, message);
         return commandResult;
     }
 
-    private ResponseMessage buildResponseMessage(HttpSession session, boolean result, boolean sendLink, String email, MessageManager manager, ValidationResult validationResult) {
+    private ResponseMessage buildResponseMessage(HttpSession session, boolean result, boolean sendLink, String email,
+                                                 MessageManager manager, ValidationResult validationResult) {
         ResponseMessage message;
         if (result) {
             String notice;
