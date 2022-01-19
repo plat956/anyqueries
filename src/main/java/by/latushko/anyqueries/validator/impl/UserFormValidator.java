@@ -7,6 +7,7 @@ import by.latushko.anyqueries.validator.ValidationResult;
 import java.util.Map;
 
 import static by.latushko.anyqueries.controller.command.identity.RequestParameter.*;
+import static by.latushko.anyqueries.service.impl.UserServiceImpl.FIRST_ADMIN_ACCOUNT_ID;
 import static by.latushko.anyqueries.util.i18n.MessageKey.LABEL_WRONG_INPUT;
 import static by.latushko.anyqueries.validator.ValidationPattern.*;
 
@@ -46,15 +47,27 @@ public class UserFormValidator implements FormValidator {
         if(!result.getValue(LOGIN).matches(LOGIN_REGEXP)) {
             result.setError(LOGIN, LABEL_WRONG_INPUT);
         }
+        User.Status status = null;
+        User.Role role = null;
         try {
-            User.Status.valueOf(result.getValue(STATUS));
+            status = User.Status.valueOf(result.getValue(STATUS));
         } catch (IllegalArgumentException ex) {
             result.setError(STATUS, LABEL_WRONG_INPUT);
         }
         try {
-            User.Role.valueOf(result.getValue(ROLE));
+            role = User.Role.valueOf(result.getValue(ROLE));
         } catch (IllegalArgumentException ex) {
             result.setError(ROLE, LABEL_WRONG_INPUT);
+        }
+        if(result.containsField(ID)) {
+            if (FIRST_ADMIN_ACCOUNT_ID.toString().equals(result.getValue(ID))) {
+                if (status != User.Status.ACTIVE) {
+                    result.setError(STATUS, LABEL_WRONG_INPUT);
+                }
+                if (role != User.Role.ADMIN) {
+                    result.setError(ROLE, LABEL_WRONG_INPUT);
+                }
+            }
         }
         return result;
     }

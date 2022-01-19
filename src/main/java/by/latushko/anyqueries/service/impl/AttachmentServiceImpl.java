@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static by.latushko.anyqueries.util.AppProperty.APP_UPLOAD_DIR;
 import static by.latushko.anyqueries.util.http.MimeType.APPLICATION_OCTET_STREAM;
 
 public class AttachmentServiceImpl implements AttachmentService {
@@ -38,7 +39,16 @@ public class AttachmentServiceImpl implements AttachmentService {
     private static final int AVATAR_MAX_SIZE = 190;
     private static final String AVATAR_PREFIX = "avatar_";
     private static final String ATTACHMENT_NAME_ENCODING = "UTF-8";
+    private static final String IMAGES_FOLDER_NAME = "images";
+    private static final String FILES_FOLDER_NAME = "files";
+    private static final String IMAGE_DIRECTORY_PATH;
+    private static final String FILE_DIRECTORY_PATH;
     private static AttachmentService instance;
+
+    static {
+        IMAGE_DIRECTORY_PATH = APP_UPLOAD_DIR + File.separator + IMAGES_FOLDER_NAME + File.separator;
+        FILE_DIRECTORY_PATH = APP_UPLOAD_DIR + File.separator + FILES_FOLDER_NAME + File.separator;
+    }
 
     private AttachmentServiceImpl() {
     }
@@ -169,6 +179,16 @@ public class AttachmentServiceImpl implements AttachmentService {
         } catch (UnsupportedEncodingException e) {
             return fileName;
         }
+    }
+
+    @Override
+    public String getImagePath(String image) {
+        return IMAGE_DIRECTORY_PATH + image;
+    }
+
+    @Override
+    public String getFilePath(String file) {
+        return FILE_DIRECTORY_PATH + file;
     }
 
     private boolean resizeAvatar(String avatar) {

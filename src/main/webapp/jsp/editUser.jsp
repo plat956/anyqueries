@@ -141,9 +141,12 @@
             </div>
 
             <div class="form-group">
-                <select class="selectpicker${!empty validationResult.getMessage(RequestParameter.STATUS) ? ' error-invalid' : ''}" data-width="100%" name="status" required>
+                <c:set var="selected_status" value="${!empty validationResult ? validationResult.getValue(RequestParameter.STATUS) : user.status}" />
+                <c:if test="${user.id == 1}">
+                    <input type="hidden" name="status" value="${selected_status}">
+                </c:if>
+                <select class="selectpicker${!empty validationResult.getMessage(RequestParameter.STATUS) ? ' error-invalid' : ''}" data-width="100%" name="status" required${user.id == 1 ? ' disabled' : ''}>
                     <option value="" selected disabled><fmt:message key="label.status.placeholder" /></option>
-                    <c:set var="selected_status" value="${!empty validationResult ? validationResult.getValue(RequestParameter.STATUS) : user.status}" />
                     <c:forEach var="c" items="${statuses}">
                         <option value="${c}"${selected_status == c ? ' selected' : ''} data-content='<span class="badge badge-${c == 'ACTIVE' ? 'success' : (c == 'INACTIVE' ? 'secondary' : 'danger')} user-role-span"><fmt:message key="label.status.${fn:toLowerCase(c)}" /></span>'>
                             <span class="badge badge-${c == 'ACTIVE' ? 'success' : (c == 'INACTIVE' ? 'secondary' : 'danger')} user-role-span"><fmt:message key="label.status.${fn:toLowerCase(c)}" /></span>
@@ -161,9 +164,12 @@
             </div>
 
             <div class="form-group">
-                <select class="selectpicker${!empty validationResult.getMessage(RequestParameter.ROLE) ? ' error-invalid' : ''}" data-width="100%" name="role" required>
+                <c:set var="selected_role" value="${!empty validationResult ? validationResult.getValue(RequestParameter.ROLE) : user.role}" />
+                <c:if test="${user.id == 1}">
+                    <input type="hidden" name="role" value="${selected_role}">
+                </c:if>
+                <select class="selectpicker${!empty validationResult.getMessage(RequestParameter.ROLE) ? ' error-invalid' : ''}" data-width="100%" name="role" required${user.id == 1 ? ' disabled' : ''}>
                     <option value="" selected disabled><fmt:message key="label.status.placeholder" /></option>
-                    <c:set var="selected_role" value="${!empty validationResult ? validationResult.getValue(RequestParameter.ROLE) : user.role}" />
                     <c:forEach var="c" items="${roles}">
                         <option value="${c}"${selected_role == c ? ' selected' : ''} data-content='<span class="badge badge-${c.color} user-role-span"><fmt:message key="label.role.${fn:toLowerCase(c)}" /></span>'>
                             <span class="badge badge-${c.color} user-role-span"><fmt:message key="label.role.${fn:toLowerCase(c)}" /></span>

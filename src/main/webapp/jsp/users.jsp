@@ -38,9 +38,11 @@
                     <a onclick="event.stopPropagation();location.href = '${pageContext.request.contextPath}/controller?command=edit_user_page&id=${q.id}'" style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="<fmt:message key="label.edit" />">
                         <i class="fa fa-edit" aria-hidden="true" style="color: #007bff"></i>
                     </a>&nbsp;
-                    <a onclick="users.delete(event, '${pageContext.request.contextPath}', ${q.id})" data-toggle="tooltip" data-placement="top" style="cursor:pointer" title="<fmt:message key="label.delete" />">
-                        <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
-                    </a>
+                    <c:if test="${q.id != 1}">
+                        <a onclick="users.delete(event, '${pageContext.request.contextPath}', ${q.id})" data-toggle="tooltip" data-placement="top" style="cursor:pointer" title="<fmt:message key="label.delete" />">
+                            <i class="fa fa-trash" aria-hidden="true" style="color: red"></i>
+                        </a>
+                    </c:if>
                 </td>
             </tr>
         </c:forEach>

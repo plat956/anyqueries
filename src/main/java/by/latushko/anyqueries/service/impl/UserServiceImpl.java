@@ -34,6 +34,7 @@ public class UserServiceImpl implements UserService {
     private static final String CREDENTIAL_TOKEN_ADDITIONAL_SALT = ";{(NP3yE4aG4fkZT";
     private static UserService instance;
     private final PasswordEncoder passwordEncoder = BCryptPasswordEncoder.getInstance();
+    public static final Long FIRST_ADMIN_ACCOUNT_ID = 1L;
 
     private UserServiceImpl() {
     }
@@ -314,7 +315,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean delete(Long id) {
         boolean result = false;
-        if(id != null) {
+        if(id != null && !id.equals(FIRST_ADMIN_ACCOUNT_ID)) {
             BaseDao userDao = new UserDaoImpl();
             BaseDao attachmentDao = new AttachmentDaoImpl();
             try (EntityTransaction transaction = new EntityTransaction(userDao, attachmentDao)) {
