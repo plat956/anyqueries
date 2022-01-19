@@ -14,7 +14,7 @@
             <div class="modal-body">
                 <div class="alert alert-warning alert-dismissible" role="alert">
                     <div class="center-v">
-                        ${fn:escapeXml(activationMessage)}
+                        ${activationMessage}
                     </div>
                 </div>
             </div>

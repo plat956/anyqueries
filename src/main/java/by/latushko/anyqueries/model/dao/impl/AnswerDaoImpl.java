@@ -202,7 +202,7 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find answer by calling findByIdAndQuestionAuthorIdAndQuestionClosedIs(Long answerId, Long userId, boolean closed) method", e);
+            throw new DaoException("Failed to find answer by calling findByIdAndQuestionAuthorIdAndQuestionClosedIs method", e);
         }
     }
 
@@ -295,7 +295,7 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             statement.setBoolean(3, solution);
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
-            throw new DaoException("Failed to answer solution category by calling updateSolutionByQuestionIdAndSolution method", e);
+            throw new DaoException("Failed to answer solution by calling updateSolutionByQuestionIdAndSolution method", e);
         }
     }
 }

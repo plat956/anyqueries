@@ -183,7 +183,7 @@ public class UserServiceImpl implements UserService {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during checking user existing by email", e);
+            logger.error("Something went wrong during checking user existing by email except id", e);
         }
         return result;
     }
@@ -200,7 +200,7 @@ public class UserServiceImpl implements UserService {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during checking user existing by telegram", e);
+            logger.error("Something went wrong during checking user existing by telegram except id", e);
         }
         return result;
     }
@@ -217,7 +217,7 @@ public class UserServiceImpl implements UserService {
                 transaction.rollback();
             }
         } catch (EntityTransactionException e) {
-            logger.error("Something went wrong during checking user existing by login", e);
+            logger.error("Something went wrong during checking user existing by login except id", e);
         }
         return result;
     }
