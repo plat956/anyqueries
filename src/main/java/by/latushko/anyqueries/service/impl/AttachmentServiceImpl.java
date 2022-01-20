@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -170,13 +169,15 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     public String detectMimeType(String file) {
-        Path path = new File(file).toPath();
-        String mimeType;
-        try {
-            mimeType = Files.probeContentType(path);
-        } catch (IOException e) {
-            logger.warn("Impossible to determine a mime type of the file: {}", file, e);
-            mimeType = APPLICATION_OCTET_STREAM;
+        String mimeType = APPLICATION_OCTET_STREAM;
+        if(file != null) {
+            try {
+                File f = new File(file);
+                mimeType = Files.probeContentType(f.toPath());
+            } catch (IOException e) {
+                logger.warn("Impossible to determine a mime type of the file: {}", file, e);
+
+            }
         }
         return mimeType;
     }

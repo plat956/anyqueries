@@ -9,7 +9,7 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="${pattern_cmd}"/>
         </Console>
-        <RollingFile name="LogFile" fileName="${LOG_FOLDER}/log-${date:yyyy_MM_dd}.log"
+        <RollingFile name="LogFile" fileName="${sys:catalina.home}/${LOG_FOLDER}/log-${date:yyyy_MM_dd}.log"
                      filePattern="${LOG_FOLDER}/log-%d{yyyy_MM_dd} - %i.log" >
             <PatternLayout pattern="${pattern_file}"/>
             <Policies>
@@ -19,7 +19,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Root level="debug">
+        <Root level="INFO">
             <AppenderRef ref="Console" />
             <AppenderRef ref="LogFile"/>
         </Root>

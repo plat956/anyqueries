@@ -78,7 +78,7 @@ public class CommonController extends HttpServlet {
     private void sendFile(HttpServletResponse response, CommandResult result) throws IOException {
         Path path = Paths.get(result.page());
         if(!Files.exists(path) || !Files.isRegularFile(path)) {
-            logger.error("Attempt to take the unknown file {}", result.page());
+            logger.warn("Attempt to take the unknown file {}", result.page());
             response.setContentType(null);
             response.setHeader(CONTENT_DISPOSITION, CONTENT_DISPOSITION_VALUE);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -91,7 +91,7 @@ public class CommonController extends HttpServlet {
                 bout.write(ch);
             }
         } finally {
-            logger.info("File {} has been given to user successfully", result.page());
+            logger.debug("File {} has been given to user successfully", result.page());
         }
     }
 
