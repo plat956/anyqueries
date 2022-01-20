@@ -3,12 +3,15 @@ package by.latushko.anyqueries.controller.command;
 import by.latushko.anyqueries.controller.command.impl.get.*;
 import by.latushko.anyqueries.controller.command.impl.post.*;
 import by.latushko.anyqueries.util.http.RequestMethod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class CommandProvider {
+    private static final Logger logger = LogManager.getLogger();
     private static CommandProvider instance;
     private final Map<CommandType, Command> getCommands = new EnumMap<>(CommandType.class);
     private final Map<CommandType, Command> postCommands = new EnumMap<>(CommandType.class);
@@ -73,7 +76,10 @@ public class CommandProvider {
         Command command = switch (method) {
             case GET -> getCommands.get(commandType.get());
             case POST -> postCommands.get(commandType.get());
-            default -> null;
+            default -> {
+                logger.warn("Unhandled HTTP method detected: {}", method);
+                yield null;
+            }
         };
 
         return Optional.ofNullable(command);

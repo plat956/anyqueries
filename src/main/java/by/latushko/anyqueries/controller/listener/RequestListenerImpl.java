@@ -14,6 +14,8 @@ import jakarta.servlet.ServletRequestListener;
 import jakarta.servlet.annotation.WebListener;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
@@ -29,6 +31,8 @@ import static by.latushko.anyqueries.controller.command.identity.SessionAttribut
 
 @WebListener
 public class RequestListenerImpl implements ServletRequestListener {
+    private static final Logger logger = LogManager.getLogger();
+
     @Override
     public void requestInitialized(ServletRequestEvent event) {
         HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
@@ -80,6 +84,7 @@ public class RequestListenerImpl implements ServletRequestListener {
             if (userOptional.isPresent()){
                 User user = userOptional.get();
                 session.setAttribute(PRINCIPAL, user);
+                logger.debug("User {} has been restored from cookies with session id {}", user.getId(), session.getId());
                 return user;
             }
         }

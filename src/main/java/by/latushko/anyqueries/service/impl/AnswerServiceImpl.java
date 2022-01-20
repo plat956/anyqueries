@@ -90,6 +90,7 @@ public class AnswerServiceImpl implements AnswerService {
                             }
                         }
                         transaction.commit();
+                        logger.info("Answer {} has been created by User {} successfully", answer.getId(), user.getId());
                         return Optional.of(answer);
                     }
                 } catch (DaoException e) {
@@ -137,6 +138,7 @@ public class AnswerServiceImpl implements AnswerService {
                             }
                         }
                         transaction.commit();
+                        logger.info("Answer {} has been updated successfully by User {}", id, answer.getAuthor().getId());
                         return Optional.of(answer);
                     }
                 } catch (DaoException e) {
@@ -151,7 +153,6 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public boolean delete(Long id) {
-        boolean result = false;
         if (id != null) {
             BaseDao answerDao = new AnswerDaoImpl();
             BaseDao attachmentDao = new AttachmentDaoImpl();
@@ -166,7 +167,8 @@ public class AnswerServiceImpl implements AnswerService {
                             attachmentService.deleteFile(a.getFile());
                         }
                         transaction.commit();
-                        result = true;
+                        logger.info("Answer {} has been deleted successfully", id);
+                        return true;
                     }
                 } catch (DaoException e) {
                     transaction.rollback();
@@ -175,7 +177,7 @@ public class AnswerServiceImpl implements AnswerService {
                 logger.error("Failed to delete answer", e);
             }
         }
-        return result;
+        return false;
     }
 
     @Override
@@ -217,6 +219,7 @@ public class AnswerServiceImpl implements AnswerService {
                         }
                         if(changeRatingResult) {
                             transaction.commit();
+                            logger.info("User {} set grade {} to answer {} successfully", userId, grade, answerId);
                             return true;
                         }
                     }
@@ -285,6 +288,7 @@ public class AnswerServiceImpl implements AnswerService {
                             answerOptional = answerDao.update(answer);
                             if (answerOptional.isPresent()) {
                                 transaction.commit();
+                                logger.info("User {} changed solution mark of answer {} to {}", userId, answerId, solution);
                                 return true;
                             }
                         }

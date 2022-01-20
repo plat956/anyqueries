@@ -4,6 +4,8 @@ import by.latushko.anyqueries.controller.command.identity.RequestParameter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.tagext.TagSupport;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
@@ -13,6 +15,7 @@ import static by.latushko.anyqueries.util.http.QueryParameterHelper.addParameter
 import static by.latushko.anyqueries.util.http.QueryParameterHelper.removeParameter;
 
 public class QueryParameterChangerTag extends TagSupport {
+    private static final Logger logger = LogManager.getLogger();
     private static final String QUERY_STRING_DELIMITER = "?";
     private String url;
     private String key;
@@ -49,6 +52,7 @@ public class QueryParameterChangerTag extends TagSupport {
             }
             pageContext.getOut().write(page);
         } catch (IOException e) {
+            logger.error("Failed to write tag response", e);
             throw new JspException(e.getMessage());
         }
         return SKIP_BODY;

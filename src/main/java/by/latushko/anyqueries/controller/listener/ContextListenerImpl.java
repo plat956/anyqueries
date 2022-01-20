@@ -24,8 +24,9 @@ public class ContextListenerImpl implements ServletContextListener {
             try {
                 TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
                 botsApi.registerBot(TelegramBot.getInstance());
+                logger.info("Telegram bot started successfully");
             } catch (TelegramApiException e) {
-                logger.error("Unable to start telegram bot", e);
+                logger.fatal("Unable to start telegram bot", e);
                 throw new ExceptionInInitializerError("Unable to start telegram bot");
             }
         }

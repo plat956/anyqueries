@@ -47,7 +47,8 @@ public class QuestionServiceImpl implements QuestionService {
         List<String> titles = new ArrayList<>();
         try (EntityTransaction transaction = new EntityTransaction(questionDao)) {
             try {
-                titles = ((QuestionDao)questionDao).findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo(pattern, categoryId, userId, limit);
+                titles = ((QuestionDao)questionDao).findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo(pattern,
+                        categoryId, userId, limit);
                 transaction.commit();
             } catch (DaoException e) {
                 transaction.rollback();
@@ -174,6 +175,7 @@ public class QuestionServiceImpl implements QuestionService {
                         }
                     }
                     transaction.commit();
+                    logger.info("Question {} has been created successfully by User {}", question.getId(), author.getId());
                     return Optional.of(question);
                 }
             } catch (DaoException e) {
@@ -187,7 +189,6 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public boolean delete(Long id) {
-        boolean result = false;
         if(id != null) {
             BaseDao questionDao = new QuestionDaoImpl();
             BaseDao attachmentDao = new AttachmentDaoImpl();
@@ -202,7 +203,8 @@ public class QuestionServiceImpl implements QuestionService {
                             attachmentService.deleteFile(a.getFile());
                         }
                         transaction.commit();
-                        result = true;
+                        logger.info("Question {} has been deleted successfully", id);
+                        return true;
                     }
                 } catch (DaoException e) {
                     transaction.rollback();
@@ -211,7 +213,7 @@ public class QuestionServiceImpl implements QuestionService {
                 logger.error("Failed to delete question", e);
             }
         }
-        return result;
+        return false;
     }
 
     @Override
@@ -254,6 +256,7 @@ public class QuestionServiceImpl implements QuestionService {
                             }
                         }
                         transaction.commit();
+                        logger.info("Question {} has been updated successfully by User {}", question.getId(), question.getAuthor().getId());
                         return true;
                     }
                 } catch (DaoException e) {
@@ -281,6 +284,7 @@ public class QuestionServiceImpl implements QuestionService {
                     questionOptional = questionDao.update(question);
                     if(questionOptional.isPresent()) {
                         transaction.commit();
+                        logger.info("Closed status of question {} has been changed to {} successfully", id, status);
                         return true;
                     }
                 } catch (DaoException e) {

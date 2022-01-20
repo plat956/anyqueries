@@ -7,6 +7,8 @@ import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.model.entity.UserHash;
 import by.latushko.anyqueries.model.mapper.RowMapper;
 import by.latushko.anyqueries.model.mapper.impl.UserMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,6 +21,7 @@ import java.util.Optional;
 import static by.latushko.anyqueries.model.mapper.TableColumnName.USER_LOGIN;
 
 public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
+    private static final Logger logger = LogManager.getLogger();
     private static final String SQL_FIND_BY_ID_QUERY = """
             SELECT id, first_name, last_name, middle_name, login, password, email, telegram, avatar, credential_key, last_login_date, status, role 
             FROM users 
@@ -102,7 +105,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find user by calling findById(Long id) method", e);
+            logger.error("Failed to find user by calling findById method", e);
+            throw new DaoException("Failed to find user by calling findById method", e);
         }
     }
 
@@ -130,7 +134,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to create user by calling create(User user) method", e);
+            logger.error("Failed to create user by calling create method", e);
+            throw new DaoException("Failed to create user by calling create method", e);
         }
         return false;
     }
@@ -155,7 +160,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 return Optional.of(user);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to update user by calling update(User user) method", e);
+            logger.error("Failed to update user by calling update method", e);
+            throw new DaoException("Failed to update user by calling update method", e);
         }
         return Optional.empty();
     }
@@ -166,7 +172,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             statement.setLong(1, id);
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
-            throw new DaoException("Failed to delete user by calling delete(Long id) method", e);
+            logger.error("Failed to delete user by calling delete method", e);
+            throw new DaoException("Failed to delete user by calling delete method", e);
         }
     }
 
@@ -185,7 +192,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to create user hash by calling createUserHash(UserHash hash) method", e);
+            logger.error("Failed to create user hash by calling createUserHash method", e);
+            throw new DaoException("Failed to create user hash by calling createUserHash method", e);
         }
         return false;
     }
@@ -204,7 +212,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find user by calling findInactiveByHashAndHashIsNotExpired(String hash, LocalDateTime validDate) method", e);
+            logger.error("Failed to find user by calling findInactiveByHashAndHashIsNotExpired method", e);
+            throw new DaoException("Failed to find user by calling findInactiveByHashAndHashIsNotExpired method", e);
         }
     }
 
@@ -221,7 +230,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find user by calling findInactiveByTelegram(String account) method", e);
+            logger.error("Failed to find user by calling findInactiveByTelegram method", e);
+            throw new DaoException("Failed to find user by calling findInactiveByTelegram method", e);
         }
     }
 
@@ -237,7 +247,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find user by calling findByLogin(String login) method", e);
+            logger.error("Failed to find user by calling findByLogin method", e);
+            throw new DaoException("Failed to find user by calling findByLogin method", e);
         }
     }
 
@@ -254,7 +265,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find user by calling findByStatusAndCredentialKey(User.Status status, String key) method", e);
+            logger.error("Failed to find user by calling findByStatusAndCredentialKey method", e);
+            throw new DaoException("Failed to find user by calling findByStatusAndCredentialKey method", e);
         }
     }
 
@@ -270,6 +282,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 }
             }
         } catch (SQLException e) {
+            logger.error("Failed to find users logins by calling findLoginByLoginContainsOrderByLoginAscLimitedTo method", e);
             throw new DaoException("Failed to find users logins by calling findLoginByLoginContainsOrderByLoginAscLimitedTo method", e);
         }
         return result;
@@ -293,6 +306,7 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
+            logger.error("Failed to find users by calling findByLoginContainsOrderByRoleAscLimitedTo method", e);
             throw new DaoException("Failed to find users by calling findByLoginContainsOrderByRoleAscLimitedTo method", e);
         }
     }
@@ -305,7 +319,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed check if user exists by calling existsByLogin(String login) method", e);
+            logger.error("Failed check if user exists by calling existsByLogin method", e);
+            throw new DaoException("Failed check if user exists by calling existsByLogin method", e);
         }
     }
 
@@ -317,7 +332,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed check if user exists by calling existsByEmail(String email) method", e);
+            logger.error("Failed check if user exists by calling existsByEmail method", e);
+            throw new DaoException("Failed check if user exists by calling existsByEmail method", e);
         }
     }
 
@@ -329,7 +345,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed check if user exists by calling existsByTelegram(String telegram) method", e);
+            logger.error("Failed check if user exists by calling existsByTelegram method", e);
+            throw new DaoException("Failed check if user exists by calling existsByTelegram method", e);
         }
     }
 
@@ -342,7 +359,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed check if user exists by calling existsByEmailExceptUserId(String email, Long userId) method", e);
+            logger.error("Failed check if user exists by calling existsByEmailExceptUserId method", e);
+            throw new DaoException("Failed check if user exists by calling existsByEmailExceptUserId method", e);
         }
     }
 
@@ -355,7 +373,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed check if user exists by calling existsByTelegramExceptUserId(String telegram, Long userId) method", e);
+            logger.error("Failed check if user exists by calling existsByTelegramExceptUserId method", e);
+            throw new DaoException("Failed check if user exists by calling existsByTelegramExceptUserId method", e);
         }
     }
 
@@ -368,7 +387,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed check if user exists by calling existsByLoginExceptUserId(String login, Long userId) method", e);
+            logger.error("Failed check if user exists by calling existsByLoginExceptUserId method", e);
+            throw new DaoException("Failed check if user exists by calling existsByLoginExceptUserId method", e);
         }
     }
 
@@ -378,7 +398,8 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
             statement.setLong(1, id);
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
-            throw new DaoException("Failed to delete user hash by calling deleteUserHashByUserId(Long id) method", e);
+            logger.error("Failed to delete user hash by calling deleteUserHashByUserId method", e);
+            throw new DaoException("Failed to delete user hash by calling deleteUserHashByUserId method", e);
         }
     }
 }

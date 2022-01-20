@@ -73,7 +73,7 @@ public final class AppProperty {
             APP_UPLOAD_AVATAR_EXTENSIONS.addAll(List.of(avatarExtensions.split(EXTENSION_DELIMITER)));
             APP_UPLOAD_DIR = properties.getProperty(APP_UPLOAD_DIR_PARAMETER);
         } catch (IOException e) {
-            logger.error("Failed to read application properties from file: {}", APP_PARAMETER_PATH, e);
+            logger.fatal("Failed to read application properties from file: {}", APP_PARAMETER_PATH, e);
             throw new ExceptionInInitializerError("Failed to read application properties from file: " + APP_PARAMETER_PATH);
         }
     }

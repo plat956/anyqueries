@@ -5,6 +5,8 @@ import by.latushko.anyqueries.model.dao.BaseDao;
 import by.latushko.anyqueries.model.dao.QuestionDao;
 import by.latushko.anyqueries.model.entity.Question;
 import by.latushko.anyqueries.model.mapper.impl.QuestionMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,6 +18,7 @@ import java.util.Optional;
 import static by.latushko.anyqueries.model.mapper.TableColumnName.QUESTION_TITLE;
 
 public class QuestionDaoImpl extends BaseDao<Long, Question> implements QuestionDao {
+    private static final Logger logger = LogManager.getLogger();
     private static final String SQL_FIND_TITLE_BY_TITLE_CONTAINS_QUERY = """
             SELECT title 
             FROM questions 
@@ -100,7 +103,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find question by calling findById(Long id) method", e);
+            logger.error("Failed to find question by calling findById method", e);
+            throw new DaoException("Failed to find question by calling findById method", e);
         }
     }
 
@@ -122,7 +126,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to create question by calling create(Question question) method", e);
+            logger.error("Failed to create question by calling create method", e);
+            throw new DaoException("Failed to create question by calling create method", e);
         }
         return false;
     }
@@ -142,7 +147,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
                 return Optional.of(question);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to update question by calling update(Question question) method", e);
+            logger.error("Failed to update question by calling update method", e);
+            throw new DaoException("Failed to update question by calling update method", e);
         }
         return Optional.empty();
     }
@@ -153,7 +159,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             statement.setLong(1, id);
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
-            throw new DaoException("Failed to delete question by calling delete(Long id) method", e);
+            logger.error("Failed to delete question by calling delete method", e);
+            throw new DaoException("Failed to delete question by calling delete method", e);
         }
     }
 
@@ -177,6 +184,7 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
                 }
             }
         } catch (SQLException e) {
+            logger.error("Failed to find question titles by calling findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo method", e);
             throw new DaoException("Failed to find question titles by calling findTitleByTitleContainsAndCategoryIdAndAuthorIdOrderByTitleAscLimitedTo method", e);
         }
         return result;
@@ -204,6 +212,7 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
+            logger.error("Failed to find questions by calling findByResolvedAndAuthorIdAndCategoryIdAndTitleContainsOrderByNewestLimitedTo method", e);
             throw new DaoException("Failed to find questions by calling findByResolvedAndAuthorIdAndCategoryIdAndTitleContainsOrderByNewestLimitedTo method", e);
         }
     }
@@ -216,7 +225,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed check if question exists by calling existsById(Long id) method", e);
+            logger.error("Failed check if question exists by calling existsById method", e);
+            throw new DaoException("Failed check if question exists by calling existsById method", e);
         }
     }
 
@@ -230,7 +240,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed check if question exists by calling existsByIdAndAuthorIdAndClosedIs(Long id, Long authorId, boolean closed) method", e);
+            logger.error("Failed check if question exists by calling existsByIdAndAuthorIdAndClosedIs method", e);
+            throw new DaoException("Failed check if question exists by calling existsByIdAndAuthorIdAndClosedIs method", e);
         }
     }
 
@@ -243,7 +254,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed check if question exists by existsByIdAndAuthorId(Long id, Long authorId) method", e);
+            logger.error("Failed check if question exists by existsByIdAndAuthorId method", e);
+            throw new DaoException("Failed check if question exists by existsByIdAndAuthorId method", e);
         }
     }
 
@@ -257,7 +269,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to count questions by calling countByAuthorId(Long authorId) method", e);
+            logger.error("Failed to count questions by calling countByAuthorId method", e);
+            throw new DaoException("Failed to count questions by calling countByAuthorId method", e);
         }
         return 0L;
     }
@@ -272,7 +285,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to count questions by calling countNotClosed() method", e);
+            logger.error("Failed to count questions by calling countNotClosed method", e);
+            throw new DaoException("Failed to count questions by calling countNotClosed method", e);
         }
         return 0L;
     }
@@ -288,7 +302,8 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to count questions by calling countNotClosedByAuthorId(Long authorId) method", e);
+            logger.error("Failed to count questions by calling countNotClosedByAuthorId method", e);
+            throw new DaoException("Failed to count questions by calling countNotClosedByAuthorId method", e);
         }
         return 0L;
     }
@@ -300,6 +315,7 @@ public class QuestionDaoImpl extends BaseDao<Long, Question> implements Question
             statement.setLong(2, attachmentId);
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
+            logger.error("Failed to create question-attachment relationship by calling createQuestionAttachment method", e);
             throw new DaoException("Failed to create question-attachment relationship by calling createQuestionAttachment method", e);
         }
     }

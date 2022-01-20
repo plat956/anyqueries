@@ -6,6 +6,8 @@ import by.latushko.anyqueries.model.dao.BaseDao;
 import by.latushko.anyqueries.model.entity.Attachment;
 import by.latushko.anyqueries.model.mapper.RowMapper;
 import by.latushko.anyqueries.model.mapper.impl.AttachmentMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements AttachmentDao {
+    private static final Logger logger = LogManager.getLogger();
     private static final String SQL_FIND_BY_ANSWER_ID_QUERY = """
             SELECT a.id, a.file  
             FROM attachments a 
@@ -68,7 +71,8 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
 
     @Override
     public Optional<Attachment> findById(Long id) throws DaoException {
-        throw new UnsupportedOperationException("Method findById(Long id) is unsupported");
+        logger.error("Method findById is unsupported");
+        throw new UnsupportedOperationException("Method findById is unsupported");
     }
 
     @Override
@@ -84,14 +88,16 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to create attachment by calling create(Attachment attachment) method", e);
+            logger.error("Failed to create attachment by calling create method", e);
+            throw new DaoException("Failed to create attachment by calling create method", e);
         }
         return false;
     }
 
     @Override
     public Optional<Attachment> update(Attachment attachment) throws DaoException {
-        throw new UnsupportedOperationException("Method update(Attachment attachment) is unsupported");
+        logger.error("Method update is unsupported");
+        throw new UnsupportedOperationException("Method update is unsupported");
     }
 
     @Override
@@ -100,7 +106,8 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
             statement.setLong(1, id);
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
-            throw new DaoException("Failed to delete attachment by calling delete(Long id) method", e);
+            logger.error("Failed to delete attachment by calling delete method", e);
+            throw new DaoException("Failed to delete attachment by calling delete method", e);
         }
     }
 
@@ -112,7 +119,8 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find attachments by calling findByQuestionId(Long id) method", e);
+            logger.error("Failed to find attachments by calling findByQuestionId method", e);
+            throw new DaoException("Failed to find attachments by calling findByQuestionId method", e);
         }
     }
 
@@ -125,7 +133,8 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find attachments by calling findByCategoryId(Long id) method", e);
+            logger.error("Failed to find attachments by calling findByCategoryId method", e);
+            throw new DaoException("Failed to find attachments by calling findByCategoryId method", e);
         }
     }
 
@@ -137,7 +146,8 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find attachments by calling findByAnswerId(Long id) method", e);
+            logger.error("Failed to find attachments by calling findByAnswerId method", e);
+            throw new DaoException("Failed to find attachments by calling findByAnswerId method", e);
         }
     }
 
@@ -150,7 +160,8 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find attachments by calling findByUserId(Long id) method", e);
+            logger.error("Failed to find attachments by calling findByUserId method", e);
+            throw new DaoException("Failed to find attachments by calling findByUserId method", e);
         }
     }
 
@@ -163,6 +174,7 @@ public class AttachmentDaoImpl extends BaseDao<Long, Attachment> implements Atta
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
+            logger.error("Failed to find attachments by calling findAllAndAnswersAttachmentsByQuestionId method", e);
             throw new DaoException("Failed to find attachments by calling findAllAndAnswersAttachmentsByQuestionId method", e);
         }
     }

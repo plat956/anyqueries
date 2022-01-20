@@ -37,7 +37,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             BOT_TOKEN = properties.getProperty(BOT_TOKEN_PARAMETER);
             BOT_ALIVE = Boolean.valueOf(properties.getProperty(BOT_ALIVE_PARAMETER));
         } catch (IOException e) {
-            logger.error("Failed to read telegram bot properties from file: {}", BOT_PROPERTIES_PATH, e);
+            logger.fatal("Failed to read telegram bot properties from file: {}", BOT_PROPERTIES_PATH, e);
             throw new ExceptionInInitializerError("Failed to read telegram bot properties from file: " + BOT_PROPERTIES_PATH);
         }
     }
@@ -47,7 +47,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     public static TelegramBot getInstance(){
         if(!CREATOR.get()){
-            try{
+            try {
                 LOCKER.lock();
                 if(instance == null){
                     instance = new TelegramBot();

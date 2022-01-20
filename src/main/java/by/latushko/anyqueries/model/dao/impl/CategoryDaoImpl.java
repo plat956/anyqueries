@@ -6,6 +6,8 @@ import by.latushko.anyqueries.model.dao.CategoryDao;
 import by.latushko.anyqueries.model.entity.Category;
 import by.latushko.anyqueries.model.mapper.RowMapper;
 import by.latushko.anyqueries.model.mapper.impl.CategoryMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,6 +20,7 @@ import java.util.Optional;
 import static by.latushko.anyqueries.model.mapper.TableColumnName.CATEGORY_NAME;
 
 public class CategoryDaoImpl extends BaseDao<Long, Category> implements CategoryDao {
+    private static final Logger logger = LogManager.getLogger();
     private static final String SQL_FIND_BY_ID_QUERY = """
             SELECT id, name, color 
             FROM categories 
@@ -77,7 +80,8 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find category by calling findById(Long id) method", e);
+            logger.error("Failed to find category by calling findById method", e);
+            throw new DaoException("Failed to find category by calling findById method", e);
         }
     }
 
@@ -95,7 +99,8 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to create category by calling create(Category category) method", e);
+            logger.error("Failed to create category by calling create method", e);
+            throw new DaoException("Failed to create category by calling create method", e);
         }
         return false;
     }
@@ -110,7 +115,8 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
                 return Optional.of(category);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to update category by calling update(Category category) method", e);
+            logger.error("Failed to update category by calling update method", e);
+            throw new DaoException("Failed to update category by calling update method", e);
         }
         return Optional.empty();
     }
@@ -121,7 +127,8 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
             statement.setLong(1, id);
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
-            throw new DaoException("Failed to delete category by calling delete(Long id) method", e);
+            logger.error("Failed to delete category by calling delete method", e);
+            throw new DaoException("Failed to delete category by calling delete method", e);
         }
     }
 
@@ -133,7 +140,8 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find top categories by calling findTop(int count) method", e);
+            logger.error("Failed to find top categories by calling findTop method", e);
+            throw new DaoException("Failed to find top categories by calling findTop method", e);
         }
     }
 
@@ -144,7 +152,8 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find categories by calling findAllOrderByNameAsc() method", e);
+            logger.error("Failed to find categories by calling findAllOrderByNameAsc method", e);
+            throw new DaoException("Failed to find categories by calling findAllOrderByNameAsc method", e);
         }
     }
 
@@ -158,7 +167,8 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find category name by calling findNameById(Long id) method", e);
+            logger.error("Failed to find category name by calling findNameById method", e);
+            throw new DaoException("Failed to find category name by calling findNameById method", e);
         }
         return Optional.empty();
     }
@@ -181,6 +191,7 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
+            logger.error("Failed to find categories by calling findByNameContainsOrderByNameAscLimitedTo method", e);
             throw new DaoException("Failed to find categories by calling findByNameContainsOrderByNameAscLimitedTo method", e);
         }
     }
@@ -197,6 +208,7 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
                 }
             }
         } catch (SQLException e) {
+            logger.error("Failed to find categories names by calling findNameByNameContainsOrderByNameAscLimitedTo method", e);
             throw new DaoException("Failed to find categories names by calling findNameByNameContainsOrderByNameAscLimitedTo method", e);
         }
         return result;
@@ -210,7 +222,8 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed check if category exists by calling existsByName(String name) method", e);
+            logger.error("Failed check if category exists by calling existsByName method", e);
+            throw new DaoException("Failed check if category exists by calling existsByName method", e);
         }
     }
 
@@ -223,7 +236,8 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed check if category exists by calling existsByNameAndIdNot(String name, Long id) method", e);
+            logger.error("Failed check if category exists by calling existsByNameAndIdNot method", e);
+            throw new DaoException("Failed check if category exists by calling existsByNameAndIdNot method", e);
         }
     }
 }

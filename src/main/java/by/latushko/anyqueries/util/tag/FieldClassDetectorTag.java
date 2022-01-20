@@ -3,10 +3,13 @@ package by.latushko.anyqueries.util.tag;
 import by.latushko.anyqueries.validator.ValidationResult;
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.tagext.TagSupport;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
 public class FieldClassDetectorTag extends TagSupport {
+    private static final Logger logger = LogManager.getLogger();
     private static final String VALID_CLASS = " is-valid-field";
     private static final String INVALID_CLASS = " is-invalid-field";
     private static final String NO_CLASS = "";
@@ -29,6 +32,7 @@ public class FieldClassDetectorTag extends TagSupport {
             }
             pageContext.getOut().write(cl);
         } catch (IOException e) {
+            logger.error("Failed to write tag response", e);
             throw new JspException(e.getMessage());
         }
         return SKIP_BODY;

@@ -6,6 +6,8 @@ import by.latushko.anyqueries.model.dao.BaseDao;
 import by.latushko.anyqueries.model.entity.Answer;
 import by.latushko.anyqueries.model.mapper.RowMapper;
 import by.latushko.anyqueries.model.mapper.impl.AnswerMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
+    private static final Logger logger = LogManager.getLogger();
     private static final String SQL_FIND_BY_ID_AND_QUESTION_AUTHOR_ID_AND_QUESTION_CLOSED_IS_QUERY = """
             SELECT a.id, a.text, a.creation_date, a.editing_date, a.solution, a.question_id, count(a.id) OVER() AS total, a.author_id as user_id, 
             u.first_name as user_first_name, u.last_name as user_last_name, u.middle_name as user_middle_name, u.login as user_login, 
@@ -108,7 +111,8 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find answer by calling findById(Long id) method", e);
+            logger.error("Failed to find answer by calling findById method", e);
+            throw new DaoException("Failed to find answer by calling findById method", e);
         }
     }
 
@@ -130,7 +134,8 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to create answer by calling create(Answer answer) method", e);
+            logger.error("Failed to create answer by calling create method", e);
+            throw new DaoException("Failed to create answer by calling create method", e);
         }
         return false;
     }
@@ -149,7 +154,8 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
                 return Optional.of(answer);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to update answer by calling update(Answer answer) method", e);
+            logger.error("Failed to update answer by calling update method", e);
+            throw new DaoException("Failed to update answer by calling update method", e);
         }
         return Optional.empty();
     }
@@ -160,7 +166,8 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             statement.setLong(1, id);
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
-            throw new DaoException("Failed to delete answer by calling delete(Long id) method", e);
+            logger.error("Failed to delete answer by calling delete method", e);
+            throw new DaoException("Failed to delete answer by calling delete method", e);
         }
     }
 
@@ -184,6 +191,7 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
                 return mapper.mapRows(resultSet);
             }
         } catch (SQLException e) {
+            logger.error("Failed to find answers by calling findAllWithUserGradeByQuestionIdOrderByCreationDateAscLimitedTo method", e);
             throw new DaoException("Failed to find answers by calling findAllWithUserGradeByQuestionIdOrderByCreationDateAscLimitedTo method", e);
         }
     }
@@ -202,6 +210,7 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
                 }
             }
         } catch (SQLException e) {
+            logger.error("Failed to find answer by calling findByIdAndQuestionAuthorIdAndQuestionClosedIs method", e);
             throw new DaoException("Failed to find answer by calling findByIdAndQuestionAuthorIdAndQuestionClosedIs method", e);
         }
     }
@@ -215,7 +224,8 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
                 return resultSet.next();
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find answer by calling existsByIdAndAuthorIdNot(Long answerId, Long authorId) method", e);
+            logger.error("Failed to find answer by calling existsByIdAndAuthorIdNot method", e);
+            throw new DaoException("Failed to find answer by calling existsByIdAndAuthorIdNot method", e);
         }
     }
 
@@ -229,6 +239,7 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
                 return resultSet.next();
             }
         } catch (SQLException e) {
+            logger.error("Failed to find answer by calling existsByIdAndAuthorIdAndQuestionClosedIs method", e);
             throw new DaoException("Failed to find answer by calling existsByIdAndAuthorIdAndQuestionClosedIs method", e);
         }
     }
@@ -242,6 +253,7 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
                 return resultSet.next();
             }
         } catch (SQLException e) {
+            logger.error("Failed to find answer by calling existsByIdAndAuthorIdAndQuestion method", e);
             throw new DaoException("Failed to find answer by calling existsByIdAndAuthorIdAndQuestion method", e);
         }
     }
@@ -256,7 +268,8 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to count answers by calling countByUserId(Long userId) method", e);
+            logger.error("Failed to count answers by calling countByUserId method", e);
+            throw new DaoException("Failed to count answers by calling countByUserId method", e);
         }
         return 0L;
     }
@@ -271,7 +284,8 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to count answers by calling countByQuestionId(Long id) method", e);
+            logger.error("Failed to count answers by calling countByQuestionId method", e);
+            throw new DaoException("Failed to count answers by calling countByQuestionId method", e);
         }
         return 0L;
     }
@@ -283,6 +297,7 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             statement.setLong(2, attachmentId);
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
+            logger.error("Failed to create answer-attachment relationship by calling createAnswerAttachment method", e);
             throw new DaoException("Failed to create answer-attachment relationship by calling createAnswerAttachment method", e);
         }
     }
@@ -295,6 +310,7 @@ public class AnswerDaoImpl extends BaseDao<Long, Answer> implements AnswerDao {
             statement.setBoolean(3, solution);
             return statement.executeUpdate() >= 0;
         } catch (SQLException e) {
+            logger.error("Failed to answer solution by calling updateSolutionByQuestionIdAndSolution method", e);
             throw new DaoException("Failed to answer solution by calling updateSolutionByQuestionIdAndSolution method", e);
         }
     }

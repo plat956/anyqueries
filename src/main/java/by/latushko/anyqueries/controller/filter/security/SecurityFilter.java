@@ -8,6 +8,8 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -21,6 +23,8 @@ import static by.latushko.anyqueries.controller.command.identity.SessionAttribut
 
 @WebFilter(filterName = "securityFilter", urlPatterns = "/controller")
 public class SecurityFilter implements Filter {
+    private static final Logger logger = LogManager.getLogger();
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
@@ -42,6 +46,7 @@ public class SecurityFilter implements Filter {
                 currentRole = AccessRole.INACTIVE_USER;
             }
             if (!RestrictedCommand.hasAccess(commandType.get(), currentRole)) {
+                logger.debug("Access denied to {} for role {}", command, currentRole);
                 response.sendRedirect(request.getContextPath() + QUESTIONS_URL);
                 return;
             }

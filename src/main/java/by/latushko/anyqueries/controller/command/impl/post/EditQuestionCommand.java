@@ -20,6 +20,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,6 +39,7 @@ import static by.latushko.anyqueries.controller.command.identity.SessionAttribut
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 
 public class EditQuestionCommand implements Command {
+    private static final Logger logger = LogManager.getLogger();
     private final QuestionService questionService = QuestionServiceImpl.getInstance();
 
     @Override
@@ -67,6 +70,7 @@ public class EditQuestionCommand implements Command {
             fileParts = request.getParts().stream().
                     filter(part -> RequestParameter.FILE.equals(part.getName()) && part.getSize() > 0).toList();
         } catch (IOException | ServletException e) {
+            logger.error("Failed to receive attachment files", e);
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_ERROR_UNEXPECTED));
             session.setAttribute(MESSAGE, message);
             session.setAttribute(VALIDATION_RESULT, validationResult);

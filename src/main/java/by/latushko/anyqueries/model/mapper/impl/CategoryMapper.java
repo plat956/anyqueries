@@ -2,6 +2,8 @@ package by.latushko.anyqueries.model.mapper.impl;
 
 import by.latushko.anyqueries.model.entity.Category;
 import by.latushko.anyqueries.model.mapper.RowMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +12,8 @@ import java.util.Optional;
 import static by.latushko.anyqueries.model.mapper.TableColumnName.*;
 
 public class CategoryMapper implements RowMapper<Category> {
+    private static final Logger logger = LogManager.getLogger();
+
     @Override
     public Optional<Category> mapRow(ResultSet resultSet, String prefix) {
         try {
@@ -25,6 +29,7 @@ public class CategoryMapper implements RowMapper<Category> {
             }
             return Optional.of(category);
         } catch (SQLException e) {
+            logger.error("Failed to fetch category data from resultSet", e);
             return Optional.empty();
         }
     }

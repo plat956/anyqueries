@@ -53,6 +53,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                         emailService.sendActivationEmail(user, userHash);
                     }
                     transaction.commit();
+                    logger.info("User {} completed the 1st step of account registration", login);
                     return true;
                 }
             } catch (DaoException | MailSenderException e) {
@@ -83,6 +84,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                         emailService.sendActivationEmail(user, userHash);
                     }
                     transaction.commit();
+                    logger.info("User {} changed registration data successfully", user.getId());
                     return true;
                 }
             } catch (DaoException | MailSenderException e) {
@@ -109,6 +111,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                         if (userOptional.isPresent()) {
                             ((UserDao) userDao).deleteUserHashByUserId(user.getId());
                             transaction.commit();
+                            logger.info("User {} activated account by email successfully", userOptional.get().getId());
                             return userOptional;
                         }
                     }
@@ -135,6 +138,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                     if(userOptional.isPresent()) {
                         ((UserDao) userDao).deleteUserHashByUserId(user.getId());
                         transaction.commit();
+                        logger.info("User {} has been activated by telegram bot", userOptional.get().getId());
                         return true;
                     }
                 }

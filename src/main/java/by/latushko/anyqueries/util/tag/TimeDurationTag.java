@@ -6,6 +6,8 @@ import by.latushko.anyqueries.util.i18n.TimeDuration;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.tagext.TagSupport;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
 
 public class TimeDurationTag extends TagSupport {
+    private static final Logger logger = LogManager.getLogger();
     private LocalDateTime date;
 
     public void setDate(LocalDateTime date) {
@@ -28,6 +31,7 @@ public class TimeDurationTag extends TagSupport {
         try {
             pageContext.getOut().write(result);
         } catch (IOException e) {
+            logger.error("Failed to write tag response", e);
             throw new JspException(e.getMessage());
         }
         return SKIP_BODY;

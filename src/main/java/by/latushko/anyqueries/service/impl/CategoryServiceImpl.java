@@ -182,6 +182,7 @@ public class CategoryServiceImpl implements CategoryService {
                 boolean result = categoryDao.create(category);
                 if(result) {
                     transaction.commit();
+                    logger.info("Category {} has been created successfully", category.getId());
                     return Optional.of(category);
                 }
             } catch (DaoException e) {
@@ -207,6 +208,7 @@ public class CategoryServiceImpl implements CategoryService {
                 categoryOptional = categoryDao.update(category);
                 if(categoryOptional.isPresent()) {
                     transaction.commit();
+                    logger.info("Category {} has been updated successfully", id);
                     return true;
                 }
             } catch (DaoException e) {
@@ -220,7 +222,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public boolean delete(Long id) {
-        boolean result = false;
         if(id != null) {
             BaseDao categoryDao = new CategoryDaoImpl();
             BaseDao attachmentDao = new AttachmentDaoImpl();
@@ -235,7 +236,8 @@ public class CategoryServiceImpl implements CategoryService {
                             attachmentService.deleteFile(a.getFile());
                         }
                         transaction.commit();
-                        result = true;
+                        logger.info("Category {} has been deleted successfully", id);
+                        return true;
                     }
                 } catch (DaoException e) {
                     transaction.rollback();
@@ -244,7 +246,7 @@ public class CategoryServiceImpl implements CategoryService {
                 logger.error("Failed to delete category", e);
             }
         }
-        return result;
+        return false;
     }
 
     private Category createCategoryObject(String name, String color) {

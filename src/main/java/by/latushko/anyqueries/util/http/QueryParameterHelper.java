@@ -2,6 +2,8 @@ package by.latushko.anyqueries.util.http;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -9,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public final class QueryParameterHelper {
+    private static final Logger logger = LogManager.getLogger();
+
     private QueryParameterHelper() {
     }
 
@@ -24,8 +28,10 @@ public final class QueryParameterHelper {
             }
             uriBuilder.setParameters(queryParameters);
             uriBuilder.addParameter(key, value);
+            logger.debug("Parameter {} has been added to url", key);
             return uriBuilder.build().toString();
         } catch (URISyntaxException e) {
+            logger.error("Wrong url syntax: {}", url, e);
             return url;
         }
     }
@@ -37,8 +43,10 @@ public final class QueryParameterHelper {
             List<String> keys = Arrays.stream(keysArray).toList();
             queryParameters.removeIf(param -> keys.contains(param.getName()));
             uriBuilder.setParameters(queryParameters);
+            logger.debug("Parameters {} have been removed from url", keysArray);
             return uriBuilder.build().toString();
         } catch (URISyntaxException e) {
+            logger.error("Wrong url syntax: {}", url, e);
             return url;
         }
     }

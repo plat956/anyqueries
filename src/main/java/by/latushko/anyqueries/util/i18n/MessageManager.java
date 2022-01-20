@@ -1,5 +1,8 @@
 package by.latushko.anyqueries.util.i18n;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.ResourceBundle;
 
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
@@ -9,8 +12,9 @@ public enum MessageManager {
     EN(ResourceBundle.getBundle(MESSAGES_FILE_NAME_PREFIX + LOCALE_EN)),
     BE(ResourceBundle.getBundle(MESSAGES_FILE_NAME_PREFIX + LOCALE_BE));
 
-    private final ResourceBundle bundle;
+    private static final Logger logger = LogManager.getLogger();
     public static final String SPACE_CHARACTER = " ";
+    private final ResourceBundle bundle;
 
     MessageManager(ResourceBundle bundle) {
         this.bundle = bundle;
@@ -23,6 +27,7 @@ public enum MessageManager {
         try {
             return MessageManager.valueOf(lang.toUpperCase());
         } catch (IllegalArgumentException e) {
+            logger.warn("Wrong language request: {}", lang, e);
             return RU;
         }
     }

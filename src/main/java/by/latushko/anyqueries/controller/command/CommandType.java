@@ -1,5 +1,8 @@
 package by.latushko.anyqueries.controller.command;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Optional;
 
 public enum CommandType {
@@ -46,6 +49,8 @@ public enum CommandType {
     EDIT_USER,
     CHANGE_QUESTION_STATUS;
 
+    private static final Logger logger = LogManager.getLogger();
+
     public static Optional<CommandType> getByName(String commandName) {
         if (commandName == null) {
             return Optional.empty();
@@ -54,6 +59,7 @@ public enum CommandType {
         try {
             commandType = Optional.of(CommandType.valueOf(commandName.toUpperCase()));
         } catch (IllegalArgumentException e) {
+            logger.error("Cannot determine requested command: {}", commandName, e);
             commandType = Optional.empty();
         }
         return commandType;

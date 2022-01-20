@@ -33,7 +33,7 @@ class ConnectionFactory {
             logger.error("Failed to read connection pool properties from file: {}", DB_PROPERTIES_PATH, e);
             throw new ExceptionInInitializerError("Failed to read connection pool properties from file: " + DB_PROPERTIES_PATH);
         } catch (ClassNotFoundException e) {
-            logger.error("Failed to register database driver", e);
+            logger.fatal("Failed to register database driver", e);
             throw new ExceptionInInitializerError("Failed to register database driver");
         }
     }

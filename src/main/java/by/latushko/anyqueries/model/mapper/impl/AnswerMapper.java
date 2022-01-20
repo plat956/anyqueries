@@ -3,6 +3,8 @@ package by.latushko.anyqueries.model.mapper.impl;
 import by.latushko.anyqueries.model.entity.Answer;
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.model.mapper.RowMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +14,8 @@ import java.util.Optional;
 import static by.latushko.anyqueries.model.mapper.TableColumnName.*;
 
 public class AnswerMapper implements RowMapper<Answer> {
+    private static final Logger logger = LogManager.getLogger();
+
     @Override
     public Optional<Answer> mapRow(ResultSet resultSet, String prefix) {
         try {
@@ -36,6 +40,7 @@ public class AnswerMapper implements RowMapper<Answer> {
             author.ifPresent(answer::setAuthor);
             return Optional.of(answer);
         } catch (SQLException e) {
+            logger.error("Failed to fetch answer data from resultSet", e);
             return Optional.empty();
         }
     }

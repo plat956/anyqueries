@@ -42,7 +42,7 @@ public class MailSender {
             USER_NAME = APP_NAME + SPACE_CHARACTER + properties.getProperty(USER_NAME_PROPERTY);
             CONTENT_TYPE = properties.getProperty(CONTENT_TYPE_PROPERTY);
         } catch (IOException e) {
-            logger.error("Failed to read mail properties from file: {}", MAIL_PROPERTIES_PATH, e);
+            logger.fatal("Failed to read mail properties from file: {}", MAIL_PROPERTIES_PATH, e);
             throw new ExceptionInInitializerError("Failed to read mail properties from file: " + MAIL_PROPERTIES_PATH);
         }
     }
@@ -61,9 +61,12 @@ public class MailSender {
         try {
             MimeMessage message = initMessage(sendTo, subject, text);
             Transport.send(message);
+            logger.info("Email with subject {} sent to {}", subject, sendTo);
         } catch (AddressException e) {
+            logger.error("Invalid recipient emial address: {}", sendTo, e);
             throw new MailSenderException("Invalid address: " + sendTo, e);
         } catch (MessagingException e) {
+            logger.error("Error generating or sending message", e);
             throw new MailSenderException("Error generating or sending message", e);
         }
     }

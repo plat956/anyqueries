@@ -15,6 +15,8 @@ import by.latushko.anyqueries.validator.impl.LoginFormValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
@@ -33,6 +35,7 @@ import static by.latushko.anyqueries.util.AppProperty.APP_COOKIE_ALIVE_SECONDS;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 
 public class LoginCommand implements Command {
+    private static final Logger logger = LogManager.getLogger();
     private final UserService userService = UserServiceImpl.getInstance();
 
     @Override
@@ -100,5 +103,6 @@ public class LoginCommand implements Command {
             String token = userService.generateCredentialToken(user);
             CookieHelper.addCookie(response, CREDENTIAL_TOKEN, token, APP_COOKIE_ALIVE_SECONDS);
         }
+        logger.info("User {} has been authorized successfully", user.getId());
     }
 }

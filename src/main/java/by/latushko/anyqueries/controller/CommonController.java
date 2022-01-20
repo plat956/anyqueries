@@ -10,6 +10,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -26,6 +28,7 @@ import static by.latushko.anyqueries.controller.command.identity.RequestParamete
         maxFileSize = 1024 * 1024 * 15,
         maxRequestSize = 1024 * 1024 * 15 * 10)
 public class CommonController extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger();
     private static final String CONTENT_DISPOSITION_VALUE = "inline";
     private static final String CACHE_CONTROL_VALUE = "no-cache, no-store, must-revalidate";
     private static final String PRAGMA_VALUE = "no-cache";
@@ -75,6 +78,7 @@ public class CommonController extends HttpServlet {
     private void sendFile(HttpServletResponse response, CommandResult result) throws IOException {
         Path path = Paths.get(result.page());
         if(!Files.exists(path) || !Files.isRegularFile(path)) {
+            logger.error("Attempt to take the unknown file {}", result.page());
             response.setContentType(null);
             response.setHeader(CONTENT_DISPOSITION, CONTENT_DISPOSITION_VALUE);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -86,6 +90,8 @@ public class CommonController extends HttpServlet {
             while ((ch = bin.read()) != -1) {
                 bout.write(ch);
             }
+        } finally {
+            logger.info("File {} has been given to user successfully", result.page());
         }
     }
 

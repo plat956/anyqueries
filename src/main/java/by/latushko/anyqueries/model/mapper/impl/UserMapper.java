@@ -2,6 +2,8 @@ package by.latushko.anyqueries.model.mapper.impl;
 
 import by.latushko.anyqueries.model.entity.User;
 import by.latushko.anyqueries.model.mapper.RowMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +13,8 @@ import java.util.Optional;
 import static by.latushko.anyqueries.model.mapper.TableColumnName.*;
 
 public class UserMapper implements RowMapper<User> {
+    private static final Logger logger = LogManager.getLogger();
+
     @Override
     public Optional<User> mapRow(ResultSet resultSet, String prefix) {
         try {
@@ -33,6 +37,7 @@ public class UserMapper implements RowMapper<User> {
             }
             return Optional.of(user);
         } catch (SQLException e) {
+            logger.error("Failed to fetch user data from resultSet", e);
             return Optional.empty();
         }
     }

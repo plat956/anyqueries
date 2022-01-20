@@ -81,6 +81,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     public Optional<String> uploadFile(Part part) {
         boolean directoryExists = createUploadDirectoryIfNotExists(FILE_DIRECTORY_PATH);
         if(!directoryExists) {
+            logger.error("Failed to find upload directory {}", FILE_DIRECTORY_PATH);
             return Optional.empty();
         }
         String fileName = part.getSubmittedFileName();
@@ -96,8 +97,10 @@ public class AttachmentServiceImpl implements AttachmentService {
         fileName = String.format("%s_%s%s", fileName, RandomStringUtils.randomAlphanumeric(8), extension.orElse(""));
         try {
             part.write(FILE_DIRECTORY_PATH + fileName);
+            logger.info("File {} has been uploaded successfully", fileName);
             return Optional.of(fileName);
         } catch (IOException e) {
+            logger.error("Failed to write file: {}, to directory: {}", fileName, FILE_DIRECTORY_PATH, e);
             return Optional.empty();
         }
     }
@@ -119,12 +122,15 @@ public class AttachmentServiceImpl implements AttachmentService {
             part.write(IMAGE_DIRECTORY_PATH + fileName);
             boolean resizeResult = resizeAvatar(fileName);
             if(resizeResult) {
+                logger.info("Avatar {} has been uploaded successfully", fileName);
                 return Optional.of(fileName);
             } else {
+                logger.error("Failed to upload avatar {} cause impossible to resize it", fileName);
                 deleteAvatar(fileName);
                 return Optional.empty();
             }
         } catch (IOException e) {
+            logger.error("Failed to upload avatar: {} to directory: {}", fileName, IMAGE_DIRECTORY_PATH, e);
             return Optional.empty();
         }
     }
@@ -134,6 +140,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         try {
             return Files.deleteIfExists(Paths.get(IMAGE_DIRECTORY_PATH + avatar));
         } catch (IOException e) {
+            logger.error("Failed to delete avatar file: {}", avatar, e);
             return false;
         }
     }
@@ -143,6 +150,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         try {
             return Files.deleteIfExists(Paths.get(FILE_DIRECTORY_PATH + file));
         } catch (IOException e) {
+            logger.error("Failed to delete file: {}", file, e);
             return false;
         }
     }
@@ -167,6 +175,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         try {
             mimeType = Files.probeContentType(path);
         } catch (IOException e) {
+            logger.warn("Impossible to determine a mime type of the file: {}", file, e);
             mimeType = APPLICATION_OCTET_STREAM;
         }
         return mimeType;
@@ -177,6 +186,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         try {
             return URLEncoder.encode(fileName, ATTACHMENT_NAME_ENCODING);
         } catch (UnsupportedEncodingException e) {
+            logger.error("Filed to encode {} to {}", fileName, ATTACHMENT_NAME_ENCODING, e);
             return fileName;
         }
     }
@@ -204,6 +214,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             ImageIO.write(outputImage, formatName, new File(file));
             return true;
         } catch (IOException e) {
+            logger.error("Failed to resize image {}", avatar, e);
             return false;
         }
     }

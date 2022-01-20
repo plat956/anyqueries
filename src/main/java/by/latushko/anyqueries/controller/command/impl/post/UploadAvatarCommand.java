@@ -17,6 +17,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,6 +34,8 @@ import static by.latushko.anyqueries.controller.command.identity.SessionAttribut
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 
 public class UploadAvatarCommand implements Command {
+    private static final Logger logger = LogManager.getLogger();
+
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
         String userLang = CookieHelper.readCookie(request, LANG);
@@ -43,6 +47,7 @@ public class UploadAvatarCommand implements Command {
         try {
             parts = request.getParts().stream().toList();
         } catch (IOException | ServletException e) {
+            logger.error("Failed to receive attachment files", e);
             message = new ResponseMessage(DANGER, manager.getMessage(MESSAGE_FILE_UPLOAD_ERROR));
             session.setAttribute(MESSAGE, message);
             return commandResult;

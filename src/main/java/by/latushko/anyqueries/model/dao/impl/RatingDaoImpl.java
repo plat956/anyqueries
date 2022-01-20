@@ -6,6 +6,8 @@ import by.latushko.anyqueries.model.dao.RatingDao;
 import by.latushko.anyqueries.model.entity.Rating;
 import by.latushko.anyqueries.model.mapper.RowMapper;
 import by.latushko.anyqueries.model.mapper.impl.RatingMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +17,7 @@ import java.util.Optional;
 import static by.latushko.anyqueries.model.mapper.TableColumnName.RATING_GRADE_SUM;
 
 public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
+    private static final Logger logger = LogManager.getLogger();
     private static final String SQL_FIND_BY_ANSWER_ID_AND_USER_ID_QUERY = """
             SELECT id, grade, answer_id, user_id 
             FROM rating 
@@ -34,7 +37,8 @@ public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
 
     @Override
     public Optional<Rating> findById(Long id) throws DaoException {
-        throw new UnsupportedOperationException("Method findById(Long id) is unsupported");
+        logger.error("Method findById is unsupported");
+        throw new UnsupportedOperationException("Method findById is unsupported");
     }
 
     @Override
@@ -52,7 +56,8 @@ public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to create rating by calling create(Rating rating) method", e);
+            logger.error("Failed to create rating by calling create method", e);
+            throw new DaoException("Failed to create rating by calling create method", e);
         }
         return false;
     }
@@ -68,14 +73,16 @@ public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
                 return Optional.of(rating);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to update rating by calling update(Rating rating) method", e);
+            logger.error("Failed to update rating by calling update method", e);
+            throw new DaoException("Failed to update rating by calling update method", e);
         }
         return Optional.empty();
     }
 
     @Override
     public boolean delete(Long id) throws DaoException {
-        throw new UnsupportedOperationException("Method delete(Long id) is unsupported");
+        logger.error("Method delete is unsupported");
+        throw new UnsupportedOperationException("Method delete is unsupported");
     }
 
     @Override
@@ -91,7 +98,8 @@ public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find rating by calling findByAnswerIdAndUserId(Long answerId, Long userId) method", e);
+            logger.error("Failed to find rating by calling findByAnswerIdAndUserId method", e);
+            throw new DaoException("Failed to find rating by calling findByAnswerIdAndUserId method", e);
         }
     }
 
@@ -107,7 +115,8 @@ public class RatingDaoImpl extends BaseDao<Long, Rating> implements RatingDao {
                 }
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find sum rating by calling sumGradeByAnswerId(Long id) method", e);
+            logger.error("Failed to find sum rating by calling sumGradeByAnswerId method", e);
+            throw new DaoException("Failed to find sum rating by calling sumGradeByAnswerId method", e);
         }
     }
 }

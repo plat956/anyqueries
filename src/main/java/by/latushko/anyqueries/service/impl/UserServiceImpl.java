@@ -231,6 +231,7 @@ public class UserServiceImpl implements UserService {
                 Optional<User> userOptional = userDao.update(user);
                 if(userOptional.isPresent()) {
                     transaction.commit();
+                    logger.info("Last login date of User {} has been updated", userOptional.get().getId());
                     return true;
                 }
             } catch (DaoException e) {
@@ -252,6 +253,7 @@ public class UserServiceImpl implements UserService {
                 Optional<User> userOptional = userDao.update(user);
                 if(userOptional.isPresent()) {
                     transaction.commit();
+                    logger.info("User {} updated his profile data successfully", user.getId());
                     return true;
                 }
             } catch (DaoException e) {
@@ -277,6 +279,7 @@ public class UserServiceImpl implements UserService {
                         userOptional = userDao.update(user);
                         if(userOptional.isPresent()) {
                             transaction.commit();
+                            logger.info("User account {} has been updated successfully", userId);
                             return true;
                         }
                     }
@@ -301,6 +304,7 @@ public class UserServiceImpl implements UserService {
                 Optional<User> userOptional = userDao.update(user);
                 if(userOptional.isPresent()) {
                     transaction.commit();
+                    logger.info("User {} changed profile avatar successfully", user.getId());
                     return true;
                 }
             } catch (DaoException e) {
@@ -314,7 +318,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean delete(Long id) {
-        boolean result = false;
         if(id != null && !id.equals(FIRST_ADMIN_ACCOUNT_ID)) {
             BaseDao userDao = new UserDaoImpl();
             BaseDao attachmentDao = new AttachmentDaoImpl();
@@ -329,7 +332,8 @@ public class UserServiceImpl implements UserService {
                             attachmentService.deleteFile(a.getFile());
                         }
                         transaction.commit();
-                        result = true;
+                        logger.info("User {} has been deleted successfully", id);
+                        return true;
                     }
                 } catch (DaoException e) {
                     transaction.rollback();
@@ -338,7 +342,7 @@ public class UserServiceImpl implements UserService {
                 logger.error("Failed to delete user", e);
             }
         }
-        return result;
+        return false;
     }
 
     @Override
@@ -382,6 +386,7 @@ public class UserServiceImpl implements UserService {
                 Optional<User> userOptional = userDao.update(user);
                 if(userOptional.isPresent()) {
                     transaction.commit();
+                    logger.info("User {} changed password successfully", user.getId());
                     return true;
                 }
             } catch (DaoException e) {

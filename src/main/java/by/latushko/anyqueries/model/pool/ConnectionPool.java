@@ -32,17 +32,17 @@ public class ConnectionPool {
                 freeConnections.put(connection);
             }
         } catch (SQLException e) {
-            logger.error("Failed to initialize connection pool", e);
+            logger.fatal("Failed to initialize connection pool", e);
             throw new ExceptionInInitializerError("Failed to initialize connection pool");
         } catch (InterruptedException e) {
-            logger.error("Failed to initialize connection pool", e);
+            logger.fatal("Failed to initialize connection pool", e);
             Thread.currentThread().interrupt();
         }
     }
 
     public static ConnectionPool getInstance(){
         if(!CREATOR.get()){
-            try{
+            try {
                 LOCKER.lock();
                 if(instance == null){
                     instance = new ConnectionPool();
