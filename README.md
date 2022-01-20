@@ -17,7 +17,7 @@ It's worth noting that each account in the system can have 3 statuses:
 </ul>
 
 ## Project stack
-Jakarta EE, MySQL, HTML/CSS/Javascript
+Jakarta EE / MySQL 8 / HTML 5 / CSS 3 / Javascript / JQuery 1.10 / Bootstrap 4
 
 ## Database model
 [![db model](https://user-images.githubusercontent.com/62507570/149677602-a609bda2-f914-4480-9272-825e3098a238.png)](#)
@@ -28,7 +28,7 @@ Jakarta EE, MySQL, HTML/CSS/Javascript
   <li>Restore database backup from the <b>dump.sql</b> file located in data;</li>
   <li>Unpack <b>uploads.zip</b> insides located in data to uploads folder on your server and change <b>app.upload.dir</b> value in <b>application.properties</b> file;</li>
   <li>Set your values in <b>database.properties</b>;</li>
-  <li>If you wanna test the application together with a telegram bot, please make sure that no one is running this app at the same time with you, in this case you won't be able to start the app at all, because only one thread can be a bot handler. To solve this problem you can create a new bot with help of <a href="https://t.me/botfather">@BotFather</a>, then make changes in <b>telegram.properties</b> or just disable usage of telegram bot changing property <b>telegram.bot.alive</b> in <b>telegram.properties</b> to <b>false</b>;</li>
+  <li>If you wanna test the application together with a telegram bot, whose credentials is located in <b>telegram.properties</b>, you should be sure that no one is running any app instances connected to that bot at the same time with you, otherwise you must create a new bot with help of <a href="https://t.me/botfather">@BotFather</a>, then make changes in configuration file or just disable usage of it changing property <b>telegram.bot.alive</b> to <b>false</b>;</li>
   <li>Build and deploy the application;</li>
   <li>To get logged in use accounts credentials from <b>accounts.txt</b> file located in data.</li>
 </ul>
