@@ -12,6 +12,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class TelegramBot extends TelegramLongPollingBot {
     private static final Logger logger = LogManager.getLogger();
@@ -22,6 +24,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     private static final String BOT_TOKEN;
     public static final String BOT_NAME;
     public static final boolean BOT_ALIVE;
+    private static final AtomicBoolean CREATOR = new AtomicBoolean(false);
+    private static final ReentrantLock LOCKER = new ReentrantLock();
+    private static TelegramBot instance;
 
     static {
         Properties properties = new Properties();
@@ -35,6 +40,24 @@ public class TelegramBot extends TelegramLongPollingBot {
             logger.error("Failed to read telegram bot properties from file: {}", BOT_PROPERTIES_PATH, e);
             throw new ExceptionInInitializerError("Failed to read telegram bot properties from file: " + BOT_PROPERTIES_PATH);
         }
+    }
+
+    private TelegramBot() {
+    }
+
+    public static TelegramBot getInstance(){
+        if(!CREATOR.get()){
+            try{
+                LOCKER.lock();
+                if(instance == null){
+                    instance = new TelegramBot();
+                    CREATOR.set(true);
+                }
+            } finally {
+                LOCKER.unlock();
+            }
+        }
+        return instance;
     }
 
     @Override
