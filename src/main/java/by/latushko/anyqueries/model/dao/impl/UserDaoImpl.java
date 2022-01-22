@@ -271,10 +271,10 @@ public class UserDaoImpl extends BaseDao<Long, User> implements UserDao {
     }
 
     @Override
-    public List<String> findLoginByLoginContainsOrderByLoginAscLimitedTo(String loginPatter, int limit) throws DaoException {
+    public List<String> findLoginByLoginContainsOrderByLoginAscLimitedTo(String loginPattern, int limit) throws DaoException {
         List<String> result = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_LOGIN_BY_LOGIN_CONTAINS_ORDER_BY_LOGIN_ASC_LIMITED_TO_QUERY)){
-            statement.setString(1, LIKE_MARKER + loginPatter + LIKE_MARKER);
+            statement.setString(1, LIKE_MARKER + loginPattern + LIKE_MARKER);
             statement.setInt(2, limit);
             try(ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()) {

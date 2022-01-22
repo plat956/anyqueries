@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The class represents a jstl tag to format a list of objects to a string separated by comma.
+ */
 public class ListFormatterTag extends TagSupport {
     private static final Logger logger = LogManager.getLogger();
     private static final String ELEMENT_DELIMITER = ",";

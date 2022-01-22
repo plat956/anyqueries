@@ -6,10 +6,20 @@ import java.time.temporal.ChronoUnit;
 import static by.latushko.anyqueries.util.i18n.MessageKey.*;
 import static by.latushko.anyqueries.util.i18n.MessageManager.SPACE_CHARACTER;
 
+/**
+ * The Time duration class.
+ */
 public final class TimeDuration {
     private TimeDuration() {
     }
 
+    /**
+     * Format date to "How much time ago?" format.
+     *
+     * @param fromDate the start counting date
+     * @param manager  the message manager to build the result in current language
+     * @return the result formatted message
+     */
     public static String format(LocalDateTime fromDate, MessageManager manager) {
         LocalDateTime toDate = LocalDateTime.now();
         long seconds = ChronoUnit.SECONDS.between(fromDate, toDate);

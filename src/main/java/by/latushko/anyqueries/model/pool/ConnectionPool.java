@@ -14,14 +14,31 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static by.latushko.anyqueries.model.pool.ConnectionFactory.DB_POOL_SIZE;
 
+/**
+ * The Connection pool class.
+ * It stores and manages all database connections available to use by the app
+ */
 public class ConnectionPool {
     private static final Logger logger = LogManager.getLogger();
     private static final AtomicBoolean CREATOR = new AtomicBoolean(false);
     private static final ReentrantLock LOCKER = new ReentrantLock();
+    /**
+     * The connection pool instance
+     */
     private static ConnectionPool instance;
+    /**
+     * The internal queue stores connections available for use
+     */
     private final BlockingQueue<ProxyConnection> freeConnections;
+    /**
+     * The internal queue stores used connections
+     */
     private final BlockingQueue<ProxyConnection> givenAwayConnections;
 
+    /**
+     * The connection pool initialization
+     * Creates essential quantity of free connections and fills them the internal queue
+     */
     private ConnectionPool() {
         freeConnections = new LinkedBlockingDeque<>(DB_POOL_SIZE);
         givenAwayConnections = new LinkedBlockingDeque<>(DB_POOL_SIZE);
@@ -40,11 +57,16 @@ public class ConnectionPool {
         }
     }
 
-    public static ConnectionPool getInstance(){
-        if(!CREATOR.get()){
+    /**
+     * Get instance of the connection pool.
+     *
+     * @return the connection pool instance
+     */
+    public static ConnectionPool getInstance() {
+        if (!CREATOR.get()) {
             try {
                 LOCKER.lock();
-                if(instance == null){
+                if (instance == null) {
                     instance = new ConnectionPool();
                     CREATOR.set(true);
                 }
@@ -55,6 +77,11 @@ public class ConnectionPool {
         return instance;
     }
 
+    /**
+     * Gives one free connection from the pool.
+     *
+     * @return a free connection
+     */
     public Connection getConnection() {
         ProxyConnection connection = null;
         try {
@@ -67,10 +94,16 @@ public class ConnectionPool {
         return connection;
     }
 
+    /**
+     * Release the used connection.
+     *
+     * @param connection the used connection
+     * @throws ConnectionPoolException if passed a wrong connection
+     */
     public void releaseConnection(Connection connection) throws ConnectionPoolException {
-        if(connection == null) {
+        if (connection == null) {
             throw new ConnectionPoolException("Filed to release connection. Connection can't be null");
-        } else if(connection.getClass() != ProxyConnection.class) {
+        } else if (connection.getClass() != ProxyConnection.class) {
             throw new ConnectionPoolException("Connection hasn't been released because of the instance of a wrong class");
         }
         ProxyConnection c = (ProxyConnection) connection;
@@ -83,6 +116,9 @@ public class ConnectionPool {
         }
     }
 
+    /**
+     * Destroy the connection pool.
+     */
     public void destroyPool() {
         for (int i = 0; i < DB_POOL_SIZE; i++) {
             try {
@@ -97,6 +133,9 @@ public class ConnectionPool {
         deregisterDrivers();
     }
 
+    /**
+     * Deregister database drivers.
+     */
     private void deregisterDrivers() {
         DriverManager.getDrivers().asIterator().forEachRemaining(d -> {
             try {

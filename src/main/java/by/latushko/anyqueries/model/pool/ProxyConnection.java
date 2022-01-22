@@ -9,14 +9,31 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+/**
+ * The Proxy connection class.
+ * This's the wrapper proxy class for Connection, it adds some features to use the connection in pool
+ */
 class ProxyConnection implements Connection {
     private static final Logger logger = LogManager.getLogger();
+
+    /**
+     * Real connection object
+     */
     private final Connection connection;
 
+    /**
+     * Instantiates a new Proxy connection.
+     *
+     * @param connection the real connection object
+     */
     ProxyConnection(Connection connection) {
         this.connection = connection;
     }
 
+    /**
+     * Restores auto commit status of the connection and returns it to pool
+     * @throws SQLException if the sql exception was thrown during the proxy connection close
+     */
     @Override
     public void close() throws SQLException {
         try {
@@ -27,6 +44,11 @@ class ProxyConnection implements Connection {
         }
     }
 
+    /**
+     * Closes the real internal connection object.
+     *
+     * @throws SQLException if the sql exception was thrown during the real connection close
+     */
     void reallyClose() throws SQLException {
         connection.close();
     }

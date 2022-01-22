@@ -14,6 +14,9 @@ import static by.latushko.anyqueries.controller.command.identity.PageUrl.QUESTIO
 import static by.latushko.anyqueries.util.http.QueryParameterHelper.addParameter;
 import static by.latushko.anyqueries.util.http.QueryParameterHelper.removeParameter;
 
+/**
+ * The class represents a jstl tag to change a query parameter in the url.
+ */
 public class QueryParameterChangerTag extends TagSupport {
     private static final Logger logger = LogManager.getLogger();
     private static final String QUERY_STRING_DELIMITER = "?";

@@ -20,6 +20,9 @@ import java.util.Properties;
 import static by.latushko.anyqueries.util.AppProperty.APP_NAME;
 import static by.latushko.anyqueries.util.i18n.MessageManager.SPACE_CHARACTER;
 
+/**
+ * The Mail sender class.
+ */
 public class MailSender {
     private static final Logger logger = LogManager.getLogger();
     private static final String MAIL_PROPERTIES_PATH = "config/mail.properties";
@@ -30,7 +33,13 @@ public class MailSender {
     private static final String CONTENT_TYPE;
     private static MailSender instance;
     private static final Properties properties;
+    /**
+     * The sender account email property.
+     */
     static final String USER_EMAIL_PROPERTY = "mail.user.email";
+    /**
+     * The sender account password property.
+     */
     static final String USER_PASSWORD_PROPERTY = "mail.user.password";
 
     static {
@@ -50,6 +59,11 @@ public class MailSender {
     private MailSender() {
     }
 
+    /**
+     * Get instance of the mail sender.
+     *
+     * @return the mail sender
+     */
     public static MailSender getInstance(){
         if(instance == null){
             instance = new MailSender();
@@ -57,6 +71,14 @@ public class MailSender {
         return instance;
     }
 
+    /**
+     * Send message.
+     *
+     * @param sendTo  the recipient address
+     * @param subject the subject of the email
+     * @param text    the text of the email
+     * @throws MailSenderException if the mail had wrong initial parameters or something else goes wrong during sending the letter
+     */
     public void send(String sendTo, String subject, String text) throws MailSenderException {
         try {
             MimeMessage message = initMessage(sendTo, subject, text);

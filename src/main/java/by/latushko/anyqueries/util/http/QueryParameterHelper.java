@@ -10,12 +10,23 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * The class provides opportunities for convenient work with url query parameters.
+ */
 public final class QueryParameterHelper {
     private static final Logger logger = LogManager.getLogger();
 
     private QueryParameterHelper() {
     }
 
+    /**
+     * Add parameter to url.
+     *
+     * @param url   the url
+     * @param key   the parameter key
+     * @param value the parameter value
+     * @return the result url
+     */
     public static String addParameter(String url, String key, String value) {
         try {
             URIBuilder uriBuilder = new URIBuilder(url);
@@ -36,6 +47,13 @@ public final class QueryParameterHelper {
         }
     }
 
+    /**
+     * Remove parameters from url.
+     *
+     * @param url       the url
+     * @param keysArray the parameters keys to remove
+     * @return the result url
+     */
     public static String removeParameter(String url, String... keysArray) {
         try {
             URIBuilder uriBuilder = new URIBuilder(url);

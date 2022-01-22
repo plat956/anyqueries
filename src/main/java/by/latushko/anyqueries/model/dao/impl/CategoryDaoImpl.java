@@ -197,10 +197,10 @@ public class CategoryDaoImpl extends BaseDao<Long, Category> implements Category
     }
 
     @Override
-    public List<String> findNameByNameContainsOrderByNameAscLimitedTo(String namePatter, int limit) throws DaoException {
+    public List<String> findNameByNameContainsOrderByNameAscLimitedTo(String namePattern, int limit) throws DaoException {
         List<String> result = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(SQL_FIND_NAME_BY_NAME_CONTAINS_ORDER_BY_NAME_ASC_LIMITED_TO_QUERY)){
-            statement.setString(1, LIKE_MARKER + namePatter + LIKE_MARKER);
+            statement.setString(1, LIKE_MARKER + namePattern + LIKE_MARKER);
             statement.setInt(2, limit);
             try(ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()) {

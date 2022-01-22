@@ -12,6 +12,9 @@ import java.io.IOException;
 
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
 
+/**
+ * The class represents a jstl tag to get a plural localized message by number.
+ */
 public class PluralFormatterTag extends TagSupport {
     private static final Logger logger = LogManager.getLogger();
     private long count;

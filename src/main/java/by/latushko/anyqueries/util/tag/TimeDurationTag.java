@@ -14,6 +14,9 @@ import java.time.LocalDateTime;
 
 import static by.latushko.anyqueries.controller.command.identity.CookieName.LANG;
 
+/**
+ * The class represents a jstl tag to format a date to "How much time ago?" format.
+ */
 public class TimeDurationTag extends TagSupport {
     private static final Logger logger = LogManager.getLogger();
     private LocalDateTime date;
