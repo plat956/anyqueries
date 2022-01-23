@@ -13,7 +13,7 @@ It's worth noting that each account in the system can have 3 statuses:
 <ul>
   <li><b>Banned</b> - these users have been banned by administrators;</li>
   <li><b>Inactive</b> - this status is assigned to user account after the 1st registration step completed, to become an Active account must be activated by following email activation link or using telegram bot;</li>
-  <li><b>Active</b> - this status provide user account access to use all system functions.</li>
+  <li><b>Active</b> - this status provides user account access to use all system functions.</li>
 </ul>
 
 ## Project stack
