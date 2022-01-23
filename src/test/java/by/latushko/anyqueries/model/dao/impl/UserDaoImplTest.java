@@ -28,7 +28,6 @@ public class UserDaoImplTest {
     @BeforeClass
     public void setUp() throws DaoException {
         MockitoAnnotations.openMocks(this);
-
         users = new ArrayList<>();
 
         User user = new User();
@@ -126,13 +125,15 @@ public class UserDaoImplTest {
     @Test
     public void testFindById() throws DaoException {
         Optional<User> user = userDao.findById(1L);
-        assertTrue(user.isPresent());
+        boolean actual = user.isPresent();
+        assertTrue(actual);
     }
 
     @Test
     public void testFindByIdEmpty() throws DaoException {
         Optional<User> user = userDao.findById(999L);
-        assertTrue(user.isEmpty());
+        boolean actual = user.isEmpty();
+        assertTrue(actual);
     }
 
     @Test
@@ -147,7 +148,8 @@ public class UserDaoImplTest {
         user.setLastName("Boss");
         user.setMiddleName("Sidorova");
         boolean result = userDao.create(user);
-        assertTrue(result && user.getId() != null);
+        boolean actual = result && user.getId() != null;
+        assertTrue(actual);
     }
 
     @Test
@@ -157,63 +159,68 @@ public class UserDaoImplTest {
         User u = userOptional.get();
         u.setFirstName(newName);
         userOptional = userDao.update(u);
-
-        assertTrue(userOptional.isPresent() &&
-                userOptional.get().getFirstName().equals(newName));
+        boolean actual = userOptional.isPresent() &&
+                userOptional.get().getFirstName().equals(newName);
+        assertTrue(actual);
     }
 
     @Test
     public void testDelete() throws DaoException {
-        boolean deleted = userDao.delete(3L);
-        assertTrue(deleted);
+        boolean actual = userDao.delete(3L);
+        assertTrue(actual);
     }
 
     @Test
     public void testFindLoginByLoginContainsOrderByLoginAscLimitedTo() throws DaoException {
         List<String> logins = ((UserDao)userDao).findLoginByLoginContainsOrderByLoginAscLimitedTo("rty", 2);
-        assertEquals(2, logins.size());
+        int actual = logins.size();
+        int expected = 2;
+        assertEquals(actual, expected);
     }
 
     @Test
     public void testFindLoginByLoginContainsOrderByLoginAscLimitedToEmpty() throws DaoException {
         List<String> logins = ((UserDao)userDao).findLoginByLoginContainsOrderByLoginAscLimitedTo("zzzzz", 2);
-        assertTrue(logins.isEmpty());
+        boolean actual = logins.isEmpty();
+        assertTrue(actual);
     }
 
     @Test
     public void testFindInactiveByTelegram() throws DaoException {
         Optional<User> user = ((UserDao)userDao).findInactiveByTelegram("qwerty123");
-        assertTrue(user.isPresent());
+        boolean actual = user.isPresent();
+        assertTrue(actual);
     }
 
     @Test
     public void testFindInactiveByTelegramEmpty() throws DaoException {
         Optional<User> user = ((UserDao)userDao).findInactiveByTelegram("adminTlgrm");
-        assertTrue(user.isEmpty());
+        boolean actual = user.isEmpty();
+        assertTrue(actual);
     }
 
     @Test
     public void testExistsByEmail() throws DaoException {
-        boolean exists = ((UserDao)userDao).existsByEmail("user@gmail.com");
-        assertTrue(exists);
+        boolean actual = ((UserDao)userDao).existsByEmail("user@gmail.com");
+        assertTrue(actual);
     }
 
     @Test
     public void testNotExistsByEmail() throws DaoException {
-        boolean exists = ((UserDao)userDao).existsByEmail("boss@gmail.com");
-        assertFalse(exists);
+        boolean actual = ((UserDao)userDao).existsByEmail("boss@gmail.com");
+        assertFalse(actual);
     }
 
     @Test
     public void testExistsByLoginExceptUserId() throws DaoException {
-        boolean exists = ((UserDao)userDao).existsByLoginExceptUserId("qwerty", 1L);
-        assertTrue(exists);
+        boolean actual = ((UserDao)userDao).existsByLoginExceptUserId("qwerty", 1L);
+        assertTrue(actual);
     }
 
     @Test
     public void testNotExistsByLoginExceptUserId() throws DaoException {
-        boolean exists = ((UserDao)userDao).existsByLoginExceptUserId("qwerty", 2L);
-        assertFalse(exists);
+        boolean actual = ((UserDao)userDao).existsByLoginExceptUserId("qwerty", 2L);
+        assertFalse(actual);
     }
 
     @AfterClass
