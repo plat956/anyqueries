@@ -42,11 +42,11 @@ public final class ValidationResult {
      * @return the value if the field was found or empty string
      */
     public String getValue(String key) {
+        String value = null;
         if(fields.containsKey(key)) {
-            return fields.get(key).getValue();
-        } else {
-            return "";
+            value = fields.get(key).getValue();
         }
+        return value != null ? value : "";
     }
 
     /**
