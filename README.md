@@ -13,7 +13,7 @@ It's worth noting that each account in the system can have 3 statuses:
 <ul>
   <li><b>Banned</b> - these users have been banned by administrators;</li>
   <li><b>Inactive</b> - this status is assigned to user account after the 1st registration step completed, to become an Active account must be activated by following email activation link or using telegram bot;</li>
-  <li><b>Active</b> - this status provide user account access to use all system functions.</li>
+  <li><b>Active</b> - this status provides user account access to use all system functions.</li>
 </ul>
 
 ## Project stack
@@ -30,7 +30,7 @@ Jakarta EE / MySQL 8 / HTML 5 / CSS 3 / Javascript / JQuery 1.10 / Bootstrap 4
   <li>Set your values in <b>database.properties</b>;</li>
   <li>If you wanna test the application together with a telegram bot, whose credentials is located in <b>telegram.properties</b>, you should be sure that no one is running any app instances connected to that bot at the same time with you, otherwise you must create a new bot with help of <a href="https://t.me/botfather">@BotFather</a>, then make changes in configuration file or just disable usage of it changing property <b>telegram.bot.alive</b> to <b>false</b>;</li>
   <li>Build and deploy the application;</li>
-  <li>To get logged in use accounts credentials from <b>accounts.txt</b> file located in data.</li>
+  <li>To get logged in use account credentials from <b>accounts.txt</b> file located in data.</li>
 </ul>
 
 ## Deployed app instance
