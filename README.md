@@ -1,5 +1,5 @@
 # ANY-QUERIES
-The application is an instance of typical "Question-Answer" system. You know such examples as <b>stackoverflow.com</b> or even <b>otvet.mail.ru</b>. Some people who'd like to ask something make question, others can respond. Users can mark any answer as a correct for thier question, attach different files, put likes/dislikes to answers.
+The application is an instance of typical "Question-Answer" system. You know such examples as <b>stackoverflow.com</b> or even <b>otvet.mail.ru</b>. Some people who'd like to ask something create question, others can respond. Users can mark any answer as a correct for thier question, attach different files, put likes/dislikes to answers.
 
 There are 4 roles in the system:
 <ul>
