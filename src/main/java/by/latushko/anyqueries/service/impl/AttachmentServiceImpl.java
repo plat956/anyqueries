@@ -23,6 +23,7 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +37,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     private static final int FILE_EXTENSION_MAX_LENGTH = 20;
     private static final int FILE_NAME_MAX_LENGTH = 40;
     private static final int AVATAR_MAX_SIZE = 190;
+    private static final int IMAGE_CACHE_MONTHS = 1;
     private static final String AVATAR_PREFIX = "avatar_";
     private static final String ATTACHMENT_NAME_ENCODING = "UTF-8";
     private static final String IMAGES_FOLDER_NAME = "images";
@@ -218,6 +220,13 @@ public class AttachmentServiceImpl implements AttachmentService {
             logger.error("Failed to resize image {}", avatar, e);
             return false;
         }
+    }
+
+    @Override
+    public long getImageCachingTerm() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, IMAGE_CACHE_MONTHS);
+        return calendar.getTimeInMillis();
     }
 
     private boolean createUploadDirectoryIfNotExists(String directory) {

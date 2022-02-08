@@ -89,4 +89,11 @@ public interface AttachmentService {
      * @return the full file path
      */
     String getFilePath(String file);
+
+    /**
+     * Gets image caching term.
+     *
+     * @return the time in milliseconds to renew an image cache
+     */
+    long getImageCachingTerm();
 }

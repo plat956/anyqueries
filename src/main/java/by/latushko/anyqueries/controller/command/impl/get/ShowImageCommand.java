@@ -11,10 +11,13 @@ import static by.latushko.anyqueries.controller.command.identity.RequestParamete
 import static by.latushko.anyqueries.util.http.MimeType.IMAGE_JPEG;
 
 public class ShowImageCommand implements Command {
+    private static final String EXPIRES_HEADER_NAME = "Expires";
+
     @Override
     public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
-        response.setContentType(IMAGE_JPEG);
         AttachmentService attachmentService = AttachmentServiceImpl.getInstance();
+        response.setContentType(IMAGE_JPEG);
+        response.setDateHeader(EXPIRES_HEADER_NAME, attachmentService.getImageCachingTerm());
         String path = attachmentService.getImagePath(request.getParameter(FILE));
         return new CommandResult(path, CommandResult.RoutingType.FILE);
     }
