@@ -30,9 +30,6 @@ import static by.latushko.anyqueries.controller.command.identity.RequestParamete
 public class CommonController extends HttpServlet {
     private static final Logger logger = LogManager.getLogger();
     private static final String CONTENT_DISPOSITION_VALUE = "inline";
-    private static final String CACHE_CONTROL_VALUE = "no-cache, no-store, must-revalidate";
-    private static final String PRAGMA_VALUE = "no-cache";
-    private static final String EXPIRES_VALUE = "0";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -45,10 +42,6 @@ public class CommonController extends HttpServlet {
     }
 
     private void doRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setHeader(CACHE_CONTROL, CACHE_CONTROL_VALUE);
-        response.setHeader(PRAGMA, PRAGMA_VALUE);
-        response.setHeader(EXPIRES, EXPIRES_VALUE);
-
         CommandProvider commandProvider = CommandProvider.getInstance();
         String commandName = request.getParameter(COMMAND);
         RequestMethod method = RequestMethod.valueOf(request.getMethod());
