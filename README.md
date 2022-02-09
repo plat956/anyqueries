@@ -17,7 +17,7 @@ It's worth noting that each account in the system can have 3 statuses:
 </ul>
 
 ## Project stack
-Jakarta EE / MySQL 8 / HTML 5 / CSS 3 / Javascript / JQuery 1.10 / Bootstrap 4
+Jakarta EE 9 / MySQL 8 / HTML 5 / CSS 3 / Javascript / JQuery 1.10 / Bootstrap 4
 
 ## Database model
 [![db model](https://user-images.githubusercontent.com/62507570/149677602-a609bda2-f914-4480-9272-825e3098a238.png)](#)
