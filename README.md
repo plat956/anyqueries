@@ -32,6 +32,3 @@ Jakarta EE 9 / MySQL 8 / HTML 5 / CSS 3 / Javascript / JQuery 1.10 / Bootstrap 4
   <li>Build and deploy the application;</li>
   <li>To get logged in use account credentials from <b>accounts.txt</b> file located in data.</li>
 </ul>
-
-## Deployed app instance
-http://34.133.230.193:8080/
