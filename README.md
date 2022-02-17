@@ -26,8 +26,8 @@ Jakarta EE 9 / MySQL 8 / HTML 5 / CSS 3 / Javascript / JQuery 1.10 / Bootstrap 4
 <ul>
   <li>Download sources from this repository;</li>
   <li>Restore database backup from the <b>dump.sql</b> file located in data;</li>
-  <li>Unpack <b>uploads.zip</b> insides located in data to uploads folder on your server and change <b>app.upload.dir</b> value in <b>application.properties</b> file;</li>
-  <li>Set your values in <b>*.properties</b>;</li>
+  <li>Unpack <b>uploads.zip</b> insides located in data to uploads folder on your server;</li>
+  <li>Update necessary values in <b>*.properties</b>;</li>
   <li>Build and deploy the application;</li>
   <li>To get logged in use account credentials from <b>accounts.txt</b> file located in data.</li>
 </ul>
